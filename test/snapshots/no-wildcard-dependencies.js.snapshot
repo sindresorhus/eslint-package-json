@@ -1,0 +1,109 @@
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"*\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "*"}}
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"*\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "*"}}
+    |                          ^^^ Dependency \`foo\` must not use the wildcard range \`*\`; specify an explicit version range.
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"foo\": \"\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": ""}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"foo\": \"\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": ""}}
+    |                          ^^ Dependency \`foo\` must not use the wildcard range \`\`; specify an explicit version range.
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"x\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "x"}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"x\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "x"}}
+    |                          ^^^ Dependency \`foo\` must not use the wildcard range \`x\`; specify an explicit version range.
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"X\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "X"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"X\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "X"}}
+    |                          ^^^ Dependency \`foo\` must not use the wildcard range \`X\`; specify an explicit version range.
+
+`;
+
+exports[`invalid(5): {\"devDependencies\": {\"foo\": \"*\"}} 1`] = `
+
+[Input]
+  1 | {"devDependencies": {"foo": "*"}}
+
+`;
+
+exports[`invalid(5): {\"devDependencies\": {\"foo\": \"*\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"foo": "*"}}
+    |                             ^^^ Dependency \`foo\` must not use the wildcard range \`*\`; specify an explicit version range.
+
+`;
+
+exports[`invalid(6): {\"optionalDependencies\": {\"foo\": \"*\"}} 1`] = `
+
+[Input]
+  1 | {"optionalDependencies": {"foo": "*"}}
+
+`;
+
+exports[`invalid(6): {\"optionalDependencies\": {\"foo\": \"*\"}} 2`] = `
+
+Message:
+> 1 | {"optionalDependencies": {"foo": "*"}}
+    |                                  ^^^ Dependency \`foo\` must not use the wildcard range \`*\`; specify an explicit version range.
+
+`;
+
+exports[`invalid(7): {\"peerDependencies\": {\"react\": \"*\"}} 1`] = `
+
+[Input]
+Options:
+- dependencyTypes:
+    - 'peerDependencies'
+
+Code:
+  1 | {"peerDependencies": {"react": "*"}}
+
+`;
+
+exports[`invalid(7): {\"peerDependencies\": {\"react\": \"*\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"react": "*"}}
+    |                                ^^^ Dependency \`react\` must not use the wildcard range \`*\`; specify an explicit version range.
+
+`;

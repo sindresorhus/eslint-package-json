@@ -1,0 +1,89 @@
+exports[`invalid(1): {\"main\": \".\\\\dist\\\\index.js\"} 1`] = `
+
+[Input]
+  1 | {"main": ".\\\\dist\\\\index.js"}
+
+`;
+
+exports[`invalid(1): {\"main\": \".\\\\dist\\\\index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": ".\\\\dist\\\\index.js"}
+    |          ^^^^^^^^^^^^^^^^^^^ Path \`.\\dist\\index.js\` must use forward slashes, not backslashes.
+
+Output:
+  1 | {"main": "./dist/index.js"}
+
+`;
+
+exports[`invalid(2): {\"bin\": {\"foo\": \".\\\\cli.js\"}} 1`] = `
+
+[Input]
+  1 | {"bin": {"foo": ".\\\\cli.js"}}
+
+`;
+
+exports[`invalid(2): {\"bin\": {\"foo\": \".\\\\cli.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": ".\\\\cli.js"}}
+    |                 ^^^^^^^^^^^ Path \`.\\cli.js\` must use forward slashes, not backslashes.
+
+Output:
+  1 | {"bin": {"foo": "./cli.js"}}
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"import\": \".\\\\index.mjs\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"import": ".\\\\index.mjs"}}
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"import\": \".\\\\index.mjs\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"import": ".\\\\index.mjs"}}
+    |                        ^^^^^^^^^^^^^^ Path \`.\\index.mjs\` must use forward slashes, not backslashes.
+
+Output:
+  1 | {"exports": {"import": "./index.mjs"}}
+
+`;
+
+exports[`invalid(4): {\"files\": [\".\\\\dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": [".\\\\dist"]}
+
+`;
+
+exports[`invalid(4): {\"files\": [\".\\\\dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": [".\\\\dist"]}
+    |            ^^^^^^^^^ Path \`.\\dist\` must use forward slashes, not backslashes.
+
+Output:
+  1 | {"files": ["./dist"]}
+
+`;
+
+exports[`invalid(5): {\"types\": \".\\\\index.d.ts\"} 1`] = `
+
+[Input]
+  1 | {"types": ".\\\\index.d.ts"}
+
+`;
+
+exports[`invalid(5): {\"types\": \".\\\\index.d.ts\"} 2`] = `
+
+Message:
+> 1 | {"types": ".\\\\index.d.ts"}
+    |           ^^^^^^^^^^^^^^^ Path \`.\\index.d.ts\` must use forward slashes, not backslashes.
+
+Output:
+  1 | {"types": "./index.d.ts"}
+
+`;

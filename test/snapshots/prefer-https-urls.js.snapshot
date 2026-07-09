@@ -1,0 +1,125 @@
+exports[`invalid(1): {\"homepage\": \"http://example.com\"} 1`] = `
+
+[Input]
+  1 | {"homepage": "http://example.com"}
+
+`;
+
+exports[`invalid(1): {\"homepage\": \"http://example.com\"} 2`] = `
+
+Message:
+> 1 | {"homepage": "http://example.com"}
+    |              ^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://example.com\`.
+
+Output:
+  1 | {"homepage": "https://example.com"}
+
+`;
+
+exports[`invalid(2): {\"bugs\": \"http://example.com/issues\"} 1`] = `
+
+[Input]
+  1 | {"bugs": "http://example.com/issues"}
+
+`;
+
+exports[`invalid(2): {\"bugs\": \"http://example.com/issues\"} 2`] = `
+
+Message:
+> 1 | {"bugs": "http://example.com/issues"}
+    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://example.com/issues\`.
+
+Output:
+  1 | {"bugs": "https://example.com/issues"}
+
+`;
+
+exports[`invalid(3): {\"bugs\": {\"url\": \"http://example.com/issues\"}} 1`] = `
+
+[Input]
+  1 | {"bugs": {"url": "http://example.com/issues"}}
+
+`;
+
+exports[`invalid(3): {\"bugs\": {\"url\": \"http://example.com/issues\"}} 2`] = `
+
+Message:
+> 1 | {"bugs": {"url": "http://example.com/issues"}}
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://example.com/issues\`.
+
+Output:
+  1 | {"bugs": {"url": "https://example.com/issues"}}
+
+`;
+
+exports[`invalid(4): {\"repository\": {\"type\": \"git\", \"url\": \"http://github.com/user/repo.git\"}} 1`] = `
+
+[Input]
+  1 | {"repository": {"type": "git", "url": "http://github.com/user/repo.git"}}
+
+`;
+
+exports[`invalid(4): {\"repository\": {\"type\": \"git\", \"url\": \"http://github.com/user/repo.git\"}} 2`] = `
+
+Message:
+> 1 | {"repository": {"type": "git", "url": "http://github.com/user/repo.git"}}
+    |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://github.com/user/repo.git\`.
+
+Output:
+  1 | {"repository": {"type": "git", "url": "https://github.com/user/repo.git"}}
+
+`;
+
+exports[`invalid(5): {\"funding\": \"http://example.com/sponsor\"} 1`] = `
+
+[Input]
+  1 | {"funding": "http://example.com/sponsor"}
+
+`;
+
+exports[`invalid(5): {\"funding\": \"http://example.com/sponsor\"} 2`] = `
+
+Message:
+> 1 | {"funding": "http://example.com/sponsor"}
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://example.com/sponsor\`.
+
+Output:
+  1 | {"funding": "https://example.com/sponsor"}
+
+`;
+
+exports[`invalid(6): {\"funding\": [{\"type\": \"individual\", \"url\": \"http://example.com/sponsor\"}]} 1`] = `
+
+[Input]
+  1 | {"funding": [{"type": "individual", "url": "http://example.com/sponsor"}]}
+
+`;
+
+exports[`invalid(6): {\"funding\": [{\"type\": \"individual\", \"url\": \"http://example.com/sponsor\"}]} 2`] = `
+
+Message:
+> 1 | {"funding": [{"type": "individual", "url": "http://example.com/sponsor"}]}
+    |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://example.com/sponsor\`.
+
+Output:
+  1 | {"funding": [{"type": "individual", "url": "https://example.com/sponsor"}]}
+
+`;
+
+exports[`invalid(7): {\"funding\": [\"http://example.com/sponsor\"]} 1`] = `
+
+[Input]
+  1 | {"funding": ["http://example.com/sponsor"]}
+
+`;
+
+exports[`invalid(7): {\"funding\": [\"http://example.com/sponsor\"]} 2`] = `
+
+Message:
+> 1 | {"funding": ["http://example.com/sponsor"]}
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://example.com/sponsor\`.
+
+Output:
+  1 | {"funding": ["https://example.com/sponsor"]}
+
+`;

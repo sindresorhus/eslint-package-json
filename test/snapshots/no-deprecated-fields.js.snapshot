@@ -1,0 +1,127 @@
+exports[`invalid(1): {\"jsnext:main\": \"index.js\"} 1`] = `
+
+[Input]
+  1 | {"jsnext:main": "index.js"}
+
+`;
+
+exports[`invalid(1): {\"jsnext:main\": \"index.js\"} 2`] = `
+
+Message:
+> 1 | {"jsnext:main": "index.js"}
+    |  ^^^^^^^^^^^^^ The \`jsnext:main\` field is deprecated. Use the \`module\` field instead.
+
+`;
+
+exports[`invalid(2): {\"preferGlobal\": true} 1`] = `
+
+[Input]
+  1 | {"preferGlobal": true}
+
+`;
+
+exports[`invalid(2): {\"preferGlobal\": true} 2`] = `
+
+Message:
+> 1 | {"preferGlobal": true}
+    |  ^^^^^^^^^^^^^^ The \`preferGlobal\` field is deprecated. It is ignored by npm.
+
+`;
+
+exports[`invalid(3): {\"engineStrict\": true} 1`] = `
+
+[Input]
+  1 | {"engineStrict": true}
+
+`;
+
+exports[`invalid(3): {\"engineStrict\": true} 2`] = `
+
+Message:
+> 1 | {"engineStrict": true}
+    |  ^^^^^^^^^^^^^^ The \`engineStrict\` field is deprecated. It is ignored by npm.
+
+`;
+
+exports[`invalid(4): {\"licenses\": [\"MIT\"]} 1`] = `
+
+[Input]
+  1 | {"licenses": ["MIT"]}
+
+`;
+
+exports[`invalid(4): {\"licenses\": [\"MIT\"]} 2`] = `
+
+Message:
+> 1 | {"licenses": ["MIT"]}
+    |  ^^^^^^^^^^ The \`licenses\` field is deprecated. Use the \`license\` field with an SPDX expression instead.
+
+`;
+
+exports[`invalid(5): {\"licenses\": [{\"type\": \"MIT\", \"url\": \"https://example.com/license\"}]} 1`] = `
+
+[Input]
+  1 | {"licenses": [{"type": "MIT", "url": "https://example.com/license"}]}
+
+`;
+
+exports[`invalid(5): {\"licenses\": [{\"type\": \"MIT\", \"url\": \"https://example.com/license\"}]} 2`] = `
+
+Message:
+> 1 | {"licenses": [{"type": "MIT", "url": "https://example.com/license"}]}
+    |  ^^^^^^^^^^ The \`licenses\` field is deprecated. Use the \`license\` field with an SPDX expression instead.
+
+`;
+
+exports[`invalid(6): {\"modules\": \"index.js\"} 1`] = `
+
+[Input]
+  1 | {"modules": "index.js"}
+
+`;
+
+exports[`invalid(6): {\"modules\": \"index.js\"} 2`] = `
+
+Message:
+> 1 | {"modules": "index.js"}
+    |  ^^^^^^^^^ The \`modules\` field is deprecated. Use the \`exports\` field instead.
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"prepublish\": \"build\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"prepublish": "build"}}
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"prepublish\": \"build\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"prepublish": "build"}}
+    |              ^^^^^^^^^^^^ The \`prepublish\` script is deprecated. Use \`prepublishOnly\` to run only on publish, or \`prepare\` to also run on local install.
+
+`;
+
+exports[`invalid(8): {\"jsnext:main\": \"index.js\", \"scripts\": {\"prepublish\": \"build\"}} 1`] = `
+
+[Input]
+  1 | {"jsnext:main": "index.js", "scripts": {"prepublish": "build"}}
+
+`;
+
+exports[`invalid(8): {\"jsnext:main\": \"index.js\", \"scripts\": {\"prepublish\": \"build\"}} 2`] = `
+
+Message:
+> 1 | {"jsnext:main": "index.js", "scripts": {"prepublish": "build"}}
+    |  ^^^^^^^^^^^^^ The \`jsnext:main\` field is deprecated. Use the \`module\` field instead.
+
+`;
+
+exports[`invalid(8): {\"jsnext:main\": \"index.js\", \"scripts\": {\"prepublish\": \"build\"}} 3`] = `
+
+Message:
+> 1 | {"jsnext:main": "index.js", "scripts": {"prepublish": "build"}}
+    |                                         ^^^^^^^^^^^^ The \`prepublish\` script is deprecated. Use \`prepublishOnly\` to run only on publish, or \`prepare\` to also run on local install.
+
+`;

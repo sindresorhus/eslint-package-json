@@ -1,0 +1,183 @@
+exports[`invalid(1): {\"repository\": \"foo/bar\", \"bugs\": \"https://github.com/foo/bar/issues\"} 1`] = `
+
+[Input]
+  1 | {"repository": "foo/bar", "bugs": "https://github.com/foo/bar/issues"}
+
+`;
+
+exports[`invalid(1): {\"repository\": \"foo/bar\", \"bugs\": \"https://github.com/foo/bar/issues\"} 2`] = `
+
+Message:
+> 1 | {"repository": "foo/bar", "bugs": "https://github.com/foo/bar/issues"}
+    |                           ^^^^^^ The \`bugs\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "foo/bar"}
+
+`;
+
+exports[`invalid(2): {\"repository\": \"foo/bar\", \"homepage\": \"https://github.com/foo/bar#readme\"} 1`] = `
+
+[Input]
+  1 | {"repository": "foo/bar", "homepage": "https://github.com/foo/bar#readme"}
+
+`;
+
+exports[`invalid(2): {\"repository\": \"foo/bar\", \"homepage\": \"https://github.com/foo/bar#readme\"} 2`] = `
+
+Message:
+> 1 | {"repository": "foo/bar", "homepage": "https://github.com/foo/bar#readme"}
+    |                           ^^^^^^^^^^ The \`homepage\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "foo/bar"}
+
+`;
+
+exports[`invalid(3): {\"repository\": \"foo/bar\", \"bugs\": \"https://github.com/foo/bar/issues\", \"homepage\": \"https://github.com/foo/bar#readme\"} 1`] = `
+
+[Input]
+  1 | {"repository": "foo/bar", "bugs": "https://github.com/foo/bar/issues", "homepage": "https://github.com/foo/bar#readme"}
+
+`;
+
+exports[`invalid(3): {\"repository\": \"foo/bar\", \"bugs\": \"https://github.com/foo/bar/issues\", \"homepage\": \"https://github.com/foo/bar#readme\"} 2`] = `
+
+Message:
+> 1 | {"repository": "foo/bar", "bugs": "https://github.com/foo/bar/issues", "homepage": "https://github.com/foo/bar#readme"}
+    |                           ^^^^^^ The \`bugs\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "foo/bar", "homepage": "https://github.com/foo/bar#readme"}
+
+`;
+
+exports[`invalid(3): {\"repository\": \"foo/bar\", \"bugs\": \"https://github.com/foo/bar/issues\", \"homepage\": \"https://github.com/foo/bar#readme\"} 3`] = `
+
+Message:
+> 1 | {"repository": "foo/bar", "bugs": "https://github.com/foo/bar/issues", "homepage": "https://github.com/foo/bar#readme"}
+    |                                                                        ^^^^^^^^^^ The \`homepage\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "foo/bar", "bugs": "https://github.com/foo/bar/issues"}
+
+`;
+
+exports[`invalid(4): {\"repository\": \"foo/bar\", \"bugs\": {\"url\": \"https://github.com/foo/bar/issues\"}} 1`] = `
+
+[Input]
+  1 | {"repository": "foo/bar", "bugs": {"url": "https://github.com/foo/bar/issues"}}
+
+`;
+
+exports[`invalid(4): {\"repository\": \"foo/bar\", \"bugs\": {\"url\": \"https://github.com/foo/bar/issues\"}} 2`] = `
+
+Message:
+> 1 | {"repository": "foo/bar", "bugs": {"url": "https://github.com/foo/bar/issues"}}
+    |                           ^^^^^^ The \`bugs\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "foo/bar"}
+
+`;
+
+exports[`invalid(5): {\"repository\": {\"url\": \"git+https://github.com/foo/bar.git\"}, \"bugs\": \"https://github.com/foo/bar/issues\"} 1`] = `
+
+[Input]
+  1 | {"repository": {"url": "git+https://github.com/foo/bar.git"}, "bugs": "https://github.com/foo/bar/issues"}
+
+`;
+
+exports[`invalid(5): {\"repository\": {\"url\": \"git+https://github.com/foo/bar.git\"}, \"bugs\": \"https://github.com/foo/bar/issues\"} 2`] = `
+
+Message:
+> 1 | {"repository": {"url": "git+https://github.com/foo/bar.git"}, "bugs": "https://github.com/foo/bar/issues"}
+    |                                                               ^^^^^^ The \`bugs\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": {"url": "git+https://github.com/foo/bar.git"}}
+
+`;
+
+exports[`invalid(6): {\"repository\": \"gitlab:foo/bar\", \"bugs\": \"https://gitlab.com/foo/bar/issues\"} 1`] = `
+
+[Input]
+  1 | {"repository": "gitlab:foo/bar", "bugs": "https://gitlab.com/foo/bar/issues"}
+
+`;
+
+exports[`invalid(6): {\"repository\": \"gitlab:foo/bar\", \"bugs\": \"https://gitlab.com/foo/bar/issues\"} 2`] = `
+
+Message:
+> 1 | {"repository": "gitlab:foo/bar", "bugs": "https://gitlab.com/foo/bar/issues"}
+    |                                  ^^^^^^ The \`bugs\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "gitlab:foo/bar"}
+
+`;
+
+exports[`invalid(7): {\"repository\": \"bitbucket:foo/bar\", \"bugs\": \"https://bitbucket.org/foo/bar/issues\"} 1`] = `
+
+[Input]
+  1 | {"repository": "bitbucket:foo/bar", "bugs": "https://bitbucket.org/foo/bar/issues"}
+
+`;
+
+exports[`invalid(7): {\"repository\": \"bitbucket:foo/bar\", \"bugs\": \"https://bitbucket.org/foo/bar/issues\"} 2`] = `
+
+Message:
+> 1 | {"repository": "bitbucket:foo/bar", "bugs": "https://bitbucket.org/foo/bar/issues"}
+    |                                     ^^^^^^ The \`bugs\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "bitbucket:foo/bar"}
+
+`;
+
+exports[`invalid(8): {\"repository\": \"gist:abc123\", \"bugs\": \"https://gist.github.com/abc123\", \"homepage\": \"https://gist.github.com/abc123\"} 1`] = `
+
+[Input]
+  1 | {"repository": "gist:abc123", "bugs": "https://gist.github.com/abc123", "homepage": "https://gist.github.com/abc123"}
+
+`;
+
+exports[`invalid(8): {\"repository\": \"gist:abc123\", \"bugs\": \"https://gist.github.com/abc123\", \"homepage\": \"https://gist.github.com/abc123\"} 2`] = `
+
+Message:
+> 1 | {"repository": "gist:abc123", "bugs": "https://gist.github.com/abc123", "homepage": "https://gist.github.com/abc123"}
+    |                               ^^^^^^ The \`bugs\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "gist:abc123", "homepage": "https://gist.github.com/abc123"}
+
+`;
+
+exports[`invalid(8): {\"repository\": \"gist:abc123\", \"bugs\": \"https://gist.github.com/abc123\", \"homepage\": \"https://gist.github.com/abc123\"} 3`] = `
+
+Message:
+> 1 | {"repository": "gist:abc123", "bugs": "https://gist.github.com/abc123", "homepage": "https://gist.github.com/abc123"}
+    |                                                                         ^^^^^^^^^^ The \`homepage\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "gist:abc123", "bugs": "https://gist.github.com/abc123"}
+
+`;
+
+exports[`invalid(9): {\"repository\": \"https://git.sr.ht/~foo/bar\", \"homepage\": \"https://git.sr.ht/~foo/bar#readme\"} 1`] = `
+
+[Input]
+  1 | {"repository": "https://git.sr.ht/~foo/bar", "homepage": "https://git.sr.ht/~foo/bar#readme"}
+
+`;
+
+exports[`invalid(9): {\"repository\": \"https://git.sr.ht/~foo/bar\", \"homepage\": \"https://git.sr.ht/~foo/bar#readme\"} 2`] = `
+
+Message:
+> 1 | {"repository": "https://git.sr.ht/~foo/bar", "homepage": "https://git.sr.ht/~foo/bar#readme"}
+    |                                              ^^^^^^^^^^ The \`homepage\` field is redundant; npm already infers this value from \`repository\` when publishing.
+
+Output:
+  1 | {"repository": "https://git.sr.ht/~foo/bar"}
+
+`;

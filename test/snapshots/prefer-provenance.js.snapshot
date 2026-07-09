@@ -1,0 +1,180 @@
+exports[`invalid(1): {\"publishConfig\": {}} 1`] = `
+
+[Input]
+  1 | {"publishConfig": {}}
+
+`;
+
+exports[`invalid(1): {\"publishConfig\": {}} 2`] = `
+
+Message:
+> 1 | {"publishConfig": {}}
+    |                   ^^ Enable npm provenance via \`publishConfig.provenance\`.
+
+Suggestion 1/1: Set \`provenance\` to \`true\`.:
+  1 | {"publishConfig": {
+  2 | 	"provenance": true
+  3 | }}
+
+`;
+
+exports[`invalid(2): {\"publishConfig\": {\"provenance\": false}} 1`] = `
+
+[Input]
+  1 | {"publishConfig": {"provenance": false}}
+
+`;
+
+exports[`invalid(2): {\"publishConfig\": {\"provenance\": false}} 2`] = `
+
+Message:
+> 1 | {"publishConfig": {"provenance": false}}
+    |                   ^^^^^^^^^^^^^^^^^^^^^ Enable npm provenance via \`publishConfig.provenance\`.
+
+Suggestion 1/1: Set \`provenance\` to \`true\`.:
+  1 | {"publishConfig": {"provenance": true}}
+
+`;
+
+exports[`invalid(3): {\"publishConfig\": {\"access\": \"public\"}} 1`] = `
+
+[Input]
+  1 | {"publishConfig": {"access": "public"}}
+
+`;
+
+exports[`invalid(3): {\"publishConfig\": {\"access\": \"public\"}} 2`] = `
+
+Message:
+> 1 | {"publishConfig": {"access": "public"}}
+    |                   ^^^^^^^^^^^^^^^^^^^^ Enable npm provenance via \`publishConfig.provenance\`.
+
+Suggestion 1/1: Set \`provenance\` to \`true\`.:
+  1 | {"publishConfig": {"access": "public",
+  2 | "provenance": true}}
+
+`;
+
+exports[`invalid(4): {\n\t\"name\": \"my-package\",\n\t\"publishConfig\": {\n\t\t\"access\": \"public\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "my-package",
+  3 | 	"publishConfig": {
+  4 | 		"access": "public"
+  5 | 	}
+  6 | }
+
+`;
+
+exports[`invalid(4): {\n\t\"name\": \"my-package\",\n\t\"publishConfig\": {\n\t\t\"access\": \"public\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "my-package",
+> 3 | 	"publishConfig": {
+    | 	                 ^
+> 4 | 		"access": "public"
+    | ^^^^^^^^^^^^^^^^^^^^
+> 5 | 	}
+    | ^^ Enable npm provenance via \`publishConfig.provenance\`.
+  6 | }
+
+Suggestion 1/1: Set \`provenance\` to \`true\`.:
+  1 | {
+  2 | 	"name": "my-package",
+  3 | 	"publishConfig": {
+  4 | 		"access": "public",
+  5 | 		"provenance": true
+  6 | 	}
+  7 | }
+
+`;
+
+exports[`invalid(5): {\n\t\"name\": \"my-package\",\n\t\"publishConfig\": {}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "my-package",
+  3 | 	"publishConfig": {}
+  4 | }
+
+`;
+
+exports[`invalid(5): {\n\t\"name\": \"my-package\",\n\t\"publishConfig\": {}\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "my-package",
+> 3 | 	"publishConfig": {}
+    | 	                 ^^ Enable npm provenance via \`publishConfig.provenance\`.
+  4 | }
+
+Suggestion 1/1: Set \`provenance\` to \`true\`.:
+  1 | {
+  2 | 	"name": "my-package",
+  3 | 	"publishConfig": {
+  4 | 		"provenance": true
+  5 | 	}
+  6 | }
+
+`;
+
+exports[`invalid(6): {\n\t\"name\": \"my-package\",\n\t\"publishConfig\": {\n\t\t\"access\": \"public\",\n\t\t\"provenance\": false\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "my-package",
+  3 | 	"publishConfig": {
+  4 | 		"access": "public",
+  5 | 		"provenance": false
+  6 | 	}
+  7 | }
+
+`;
+
+exports[`invalid(6): {\n\t\"name\": \"my-package\",\n\t\"publishConfig\": {\n\t\t\"access\": \"public\",\n\t\t\"provenance\": false\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "my-package",
+> 3 | 	"publishConfig": {
+    | 	                 ^
+> 4 | 		"access": "public",
+    | ^^^^^^^^^^^^^^^^^^^^^
+> 5 | 		"provenance": false
+    | ^^^^^^^^^^^^^^^^^^^^^
+> 6 | 	}
+    | ^^ Enable npm provenance via \`publishConfig.provenance\`.
+  7 | }
+
+Suggestion 1/1: Set \`provenance\` to \`true\`.:
+  1 | {
+  2 | 	"name": "my-package",
+  3 | 	"publishConfig": {
+  4 | 		"access": "public",
+  5 | 		"provenance": true
+  6 | 	}
+  7 | }
+
+`;
+
+exports[`invalid(7): {\"private\": false, \"publishConfig\": {}} 1`] = `
+
+[Input]
+  1 | {"private": false, "publishConfig": {}}
+
+`;
+
+exports[`invalid(7): {\"private\": false, \"publishConfig\": {}} 2`] = `
+
+Message:
+> 1 | {"private": false, "publishConfig": {}}
+    |                                     ^^ Enable npm provenance via \`publishConfig.provenance\`.
+
+Suggestion 1/1: Set \`provenance\` to \`true\`.:
+  1 | {"private": false, "publishConfig": {
+  2 | 	"provenance": true
+  3 | }}
+
+`;

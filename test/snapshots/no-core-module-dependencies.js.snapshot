@@ -1,0 +1,82 @@
+exports[`invalid(1): {\"dependencies\": {\"path\": \"^0.12.7\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"path": "^0.12.7"}}
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"path\": \"^0.12.7\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"path": "^0.12.7"}}
+    |                   ^^^^^^ Dependency \`path\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
+
+Suggestion 1/1: Remove the dependency.:
+  1 | {"dependencies": {}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"fs\": \"0.0.2\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"fs": "0.0.2"}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"fs\": \"0.0.2\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"fs": "0.0.2"}}
+    |                   ^^^^ Dependency \`fs\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
+
+Suggestion 1/1: Remove the dependency.:
+  1 | {"dependencies": {}}
+
+`;
+
+exports[`invalid(3): {\"devDependencies\": {\"crypto\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"devDependencies": {"crypto": "^1.0.0"}}
+
+`;
+
+exports[`invalid(3): {\"devDependencies\": {\"crypto\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"crypto": "^1.0.0"}}
+    |                      ^^^^^^^^ Dependency \`crypto\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
+
+Suggestion 1/1: Remove the dependency.:
+  1 | {"devDependencies": {}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"util\": \"^0.12.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"path": "^0.12.7", "util": "^0.12.0"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"util\": \"^0.12.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"path": "^0.12.7", "util": "^0.12.0"}}
+    |                   ^^^^^^ Dependency \`path\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
+
+Suggestion 1/1: Remove the dependency.:
+  1 | {"dependencies": {"util": "^0.12.0"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"util\": \"^0.12.0\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"path": "^0.12.7", "util": "^0.12.0"}}
+    |                                      ^^^^^^ Dependency \`util\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
+
+Suggestion 1/1: Remove the dependency.:
+  1 | {"dependencies": {"path": "^0.12.7"}}
+
+`;

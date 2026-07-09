@@ -1,0 +1,198 @@
+exports[`invalid(1): {\"main\": \"index.js\"} 1`] = `
+
+[Input]
+  1 | {"main": "index.js"}
+
+`;
+
+exports[`invalid(1): {\"main\": \"index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "index.js"}
+    |          ^^^^^^^^^^ Path \`index.js\` should start with \`./\`.
+
+Output:
+  1 | {"main": "./index.js"}
+
+`;
+
+exports[`invalid(10): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 1`] = `
+
+[Input]
+  1 | {"main": "index.js", "types": "index.d.ts"}
+
+`;
+
+exports[`invalid(10): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 2`] = `
+
+Message:
+> 1 | {"main": "index.js", "types": "index.d.ts"}
+    |          ^^^^^^^^^^ Path \`index.js\` should start with \`./\`.
+
+Output:
+  1 | {"main": "./index.js", "types": "index.d.ts"}
+
+`;
+
+exports[`invalid(10): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 3`] = `
+
+Message:
+> 1 | {"main": "index.js", "types": "index.d.ts"}
+    |                               ^^^^^^^^^^^^ Path \`index.d.ts\` should start with \`./\`.
+
+Output:
+  1 | {"main": "index.js", "types": "./index.d.ts"}
+
+`;
+
+exports[`invalid(2): {\"module\": \"index.mjs\"} 1`] = `
+
+[Input]
+  1 | {"module": "index.mjs"}
+
+`;
+
+exports[`invalid(2): {\"module\": \"index.mjs\"} 2`] = `
+
+Message:
+> 1 | {"module": "index.mjs"}
+    |            ^^^^^^^^^^^ Path \`index.mjs\` should start with \`./\`.
+
+Output:
+  1 | {"module": "./index.mjs"}
+
+`;
+
+exports[`invalid(3): {\"types\": \"index.d.ts\"} 1`] = `
+
+[Input]
+  1 | {"types": "index.d.ts"}
+
+`;
+
+exports[`invalid(3): {\"types\": \"index.d.ts\"} 2`] = `
+
+Message:
+> 1 | {"types": "index.d.ts"}
+    |           ^^^^^^^^^^^^ Path \`index.d.ts\` should start with \`./\`.
+
+Output:
+  1 | {"types": "./index.d.ts"}
+
+`;
+
+exports[`invalid(4): {\"typings\": \"index.d.ts\"} 1`] = `
+
+[Input]
+  1 | {"typings": "index.d.ts"}
+
+`;
+
+exports[`invalid(4): {\"typings\": \"index.d.ts\"} 2`] = `
+
+Message:
+> 1 | {"typings": "index.d.ts"}
+    |             ^^^^^^^^^^^^ Path \`index.d.ts\` should start with \`./\`.
+
+Output:
+  1 | {"typings": "./index.d.ts"}
+
+`;
+
+exports[`invalid(5): {\"browser\": \"dist/browser.js\"} 1`] = `
+
+[Input]
+  1 | {"browser": "dist/browser.js"}
+
+`;
+
+exports[`invalid(5): {\"browser\": \"dist/browser.js\"} 2`] = `
+
+Message:
+> 1 | {"browser": "dist/browser.js"}
+    |             ^^^^^^^^^^^^^^^^^ Path \`dist/browser.js\` should start with \`./\`.
+
+Output:
+  1 | {"browser": "./dist/browser.js"}
+
+`;
+
+exports[`invalid(6): {\"bin\": \"cli.js\"} 1`] = `
+
+[Input]
+  1 | {"bin": "cli.js"}
+
+`;
+
+exports[`invalid(6): {\"bin\": \"cli.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "cli.js"}
+    |         ^^^^^^^^ Path \`cli.js\` should start with \`./\`.
+
+Output:
+  1 | {"bin": "./cli.js"}
+
+`;
+
+exports[`invalid(7): {\"bin\": {\"mycli\": \"bin/cli.js\"}} 1`] = `
+
+[Input]
+  1 | {"bin": {"mycli": "bin/cli.js"}}
+
+`;
+
+exports[`invalid(7): {\"bin\": {\"mycli\": \"bin/cli.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"mycli": "bin/cli.js"}}
+    |                   ^^^^^^^^^^^^ Path \`bin/cli.js\` should start with \`./\`.
+
+Output:
+  1 | {"bin": {"mycli": "./bin/cli.js"}}
+
+`;
+
+exports[`invalid(8): {\"main\": \"./index.js\"} 1`] = `
+
+[Input]
+Options:
+- prefix: 'never'
+
+Code:
+  1 | {"main": "./index.js"}
+
+`;
+
+exports[`invalid(8): {\"main\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "./index.js"}
+    |          ^^^^^^^^^^^^ Path \`./index.js\` should not start with \`./\`.
+
+Output:
+  1 | {"main": "index.js"}
+
+`;
+
+exports[`invalid(9): {\"bin\": {\"mycli\": \"./bin/cli.js\"}} 1`] = `
+
+[Input]
+Options:
+- prefix: 'never'
+
+Code:
+  1 | {"bin": {"mycli": "./bin/cli.js"}}
+
+`;
+
+exports[`invalid(9): {\"bin\": {\"mycli\": \"./bin/cli.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"mycli": "./bin/cli.js"}}
+    |                   ^^^^^^^^^^^^^^ Path \`./bin/cli.js\` should not start with \`./\`.
+
+Output:
+  1 | {"bin": {"mycli": "bin/cli.js"}}
+
+`;

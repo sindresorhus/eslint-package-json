@@ -1,0 +1,202 @@
+exports[`invalid(1): {\"version\": \"1.0.0\", \"name\": \"foo\"} 1`] = `
+
+[Input]
+  1 | {"version": "1.0.0", "name": "foo"}
+
+`;
+
+exports[`invalid(1): {\"version\": \"1.0.0\", \"name\": \"foo\"} 2`] = `
+
+Message:
+> 1 | {"version": "1.0.0", "name": "foo"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Top-level fields should be in the canonical order.
+
+Output:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"version": "1.0.0"
+  4 | }
+
+`;
+
+exports[`invalid(2): {\"description\": \"bar\", \"name\": \"foo\", \"version\": \"1.0.0\"} 1`] = `
+
+[Input]
+  1 | {"description": "bar", "name": "foo", "version": "1.0.0"}
+
+`;
+
+exports[`invalid(2): {\"description\": \"bar\", \"name\": \"foo\", \"version\": \"1.0.0\"} 2`] = `
+
+Message:
+> 1 | {"description": "bar", "name": "foo", "version": "1.0.0"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Top-level fields should be in the canonical order.
+
+Output:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"version": "1.0.0",
+  4 | 	"description": "bar"
+  5 | }
+
+`;
+
+exports[`invalid(3): {\n\t\"version\": \"1.0.0\",\n\t\"name\": \"foo\"\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"version": "1.0.0",
+  3 | 	"name": "foo"
+  4 | }
+
+`;
+
+exports[`invalid(3): {\n\t\"version\": \"1.0.0\",\n\t\"name\": \"foo\"\n} 2`] = `
+
+Message:
+> 1 | {
+    | ^
+> 2 | 	"version": "1.0.0",
+    | ^^^^^^^^^^^^^^^^^^^^
+> 3 | 	"name": "foo"
+    | ^^^^^^^^^^^^^^
+> 4 | }
+    | ^ Top-level fields should be in the canonical order.
+
+Output:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"version": "1.0.0"
+  4 | }
+
+`;
+
+exports[`invalid(4): {\n  \"version\": \"1.0.0\",\n  \"name\": \"foo\"\n} 1`] = `
+
+[Input]
+  1 | {
+  2 |   "version": "1.0.0",
+  3 |   "name": "foo"
+  4 | }
+
+`;
+
+exports[`invalid(4): {\n  \"version\": \"1.0.0\",\n  \"name\": \"foo\"\n} 2`] = `
+
+Message:
+> 1 | {
+    | ^
+> 2 |   "version": "1.0.0",
+    | ^^^^^^^^^^^^^^^^^^^^^
+> 3 |   "name": "foo"
+    | ^^^^^^^^^^^^^^^
+> 4 | }
+    | ^ Top-level fields should be in the canonical order.
+
+Output:
+  1 | {
+  2 |   "name": "foo",
+  3 |   "version": "1.0.0"
+  4 | }
+
+`;
+
+exports[`invalid(5): {\"unknown\": \"x\", \"name\": \"foo\"} 1`] = `
+
+[Input]
+  1 | {"unknown": "x", "name": "foo"}
+
+`;
+
+exports[`invalid(5): {\"unknown\": \"x\", \"name\": \"foo\"} 2`] = `
+
+Message:
+> 1 | {"unknown": "x", "name": "foo"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Top-level fields should be in the canonical order.
+
+Output:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"unknown": "x"
+  4 | }
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"name\": \"foo\", \"version\": \"1.0.0\"} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "^1.0.0"}, "name": "foo", "version": "1.0.0"}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"name\": \"foo\", \"version\": \"1.0.0\"} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "^1.0.0"}, "name": "foo", "version": "1.0.0"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Top-level fields should be in the canonical order.
+
+Output:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"version": "1.0.0",
+  4 | 	"dependencies": {"foo": "^1.0.0"}
+  5 | }
+
+`;
+
+exports[`invalid(7): {\r\n\t\"version\": \"1.0.0\",\r\n\t\"name\": \"foo\"\r\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"version": "1.0.0",
+  3 | 	"name": "foo"
+  4 | }
+
+`;
+
+exports[`invalid(7): {\r\n\t\"version\": \"1.0.0\",\r\n\t\"name\": \"foo\"\r\n} 2`] = `
+
+Message:
+> 1 | {
+    | ^
+> 2 | 	"version": "1.0.0",
+    | ^^^^^^^^^^^^^^^^^^^^
+> 3 | 	"name": "foo"
+    | ^^^^^^^^^^^^^^
+> 4 | }
+    | ^ Top-level fields should be in the canonical order.
+
+Output:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"version": "1.0.0"
+  4 | }
+
+`;
+
+exports[`invalid(8): {\"name\": \"foo\", \"version\": \"1.0.0\"} 1`] = `
+
+[Input]
+Options:
+- order:
+    - 'version'
+    - 'name'
+
+Code:
+  1 | {"name": "foo", "version": "1.0.0"}
+
+`;
+
+exports[`invalid(8): {\"name\": \"foo\", \"version\": \"1.0.0\"} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "version": "1.0.0"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Top-level fields should be in the canonical order.
+
+Output:
+  1 | {
+  2 | 	"version": "1.0.0",
+  3 | 	"name": "foo"
+  4 | }
+
+`;

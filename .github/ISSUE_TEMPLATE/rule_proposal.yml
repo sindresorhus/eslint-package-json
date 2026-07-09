@@ -1,0 +1,48 @@
+name: Rule proposal
+description: Have an idea for a new rule?
+title: "Rule proposal: "
+labels:
+  - new rule
+  - evaluating
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening a new issue:
+        - Look for existing [open or closed rule proposals](https://github.com/sindresorhus/eslint-package-json/issues?q=is%3Aissue+label%3A%22new+rule%22)
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Description
+      description: Explain here why this rule would be beneficial
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Examples
+      description: Provide examples of `package.json` to detect and the acceptable alternatives.
+      value: |
+        ```json
+        // ❌
+        {
+        	"name": "Foo"
+        }
+        ```
+
+        ```json
+        // ✅
+        {
+        	"name": "foo"
+        }
+        ```
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: Proposed rule name
+      placeholder: no-invalid-rule-name
+  - type: textarea
+    attributes:
+      label: Additional Info
+      description: Additional Info

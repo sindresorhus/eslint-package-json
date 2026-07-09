@@ -1,0 +1,44 @@
+exports[`invalid(1): {\"name\": \"foo\"} 1`] = `
+
+[Input]
+  1 | {"name": "foo"}
+
+`;
+
+exports[`invalid(1): {\"name\": \"foo\"} 2`] = `
+
+Message:
+> 1 | {"name": "foo"}
+    | ^^^^^^^^^^^^^^^ Declare a supported Node.js version in \`engines.node\`.
+
+`;
+
+exports[`invalid(2): {\"engines\": {\"npm\": \">=10\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"npm": ">=10"}}
+
+`;
+
+exports[`invalid(2): {\"engines\": {\"npm\": \">=10\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"npm": ">=10"}}
+    |  ^^^^^^^^^ Declare a supported Node.js version in \`engines.node\`.
+
+`;
+
+exports[`invalid(3): {\"engines\": \"node\"} 1`] = `
+
+[Input]
+  1 | {"engines": "node"}
+
+`;
+
+exports[`invalid(3): {\"engines\": \"node\"} 2`] = `
+
+Message:
+> 1 | {"engines": "node"}
+    |  ^^^^^^^^^ Declare a supported Node.js version in \`engines.node\`.
+
+`;

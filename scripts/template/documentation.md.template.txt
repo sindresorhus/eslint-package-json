@@ -1,0 +1,20 @@
+<!-- end auto-generated rule header -->
+<!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
+
+<!-- Remove this comment, add a more detailed description. -->
+
+## Examples
+
+```json
+// ✗ Fail
+{
+	"name": "foo"
+}
+```
+
+```json
+// ✓ Pass
+{
+	"name": "foo"
+}
+```

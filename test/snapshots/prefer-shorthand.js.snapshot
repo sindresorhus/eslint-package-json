@@ -1,0 +1,125 @@
+exports[`invalid(1): {\"bugs\": {\"url\": \"https://github.com/user/repo/issues\"}} 1`] = `
+
+[Input]
+  1 | {"bugs": {"url": "https://github.com/user/repo/issues"}}
+
+`;
+
+exports[`invalid(1): {\"bugs\": {\"url\": \"https://github.com/user/repo/issues\"}} 2`] = `
+
+Message:
+> 1 | {"bugs": {"url": "https://github.com/user/repo/issues"}}
+    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`bugs\` field can use the shorthand string form.
+
+Output:
+  1 | {"bugs": "https://github.com/user/repo/issues"}
+
+`;
+
+exports[`invalid(2): {\"funding\": {\"url\": \"https://github.com/sponsors/user\"}} 1`] = `
+
+[Input]
+  1 | {"funding": {"url": "https://github.com/sponsors/user"}}
+
+`;
+
+exports[`invalid(2): {\"funding\": {\"url\": \"https://github.com/sponsors/user\"}} 2`] = `
+
+Message:
+> 1 | {"funding": {"url": "https://github.com/sponsors/user"}}
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`funding\` field can use the shorthand string form.
+
+Output:
+  1 | {"funding": "https://github.com/sponsors/user"}
+
+`;
+
+exports[`invalid(3): {\"author\": {\"name\": \"Sindre Sorhus\"}} 1`] = `
+
+[Input]
+  1 | {"author": {"name": "Sindre Sorhus"}}
+
+`;
+
+exports[`invalid(3): {\"author\": {\"name\": \"Sindre Sorhus\"}} 2`] = `
+
+Message:
+> 1 | {"author": {"name": "Sindre Sorhus"}}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^ The \`author\` field can use the shorthand string form.
+
+Output:
+  1 | {"author": "Sindre Sorhus"}
+
+`;
+
+exports[`invalid(4): {\"author\": {\"name\": \"Sindre Sorhus\", \"email\": \"sindre@example.com\", \"url\": \"https://sindresorhus.com\"}} 1`] = `
+
+[Input]
+  1 | {"author": {"name": "Sindre Sorhus", "email": "sindre@example.com", "url": "https://sindresorhus.com"}}
+
+`;
+
+exports[`invalid(4): {\"author\": {\"name\": \"Sindre Sorhus\", \"email\": \"sindre@example.com\", \"url\": \"https://sindresorhus.com\"}} 2`] = `
+
+Message:
+> 1 | {"author": {"name": "Sindre Sorhus", "email": "sindre@example.com", "url": "https://sindresorhus.com"}}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`author\` field can use the shorthand string form.
+
+Output:
+  1 | {"author": "Sindre Sorhus <sindre@example.com> (https://sindresorhus.com)"}
+
+`;
+
+exports[`invalid(5): {\"contributors\": [{\"name\": \"Alice\"}]} 1`] = `
+
+[Input]
+  1 | {"contributors": [{"name": "Alice"}]}
+
+`;
+
+exports[`invalid(5): {\"contributors\": [{\"name\": \"Alice\"}]} 2`] = `
+
+Message:
+> 1 | {"contributors": [{"name": "Alice"}]}
+    |                   ^^^^^^^^^^^^^^^^^ The \`contributors\` field can use the shorthand string form.
+
+Output:
+  1 | {"contributors": ["Alice"]}
+
+`;
+
+exports[`invalid(6): {\"repository\": {\"type\": \"git\", \"url\": \"git+https://github.com/user/repo.git\"}} 1`] = `
+
+[Input]
+  1 | {"repository": {"type": "git", "url": "git+https://github.com/user/repo.git"}}
+
+`;
+
+exports[`invalid(6): {\"repository\": {\"type\": \"git\", \"url\": \"git+https://github.com/user/repo.git\"}} 2`] = `
+
+Message:
+> 1 | {"repository": {"type": "git", "url": "git+https://github.com/user/repo.git"}}
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`repository\` field can use the shorthand string form.
+
+Output:
+  1 | {"repository": "github:user/repo"}
+
+`;
+
+exports[`invalid(7): {\"repository\": {\"url\": \"git+https://github.com/user/repo.git\"}} 1`] = `
+
+[Input]
+  1 | {"repository": {"url": "git+https://github.com/user/repo.git"}}
+
+`;
+
+exports[`invalid(7): {\"repository\": {\"url\": \"git+https://github.com/user/repo.git\"}} 2`] = `
+
+Message:
+> 1 | {"repository": {"url": "git+https://github.com/user/repo.git"}}
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`repository\` field can use the shorthand string form.
+
+Output:
+  1 | {"repository": "github:user/repo"}
+
+`;

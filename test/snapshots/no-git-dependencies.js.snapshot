@@ -1,0 +1,198 @@
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"git+https://github.com/user/repo.git\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "git+https://github.com/user/repo.git"}}
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"git+https://github.com/user/repo.git\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "git+https://github.com/user/repo.git"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"my.org/repo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "my.org/repo"}}
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"my.org/repo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "my.org/repo"}}
+    |                          ^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"foo\": \"user/repo#v1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "user/repo#v1.0.0"}}
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"foo\": \"user/repo#v1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "user/repo#v1.0.0"}}
+    |                          ^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(12): {\"dependencies\": {\"foo\": \"github:user/repo\"}} 1`] = `
+
+[Input]
+Options:
+- allowWithRef: false
+
+Code:
+  1 | {"dependencies": {"foo": "github:user/repo"}}
+
+`;
+
+exports[`invalid(12): {\"dependencies\": {\"foo\": \"github:user/repo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "github:user/repo"}}
+    |                          ^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(13): {\"devDependencies\": {\"foo\": \"git+https://github.com/user/repo.git\"}} 1`] = `
+
+[Input]
+  1 | {"devDependencies": {"foo": "git+https://github.com/user/repo.git"}}
+
+`;
+
+exports[`invalid(13): {\"devDependencies\": {\"foo\": \"git+https://github.com/user/repo.git\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"foo": "git+https://github.com/user/repo.git"}}
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"foo\": \"git://github.com/user/repo.git\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "git://github.com/user/repo.git"}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"foo\": \"git://github.com/user/repo.git\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "git://github.com/user/repo.git"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"github:user/repo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "github:user/repo"}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"github:user/repo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "github:user/repo"}}
+    |                          ^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"gitlab:user/repo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "gitlab:user/repo"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"gitlab:user/repo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "gitlab:user/repo"}}
+    |                          ^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"bitbucket:user/repo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "bitbucket:user/repo"}}
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"bitbucket:user/repo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "bitbucket:user/repo"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"https://github.com/user/repo.git\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "https://github.com/user/repo.git"}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"https://github.com/user/repo.git\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "https://github.com/user/repo.git"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"foo\": \"https://github.com/user/repo.git#v1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "https://github.com/user/repo.git#v1.0.0"}}
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"foo\": \"https://github.com/user/repo.git#v1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "https://github.com/user/repo.git#v1.0.0"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"git@github.com:user/repo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "git@github.com:user/repo"}}
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"git@github.com:user/repo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "git@github.com:user/repo"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"user/repo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "user/repo"}}
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"user/repo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "user/repo"}}
+    |                          ^^^^^^^^^^^ Git dependency \`foo\` should use a published version.
+
+`;

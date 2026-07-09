@@ -1,0 +1,29 @@
+exports[`invalid(1): {\"name\": \"foo\"} 1`] = `
+
+[Input]
+  1 | {"name": "foo"}
+
+`;
+
+exports[`invalid(1): {\"name\": \"foo\"} 2`] = `
+
+Message:
+> 1 | {"name": "foo"}
+    | ^^^^^^^^^^^^^^^ Define an entry point via \`exports\`, \`main\`, or \`bin\`.
+
+`;
+
+exports[`invalid(2): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "version": "1.0.0", "private": false}
+
+`;
+
+exports[`invalid(2): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "version": "1.0.0", "private": false}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Define an entry point via \`exports\`, \`main\`, or \`bin\`.
+
+`;

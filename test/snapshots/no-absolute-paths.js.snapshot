@@ -1,0 +1,104 @@
+exports[`invalid(1): {\"main\": \"/abs/index.js\"} 1`] = `
+
+[Input]
+  1 | {"main": "/abs/index.js"}
+
+`;
+
+exports[`invalid(1): {\"main\": \"/abs/index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "/abs/index.js"}
+    |          ^^^^^^^^^^^^^^^ Path \`/abs/index.js\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(2): {\"bin\": {\"foo\": \"/usr/local/bin/foo\"}} 1`] = `
+
+[Input]
+  1 | {"bin": {"foo": "/usr/local/bin/foo"}}
+
+`;
+
+exports[`invalid(2): {\"bin\": {\"foo\": \"/usr/local/bin/foo\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "/usr/local/bin/foo"}}
+    |                 ^^^^^^^^^^^^^^^^^^^^ Path \`/usr/local/bin/foo\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"import\": \"/abs/index.mjs\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"import": "/abs/index.mjs"}}
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"import\": \"/abs/index.mjs\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"import": "/abs/index.mjs"}}
+    |                        ^^^^^^^^^^^^^^^^ Path \`/abs/index.mjs\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(4): {\"files\": [\"/dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["/dist"]}
+
+`;
+
+exports[`invalid(4): {\"files\": [\"/dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["/dist"]}
+    |            ^^^^^^^ Path \`/dist\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(5): {\"main\": \"C:/project/index.js\"} 1`] = `
+
+[Input]
+  1 | {"main": "C:/project/index.js"}
+
+`;
+
+exports[`invalid(5): {\"main\": \"C:/project/index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "C:/project/index.js"}
+    |          ^^^^^^^^^^^^^^^^^^^^^ Path \`C:/project/index.js\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(6): {\"bin\": \"/usr/local/bin/foo\"} 1`] = `
+
+[Input]
+  1 | {"bin": "/usr/local/bin/foo"}
+
+`;
+
+exports[`invalid(6): {\"bin\": \"/usr/local/bin/foo\"} 2`] = `
+
+Message:
+> 1 | {"bin": "/usr/local/bin/foo"}
+    |         ^^^^^^^^^^^^^^^^^^^^ Path \`/usr/local/bin/foo\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(7): {\"exports\": [\"./index.js\", \"/abs/fallback.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": ["./index.js", "/abs/fallback.js"]}
+
+`;
+
+exports[`invalid(7): {\"exports\": [\"./index.js\", \"/abs/fallback.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": ["./index.js", "/abs/fallback.js"]}
+    |                            ^^^^^^^^^^^^^^^^^^ Path \`/abs/fallback.js\` must be relative, not absolute.
+
+`;

@@ -1,0 +1,158 @@
+exports[`invalid(1): {\"keywords\": []} 1`] = `
+
+[Input]
+  1 | {"keywords": []}
+
+`;
+
+exports[`invalid(1): {\"keywords\": []} 2`] = `
+
+Message:
+> 1 | {"keywords": []}
+    |  ^^^^^^^^^^^^^^ Unexpected empty \`keywords\` field.
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {}
+
+`;
+
+exports[`invalid(2): {\"scripts\": {}} 1`] = `
+
+[Input]
+  1 | {"scripts": {}}
+
+`;
+
+exports[`invalid(2): {\"scripts\": {}} 2`] = `
+
+Message:
+> 1 | {"scripts": {}}
+    |  ^^^^^^^^^^^^^ Unexpected empty \`scripts\` field.
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {}
+
+`;
+
+exports[`invalid(3): {\"description\": \"\"} 1`] = `
+
+[Input]
+  1 | {"description": ""}
+
+`;
+
+exports[`invalid(3): {\"description\": \"\"} 2`] = `
+
+Message:
+> 1 | {"description": ""}
+    |  ^^^^^^^^^^^^^^^^^ Unexpected empty \`description\` field.
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {}
+
+`;
+
+exports[`invalid(4): {\"name\": \"foo\", \"keywords\": [], \"scripts\": {}} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "keywords": [], "scripts": {}}
+
+`;
+
+exports[`invalid(4): {\"name\": \"foo\", \"keywords\": [], \"scripts\": {}} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "keywords": [], "scripts": {}}
+    |                 ^^^^^^^^^^^^^^ Unexpected empty \`keywords\` field.
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {"name": "foo", "scripts": {}}
+
+`;
+
+exports[`invalid(4): {\"name\": \"foo\", \"keywords\": [], \"scripts\": {}} 3`] = `
+
+Message:
+> 1 | {"name": "foo", "keywords": [], "scripts": {}}
+    |                                 ^^^^^^^^^^^^^ Unexpected empty \`scripts\` field.
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {"name": "foo", "keywords": []}
+
+`;
+
+exports[`invalid(5): {\"keywords\": [], \"name\": \"foo\"} 1`] = `
+
+[Input]
+  1 | {"keywords": [], "name": "foo"}
+
+`;
+
+exports[`invalid(5): {\"keywords\": [], \"name\": \"foo\"} 2`] = `
+
+Message:
+> 1 | {"keywords": [], "name": "foo"}
+    |  ^^^^^^^^^^^^^^ Unexpected empty \`keywords\` field.
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {"name": "foo"}
+
+`;
+
+exports[`invalid(6): {\"name\": \"foo\", \"keywords\": []} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "keywords": []}
+
+`;
+
+exports[`invalid(6): {\"name\": \"foo\", \"keywords\": []} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "keywords": []}
+    |                 ^^^^^^^^^^^^^^ Unexpected empty \`keywords\` field.
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {"name": "foo"}
+
+`;
+
+exports[`invalid(7): {\"files\": []} 1`] = `
+
+[Input]
+  1 | {"files": []}
+
+`;
+
+exports[`invalid(7): {\"files\": []} 2`] = `
+
+Message:
+> 1 | {"files": []}
+    |  ^^^^^^^^^^^ Unexpected empty \`files\` field.
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {}
+
+`;
+
+exports[`invalid(8): {\n\t\"keywords\": []\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"keywords": []
+  3 | }
+
+`;
+
+exports[`invalid(8): {\n\t\"keywords\": []\n} 2`] = `
+
+Message:
+  1 | {
+> 2 | 	"keywords": []
+    | 	^^^^^^^^^^^^^^ Unexpected empty \`keywords\` field.
+  3 | }
+
+Suggestion 1/1: Remove the empty field.:
+  1 | {}
+
+`;

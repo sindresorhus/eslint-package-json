@@ -1,0 +1,219 @@
+exports[`invalid(1): {\"dependencies\": {\"@types/node\": \"^20.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"@types/node": "^20.0.0"}}
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"@types/node\": \"^20.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/node": "^20.0.0"}}
+    |                   ^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`dependencies\`.
+
+Suggestion 1/1: Move to \`devDependencies\`.:
+  1 | {"dependencies": {},
+  2 | 	"devDependencies": {
+  3 | 		"@types/node": "^20.0.0"
+  4 | 	}}
+
+`;
+
+exports[`invalid(10): {\n\t\"dependencies\": {\n\t\t\"@types/node\": \"^20.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"foo\": \"^1.0.0\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"dependencies": {
+  3 | 		"@types/node": "^20.0.0"
+  4 | 	},
+  5 | 	"devDependencies": {
+  6 | 		"foo": "^1.0.0"
+  7 | 	}
+  8 | }
+
+`;
+
+exports[`invalid(10): {\n\t\"dependencies\": {\n\t\t\"@types/node\": \"^20.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"foo\": \"^1.0.0\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"dependencies": {
+> 3 | 		"@types/node": "^20.0.0"
+    | 		^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`dependencies\`.
+  4 | 	},
+  5 | 	"devDependencies": {
+  6 | 		"foo": "^1.0.0"
+  7 | 	}
+  8 | }
+
+Suggestion 1/1: Move to \`devDependencies\`.:
+  1 | {
+  2 | 	"dependencies": {},
+  3 | 	"devDependencies": {
+  4 | 		"foo": "^1.0.0",
+  5 | 		"@types/node": "^20.0.0"
+  6 | 	}
+  7 | }
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"@types/node\": \"^20.0.0\", \"@types/react\": \"^18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"@types/node": "^20.0.0", "@types/react": "^18.0.0"}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"@types/node\": \"^20.0.0\", \"@types/react\": \"^18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/node": "^20.0.0", "@types/react": "^18.0.0"}}
+    |                   ^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`dependencies\`.
+
+Suggestion 1/1: Move to \`devDependencies\`.:
+  1 | {"dependencies": {"@types/react": "^18.0.0"},
+  2 | 	"devDependencies": {
+  3 | 		"@types/node": "^20.0.0"
+  4 | 	}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"@types/node\": \"^20.0.0\", \"@types/react\": \"^18.0.0\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/node": "^20.0.0", "@types/react": "^18.0.0"}}
+    |                                             ^^^^^^^^^^^^^^ \`@types/react\` should be in \`devDependencies\`, not \`dependencies\`.
+
+Suggestion 1/1: Move to \`devDependencies\`.:
+  1 | {"dependencies": {"@types/node": "^20.0.0"},
+  2 | 	"devDependencies": {
+  3 | 		"@types/react": "^18.0.0"
+  4 | 	}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"^1.0.0\", \"@types/node\": \"^20.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "^1.0.0", "@types/node": "^20.0.0"}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"^1.0.0\", \"@types/node\": \"^20.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "^1.0.0", "@types/node": "^20.0.0"}}
+    |                                    ^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`dependencies\`.
+
+Suggestion 1/1: Move to \`devDependencies\`.:
+  1 | {"dependencies": {"foo": "^1.0.0"},
+  2 | 	"devDependencies": {
+  3 | 		"@types/node": "^20.0.0"
+  4 | 	}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"@types/some-package\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"@types/some-package": "^1.0.0"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"@types/some-package\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/some-package": "^1.0.0"}}
+    |                   ^^^^^^^^^^^^^^^^^^^^^ \`@types/some-package\` should be in \`devDependencies\`, not \`dependencies\`.
+
+Suggestion 1/1: Move to \`devDependencies\`.:
+  1 | {"dependencies": {},
+  2 | 	"devDependencies": {
+  3 | 		"@types/some-package": "^1.0.0"
+  4 | 	}}
+
+`;
+
+exports[`invalid(5): {\"optionalDependencies\": {\"@types/node\": \"^20.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"optionalDependencies": {"@types/node": "^20.0.0"}}
+
+`;
+
+exports[`invalid(5): {\"optionalDependencies\": {\"@types/node\": \"^20.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"optionalDependencies": {"@types/node": "^20.0.0"}}
+    |                           ^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`optionalDependencies\`.
+
+Suggestion 1/1: Move to \`devDependencies\`.:
+  1 | {"optionalDependencies": {},
+  2 | 	"devDependencies": {
+  3 | 		"@types/node": "^20.0.0"
+  4 | 	}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"@types/node\": \"^20.0.0\"}, \"devDependencies\": {\"foo\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"@types/node\": \"^20.0.0\"}, \"devDependencies\": {\"foo\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"foo": "^1.0.0"}}
+    |                   ^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`dependencies\`.
+
+Suggestion 1/1: Move to \`devDependencies\`.:
+  1 | {"dependencies": {}, "devDependencies": {"foo": "^1.0.0", "@types/node": "^20.0.0"}}
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"@types/node\": \"^20.0.0\"}, \"devDependencies\": {\"@types/node\": \"^19.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^19.0.0"}}
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"@types/node\": \"^20.0.0\"}, \"devDependencies\": {\"@types/node\": \"^19.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^19.0.0"}}
+    |                   ^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`dependencies\`.
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"@types/node\": \"^20.0.0\"}, \"devDependencies\": \"invalid\"} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": "invalid"}
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"@types/node\": \"^20.0.0\"}, \"devDependencies\": \"invalid\"} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": "invalid"}
+    |                   ^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`dependencies\`.
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"@types/node\": 1}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"@types/node": 1}}
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"@types/node\": 1}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/node": 1}}
+    |                   ^^^^^^^^^^^^^ \`@types/node\` should be in \`devDependencies\`, not \`dependencies\`.
+
+`;

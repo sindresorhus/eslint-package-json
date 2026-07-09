@@ -1,0 +1,194 @@
+exports[`invalid(1): {\"dependancies\": {}} 1`] = `
+
+[Input]
+  1 | {"dependancies": {}}
+
+`;
+
+exports[`invalid(1): {\"dependancies\": {}} 2`] = `
+
+Message:
+> 1 | {"dependancies": {}}
+    |  ^^^^^^^^^^^^^^ Unknown field \`dependancies\`. Did you mean \`dependencies\`?
+
+Output:
+  1 | {"dependencies": {}}
+
+`;
+
+exports[`invalid(10): {\"autor\": \"Sindre\"} 1`] = `
+
+[Input]
+  1 | {"autor": "Sindre"}
+
+`;
+
+exports[`invalid(10): {\"autor\": \"Sindre\"} 2`] = `
+
+Message:
+> 1 | {"autor": "Sindre"}
+    |  ^^^^^^^ Unknown field \`autor\`. Did you mean \`author\`?
+
+Output:
+  1 | {"author": "Sindre"}
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {}, \"dependancies\": {}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {}, "dependancies": {}}
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {}, \"dependancies\": {}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {}, "dependancies": {}}
+    |                      ^^^^^^^^^^^^^^ Unknown field \`dependancies\`. Did you mean \`dependencies\`?
+
+`;
+
+exports[`invalid(2): {\"devDependences\": {}} 1`] = `
+
+[Input]
+  1 | {"devDependences": {}}
+
+`;
+
+exports[`invalid(2): {\"devDependences\": {}} 2`] = `
+
+Message:
+> 1 | {"devDependences": {}}
+    |  ^^^^^^^^^^^^^^^^ Unknown field \`devDependences\`. Did you mean \`devDependencies\`?
+
+Output:
+  1 | {"devDependencies": {}}
+
+`;
+
+exports[`invalid(3): {\"dev-dependencies\": {}} 1`] = `
+
+[Input]
+  1 | {"dev-dependencies": {}}
+
+`;
+
+exports[`invalid(3): {\"dev-dependencies\": {}} 2`] = `
+
+Message:
+> 1 | {"dev-dependencies": {}}
+    |  ^^^^^^^^^^^^^^^^^^ Unknown field \`dev-dependencies\`. Did you mean \`devDependencies\`?
+
+Output:
+  1 | {"devDependencies": {}}
+
+`;
+
+exports[`invalid(4): {\"hompage\": \"https://example.com\"} 1`] = `
+
+[Input]
+  1 | {"hompage": "https://example.com"}
+
+`;
+
+exports[`invalid(4): {\"hompage\": \"https://example.com\"} 2`] = `
+
+Message:
+> 1 | {"hompage": "https://example.com"}
+    |  ^^^^^^^^^ Unknown field \`hompage\`. Did you mean \`homepage\`?
+
+Output:
+  1 | {"homepage": "https://example.com"}
+
+`;
+
+exports[`invalid(5): {\"hampage\": \"https://example.com\"} 1`] = `
+
+[Input]
+  1 | {"hampage": "https://example.com"}
+
+`;
+
+exports[`invalid(5): {\"hampage\": \"https://example.com\"} 2`] = `
+
+Message:
+> 1 | {"hampage": "https://example.com"}
+    |  ^^^^^^^^^ Unknown field \`hampage\`. Did you mean \`homepage\`?
+
+Output:
+  1 | {"homepage": "https://example.com"}
+
+`;
+
+exports[`invalid(6): {\"script\": {}} 1`] = `
+
+[Input]
+  1 | {"script": {}}
+
+`;
+
+exports[`invalid(6): {\"script\": {}} 2`] = `
+
+Message:
+> 1 | {"script": {}}
+    |  ^^^^^^^^ Unknown field \`script\`. Did you mean \`scripts\`?
+
+Output:
+  1 | {"scripts": {}}
+
+`;
+
+exports[`invalid(7): {\"sideEffect\": true} 1`] = `
+
+[Input]
+  1 | {"sideEffect": true}
+
+`;
+
+exports[`invalid(7): {\"sideEffect\": true} 2`] = `
+
+Message:
+> 1 | {"sideEffect": true}
+    |  ^^^^^^^^^^^^ Unknown field \`sideEffect\`. Did you mean \`sideEffects\`?
+
+Output:
+  1 | {"sideEffects": true}
+
+`;
+
+exports[`invalid(8): {\"repositories\": \"user/repo\"} 1`] = `
+
+[Input]
+  1 | {"repositories": "user/repo"}
+
+`;
+
+exports[`invalid(8): {\"repositories\": \"user/repo\"} 2`] = `
+
+Message:
+> 1 | {"repositories": "user/repo"}
+    |  ^^^^^^^^^^^^^^ Unknown field \`repositories\`. Did you mean \`repository\`?
+
+Output:
+  1 | {"repository": "user/repo"}
+
+`;
+
+exports[`invalid(9): {\"repo\": \"user/repo\"} 1`] = `
+
+[Input]
+  1 | {"repo": "user/repo"}
+
+`;
+
+exports[`invalid(9): {\"repo\": \"user/repo\"} 2`] = `
+
+Message:
+> 1 | {"repo": "user/repo"}
+    |  ^^^^^^ Unknown field \`repo\`. Did you mean \`repository\`?
+
+Output:
+  1 | {"repository": "user/repo"}
+
+`;

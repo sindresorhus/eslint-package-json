@@ -1,0 +1,63 @@
+exports[`invalid(1): {\n\t\"devDependencies\": {\n\t\t\"@types/foo\": \"^1.0.0\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"devDependencies": {
+  3 | 		"@types/foo": "^1.0.0"
+  4 | 	}
+  5 | }
+
+`;
+
+exports[`invalid(1): {\n\t\"devDependencies\": {\n\t\t\"@types/foo\": \"^1.0.0\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"devDependencies": {
+> 3 | 		"@types/foo": "^1.0.0"
+    | 		^^^^^^^^^^^^ \`@types/foo\` has no corresponding \`foo\` dependency; the type package is unused.
+  4 | 	}
+  5 | }
+
+Suggestion 1/1: Remove the unused type package.:
+  1 | {
+  2 | 	"devDependencies": {}
+  3 | }
+
+`;
+
+exports[`invalid(2): {\"devDependencies\": {\"@types/foo__bar\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"devDependencies": {"@types/foo__bar": "^1.0.0"}}
+
+`;
+
+exports[`invalid(2): {\"devDependencies\": {\"@types/foo__bar\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"@types/foo__bar": "^1.0.0"}}
+    |                      ^^^^^^^^^^^^^^^^^ \`@types/foo__bar\` has no corresponding \`@foo/bar\` dependency; the type package is unused.
+
+Suggestion 1/1: Remove the unused type package.:
+  1 | {"devDependencies": {}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"@types/foo\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"@types/foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"@types/foo\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"@types/foo": "^1.0.0"}}
+    |                   ^^^^^^^^^^^^ \`@types/foo\` has no corresponding \`foo\` dependency; the type package is unused.
+
+Suggestion 1/1: Remove the unused type package.:
+  1 | {"dependencies": {}}
+
+`;

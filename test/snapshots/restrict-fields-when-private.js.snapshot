@@ -1,0 +1,167 @@
+exports[`invalid(1): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {\"access\": \"public\"}} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "private": true, "publishConfig": {"access": "public"}}
+
+`;
+
+exports[`invalid(1): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {\"access\": \"public\"}} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "private": true, "publishConfig": {"access": "public"}}
+    |                                  ^^^^^^^^^^^^^^^ \`publishConfig\` has no effect when the package is private.
+
+Suggestion 1/1: Remove the field.:
+  1 | {"name": "foo", "private": true}
+
+`;
+
+exports[`invalid(2): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "private": true, "files": ["dist"]}
+
+`;
+
+exports[`invalid(2): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "private": true, "files": ["dist"]}
+    |                                  ^^^^^^^ \`files\` has no effect when the package is private.
+
+Suggestion 1/1: Remove the field.:
+  1 | {"name": "foo", "private": true}
+
+`;
+
+exports[`invalid(3): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {}, \"files\": []} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "private": true, "publishConfig": {}, "files": []}
+
+`;
+
+exports[`invalid(3): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {}, \"files\": []} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "private": true, "publishConfig": {}, "files": []}
+    |                                  ^^^^^^^^^^^^^^^ \`publishConfig\` has no effect when the package is private.
+
+Suggestion 1/1: Remove the field.:
+  1 | {"name": "foo", "private": true, "files": []}
+
+`;
+
+exports[`invalid(3): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {}, \"files\": []} 3`] = `
+
+Message:
+> 1 | {"name": "foo", "private": true, "publishConfig": {}, "files": []}
+    |                                                       ^^^^^^^ \`files\` has no effect when the package is private.
+
+Suggestion 1/1: Remove the field.:
+  1 | {"name": "foo", "private": true, "publishConfig": {}}
+
+`;
+
+exports[`invalid(4): {\"name\": \"foo\", \"private\": true, \"funding\": \"https://example.com\"} 1`] = `
+
+[Input]
+Options:
+- fields:
+    - 'funding'
+
+Code:
+  1 | {"name": "foo", "private": true, "funding": "https://example.com"}
+
+`;
+
+exports[`invalid(4): {\"name\": \"foo\", \"private\": true, \"funding\": \"https://example.com\"} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "private": true, "funding": "https://example.com"}
+    |                                  ^^^^^^^^^ \`funding\` has no effect when the package is private.
+
+Suggestion 1/1: Remove the field.:
+  1 | {"name": "foo", "private": true}
+
+`;
+
+exports[`invalid(5): {\"publishConfig\": {}, \"private\": true, \"name\": \"foo\"} 1`] = `
+
+[Input]
+Options:
+- fields:
+    - 'publishConfig'
+
+Code:
+  1 | {"publishConfig": {}, "private": true, "name": "foo"}
+
+`;
+
+exports[`invalid(5): {\"publishConfig\": {}, \"private\": true, \"name\": \"foo\"} 2`] = `
+
+Message:
+> 1 | {"publishConfig": {}, "private": true, "name": "foo"}
+    |  ^^^^^^^^^^^^^^^ \`publishConfig\` has no effect when the package is private.
+
+Suggestion 1/1: Remove the field.:
+  1 | {"private": true, "name": "foo"}
+
+`;
+
+exports[`invalid(6): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 1`] = `
+
+[Input]
+Options:
+- fields:
+    - 'files'
+
+Code:
+  1 | {"name": "foo", "private": true, "files": ["dist"]}
+
+`;
+
+exports[`invalid(6): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "private": true, "files": ["dist"]}
+    |                                  ^^^^^^^ \`files\` has no effect when the package is private.
+
+Suggestion 1/1: Remove the field.:
+  1 | {"name": "foo", "private": true}
+
+`;
+
+exports[`invalid(7): {\n\t\"name\": \"foo\",\n\t\"private\": true,\n\t\"files\": [\"dist\"]\n} 1`] = `
+
+[Input]
+Options:
+- fields:
+    - 'files'
+
+Code:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"private": true,
+  4 | 	"files": ["dist"]
+  5 | }
+
+`;
+
+exports[`invalid(7): {\n\t\"name\": \"foo\",\n\t\"private\": true,\n\t\"files\": [\"dist\"]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"private": true,
+> 4 | 	"files": ["dist"]
+    | 	^^^^^^^ \`files\` has no effect when the package is private.
+  5 | }
+
+Suggestion 1/1: Remove the field.:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"private": true
+  4 | }
+
+`;

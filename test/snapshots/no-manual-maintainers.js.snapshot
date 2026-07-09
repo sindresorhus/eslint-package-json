@@ -1,0 +1,162 @@
+exports[`invalid(1): {\n\t\"name\": \"foo\",\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"maintainers": [
+  4 | 		"Jane Doe <jane@example.com>"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(1): {\n\t\"name\": \"foo\",\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "foo",
+> 3 | 	"maintainers": [
+    | 	^^^^^^^^^^^^^ The \`maintainers\` field is managed by npm from the publishing account; remove it from \`package.json\`.
+  4 | 		"Jane Doe <jane@example.com>"
+  5 | 	]
+  6 | }
+
+Suggestion 1/2: Remove the \`maintainers\` field.:
+  1 | {
+  2 | 	"name": "foo"
+  3 | }
+
+Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": [
+  4 | 		"Jane Doe <jane@example.com>"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"contributors\": [\n\t\t\"John Smith <john@example.com>\"\n\t],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": [
+  4 | 		"John Smith <john@example.com>"
+  5 | 	],
+  6 | 	"maintainers": [
+  7 | 		"Jane Doe <jane@example.com>"
+  8 | 	]
+  9 | }
+
+`;
+
+exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"contributors\": [\n\t\t\"John Smith <john@example.com>\"\n\t],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": [
+  4 | 		"John Smith <john@example.com>"
+  5 | 	],
+> 6 | 	"maintainers": [
+    | 	^^^^^^^^^^^^^ The \`maintainers\` field is managed by npm from the publishing account; remove it from \`package.json\`.
+  7 | 		"Jane Doe <jane@example.com>"
+  8 | 	]
+  9 | }
+
+Suggestion 1/2: Remove the \`maintainers\` field.:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": [
+  4 | 		"John Smith <john@example.com>"
+  5 | 	]
+  6 | }
+
+Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": [
+  4 | 		"John Smith <john@example.com>",
+  5 | 		"Jane Doe <jane@example.com>"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"contributors\": [],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": [],
+  4 | 	"maintainers": [
+  5 | 		"Jane Doe <jane@example.com>"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"contributors\": [],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": [],
+> 4 | 	"maintainers": [
+    | 	^^^^^^^^^^^^^ The \`maintainers\` field is managed by npm from the publishing account; remove it from \`package.json\`.
+  5 | 		"Jane Doe <jane@example.com>"
+  6 | 	]
+  7 | }
+
+Suggestion 1/2: Remove the \`maintainers\` field.:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": []
+  4 | }
+
+Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
+  1 | {
+  2 | 	"name": "foo",
+  3 | 	"contributors": [
+  4 | 		"Jane Doe <jane@example.com>"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(4): {\"maintainers\": []} 1`] = `
+
+[Input]
+  1 | {"maintainers": []}
+
+`;
+
+exports[`invalid(4): {\"maintainers\": []} 2`] = `
+
+Message:
+> 1 | {"maintainers": []}
+    |  ^^^^^^^^^^^^^ The \`maintainers\` field is managed by npm from the publishing account; remove it from \`package.json\`.
+
+Suggestion 1/1: Remove the \`maintainers\` field.:
+  1 | {}
+
+`;
+
+exports[`invalid(5): {\"contributors\": \"John Smith\", \"maintainers\": [\"Jane Doe <jane@example.com>\"]} 1`] = `
+
+[Input]
+  1 | {"contributors": "John Smith", "maintainers": ["Jane Doe <jane@example.com>"]}
+
+`;
+
+exports[`invalid(5): {\"contributors\": \"John Smith\", \"maintainers\": [\"Jane Doe <jane@example.com>\"]} 2`] = `
+
+Message:
+> 1 | {"contributors": "John Smith", "maintainers": ["Jane Doe <jane@example.com>"]}
+    |                                ^^^^^^^^^^^^^ The \`maintainers\` field is managed by npm from the publishing account; remove it from \`package.json\`.
+
+Suggestion 1/1: Remove the \`maintainers\` field.:
+  1 | {"contributors": "John Smith"}
+
+`;

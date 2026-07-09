@@ -1,0 +1,76 @@
+import {getTester} from './utils/test.js';
+
+const {test} = getTester(import.meta);
+
+test.snapshot({
+	valid: [
+		// Conditions object ending in `default`.
+		`{
+			"exports": {
+				"import": "./index.js",
+				"default": "./index.cjs"
+			}
+		}`,
+		// Subpath map (not a conditions object).
+		'{"exports": {".": "./index.js"}}',
+		// Plain string `exports`.
+		'{"exports": "./index.js"}',
+		// Nested conditions all have `default`.
+		`{
+			"exports": {
+				".": {
+					"types": "./index.d.ts",
+					"default": "./index.js"
+				}
+			}
+		}`,
+		// `imports` conditions object with `default`.
+		`{
+			"imports": {
+				"#dep": {
+					"node": "./node.js",
+					"default": "./browser.js"
+				}
+			}
+		}`,
+		// A malformed object that mixes a condition key with a subpath key is treated as a subpath map (key mixing is reported by `valid-fields`), so no missing-`default` report.
+		`{
+			"exports": {
+				"import": "./index.js",
+				"./sub": "./sub.js"
+			}
+		}`,
+		// An array fallback of plain targets has no conditions object to check.
+		`{
+			"exports": {
+				".": ["./index.js", "./fallback.js"]
+			}
+		}`,
+	],
+	invalid: [
+		// Conditions object without `default`.
+		`{
+			"exports": {
+				"types": "./index.d.ts",
+				"import": "./index.js"
+			}
+		}`,
+		// Nested conditions object without `default`.
+		`{
+			"exports": {
+				".": {
+					"types": "./index.d.ts",
+					"import": "./index.js"
+				}
+			}
+		}`,
+		// `imports` conditions object without `default`.
+		`{
+			"imports": {
+				"#dep": {
+					"node": "./node.js"
+				}
+			}
+		}`,
+	],
+});

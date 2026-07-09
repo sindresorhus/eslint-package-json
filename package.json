@@ -1,0 +1,80 @@
+{
+	"name": "eslint-package-json",
+	"version": "0.0.0",
+	"description": "Powerful ESLint rules for package.json",
+	"license": "MIT",
+	"repository": "sindresorhus/eslint-package-json",
+	"funding": "https://github.com/sindresorhus/eslint-package-json?sponsor=1",
+	"author": "Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)",
+	"type": "module",
+	"exports": {
+		"types": "./index.d.ts",
+		"default": "./index.js"
+	},
+	"sideEffects": false,
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"coverage": "node --test --experimental-test-snapshots --experimental-test-coverage test/*.js",
+		"create-rule": "node ./scripts/create-rule.js && npm run create-rules-index-file && npm run fix:eslint-docs",
+		"create-rules-index-file": "node ./scripts/create-rules-index-file.js",
+		"fix": "run-p --continue-on-error \"fix:*\"",
+		"fix:eslint-docs": "eslint-doc-generator",
+		"fix:js": "npm run lint:js -- --fix",
+		"fix:markdown": "npm run lint:markdown -- --fix",
+		"fix:snapshots": "node --test --experimental-test-snapshots --test-update-snapshots test/*.js",
+		"lint": "run-p --continue-on-error \"lint:*\"",
+		"lint:eslint-docs": "npm run fix:eslint-docs -- --check",
+		"lint:js": "eslint",
+		"lint:markdown": "markdownlint \"**/*.md\"",
+		"run-rules-on-codebase": "eslint --config=./eslint.dogfooding.config.js",
+		"test": "npm-run-all --node-run --continue-on-error lint \"test:*\"",
+		"test:js": "node --test --experimental-test-snapshots test/*.js"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"rules"
+	],
+	"keywords": [
+		"eslint",
+		"eslintplugin",
+		"eslint-plugin",
+		"package.json",
+		"package-json",
+		"npm",
+		"manifest",
+		"linter",
+		"lint",
+		"json"
+	],
+	"dependencies": {
+		"@eslint/json": "^2.0.1",
+		"detect-indent": "^7.0.2",
+		"hosted-git-info": "^10.1.1",
+		"semver": "^7.8.5",
+		"spdx-expression-parse": "^4.0.0",
+		"validate-npm-package-name": "^7.0.2"
+	},
+	"devDependencies": {
+		"@babel/code-frame": "^8.0.0",
+		"enquirer": "^2.4.1",
+		"eslint": "^10.6.0",
+		"eslint-config-xo": "^0.57.0",
+		"eslint-doc-generator": "^3.6.0",
+		"eslint-plugin-eslint-plugin": "^7.4.1",
+		"eslint-plugin-jsdoc": "^63.0.12",
+		"globals": "^17.7.0",
+		"markdownlint-cli": "^0.49.0",
+		"nano-spawn": "^2.1.0",
+		"node-style-text": "^2.1.2",
+		"npm-run-all2": "^9.0.2",
+		"open-editor": "^6.0.0",
+		"outdent": "^0.8.0",
+		"yaml": "^2.9.0"
+	},
+	"peerDependencies": {
+		"eslint": ">=10.4"
+	}
+}

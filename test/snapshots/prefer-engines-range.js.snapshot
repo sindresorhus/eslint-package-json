@@ -1,0 +1,71 @@
+exports[`invalid(1): {\"engines\": {\"node\": \"^18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "^18.0.0"}}
+
+`;
+
+exports[`invalid(1): {\"engines\": {\"node\": \"^18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "^18.0.0"}}
+    |                      ^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`^18.0.0\`.
+
+Suggestion 1/1: Use \`>=18.0.0\`.:
+  1 | {"engines": {"node": ">=18.0.0"}}
+
+`;
+
+exports[`invalid(2): {\"engines\": {\"node\": \"~18.2\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "~18.2"}}
+
+`;
+
+exports[`invalid(2): {\"engines\": {\"node\": \"~18.2\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "~18.2"}}
+    |                      ^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`~18.2\`.
+
+Suggestion 1/1: Use \`>=18.2\`.:
+  1 | {"engines": {"node": ">=18.2"}}
+
+`;
+
+exports[`invalid(3): {\"engines\": {\"node\": \"18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "18.0.0"}}
+
+`;
+
+exports[`invalid(3): {\"engines\": {\"node\": \"18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "18.0.0"}}
+    |                      ^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`18.0.0\`.
+
+Suggestion 1/1: Use \`>=18.0.0\`.:
+  1 | {"engines": {"node": ">=18.0.0"}}
+
+`;
+
+exports[`invalid(4): {\"engines\": {\"node\": \">=18\", \"npm\": \"^10.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": ">=18", "npm": "^10.0.0"}}
+
+`;
+
+exports[`invalid(4): {\"engines\": {\"node\": \">=18\", \"npm\": \"^10.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": ">=18", "npm": "^10.0.0"}}
+    |                                     ^^^^^^^^^ The \`engines.npm\` range should be an open-ended \`>=\` range, not \`^10.0.0\`.
+
+Suggestion 1/1: Use \`>=10.0.0\`.:
+  1 | {"engines": {"node": ">=18", "npm": ">=10.0.0"}}
+
+`;

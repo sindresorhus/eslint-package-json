@@ -1,0 +1,82 @@
+exports[`invalid(1): {\"peerDependencies\": {\"react\": \"18.2.0\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"react": "18.2.0"}}
+
+`;
+
+exports[`invalid(1): {\"peerDependencies\": {\"react\": \"18.2.0\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"react": "18.2.0"}}
+    |                                ^^^^^^^^ Peer dependency \`react\` is pinned to the exact version \`18.2.0\`; use a range instead.
+
+Suggestion 1/2: Use a caret range.:
+  1 | {"peerDependencies": {"react": "^18.2.0"}}
+
+Suggestion 2/2: Use a \`>=\` range from the major version.:
+  1 | {"peerDependencies": {"react": ">=18"}}
+
+`;
+
+exports[`invalid(2): {\"peerDependencies\": {\"react\": \"2.0.0-beta.1\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"react": "2.0.0-beta.1"}}
+
+`;
+
+exports[`invalid(2): {\"peerDependencies\": {\"react\": \"2.0.0-beta.1\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"react": "2.0.0-beta.1"}}
+    |                                ^^^^^^^^^^^^^^ Peer dependency \`react\` is pinned to the exact version \`2.0.0-beta.1\`; use a range instead.
+
+Suggestion 1/2: Use a caret range.:
+  1 | {"peerDependencies": {"react": "^2.0.0-beta.1"}}
+
+Suggestion 2/2: Use a \`>=\` range from the major version.:
+  1 | {"peerDependencies": {"react": ">=2"}}
+
+`;
+
+exports[`invalid(3): {\n\t\t\t\"peerDependencies\": {\n\t\t\t\t\"react\": \"18.2.0\",\n\t\t\t\t\"vue\": \"^3.0.0\"\n\t\t\t}\n\t\t} 1`] = `
+
+[Input]
+  1 | {
+  2 | 			"peerDependencies": {
+  3 | 				"react": "18.2.0",
+  4 | 				"vue": "^3.0.0"
+  5 | 			}
+  6 | 		}
+
+`;
+
+exports[`invalid(3): {\n\t\t\t\"peerDependencies\": {\n\t\t\t\t\"react\": \"18.2.0\",\n\t\t\t\t\"vue\": \"^3.0.0\"\n\t\t\t}\n\t\t} 2`] = `
+
+Message:
+  1 | {
+  2 | 			"peerDependencies": {
+> 3 | 				"react": "18.2.0",
+    | 				         ^^^^^^^^ Peer dependency \`react\` is pinned to the exact version \`18.2.0\`; use a range instead.
+  4 | 				"vue": "^3.0.0"
+  5 | 			}
+  6 | 		}
+
+Suggestion 1/2: Use a caret range.:
+  1 | {
+  2 | 			"peerDependencies": {
+  3 | 				"react": "^18.2.0",
+  4 | 				"vue": "^3.0.0"
+  5 | 			}
+  6 | 		}
+
+Suggestion 2/2: Use a \`>=\` range from the major version.:
+  1 | {
+  2 | 			"peerDependencies": {
+  3 | 				"react": ">=18",
+  4 | 				"vue": "^3.0.0"
+  5 | 			}
+  6 | 		}
+
+`;

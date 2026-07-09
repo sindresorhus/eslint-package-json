@@ -1,0 +1,10 @@
+{
+	"line-length": false,
+	"no-duplicate-heading": false,
+	"no-hard-tabs": false,
+	"ul-style": {
+		"style": "dash"
+	},
+	"descriptive-link-text": false,
+	"table-column-style": false
+}

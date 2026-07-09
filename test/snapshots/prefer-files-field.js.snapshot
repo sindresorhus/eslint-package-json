@@ -1,0 +1,29 @@
+exports[`invalid(1): {\"name\": \"foo\"} 1`] = `
+
+[Input]
+  1 | {"name": "foo"}
+
+`;
+
+exports[`invalid(1): {\"name\": \"foo\"} 2`] = `
+
+Message:
+> 1 | {"name": "foo"}
+    | ^^^^^^^^^^^^^^^ Add a \`files\` allowlist so only intended files are published.
+
+`;
+
+exports[`invalid(2): {\"name\": \"foo\", \"private\": false} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "private": false}
+
+`;
+
+exports[`invalid(2): {\"name\": \"foo\", \"private\": false} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "private": false}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Add a \`files\` allowlist so only intended files are published.
+
+`;

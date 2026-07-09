@@ -1,0 +1,188 @@
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "1.0.0"}}
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "1.0.0"}}
+    |                          ^^^^^^^ Dependency \`foo\` should use the caret (\`^\`) version range.
+
+Suggestion 1/1: Use the caret (\`^\`) version range.:
+  1 | {"dependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"foo\": \"~1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "~1.0.0"}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"foo\": \"~1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "~1.0.0"}}
+    |                          ^^^^^^^^ Dependency \`foo\` should use the caret (\`^\`) version range.
+
+Suggestion 1/1: Use the caret (\`^\`) version range.:
+  1 | {"dependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"v1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "v1.0.0"}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"v1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "v1.0.0"}}
+    |                          ^^^^^^^^ Dependency \`foo\` should use the caret (\`^\`) version range.
+
+Suggestion 1/1: Use the caret (\`^\`) version range.:
+  1 | {"dependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- range: 'tilde'
+
+Code:
+  1 | {"dependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "^1.0.0"}}
+    |                          ^^^^^^^^ Dependency \`foo\` should use the tilde (\`~\`) version range.
+
+Suggestion 1/1: Use the tilde (\`~\`) version range.:
+  1 | {"dependencies": {"foo": "~1.0.0"}}
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"^1.2.3\"}} 1`] = `
+
+[Input]
+Options:
+- range: 'exact'
+
+Code:
+  1 | {"dependencies": {"foo": "^1.2.3"}}
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"^1.2.3\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "^1.2.3"}}
+    |                          ^^^^^^^^ Dependency \`foo\` should use the exact version range.
+
+Suggestion 1/1: Use the exact version range.:
+  1 | {"dependencies": {"foo": "1.2.3"}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"a\": \"1.0.0\"}, \"devDependencies\": {\"b\": \"~2.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- range: 'caret'
+
+Code:
+  1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {"b": "~2.0.0"}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"a\": \"1.0.0\"}, \"devDependencies\": {\"b\": \"~2.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {"b": "~2.0.0"}}
+    |                        ^^^^^^^ Dependency \`a\` should use the caret (\`^\`) version range.
+
+Suggestion 1/1: Use the caret (\`^\`) version range.:
+  1 | {"dependencies": {"a": "^1.0.0"}, "devDependencies": {"b": "~2.0.0"}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"a\": \"1.0.0\"}, \"devDependencies\": {\"b\": \"~2.0.0\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {"b": "~2.0.0"}}
+    |                                                           ^^^^^^^^ Dependency \`b\` should use the caret (\`^\`) version range.
+
+Suggestion 1/1: Use the caret (\`^\`) version range.:
+  1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {"b": "^2.0.0"}}
+
+`;
+
+exports[`invalid(7): {\"optionalDependencies\": {\"foo\": \"1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"optionalDependencies": {"foo": "1.0.0"}}
+
+`;
+
+exports[`invalid(7): {\"optionalDependencies\": {\"foo\": \"1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"optionalDependencies": {"foo": "1.0.0"}}
+    |                                  ^^^^^^^ Dependency \`foo\` should use the caret (\`^\`) version range.
+
+Suggestion 1/1: Use the caret (\`^\`) version range.:
+  1 | {"optionalDependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(8): {\"peerDependencies\": {\"foo\": \"1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "1.0.0"}}
+
+`;
+
+exports[`invalid(8): {\"peerDependencies\": {\"foo\": \"1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "1.0.0"}}
+    |                              ^^^^^^^ Dependency \`foo\` should use the caret (\`^\`) version range.
+
+Suggestion 1/1: Use the caret (\`^\`) version range.:
+  1 | {"peerDependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"a\": \"^1.0.0\", \"b\": \"^2.0.0\", \"c\": \"~3.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- range: 'consistent'
+
+Code:
+  1 | {"dependencies": {"a": "^1.0.0", "b": "^2.0.0", "c": "~3.0.0"}}
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"a\": \"^1.0.0\", \"b\": \"^2.0.0\", \"c\": \"~3.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"a": "^1.0.0", "b": "^2.0.0", "c": "~3.0.0"}}
+    |                                                      ^^^^^^^^ Dependency \`c\` should use the caret (\`^\`) version range.
+
+Suggestion 1/1: Use the caret (\`^\`) version range.:
+  1 | {"dependencies": {"a": "^1.0.0", "b": "^2.0.0", "c": "^3.0.0"}}
+
+`;

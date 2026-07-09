@@ -1,0 +1,142 @@
+exports[`invalid(1): {\"scripts\": {\"buildProd\": \"tsc\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"buildProd": "tsc"}}
+
+`;
+
+exports[`invalid(1): {\"scripts\": {\"buildProd\": \"tsc\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"buildProd": "tsc"}}
+    |              ^^^^^^^^^^^ \`buildProd\` in \`scripts\` should be kebab-case.
+
+`;
+
+exports[`invalid(2): {\"scripts\": {\"BuildProd\": \"tsc\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"BuildProd": "tsc"}}
+
+`;
+
+exports[`invalid(2): {\"scripts\": {\"BuildProd\": \"tsc\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"BuildProd": "tsc"}}
+    |              ^^^^^^^^^^^ \`BuildProd\` in \`scripts\` should be kebab-case.
+
+`;
+
+exports[`invalid(3): {\"scripts\": {\"build_prod\": \"tsc\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"build_prod": "tsc"}}
+
+`;
+
+exports[`invalid(3): {\"scripts\": {\"build_prod\": \"tsc\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"build_prod": "tsc"}}
+    |              ^^^^^^^^^^^^ \`build_prod\` in \`scripts\` should be kebab-case.
+
+`;
+
+exports[`invalid(4): {\"bin\": {\"myCli\": \"cli.js\"}} 1`] = `
+
+[Input]
+  1 | {"bin": {"myCli": "cli.js"}}
+
+`;
+
+exports[`invalid(4): {\"bin\": {\"myCli\": \"cli.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"myCli": "cli.js"}}
+    |          ^^^^^^^ \`myCli\` in \`bin\` should be kebab-case.
+
+`;
+
+exports[`invalid(5): {\"bin\": {\"MyCli\": \"cli.js\"}} 1`] = `
+
+[Input]
+  1 | {"bin": {"MyCli": "cli.js"}}
+
+`;
+
+exports[`invalid(5): {\"bin\": {\"MyCli\": \"cli.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"MyCli": "cli.js"}}
+    |          ^^^^^^^ \`MyCli\` in \`bin\` should be kebab-case.
+
+`;
+
+exports[`invalid(6): {\"scripts\": {\"buildProd\": \"tsc\", \"lintFix\": \"eslint --fix\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"buildProd": "tsc", "lintFix": "eslint --fix"}}
+
+`;
+
+exports[`invalid(6): {\"scripts\": {\"buildProd\": \"tsc\", \"lintFix\": \"eslint --fix\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"buildProd": "tsc", "lintFix": "eslint --fix"}}
+    |              ^^^^^^^^^^^ \`buildProd\` in \`scripts\` should be kebab-case.
+
+`;
+
+exports[`invalid(6): {\"scripts\": {\"buildProd\": \"tsc\", \"lintFix\": \"eslint --fix\"}} 3`] = `
+
+Message:
+> 1 | {"scripts": {"buildProd": "tsc", "lintFix": "eslint --fix"}}
+    |                                  ^^^^^^^^^ \`lintFix\` in \`scripts\` should be kebab-case.
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"build\": \"tsc\", \"buildProd\": \"tsc --build\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"build": "tsc", "buildProd": "tsc --build"}}
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"build\": \"tsc\", \"buildProd\": \"tsc --build\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"build": "tsc", "buildProd": "tsc --build"}}
+    |                              ^^^^^^^^^^^ \`buildProd\` in \`scripts\` should be kebab-case.
+
+`;
+
+exports[`invalid(8): {\"scripts\": {\"pre:buildProd\": \"echo pre\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"pre:buildProd": "echo pre"}}
+
+`;
+
+exports[`invalid(8): {\"scripts\": {\"pre:buildProd\": \"echo pre\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"pre:buildProd": "echo pre"}}
+    |              ^^^^^^^^^^^^^^^ \`pre:buildProd\` in \`scripts\` should be kebab-case.
+
+`;
+
+exports[`invalid(9): {\"scripts\": {\"Test\": \"ava\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"Test": "ava"}}
+
+`;
+
+exports[`invalid(9): {\"scripts\": {\"Test\": \"ava\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"Test": "ava"}}
+    |              ^^^^^^ \`Test\` in \`scripts\` should be kebab-case.
+
+`;

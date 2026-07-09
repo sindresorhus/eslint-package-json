@@ -1,0 +1,88 @@
+exports[`invalid(1): {\n\t\t\t\"exports\": {\n\t\t\t\t\"types\": \"./index.d.ts\",\n\t\t\t\t\"import\": \"./index.js\"\n\t\t\t}\n\t\t} 1`] = `
+
+[Input]
+  1 | {
+  2 | 			"exports": {
+  3 | 				"types": "./index.d.ts",
+  4 | 				"import": "./index.js"
+  5 | 			}
+  6 | 		}
+
+`;
+
+exports[`invalid(1): {\n\t\t\t\"exports\": {\n\t\t\t\t\"types\": \"./index.d.ts\",\n\t\t\t\t\"import\": \"./index.js\"\n\t\t\t}\n\t\t} 2`] = `
+
+Message:
+  1 | {
+> 2 | 			"exports": {
+    | 			           ^
+> 3 | 				"types": "./index.d.ts",
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 4 | 				"import": "./index.js"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 5 | 			}
+    | ^^^^ A conditions object should include a \`default\` entry as a fallback.
+  6 | 		}
+
+`;
+
+exports[`invalid(2): {\n\t\t\t\"exports\": {\n\t\t\t\t\".\": {\n\t\t\t\t\t\"types\": \"./index.d.ts\",\n\t\t\t\t\t\"import\": \"./index.js\"\n\t\t\t\t}\n\t\t\t}\n\t\t} 1`] = `
+
+[Input]
+  1 | {
+  2 | 			"exports": {
+  3 | 				".": {
+  4 | 					"types": "./index.d.ts",
+  5 | 					"import": "./index.js"
+  6 | 				}
+  7 | 			}
+  8 | 		}
+
+`;
+
+exports[`invalid(2): {\n\t\t\t\"exports\": {\n\t\t\t\t\".\": {\n\t\t\t\t\t\"types\": \"./index.d.ts\",\n\t\t\t\t\t\"import\": \"./index.js\"\n\t\t\t\t}\n\t\t\t}\n\t\t} 2`] = `
+
+Message:
+  1 | {
+  2 | 			"exports": {
+> 3 | 				".": {
+    | 				     ^
+> 4 | 					"types": "./index.d.ts",
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 5 | 					"import": "./index.js"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 6 | 				}
+    | ^^^^^ A conditions object should include a \`default\` entry as a fallback.
+  7 | 			}
+  8 | 		}
+
+`;
+
+exports[`invalid(3): {\n\t\t\t\"imports\": {\n\t\t\t\t\"#dep\": {\n\t\t\t\t\t\"node\": \"./node.js\"\n\t\t\t\t}\n\t\t\t}\n\t\t} 1`] = `
+
+[Input]
+  1 | {
+  2 | 			"imports": {
+  3 | 				"#dep": {
+  4 | 					"node": "./node.js"
+  5 | 				}
+  6 | 			}
+  7 | 		}
+
+`;
+
+exports[`invalid(3): {\n\t\t\t\"imports\": {\n\t\t\t\t\"#dep\": {\n\t\t\t\t\t\"node\": \"./node.js\"\n\t\t\t\t}\n\t\t\t}\n\t\t} 2`] = `
+
+Message:
+  1 | {
+  2 | 			"imports": {
+> 3 | 				"#dep": {
+    | 				        ^
+> 4 | 					"node": "./node.js"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 5 | 				}
+    | ^^^^^ A conditions object should include a \`default\` entry as a fallback.
+  6 | 			}
+  7 | 		}
+
+`;

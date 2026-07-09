@@ -1,0 +1,21 @@
+name: autofix.ci # needed to securely identify the workflow
+on:
+  pull_request:
+permissions: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  update-snapshots:
+    if: github.repository == 'sindresorhus/eslint-package-json'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - run: npm install --legacy-peer-deps
+      - run: npm run fix:snapshots
+      - uses: autofix-ci/action@v1
+        with:
+          commit-message: "Update snapshots"

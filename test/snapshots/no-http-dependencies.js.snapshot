@@ -1,0 +1,29 @@
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"https://example.com/foo.tgz\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "https://example.com/foo.tgz"}}
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"https://example.com/foo.tgz\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "https://example.com/foo.tgz"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ HTTP dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(2): {\"devDependencies\": {\"foo\": \"http://example.com/foo.tar.gz\"}} 1`] = `
+
+[Input]
+  1 | {"devDependencies": {"foo": "http://example.com/foo.tar.gz"}}
+
+`;
+
+exports[`invalid(2): {\"devDependencies\": {\"foo\": \"http://example.com/foo.tar.gz\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"foo": "http://example.com/foo.tar.gz"}}
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ HTTP dependency \`foo\` should use a published version.
+
+`;

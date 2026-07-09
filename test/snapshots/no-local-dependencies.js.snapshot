@@ -1,0 +1,157 @@
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"file:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "file:../foo"}}
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"foo\": \"file:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "file:../foo"}}
+    |                          ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "file:../foo", "bar": "^1.0.0", "baz": "../baz"}}
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "file:../foo", "bar": "^1.0.0", "baz": "../baz"}}
+    |                          ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "file:../foo", "bar": "^1.0.0", "baz": "../baz"}}
+    |                                                                 ^^^^^^^^ Local dependency \`baz\` should not be published.
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"foo\": \"link:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "link:../foo"}}
+
+`;
+
+exports[`invalid(2): {\"dependencies\": {\"foo\": \"link:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "link:../foo"}}
+    |                          ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"./foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "./foo"}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"./foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "./foo"}}
+    |                          ^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"../foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "../foo"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"../foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "../foo"}}
+    |                          ^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"/home/user/foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "/home/user/foo"}}
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"/home/user/foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "/home/user/foo"}}
+    |                          ^^^^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"~/foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "~/foo"}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"~/foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "~/foo"}}
+    |                          ^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(7): {\"devDependencies\": {\"foo\": \"file:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"devDependencies": {"foo": "file:../foo"}}
+
+`;
+
+exports[`invalid(7): {\"devDependencies\": {\"foo\": \"file:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"foo": "file:../foo"}}
+    |                             ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(8): {\"peerDependencies\": {\"foo\": \"file:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "file:../foo"}}
+
+`;
+
+exports[`invalid(8): {\"peerDependencies\": {\"foo\": \"file:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "file:../foo"}}
+    |                              ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(9): {\"optionalDependencies\": {\"foo\": \"file:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"optionalDependencies": {"foo": "file:../foo"}}
+
+`;
+
+exports[`invalid(9): {\"optionalDependencies\": {\"foo\": \"file:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"optionalDependencies": {"foo": "file:../foo"}}
+    |                                  ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
