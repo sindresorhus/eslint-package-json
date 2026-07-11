@@ -7,7 +7,7 @@
 
 npm runs `pre<name>` and `post<name>` scripts before and after `name`, respectively. Without the matching script, the hook cannot run as part of that command and is usually a stale script or a typo.
 
-npm lifecycle scripts such as `prepare`, `prepack`, and `preversion` are exempt because npm runs them independently. `prerestart` and `postrestart` are also exempt because npm supplies an implicit `restart` command. The rule does not inspect the filesystem, so a `prestart` hook that relies on npm's implicit `server.js` start script must be exempted with `ignore`.
+npm lifecycle scripts such as `prepare`, `prepack`, and `preversion` are exempt because npm runs them independently. `preenv`, `postenv`, `prerestart`, and `postrestart` are also exempt because npm supplies implicit `env` and `restart` commands. The rule does not inspect the filesystem, so a `prestart` hook that relies on npm's implicit `server.js` start script must be exempted with `ignore`.
 
 No fix is provided because a hook-like name may be an intentionally standalone command, and only the package author can decide whether to remove it, add its target script, or ignore it.
 

@@ -10,7 +10,9 @@ test.snapshot({
 		'{"scripts": {"build": "tsc", "prebuild": "npm run clean", "postbuild": "npm run check"}}',
 		'{"scripts": {"build": "tsc", "postbuild": "npm run check", "prepostbuild": "npm run clean"}}',
 		'{"scripts": {"pre": "echo before", "post": "echo after"}}',
-		// `npm restart` provides an implicit restart script.
+		// npm provides implicit `env` and `restart` scripts.
+		'{"scripts": {"preenv": "echo before"}}',
+		'{"scripts": {"postenv": "echo after"}}',
 		'{"scripts": {"prerestart": "echo before"}}',
 		'{"scripts": {"postrestart": "echo after"}}',
 		// npm lifecycle scripts run without a base script.

@@ -14,8 +14,8 @@ const messages = {
 
 const hookPrefixes = ['pre', 'post'];
 
-// These npm lifecycle scripts run independently of a correspondingly named script.
-const lifecycleScriptNames = new Set([
+// npm can run these scripts without a correspondingly named package script.
+const specialScriptNames = new Set([
 	'prepare',
 	'prepublish',
 	'prepublishOnly',
@@ -23,6 +23,8 @@ const lifecycleScriptNames = new Set([
 	'postpack',
 	'preinstall',
 	'postinstall',
+	'preenv',
+	'postenv',
 	'prerestart',
 	'postrestart',
 	'preprepare',
@@ -73,7 +75,7 @@ const create = context => {
 
 				if (
 					ignore.has(hook)
-					|| lifecycleScriptNames.has(hook)
+					|| specialScriptNames.has(hook)
 				) {
 					continue;
 				}
