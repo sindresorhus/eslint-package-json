@@ -26,6 +26,8 @@ test.snapshot({
 		'{\n\t"scripts": {\n\t\t"test": "node --test",\n\t\t"build": "tsc"\n\t}\n}',
 		// Multiline with 2-space indentation.
 		'{\n  "scripts": {\n    "test": "node --test",\n    "build": "tsc"\n  }\n}',
+		// Single-line scripts with 2-space root indentation.
+		'{\n  "scripts": {"test": "node --test", "build": "tsc"}\n}',
 		// CRLF line endings.
 		'{\r\n\t"scripts": {\r\n\t\t"test": "node --test",\r\n\t\t"build": "tsc"\r\n\t}\r\n}',
 	],
