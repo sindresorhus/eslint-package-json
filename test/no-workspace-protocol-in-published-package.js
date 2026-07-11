@@ -18,6 +18,8 @@ test.snapshot({
 		'{"private": false, "private": true, "dependencies": {"one": "workspace:*"}}',
 		'{"dependencies": {"one": "workspace:*"}, "dependencies": {"one": "^1.0.0"}}',
 		'{"dependencies": {"one": "workspace:*", "one": "^1.0.0"}}',
+		'{"dependencies": {"one": "workspace:*"}, "dependencies": false}',
+		'{"dependencies": {"one": "workspace:*", "one": false}}',
 		// Standard ranges and other protocols are unaffected.
 		'{"dependencies": {"one": "^1.0.0", "two": "file:../two", "three": "catalog:", "four": "npm:workspace@^1.0.0"}}',
 		// The protocol is case-sensitive.
