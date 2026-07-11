@@ -14,7 +14,7 @@ const messages = {
 
 const hookPrefixes = ['pre', 'post'];
 
-// npm can run these scripts without a correspondingly named package script.
+// The npm CLI can run these scripts without a correspondingly named package script.
 const specialScriptNames = new Set([
 	'prepare',
 	'prepublish',
@@ -52,7 +52,7 @@ const getHookTarget = name => {
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
-	const ignore = new Set(context.options[0]?.ignore ?? []);
+	const ignore = new Set(context.options[0]?.ignore);
 
 	return {
 		Document(node) {
