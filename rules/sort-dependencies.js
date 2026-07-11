@@ -2,7 +2,6 @@ import {
 	getRootObject,
 	getKey,
 	findMember,
-	getIndentString,
 	buildReorderedObject,
 	isSameOrder,
 	optionsSchema,
@@ -66,7 +65,7 @@ const create = context => {
 					data: {group: groupName},
 					fix: fixer => fixer.replaceText(
 						objectNode,
-						buildReorderedObject(sourceCode, objectNode, sortedMembers, getIndentString(sourceCode).repeat(2)),
+						buildReorderedObject(sourceCode, objectNode, sortedMembers),
 					),
 				});
 			}

@@ -1,7 +1,6 @@
 import {
 	getRootObject,
 	getKey,
-	getIndentString,
 	buildReorderedObject,
 	isSameOrder,
 	optionsSchema,
@@ -58,7 +57,7 @@ const create = context => {
 				messageId: MESSAGE_ID,
 				fix: fixer => fixer.replaceText(
 					root,
-					buildReorderedObject(sourceCode, root, desired, getIndentString(sourceCode)),
+					buildReorderedObject(sourceCode, root, desired),
 				),
 			});
 		},

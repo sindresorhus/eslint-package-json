@@ -30,6 +30,10 @@ test.snapshot({
 		'{\n  "scripts": {"test": "node --test", "build": "tsc"}\n}',
 		// Single-line scripts with a space after the opening brace.
 		'{\n  "scripts": { "test": "node --test", "build": "tsc"}\n}',
+		// Preserve the existing closing indentation when members use a different indentation style.
+		'{\n  "scripts": {\n\t\t"test": "node --test",\n\t\t"build": "tsc"\n  }\n}',
+		// Preserve zero indentation for multiline members.
+		'{\n"scripts": {\n"test": "node --test",\n"build": "tsc"\n}\n}',
 		// CRLF line endings.
 		'{\r\n\t"scripts": {\r\n\t\t"test": "node --test",\r\n\t\t"build": "tsc"\r\n\t}\r\n}',
 	],

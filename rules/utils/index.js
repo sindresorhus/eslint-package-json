@@ -284,21 +284,25 @@ export function * removeElement(fixer, sourceCode, element) {
 
 /**
 Build the source text for an object with its members reordered, preserving the file's existing indentation and newline.
-
-`fallbackIndent` is used when the object has no existing per-member indentation, including single-line objects.
 */
-export function buildReorderedObject(sourceCode, objectNode, orderedMembers, fallbackIndent) {
+export function buildReorderedObject(sourceCode, objectNode, orderedMembers) {
 	const newline = getNewline(sourceCode);
 	const indent = getIndentString(sourceCode);
+	const objectIndent = lineIndentOf(sourceCode, objectNode);
 
 	// The member indentation is whatever follows the last newline before the first member.
 	const firstMemberStart = objectNode.members[0].range[0];
 	const textBefore = sourceCode.text.slice(objectNode.range[0] + 1, firstMemberStart);
-	const existingIndent = textBefore.includes('\n')
+	const hasExistingMemberIndent = textBefore.includes('\n');
+	const existingIndent = hasExistingMemberIndent
 		? textBefore.slice(textBefore.lastIndexOf('\n') + 1)
 		: '';
-	const memberIndent = existingIndent.length > 0 ? existingIndent : fallbackIndent;
-	const closingIndent = memberIndent.slice(indent.length);
+	const memberIndent = hasExistingMemberIndent ? existingIndent : objectIndent + indent;
+	const lastMemberEnd = objectNode.members.at(-1).range[1];
+	const textBeforeClosing = sourceCode.text.slice(lastMemberEnd, objectNode.range[1] - 1);
+	const closingIndent = textBeforeClosing.includes('\n')
+		? textBeforeClosing.slice(textBeforeClosing.lastIndexOf('\n') + 1)
+		: objectIndent;
 
 	return '{'
 		+ newline

@@ -8,7 +8,7 @@
 
 Alphabetically sorted scripts are easier to scan and produce cleaner diffs when adding or removing commands. [ESLint's package.json conventions](https://eslint.org/docs/latest/contribute/package-json-conventions) require script names to appear in alphabetical order.
 
-The fixer only reorders object members. npm identifies scripts by name, so reordering them does not change when they run.
+The fixer preserves script names and commands while rebuilding their object with the file's indentation and newline style. npm identifies scripts by name, so reordering them does not change when they run.
 
 ## Examples
 

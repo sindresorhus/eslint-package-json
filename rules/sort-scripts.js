@@ -2,7 +2,6 @@ import {
 	getRootObject,
 	getKey,
 	findMember,
-	getIndentString,
 	buildReorderedObject,
 	isSameOrder,
 } from './utils/index.js';
@@ -50,7 +49,7 @@ const create = context => {
 				messageId: MESSAGE_ID,
 				fix: fixer => fixer.replaceText(
 					scripts,
-					buildReorderedObject(sourceCode, scripts, sortedMembers, getIndentString(sourceCode).repeat(2)),
+					buildReorderedObject(sourceCode, scripts, sortedMembers),
 				),
 			});
 		},
