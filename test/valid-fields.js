@@ -235,6 +235,11 @@ test.snapshot({
 		'{"dependencies": {}}',
 		// `peerDependenciesMeta`
 		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true}}}',
+		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {}}}',
+		// Non-boolean metadata values are outside this rule's redundancy check.
+		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": "false"}}}',
+		// Non-object metadata entries are outside this rule's redundancy check.
+		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": false}}',
 		'{"name": "foo"}',
 		'{"peerDependenciesMeta": {}}',
 		// `bundleDependencies`
@@ -588,7 +593,33 @@ test.snapshot({
 		'{"peerDependencies": {"foo": true}}',
 		// `peerDependenciesMeta`
 		'{"peerDependenciesMeta": {"a": {"optional": true}}}',
+		// The redundant value is still reported alongside the orphaned entry.
+		'{"peerDependenciesMeta": {"a": {"optional": false}}}',
 		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true}, "b": {"optional": true}}}',
+		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": false}}}',
+		`{
+	"peerDependencies": {
+		"a": "1.0.0"
+	},
+	"peerDependenciesMeta": {
+		"a": {
+			"before": true,
+			"optional": false,
+			"after": true
+		}
+	}
+}`,
+		`{
+	"peerDependencies": {
+		"a": "1.0.0"
+	},
+	"peerDependenciesMeta": {
+		"a": {
+			"before": true,
+			"optional": false
+		}
+	}
+}`,
 		// `bundleDependencies`
 		'{"bundledDependencies": "foo"}',
 		'{"bundledDependencies": [1]}',
