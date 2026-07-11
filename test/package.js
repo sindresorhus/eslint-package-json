@@ -86,6 +86,7 @@ test('the recommended config works end-to-end through ESLint', () => {
 		type: 'module',
 		exports: './index.js',
 		engines: {node: '>=18'},
+		scripts: {test: 'node --test', build: 'node build.js'},
 		files: ['index.js'],
 		keywords: ['cli'],
 	});
