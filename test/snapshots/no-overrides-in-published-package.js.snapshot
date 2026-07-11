@@ -1,15 +1,19 @@
-exports[`invalid(1): {\"overrides\": {}} 1`] = `
+exports[`invalid(1): {\n\t\"overrides\": {}\n} 1`] = `
 
 [Input]
-  1 | {"overrides": {}}
+  1 | {
+  2 | 	"overrides": {}
+  3 | }
 
 `;
 
-exports[`invalid(1): {\"overrides\": {}} 2`] = `
+exports[`invalid(1): {\n\t\"overrides\": {}\n} 2`] = `
 
 Message:
-> 1 | {"overrides": {}}
-    |  ^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
+  1 | {
+> 2 | 	"overrides": {}
+    | 	^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
+  3 | }
 
 Suggestion 1/1: Remove the \`overrides\` field.:
   1 | {}

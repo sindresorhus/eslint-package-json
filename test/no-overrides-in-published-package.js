@@ -14,7 +14,7 @@ test.snapshot({
 	],
 	invalid: [
 		// Sole property.
-		'{"overrides": {}}',
+		'{\n\t"overrides": {}\n}',
 		// First property.
 		'{\n\t"overrides": {\n\t\t"foo": "1.0.0"\n\t},\n\t"name": "foo"\n}',
 		// Middle property.
