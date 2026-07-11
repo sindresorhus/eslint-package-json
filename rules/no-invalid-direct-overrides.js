@@ -24,6 +24,8 @@ const dependencyGroupPrecedence = [
 
 const arrayIndexPattern = /^(?:0|[1-9]\d*)$/;
 
+const getCaseInsensitiveKey = name => name.normalize('NFKD').toLowerCase();
+
 const findLastMember = (object, key) => {
 	let result;
 
@@ -85,10 +87,13 @@ const getDirectDependencies = root => {
 		}
 
 		for (const member of group.value.members) {
+			const name = getKey(member);
+			const key = getCaseInsensitiveKey(name);
+
 			if (member.value.type === 'String') {
-				dependencies.set(getKey(member), member.value.value);
+				dependencies.set(key, {name, specifier: member.value.value});
 			} else {
-				dependencies.delete(getKey(member));
+				dependencies.delete(key);
 			}
 		}
 	}
@@ -256,10 +261,12 @@ const create = context => {
 					continue;
 				}
 
-				const directSpecifier = directDependencies.get(override.packageName);
+				const directDependency = directDependencies.get(getCaseInsensitiveKey(override.packageName));
+				const directSpecifier = directDependency?.specifier;
 
 				if (
 					directSpecifier === undefined
+					|| directDependency.name !== override.packageName
 					|| matchedOverridePackageNames.has(override.packageName)
 					|| !doesOverrideApply(override.packageName, directSpecifier, override)
 				) {

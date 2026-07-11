@@ -27,6 +27,7 @@ test.snapshot({
 		'{"dependencies":{"foo":"^1"},"overrides":{"foo":"^2"},"overrides":{"foo":"^1"}}',
 		'{"dependencies":{"foo":"^2"},"dependencies":{"foo":"^1"},"overrides":{"foo":"^1"}}',
 		'{"dependencies":{"foo":"^1","foo":1},"overrides":{"foo":"^2"}}',
+		'{"dependencies":{"Foo":"^1"},"devDependencies":{"foo":"^2"},"overrides":{"Foo":"^2"}}',
 		'{"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^2.0.0"}, "optionalDependencies": {"foo": "^3.0.0"}, "devDependencies": {"foo": "^4.0.0"}, "overrides": {"foo": "^4.0.0"}}',
 		'{"dependencies":{"foo":"^1","bar":""},"overrides":{"foo":"$bar"}}',
 		'{"dependencies":{"foo":"^1","bar":"$baz"},"overrides":{"foo":"$bar"}}',
@@ -65,5 +66,6 @@ test.snapshot({
 		'{\n\t"dependencies": {\n\t\t"foo": "^1.2.3"\n\t},\n\t"overrides": {\n\t\t"foo@^1.0.0": {\n\t\t\t"bar": "^2.0.0"\n\t\t}\n\t}\n}',
 		'{\n\t"dependencies": {\n\t\t"foo": "^1.2.3"\n\t},\n\t"overrides": {\n\t\t"foo@^1.0.0": {\n\t\t}\n\t}\n}',
 		'{"dependencies":{"foo":"^1","bar":"^2"},"devDependencies":{"bar":""},"overrides":{"foo":"$bar"}}',
+		'{"dependencies":{"Foo":"^1"},"devDependencies":{"foo":"^2"},"overrides":{"foo":"^1"}}',
 	],
 });

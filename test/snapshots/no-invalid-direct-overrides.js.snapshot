@@ -378,6 +378,24 @@ Output:
 
 `;
 
+exports[`invalid(26): {\"dependencies\":{\"Foo\":\"^1\"},\"devDependencies\":{\"foo\":\"^2\"},\"overrides\":{\"foo\":\"^1\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies":{"Foo":"^1"},"devDependencies":{"foo":"^2"},"overrides":{"foo":"^1"}}
+
+`;
+
+exports[`invalid(26): {\"dependencies\":{\"Foo\":\"^1\"},\"devDependencies\":{\"foo\":\"^2\"},\"overrides\":{\"foo\":\"^1\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies":{"Foo":"^1"},"devDependencies":{"foo":"^2"},"overrides":{"foo":"^1"}}
+    |                                                                                ^^^^ Override for direct dependency \`foo\` conflicts with its \`^2\` specifier.
+
+Output:
+  1 | {"dependencies":{"Foo":"^1"},"devDependencies":{"foo":"^2"},"overrides":{"foo":"$foo"}}
+
+`;
+
 exports[`invalid(3): {\"optionalDependencies\": {\"foo\": \"^1.0.0\"}, \"overrides\": {\"foo\": \"^2.0.0\"}} 1`] = `
 
 [Input]
