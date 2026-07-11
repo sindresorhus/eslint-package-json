@@ -43,7 +43,7 @@ const getDirectDependencies = root => {
 	return dependencies;
 };
 
-const getOverride = name => {
+const parseOverrideKey = name => {
 	try {
 		const parsed = npa(name);
 		const packageName = parsed.name;
@@ -135,10 +135,9 @@ function fixImplicitOverride(fixer, sourceCode, object, name) {
 			return fixer.insertTextAfterRange([object.range[0], object.range[0] + 1], entry);
 		}
 
-		const outerIndent = lineIndentOf(sourceCode, object);
-		const memberIndent = outerIndent + getIndentString(sourceCode);
+		const memberIndent = lineIndentOf(sourceCode, object) + getIndentString(sourceCode);
 		const newline = getNewline(sourceCode);
-		return fixer.insertTextAfterRange([object.range[0], object.range[0] + 1], `${newline}${memberIndent}${entry}${newline}${outerIndent}`);
+		return fixer.insertTextAfterRange([object.range[0], object.range[0] + 1], `${newline}${memberIndent}${entry}`);
 	}
 
 	const firstMember = object.members[0];
@@ -173,10 +172,10 @@ const create = context => {
 
 			const directDependencies = getDirectDependencies(root);
 
-			const matchingOverrides = new Map();
+			const matchedOverridePackageNames = new Set();
 
 			for (const member of overrides.value.members) {
-				const override = getOverride(getKey(member));
+				const override = parseOverrideKey(getKey(member));
 
 				if (!override) {
 					continue;
@@ -186,16 +185,13 @@ const create = context => {
 
 				if (
 					directSpecifier === undefined
-					|| matchingOverrides.has(override.packageName)
+					|| matchedOverridePackageNames.has(override.packageName)
 					|| !doesOverrideApply(override.packageName, directSpecifier, override)
 				) {
 					continue;
 				}
 
-				matchingOverrides.set(override.packageName, {member, override, directSpecifier});
-			}
-
-			for (const {member, override, directSpecifier} of matchingOverrides.values()) {
+				matchedOverridePackageNames.add(override.packageName);
 				const effectiveOverride = getEffectiveOverride(member, override.keySpecifier);
 
 				if (!effectiveOverride || effectiveOverride.specifier === '' || effectiveOverride.specifier === '*') {
