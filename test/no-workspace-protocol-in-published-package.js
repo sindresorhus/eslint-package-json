@@ -15,7 +15,7 @@ test.snapshot({
 		+ '\t"peerDependencies": {"four": "workspace:^1.2.3"}\n'
 		+ '}',
 		// Standard ranges and other protocols are unaffected.
-		'{"dependencies": {"one": "^1.0.0", "two": "file:../two", "three": "catalog:"}}',
+		'{"dependencies": {"one": "^1.0.0", "two": "file:../two", "three": "catalog:", "four": "npm:workspace@^1.0.0"}}',
 		// The protocol is case-sensitive.
 		'{"dependencies": {"one": "Workspace:*"}}',
 		// Only the exact `workspace:` protocol is checked.
@@ -26,6 +26,8 @@ test.snapshot({
 	invalid: [
 		// Every standard dependency group is checked.
 		'{"dependencies": {"one": "workspace:*"}, "devDependencies": {"two": "workspace:^"}, "optionalDependencies": {"three": "workspace:~"}, "peerDependencies": {"four": "workspace:^1.2.3"}}',
+		// Bare, aliased, and relative workspace specifiers are supported by pnpm.
+		'{"dependencies": {"one": "workspace:", "two": "workspace:foo@*", "three": "workspace:../foo"}}',
 		// Explicitly non-private packages can be published.
 		'{"private": false, "dependencies": {"one": "workspace:*"}}',
 		// Non-boolean `private` values do not meet the private-package contract.
