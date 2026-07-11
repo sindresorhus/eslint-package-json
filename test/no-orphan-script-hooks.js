@@ -40,6 +40,9 @@ test.snapshot({
 		'{"scripts": {"build": false, "prebuild": "npm run clean"}}',
 		// Standalone names can be exempted explicitly.
 		{code: '{"scripts": {"prettier": "prettier --check .", "preview": "vite preview", "postcss": "postcss src/index.css"}}', options: [{ignore: ['prettier', 'preview', 'postcss']}]},
+		{code: '{"scripts": {"prettier": "prettier --check .", "preview": "vite preview"}}', options: [{ignore: ['^pre(?:ttier|view)$']}]},
+		{code: '{"scripts": {"postcss:build": "postcss src/index.css", "postcss:test": "postcss test/fixture.css"}}', options: [{ignore: [/^postcss:/]}]},
+		{code: '{"scripts": {"prebuild": "npm run build", "pretest": "npm test"}}', options: [{ignore: [/^pre/g]}]},
 		// An implicit npm `start` script needs an explicit exemption.
 		{code: '{"scripts": {"prestart": "npm run setup"}}', options: [{ignore: ['prestart']}]},
 	],

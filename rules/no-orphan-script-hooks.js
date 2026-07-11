@@ -1,9 +1,9 @@
+import {isRegExp} from 'node:util/types';
 import {
 	findMember,
 	getKey,
 	getRootObject,
 	optionsSchema,
-	stringArraySchema,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-orphan-script-hooks';
@@ -50,9 +50,20 @@ const getHookTarget = name => {
 	}
 };
 
+/**
+Check whether a script name matches one of the ignored patterns without retaining state from global or sticky regular expressions.
+*/
+const isIgnoredName = (name, patterns) => patterns.some(regexp => {
+	regexp.lastIndex = 0;
+	const isIgnored = regexp.test(name);
+	regexp.lastIndex = 0;
+	return isIgnored;
+});
+
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
-	const ignore = new Set(context.options[0]?.ignore);
+	const {ignore = []} = context.options[0] ?? {};
+	const ignoredPatterns = ignore.map(pattern => isRegExp(pattern) ? new RegExp(pattern) : new RegExp(pattern, 'u'));
 
 	return {
 		Document(node) {
@@ -74,8 +85,8 @@ const create = context => {
 				const hook = getKey(member);
 
 				if (
-					ignore.has(hook)
-					|| specialScriptNames.has(hook)
+					specialScriptNames.has(hook)
+					|| isIgnoredName(hook, ignoredPatterns)
 				) {
 					continue;
 				}
@@ -108,7 +119,12 @@ const config = {
 			description: 'Disallow `pre`/`post` script hooks without a corresponding script.',
 			recommended: false,
 		},
-		schema: optionsSchema({ignore: stringArraySchema}),
+		schema: optionsSchema({
+			ignore: {
+				type: 'array',
+				uniqueItems: true,
+			},
+		}),
 		messages,
 		languages: ['json/json'],
 	},

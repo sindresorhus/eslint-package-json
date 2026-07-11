@@ -15,15 +15,20 @@ No fix is provided because a hook-like name may be an intentionally standalone c
 
 ### `ignore`
 
-Type: `string[]`\
+Type: `Array<string | RegExp>`\
 Default: `[]`
 
-Script names to allow without a corresponding target script. Use this for standalone commands whose names begin with `pre` or `post`, such as `prettier`, `preview`, or `postcss`.
+Regular expressions matching standalone script names to ignore. Strings are interpreted as regular expression source.
 
 ```js
 'package-json/no-orphan-script-hooks': [
 	'error',
-	{ignore: ['prettier']}
+	{
+		ignore: [
+			'^prettier$',
+			/^preview(?::|$)/,
+		],
+	},
 ]
 ```
 
@@ -49,7 +54,7 @@ Script names to allow without a corresponding target script. Use this for standa
 }
 ```
 
-With `{ignore: ['prettier']}`:
+With `{ignore: ['^prettier$']}`:
 
 ```json
 // ✅
