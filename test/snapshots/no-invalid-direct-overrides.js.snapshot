@@ -232,14 +232,32 @@ Output:
 
 `;
 
-exports[`invalid(21): {\"dependencies\":{\"foo\":\"^1.2.3\"},\"overrides\":{\"foo@^1.0.0\":{\"bar\":\"^2.0.0\"}}} 1`] = `
+exports[`invalid(21): {\"dependencies\":{\"4294967295\":\"^1\"},\"overrides\":{\"4294967295@^1\":\"^2\",\"4294967295\":\"*\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies":{"4294967295":"^1"},"overrides":{"4294967295@^1":"^2","4294967295":"*"}}
+
+`;
+
+exports[`invalid(21): {\"dependencies\":{\"4294967295\":\"^1\"},\"overrides\":{\"4294967295@^1\":\"^2\",\"4294967295\":\"*\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies":{"4294967295":"^1"},"overrides":{"4294967295@^1":"^2","4294967295":"*"}}
+    |                                                                  ^^^^ Override for direct dependency \`4294967295\` conflicts with its \`^1\` specifier.
+
+Output:
+  1 | {"dependencies":{"4294967295":"^1"},"overrides":{"4294967295@^1":"$4294967295","4294967295":"*"}}
+
+`;
+
+exports[`invalid(22): {\"dependencies\":{\"foo\":\"^1.2.3\"},\"overrides\":{\"foo@^1.0.0\":{\"bar\":\"^2.0.0\"}}} 1`] = `
 
 [Input]
   1 | {"dependencies":{"foo":"^1.2.3"},"overrides":{"foo@^1.0.0":{"bar":"^2.0.0"}}}
 
 `;
 
-exports[`invalid(21): {\"dependencies\":{\"foo\":\"^1.2.3\"},\"overrides\":{\"foo@^1.0.0\":{\"bar\":\"^2.0.0\"}}} 2`] = `
+exports[`invalid(22): {\"dependencies\":{\"foo\":\"^1.2.3\"},\"overrides\":{\"foo@^1.0.0\":{\"bar\":\"^2.0.0\"}}} 2`] = `
 
 Message:
 > 1 | {"dependencies":{"foo":"^1.2.3"},"overrides":{"foo@^1.0.0":{"bar":"^2.0.0"}}}
@@ -250,7 +268,7 @@ Output:
 
 `;
 
-exports[`invalid(22): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t\t\"bar\": \"^2.0.0\"\n\t\t}\n\t}\n} 1`] = `
+exports[`invalid(23): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t\t\"bar\": \"^2.0.0\"\n\t\t}\n\t}\n} 1`] = `
 
 [Input]
    1 | {
@@ -266,7 +284,7 @@ exports[`invalid(22): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\
 
 `;
 
-exports[`invalid(22): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t\t\"bar\": \"^2.0.0\"\n\t\t}\n\t}\n} 2`] = `
+exports[`invalid(23): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t\t\"bar\": \"^2.0.0\"\n\t\t}\n\t}\n} 2`] = `
 
 Message:
    1 | {
@@ -298,7 +316,7 @@ Output:
 
 `;
 
-exports[`invalid(23): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t}\n\t}\n} 1`] = `
+exports[`invalid(24): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t}\n\t}\n} 1`] = `
 
 [Input]
   1 | {
@@ -313,7 +331,7 @@ exports[`invalid(23): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\
 
 `;
 
-exports[`invalid(23): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t}\n\t}\n} 2`] = `
+exports[`invalid(24): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t}\n\t}\n} 2`] = `
 
 Message:
   1 | {

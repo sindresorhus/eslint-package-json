@@ -1,7 +1,6 @@
 import npa from 'npm-package-arg';
 import semver from 'semver';
 import {
-	findMember,
 	getIndentString,
 	getKey,
 	getNewline,
@@ -25,6 +24,18 @@ const dependencyGroupPrecedence = [
 
 const arrayIndexPattern = /^(?:0|[1-9]\d*)$/;
 
+const findLastMember = (object, key) => {
+	let result;
+
+	for (const member of object?.members ?? []) {
+		if (getKey(member) === key) {
+			result = member;
+		}
+	}
+
+	return result;
+};
+
 const getArrayIndex = key => {
 	if (!arrayIndexPattern.test(key)) {
 		return undefined;
@@ -34,12 +45,17 @@ const getArrayIndex = key => {
 	return index < (2 ** 32) - 1 ? index : undefined;
 };
 
-// Because npm reads overrides through a JavaScript object, it enumerates array-index keys first.
+// Overrides are parsed as a JavaScript object, so final duplicate keys win and array-index keys enumerate first.
 function * iterateOverrideMembers(members) {
+	const membersByKey = new Map();
 	const arrayIndexMembers = [];
 	const stringMembers = [];
 
 	for (const member of members) {
+		membersByKey.set(getKey(member), member);
+	}
+
+	for (const member of membersByKey.values()) {
 		const index = getArrayIndex(getKey(member));
 
 		if (index === undefined) {
@@ -62,7 +78,7 @@ const getDirectDependencies = root => {
 	const dependencies = new Map();
 
 	for (const groupName of dependencyGroupPrecedence) {
-		const group = findMember(root, groupName);
+		const group = findLastMember(root, groupName);
 
 		if (group?.value.type !== 'Object') {
 			continue;
@@ -143,7 +159,7 @@ const getEffectiveOverride = (member, keySpecifier) => {
 		return undefined;
 	}
 
-	const self = findMember(member.value, '.');
+	const self = findLastMember(member.value, '.');
 
 	if (self) {
 		return self.value.type === 'String' ? {node: self.value, specifier: self.value.value} : undefined;
@@ -202,7 +218,7 @@ const create = context => {
 				return;
 			}
 
-			const overrides = findMember(root, 'overrides');
+			const overrides = findLastMember(root, 'overrides');
 
 			if (overrides?.value.type !== 'Object') {
 				return;
