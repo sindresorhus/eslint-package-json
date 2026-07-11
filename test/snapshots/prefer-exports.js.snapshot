@@ -73,34 +73,50 @@ Message:
 
 `;
 
-exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"browser\": {\"./server.js\": \"./browser.js\"}} 1`] = `
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"module\": \"./index.mjs\", \"browser\": {\"./server.js\": \"./browser.js\"}, \"types\": \"./index.d.ts\", \"typings\": \"./index.d.ts\"} 1`] = `
 
 [Input]
-  1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
+  1 | {"exports": "./index.js", "main": "./index.js", "module": "./index.mjs", "browser": {"./server.js": "./browser.js"}, "types": "./index.d.ts", "typings": "./index.d.ts"}
 
 `;
 
-exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"browser\": {\"./server.js\": \"./browser.js\"}} 2`] = `
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"module\": \"./index.mjs\", \"browser\": {\"./server.js\": \"./browser.js\"}, \"types\": \"./index.d.ts\", \"typings\": \"./index.d.ts\"} 2`] = `
 
 Message:
-> 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
+> 1 | {"exports": "./index.js", "main": "./index.js", "module": "./index.mjs", "browser": {"./server.js": "./browser.js"}, "types": "./index.d.ts", "typings": "./index.d.ts"}
     |                           ^^^^^^ Prefer an \`exports\`-first package interface instead of \`main\`.
 
 `;
 
-exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"browser\": {\"./server.js\": \"./browser.js\"}} 3`] = `
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"module\": \"./index.mjs\", \"browser\": {\"./server.js\": \"./browser.js\"}, \"types\": \"./index.d.ts\", \"typings\": \"./index.d.ts\"} 3`] = `
 
 Message:
-> 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
-    |                                                 ^^^^^^^ Prefer an \`exports\`-first package interface instead of \`types\`.
+> 1 | {"exports": "./index.js", "main": "./index.js", "module": "./index.mjs", "browser": {"./server.js": "./browser.js"}, "types": "./index.d.ts", "typings": "./index.d.ts"}
+    |                                                 ^^^^^^^^ Prefer an \`exports\`-first package interface instead of \`module\`.
 
 `;
 
-exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"browser\": {\"./server.js\": \"./browser.js\"}} 4`] = `
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"module\": \"./index.mjs\", \"browser\": {\"./server.js\": \"./browser.js\"}, \"types\": \"./index.d.ts\", \"typings\": \"./index.d.ts\"} 4`] = `
 
 Message:
-> 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
+> 1 | {"exports": "./index.js", "main": "./index.js", "module": "./index.mjs", "browser": {"./server.js": "./browser.js"}, "types": "./index.d.ts", "typings": "./index.d.ts"}
     |                                                                          ^^^^^^^^^ Prefer an \`exports\`-first package interface instead of \`browser\`.
+
+`;
+
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"module\": \"./index.mjs\", \"browser\": {\"./server.js\": \"./browser.js\"}, \"types\": \"./index.d.ts\", \"typings\": \"./index.d.ts\"} 5`] = `
+
+Message:
+> 1 | {"exports": "./index.js", "main": "./index.js", "module": "./index.mjs", "browser": {"./server.js": "./browser.js"}, "types": "./index.d.ts", "typings": "./index.d.ts"}
+    |                                                                                                                      ^^^^^^^ Prefer an \`exports\`-first package interface instead of \`types\`.
+
+`;
+
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"module\": \"./index.mjs\", \"browser\": {\"./server.js\": \"./browser.js\"}, \"types\": \"./index.d.ts\", \"typings\": \"./index.d.ts\"} 6`] = `
+
+Message:
+> 1 | {"exports": "./index.js", "main": "./index.js", "module": "./index.mjs", "browser": {"./server.js": "./browser.js"}, "types": "./index.d.ts", "typings": "./index.d.ts"}
+    |                                                                                                                                               ^^^^^^^^^ Prefer an \`exports\`-first package interface instead of \`typings\`.
 
 `;
 
