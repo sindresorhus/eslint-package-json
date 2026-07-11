@@ -18,6 +18,8 @@ test.snapshot({
 		'{"dependencies": {"one": "^1.0.0", "two": "file:../two", "three": "catalog:"}}',
 		// The protocol is case-sensitive.
 		'{"dependencies": {"one": "Workspace:*"}}',
+		// Only the exact `workspace:` protocol is checked.
+		'{"dependencies": {"one": "workspace"}}',
 		// Invalid dependency values are left to `valid-fields`.
 		'{"dependencies": {"one": true}}',
 	],
