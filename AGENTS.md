@@ -136,7 +136,19 @@ Write the prose in `docs/rules/<rule>.md` below the `<!-- end auto-generated rul
 
 - Keep the `## Examples` heading. Show failing and passing cases in separate `json` fenced code blocks, each labelled with a `// ❌` or `// ✅` comment on the first line. Pair each fail with its passing counterpart.
 - When a rule has options, add a `## Options` section with a `### optionName` subsection per option, each giving `Type:` and `Default:` (use a trailing `\` for the line break), then prose. Lead the relevant examples with the option context (e.g. `With {range: 'caret'} (the default):`).
-- Write rule-configuration snippets in JavaScript, not JSON: `'package-json/rule': ['error', {…}]`. Put severity and options on separate lines when the rule has options, and omit trailing commas.
+- Write rule-configuration snippets in JavaScript, not JSON. When a rule has options, put the severity, options object, and nested arrays on separate lines, with trailing commas:
+
+```js
+'package-json/rule': [
+	'error',
+	{
+		ignore: [
+			'example',
+		],
+	},
+]
+```
+
 - Keep the readme rule description and the `meta.docs.description` in sync.
 
 ## Testing
