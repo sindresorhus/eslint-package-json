@@ -14,6 +14,10 @@ test.snapshot({
 		+ '\t"optionalDependencies": {"three": "workspace:~"},\n'
 		+ '\t"peerDependencies": {"four": "workspace:^1.2.3"}\n'
 		+ '}',
+		// Duplicate keys use the final value, matching npm's JSON parsing.
+		'{"private": false, "private": true, "dependencies": {"one": "workspace:*"}}',
+		'{"dependencies": {"one": "workspace:*"}, "dependencies": {"one": "^1.0.0"}}',
+		'{"dependencies": {"one": "workspace:*", "one": "^1.0.0"}}',
 		// Standard ranges and other protocols are unaffected.
 		'{"dependencies": {"one": "^1.0.0", "two": "file:../two", "three": "catalog:", "four": "npm:workspace@^1.0.0"}}',
 		// The protocol is case-sensitive.
@@ -30,6 +34,10 @@ test.snapshot({
 		'{"dependencies": {"one": "workspace:", "two": "workspace:foo@*", "three": "workspace:../foo"}}',
 		// Explicitly non-private packages can be published.
 		'{"private": false, "dependencies": {"one": "workspace:*"}}',
+		// Duplicate keys use the final value, matching npm's JSON parsing.
+		'{"private": true, "private": false, "dependencies": {"one": "workspace:*"}}',
+		'{"dependencies": {"one": "^1.0.0"}, "dependencies": {"one": "workspace:*"}}',
+		'{"dependencies": {"one": "^1.0.0", "one": "workspace:*"}}',
 		// Non-boolean `private` values do not meet the private-package contract.
 		'{"private": "true", "dependencies": {"one": "workspace:*"}}',
 		'{"private": 1, "dependencies": {"one": "workspace:*"}}',
