@@ -7,6 +7,7 @@ test.snapshot({
 		'{}',
 		'"package"',
 		'{"scripts": 1}',
+		'{"scripts": []}',
 		'{"scripts": {"build": "tsc", "prebuild": "npm run clean", "postbuild": "npm run check"}}',
 		'{"scripts": {"build": "tsc", "postbuild": "npm run check", "prepostbuild": "npm run clean"}}',
 		'{"scripts": {"pre": "echo before", "post": "echo after"}}',
