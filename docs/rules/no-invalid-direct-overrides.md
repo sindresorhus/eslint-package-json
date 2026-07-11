@@ -13,6 +13,8 @@ npm rejects an override for a direct dependency when its effective specifier dif
 
 Use the same specifier, or reference the direct dependency with `$dependency`. The latter keeps the override synchronized when the dependency is updated. This rule automatically converts invalid direct overrides to the `$dependency` form.
 
+Workspace packages are not checked because their names cannot be determined from workspace glob patterns in a single `package.json` file.
+
 ## Examples
 
 ```json

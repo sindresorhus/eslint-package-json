@@ -16,14 +16,32 @@ Output:
 
 `;
 
-exports[`invalid(10): {\"dependencies\": {\"@scope/foo\": \"^1.2.3\"}, \"overrides\": {\"@scope/foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 1`] = `
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"npm:bar@^1.0.0\"}, \"overrides\": {\"foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "npm:bar@^1.0.0"}, "overrides": {"foo@^1.0.0": {"bar": "^2.0.0"}}}
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"npm:bar@^1.0.0\"}, \"overrides\": {\"foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "npm:bar@^1.0.0"}, "overrides": {"foo@^1.0.0": {"bar": "^2.0.0"}}}
+    |                                                                         ^^^^^^^^^^^^^^^^^ Override for direct dependency \`foo\` conflicts with its \`npm:bar@^1.0.0\` specifier.
+
+Output:
+  1 | {"dependencies": {"foo": "npm:bar@^1.0.0"}, "overrides": {"foo@^1.0.0": {".": "$foo","bar": "^2.0.0"}}}
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"@scope/foo\": \"^1.2.3\"}, \"overrides\": {\"@scope/foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"@scope/foo": "^1.2.3"}, "overrides": {"@scope/foo@^1.0.0": {"bar": "^2.0.0"}}}
 
 `;
 
-exports[`invalid(10): {\"dependencies\": {\"@scope/foo\": \"^1.2.3\"}, \"overrides\": {\"@scope/foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 2`] = `
+exports[`invalid(11): {\"dependencies\": {\"@scope/foo\": \"^1.2.3\"}, \"overrides\": {\"@scope/foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"@scope/foo": "^1.2.3"}, "overrides": {"@scope/foo@^1.0.0": {"bar": "^2.0.0"}}}
@@ -34,14 +52,14 @@ Output:
 
 `;
 
-exports[`invalid(11): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"devDependencies\": {\"foo\": \"^2.0.0\"}, \"overrides\": {\"foo\": \"^1.0.0\"}} 1`] = `
+exports[`invalid(12): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"devDependencies\": {\"foo\": \"^2.0.0\"}, \"overrides\": {\"foo\": \"^1.0.0\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "^1.0.0"}, "devDependencies": {"foo": "^2.0.0"}, "overrides": {"foo": "^1.0.0"}}
 
 `;
 
-exports[`invalid(11): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"devDependencies\": {\"foo\": \"^2.0.0\"}, \"overrides\": {\"foo\": \"^1.0.0\"}} 2`] = `
+exports[`invalid(12): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"devDependencies\": {\"foo\": \"^2.0.0\"}, \"overrides\": {\"foo\": \"^1.0.0\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "^1.0.0"}, "devDependencies": {"foo": "^2.0.0"}, "overrides": {"foo": "^1.0.0"}}
@@ -52,14 +70,14 @@ Output:
 
 `;
 
-exports[`invalid(12): {\"dependencies\": {\"foo\": \"latest\"}, \"overrides\": {\"foo\": \"next\"}} 1`] = `
+exports[`invalid(13): {\"dependencies\": {\"foo\": \"latest\"}, \"overrides\": {\"foo\": \"next\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "latest"}, "overrides": {"foo": "next"}}
 
 `;
 
-exports[`invalid(12): {\"dependencies\": {\"foo\": \"latest\"}, \"overrides\": {\"foo\": \"next\"}} 2`] = `
+exports[`invalid(13): {\"dependencies\": {\"foo\": \"latest\"}, \"overrides\": {\"foo\": \"next\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "latest"}, "overrides": {"foo": "next"}}
@@ -70,14 +88,14 @@ Output:
 
 `;
 
-exports[`invalid(13): {\"dependencies\": {\"foo\": \"latest\"}, \"overrides\": {\"foo@next\": \"beta\"}} 1`] = `
+exports[`invalid(14): {\"dependencies\": {\"foo\": \"latest\"}, \"overrides\": {\"foo@next\": \"beta\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "latest"}, "overrides": {"foo@next": "beta"}}
 
 `;
 
-exports[`invalid(13): {\"dependencies\": {\"foo\": \"latest\"}, \"overrides\": {\"foo@next\": \"beta\"}} 2`] = `
+exports[`invalid(14): {\"dependencies\": {\"foo\": \"latest\"}, \"overrides\": {\"foo@next\": \"beta\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "latest"}, "overrides": {"foo@next": "beta"}}
@@ -88,14 +106,14 @@ Output:
 
 `;
 
-exports[`invalid(14): {\"dependencies\": {\"foo\": \"git+https://github.com/user/repo.git#semver:^1.0.0\"}, \"overrides\": {\"foo@^1.0.0\": \"^2.0.0\"}} 1`] = `
+exports[`invalid(15): {\"dependencies\": {\"foo\": \"git+https://github.com/user/repo.git#semver:^1.0.0\"}, \"overrides\": {\"foo@^1.0.0\": \"^2.0.0\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "git+https://github.com/user/repo.git#semver:^1.0.0"}, "overrides": {"foo@^1.0.0": "^2.0.0"}}
 
 `;
 
-exports[`invalid(14): {\"dependencies\": {\"foo\": \"git+https://github.com/user/repo.git#semver:^1.0.0\"}, \"overrides\": {\"foo@^1.0.0\": \"^2.0.0\"}} 2`] = `
+exports[`invalid(15): {\"dependencies\": {\"foo\": \"git+https://github.com/user/repo.git#semver:^1.0.0\"}, \"overrides\": {\"foo@^1.0.0\": \"^2.0.0\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "git+https://github.com/user/repo.git#semver:^1.0.0"}, "overrides": {"foo@^1.0.0": "^2.0.0"}}
@@ -106,14 +124,14 @@ Output:
 
 `;
 
-exports[`invalid(15): {\"dependencies\": {\"foo\": \"file:../foo\"}, \"overrides\": {\"foo@file:../bar\": \"file:../baz\"}} 1`] = `
+exports[`invalid(16): {\"dependencies\": {\"foo\": \"file:../foo\"}, \"overrides\": {\"foo@file:../bar\": \"file:../baz\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "file:../foo"}, "overrides": {"foo@file:../bar": "file:../baz"}}
 
 `;
 
-exports[`invalid(15): {\"dependencies\": {\"foo\": \"file:../foo\"}, \"overrides\": {\"foo@file:../bar\": \"file:../baz\"}} 2`] = `
+exports[`invalid(16): {\"dependencies\": {\"foo\": \"file:../foo\"}, \"overrides\": {\"foo@file:../bar\": \"file:../baz\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "file:../foo"}, "overrides": {"foo@file:../bar": "file:../baz"}}
@@ -124,14 +142,14 @@ Output:
 
 `;
 
-exports[`invalid(16): {\"dependencies\": {\"foo\": \"../foo\"}, \"overrides\": {\"foo@../bar\": \"../baz\"}} 1`] = `
+exports[`invalid(17): {\"dependencies\": {\"foo\": \"../foo\"}, \"overrides\": {\"foo@../bar\": \"../baz\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "../foo"}, "overrides": {"foo@../bar": "../baz"}}
 
 `;
 
-exports[`invalid(16): {\"dependencies\": {\"foo\": \"../foo\"}, \"overrides\": {\"foo@../bar\": \"../baz\"}} 2`] = `
+exports[`invalid(17): {\"dependencies\": {\"foo\": \"../foo\"}, \"overrides\": {\"foo@../bar\": \"../baz\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "../foo"}, "overrides": {"foo@../bar": "../baz"}}
@@ -142,14 +160,14 @@ Output:
 
 `;
 
-exports[`invalid(17): {\"dependencies\": {\"foo\": \"https://example.com/foo.tgz\"}, \"overrides\": {\"foo@https://example.com/bar.tgz\": \"https://example.com/baz.tgz\"}} 1`] = `
+exports[`invalid(18): {\"dependencies\": {\"foo\": \"https://example.com/foo.tgz\"}, \"overrides\": {\"foo@https://example.com/bar.tgz\": \"https://example.com/baz.tgz\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "https://example.com/foo.tgz"}, "overrides": {"foo@https://example.com/bar.tgz": "https://example.com/baz.tgz"}}
 
 `;
 
-exports[`invalid(17): {\"dependencies\": {\"foo\": \"https://example.com/foo.tgz\"}, \"overrides\": {\"foo@https://example.com/bar.tgz\": \"https://example.com/baz.tgz\"}} 2`] = `
+exports[`invalid(18): {\"dependencies\": {\"foo\": \"https://example.com/foo.tgz\"}, \"overrides\": {\"foo@https://example.com/bar.tgz\": \"https://example.com/baz.tgz\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "https://example.com/foo.tgz"}, "overrides": {"foo@https://example.com/bar.tgz": "https://example.com/baz.tgz"}}
@@ -160,14 +178,14 @@ Output:
 
 `;
 
-exports[`invalid(18): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": \"^2.0.0\", \"foo@~1.2.0\": \"^1.2.3\"}} 1`] = `
+exports[`invalid(19): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": \"^2.0.0\", \"foo@~1.2.0\": \"^1.2.3\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": "^2.0.0", "foo@~1.2.0": "^1.2.3"}}
 
 `;
 
-exports[`invalid(18): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": \"^2.0.0\", \"foo@~1.2.0\": \"^1.2.3\"}} 2`] = `
+exports[`invalid(19): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": \"^2.0.0\", \"foo@~1.2.0\": \"^1.2.3\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": "^2.0.0", "foo@~1.2.0": "^1.2.3"}}
@@ -175,24 +193,6 @@ Message:
 
 Output:
   1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": "$foo", "foo@~1.2.0": "^1.2.3"}}
-
-`;
-
-exports[`invalid(19): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": {}}} 1`] = `
-
-[Input]
-  1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {}}}
-
-`;
-
-exports[`invalid(19): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": {}}} 2`] = `
-
-Message:
-> 1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {}}}
-    |                                                                 ^^ Override for direct dependency \`foo\` conflicts with its \`^1.2.3\` specifier.
-
-Output:
-  1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {".": "$foo"}}}
 
 `;
 
@@ -214,7 +214,43 @@ Output:
 
 `;
 
-exports[`invalid(20): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t\t\"bar\": \"^2.0.0\"\n\t\t}\n\t}\n} 1`] = `
+exports[`invalid(20): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": {}}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {}}}
+
+`;
+
+exports[`invalid(20): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": {}}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {}}}
+    |                                                                 ^^ Override for direct dependency \`foo\` conflicts with its \`^1.2.3\` specifier.
+
+Output:
+  1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {".": "$foo"}}}
+
+`;
+
+exports[`invalid(21): {\"dependencies\":{\"foo\":\"^1.2.3\"},\"overrides\":{\"foo@^1.0.0\":{\"bar\":\"^2.0.0\"}}} 1`] = `
+
+[Input]
+  1 | {"dependencies":{"foo":"^1.2.3"},"overrides":{"foo@^1.0.0":{"bar":"^2.0.0"}}}
+
+`;
+
+exports[`invalid(21): {\"dependencies\":{\"foo\":\"^1.2.3\"},\"overrides\":{\"foo@^1.0.0\":{\"bar\":\"^2.0.0\"}}} 2`] = `
+
+Message:
+> 1 | {"dependencies":{"foo":"^1.2.3"},"overrides":{"foo@^1.0.0":{"bar":"^2.0.0"}}}
+    |                                                            ^^^^^^^^^^^^^^^^ Override for direct dependency \`foo\` conflicts with its \`^1.2.3\` specifier.
+
+Output:
+  1 | {"dependencies":{"foo":"^1.2.3"},"overrides":{"foo@^1.0.0":{".":"$foo","bar":"^2.0.0"}}}
+
+`;
+
+exports[`invalid(22): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t\t\"bar\": \"^2.0.0\"\n\t\t}\n\t}\n} 1`] = `
 
 [Input]
    1 | {
@@ -230,7 +266,7 @@ exports[`invalid(20): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\
 
 `;
 
-exports[`invalid(20): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t\t\"bar\": \"^2.0.0\"\n\t\t}\n\t}\n} 2`] = `
+exports[`invalid(22): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t\t\"bar\": \"^2.0.0\"\n\t\t}\n\t}\n} 2`] = `
 
 Message:
    1 | {
@@ -262,7 +298,7 @@ Output:
 
 `;
 
-exports[`invalid(21): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t}\n\t}\n} 1`] = `
+exports[`invalid(23): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t}\n\t}\n} 1`] = `
 
 [Input]
   1 | {
@@ -277,7 +313,7 @@ exports[`invalid(21): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\
 
 `;
 
-exports[`invalid(21): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t}\n\t}\n} 2`] = `
+exports[`invalid(23): {\n\t\"dependencies\": {\n\t\t\"foo\": \"^1.2.3\"\n\t},\n\t\"overrides\": {\n\t\t\"foo@^1.0.0\": {\n\t\t}\n\t}\n} 2`] = `
 
 Message:
   1 | {
@@ -360,14 +396,32 @@ Output:
 
 `;
 
-exports[`invalid(6): {\"dependencies\": {\"@scope/foo\": \"^1.0.0\"}, \"overrides\": {\"@scope/foo\": \"^2.0.0\"}} 1`] = `
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"^1.0.0\", \"bar\": \"^2.0.0\"}, \"overrides\": {\"foo\": {\".\": \"$bar\"}}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}, "overrides": {"foo": {".": "$bar"}}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"^1.0.0\", \"bar\": \"^2.0.0\"}, \"overrides\": {\"foo\": {\".\": \"$bar\"}}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}, "overrides": {"foo": {".": "$bar"}}}
+    |                                                                                 ^^^^^^ Override for direct dependency \`foo\` conflicts with its \`^1.0.0\` specifier.
+
+Output:
+  1 | {"dependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}, "overrides": {"foo": {".": "$foo"}}}
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"@scope/foo\": \"^1.0.0\"}, \"overrides\": {\"@scope/foo\": \"^2.0.0\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"@scope/foo": "^1.0.0"}, "overrides": {"@scope/foo": "^2.0.0"}}
 
 `;
 
-exports[`invalid(6): {\"dependencies\": {\"@scope/foo\": \"^1.0.0\"}, \"overrides\": {\"@scope/foo\": \"^2.0.0\"}} 2`] = `
+exports[`invalid(7): {\"dependencies\": {\"@scope/foo\": \"^1.0.0\"}, \"overrides\": {\"@scope/foo\": \"^2.0.0\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"@scope/foo": "^1.0.0"}, "overrides": {"@scope/foo": "^2.0.0"}}
@@ -378,14 +432,14 @@ Output:
 
 `;
 
-exports[`invalid(7): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"overrides\": {\"foo\": {\".\": \"^2.0.0\"}}} 1`] = `
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"overrides\": {\"foo\": {\".\": \"^2.0.0\"}}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "^1.0.0"}, "overrides": {"foo": {".": "^2.0.0"}}}
 
 `;
 
-exports[`invalid(7): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"overrides\": {\"foo\": {\".\": \"^2.0.0\"}}} 2`] = `
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"overrides\": {\"foo\": {\".\": \"^2.0.0\"}}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "^1.0.0"}, "overrides": {"foo": {".": "^2.0.0"}}}
@@ -396,14 +450,14 @@ Output:
 
 `;
 
-exports[`invalid(8): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 1`] = `
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {"bar": "^2.0.0"}}}
 
 `;
 
-exports[`invalid(8): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 2`] = `
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"^1.2.3\"}, \"overrides\": {\"foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {"bar": "^2.0.0"}}}
@@ -411,23 +465,5 @@ Message:
 
 Output:
   1 | {"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": {".": "$foo","bar": "^2.0.0"}}}
-
-`;
-
-exports[`invalid(9): {\"dependencies\": {\"foo\": \"npm:bar@^1.0.0\"}, \"overrides\": {\"foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 1`] = `
-
-[Input]
-  1 | {"dependencies": {"foo": "npm:bar@^1.0.0"}, "overrides": {"foo@^1.0.0": {"bar": "^2.0.0"}}}
-
-`;
-
-exports[`invalid(9): {\"dependencies\": {\"foo\": \"npm:bar@^1.0.0\"}, \"overrides\": {\"foo@^1.0.0\": {\"bar\": \"^2.0.0\"}}} 2`] = `
-
-Message:
-> 1 | {"dependencies": {"foo": "npm:bar@^1.0.0"}, "overrides": {"foo@^1.0.0": {"bar": "^2.0.0"}}}
-    |                                                                         ^^^^^^^^^^^^^^^^^ Override for direct dependency \`foo\` conflicts with its \`npm:bar@^1.0.0\` specifier.
-
-Output:
-  1 | {"dependencies": {"foo": "npm:bar@^1.0.0"}, "overrides": {"foo@^1.0.0": {".": "$foo","bar": "^2.0.0"}}}
 
 `;

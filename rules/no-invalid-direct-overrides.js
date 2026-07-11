@@ -128,9 +128,13 @@ const getFixedOverride = name => JSON.stringify(`$${name}`);
 
 function fixImplicitOverride(fixer, sourceCode, object, name) {
 	const value = getFixedOverride(name);
-	const entry = `".": ${value}`;
+	const firstMember = object.members[0];
+	const separator = firstMember
+		? sourceCode.text.slice(firstMember.name.range[1], firstMember.value.range[0])
+		: ': ';
+	const entry = `"."${separator}${value}`;
 
-	if (object.members.length === 0) {
+	if (!firstMember) {
 		if (!sourceCode.getText(object).includes('\n')) {
 			return fixer.insertTextAfterRange([object.range[0], object.range[0] + 1], entry);
 		}
@@ -140,7 +144,6 @@ function fixImplicitOverride(fixer, sourceCode, object, name) {
 		return fixer.insertTextAfterRange([object.range[0], object.range[0] + 1], `${newline}${memberIndent}${entry}`);
 	}
 
-	const firstMember = object.members[0];
 	const leading = sourceCode.text.slice(object.range[0] + 1, firstMember.range[0]);
 	const lastNewline = leading.lastIndexOf('\n');
 
