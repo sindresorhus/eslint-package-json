@@ -38,10 +38,12 @@ test.snapshot({
 		'{"scripts": {"preprepare": "echo preprepare", "postprepare": "echo postprepare"}}',
 		// A malformed base script is handled by `valid-fields`.
 		'{"scripts": {"build": false, "prebuild": "npm run clean"}}',
+		// Common standalone tool names are exempt.
+		'{"scripts": {"prettier": "prettier --check .", "prettier:fix": "prettier --write ."}}',
+		'{"scripts": {"preview": "vite preview", "preview:production": "vite preview --mode production"}}',
+		'{"scripts": {"postcss": "postcss src/index.css", "postcss:build": "postcss src/index.css"}}',
 		// Standalone names can be exempted explicitly.
-		{code: '{"scripts": {"prettier": "prettier --check .", "preview": "vite preview", "postcss": "postcss src/index.css"}}', options: [{ignore: ['prettier', 'preview', 'postcss']}]},
-		{code: '{"scripts": {"prettier": "prettier --check .", "preview": "vite preview"}}', options: [{ignore: ['^pre(?:ttier|view)$']}]},
-		{code: '{"scripts": {"postcss:build": "postcss src/index.css", "postcss:test": "postcss test/fixture.css"}}', options: [{ignore: [/^postcss:/]}]},
+		{code: '{"scripts": {"preflight": "npm run check"}}', options: [{ignore: ['^preflight$']}]},
 		{code: '{"scripts": {"prebuild": "npm run build", "pretest": "npm test"}}', options: [{ignore: [/^pre/g]}]},
 		// An implicit npm `start` script needs an explicit exemption.
 		{code: '{"scripts": {"prestart": "npm run setup"}}', options: [{ignore: ['prestart']}]},
@@ -55,8 +57,8 @@ test.snapshot({
 		'{"scripts": {"posttest": "npm run clean"}}',
 		'{"scripts": {"prestart": "npm run setup"}}',
 		'{"scripts": {"prebuild": "npm run clean", "posttest": "npm run clean"}}',
-		{code: '{"scripts": {"prettier": "prettier --check .", "postcss": "postcss src/index.css"}}', options: [{ignore: ['prettier']}]},
+		'{"scripts": {"prettierx": "echo no", "previewing": "echo no", "postcssx": "echo no"}}',
 		// A standalone command with a hook-like name needs `ignore`.
-		'{"scripts": {"prettier": "prettier --check ."}}',
+		'{"scripts": {"preflight": "npm run check"}}',
 	],
 });

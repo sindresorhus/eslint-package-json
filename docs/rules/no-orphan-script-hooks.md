@@ -11,6 +11,8 @@ npm runs `pre<name>` and `post<name>` scripts before and after `name`, respectiv
 
 npm lifecycle scripts such as `prepare`, `prepack`, and `preversion` are exempt because npm runs them independently. `preenv`, `postenv`, `prerestart`, and `postrestart` are also exempt because npm supplies implicit `env` and `restart` scripts. The rule does not inspect the filesystem, so a `prestart` hook that relies on npm's implicit `server.js` start script must be exempted with `ignore`.
 
+Common standalone tool names such as `postcss`, `prettier`, and `preview`, including namespaced variants, are ignored by default.
+
 No fix is provided because a hook-like name may be an intentionally standalone command, and only the package author can decide whether to remove it, add its target script, or ignore it.
 
 ## Options
@@ -27,8 +29,7 @@ Regular expressions matching standalone script names to ignore. Strings are inte
 	'error',
 	{
 		ignore: [
-			'^prettier$',
-			/^preview(?::|$)/,
+			'^preflight$',
 		],
 	},
 ]
@@ -56,13 +57,13 @@ Regular expressions matching standalone script names to ignore. Strings are inte
 }
 ```
 
-With `{ignore: ['^prettier$']}`:
+With `{ignore: ['^preflight$']}`:
 
 ```json
 // ✅
 {
 	"scripts": {
-		"prettier": "prettier --check ."
+		"preflight": "npm run check"
 	}
 }
 ```

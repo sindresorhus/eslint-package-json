@@ -14,6 +14,8 @@ const messages = {
 
 const hookPrefixes = ['pre', 'post'];
 
+const commonStandaloneScriptPattern = /^(?:postcss|prettier|preview)(?::|$)/u;
+
 // The npm CLI can run these scripts without a correspondingly named package script.
 const specialScriptNames = new Set([
 	'prepare',
@@ -86,6 +88,7 @@ const create = context => {
 
 				if (
 					specialScriptNames.has(hook)
+					|| commonStandaloneScriptPattern.test(hook)
 					|| isIgnoredName(hook, ignoredPatterns)
 				) {
 					continue;
