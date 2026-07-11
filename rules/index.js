@@ -16,6 +16,7 @@ export {default as 'no-exports-trailing-slash'} from './no-exports-trailing-slas
 export {default as 'no-git-dependencies'} from './no-git-dependencies.js';
 export {default as 'no-http-dependencies'} from './no-http-dependencies.js';
 export {default as 'no-install-scripts'} from './no-install-scripts.js';
+export {default as 'no-invalid-direct-overrides'} from './no-invalid-direct-overrides.js';
 export {default as 'no-local-dependencies'} from './no-local-dependencies.js';
 export {default as 'no-manual-maintainers'} from './no-manual-maintainers.js';
 export {default as 'no-orphan-types'} from './no-orphan-types.js';
