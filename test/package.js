@@ -62,6 +62,12 @@ test('recommended config contains exactly the recommended rules', () => {
 	assert.deepEqual(actual.toSorted(byName), expected.toSorted(byName));
 });
 
+test('prefer-exports is opt-in', () => {
+	const ruleKey = 'package-json/prefer-exports';
+	assert.ok(!Object.hasOwn(plugin.configs.recommended.rules, ruleKey));
+	assert.equal(plugin.configs.all.rules[ruleKey], 'error');
+});
+
 test('all config contains every rule set to error', () => {
 	const actual = Object.keys(plugin.configs.all.rules).map(key => withoutPrefix(key));
 	assert.deepEqual(actual.toSorted(byName), ruleIds.toSorted(byName));
