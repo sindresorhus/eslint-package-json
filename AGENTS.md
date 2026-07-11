@@ -96,7 +96,7 @@ Name boolean options in the positive `check*` form, never the negated `ignore*`/
 - `iterateDependencies(root, types?)` — yields `{groupName, group, member, name}` across dependency groups.
 - `dependencyTypes` — the four standard dependency group names.
 - `removeMember`/`removeElement` — comma-aware removal (generators yielding fixes).
-- `buildReorderedObject(sourceCode, object, orderedMembers, fallbackIndent)` + `isSameOrder` — for sorting fixes that preserve indentation.
+- `buildReorderedObject(sourceCode, object, orderedMembers)` + `isSameOrder` — for sorting fixes that preserve indentation.
 - `getIndentString`/`getNewline` — detect the file's formatting.
 - `optionsSchema(properties)` + `stringArraySchema` — build a rule's options schema without boilerplate.
 

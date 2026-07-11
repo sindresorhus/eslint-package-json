@@ -233,7 +233,7 @@ export function getIndentString(sourceCode) {
 }
 
 /**
-Detect the newline sequence used by the document, defaulting to `\n`.
+Detect the LF or CRLF newline sequence used by the document, defaulting to `\n`.
 */
 export function getNewline(sourceCode) {
 	return sourceCode.text.includes('\r\n') ? '\r\n' : '\n';
