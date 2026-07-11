@@ -135,6 +135,7 @@ export default [
 | [restrict-fields-when-private](docs/rules/restrict-fields-when-private.md)                   | Disallow fields that have no effect when the package is private.                          |    |    | 💡 |
 | [sort-dependencies](docs/rules/sort-dependencies.md)                                         | Enforce alphabetical ordering of dependencies.                                            | ✅  | 🔧 |    |
 | [sort-properties](docs/rules/sort-properties.md)                                             | Enforce a canonical order for top-level package.json fields.                              | ✅  | 🔧 |    |
+| [sort-scripts](docs/rules/sort-scripts.md)                                                   | Enforce alphabetical ordering of scripts.                                                 |    | 🔧 |    |
 | [types-in-dev-dependencies](docs/rules/types-in-dev-dependencies.md)                         | Enforce `@types/*` packages to be in `devDependencies`.                                   |    |    | 💡 |
 | [valid-fields](docs/rules/valid-fields.md)                                                   | Enforce valid values for package.json fields.                                             | ✅  | 🔧 | 💡 |
 
