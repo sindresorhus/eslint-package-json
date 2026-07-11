@@ -23,6 +23,41 @@ const dependencyGroupPrecedence = [
 	'devDependencies',
 ];
 
+const arrayIndexPattern = /^(?:0|[1-9]\d*)$/;
+
+const getArrayIndex = key => {
+	if (!arrayIndexPattern.test(key)) {
+		return undefined;
+	}
+
+	const index = Number(key);
+	return index < (2 ** 32) - 1 ? index : undefined;
+};
+
+// Because npm reads overrides through a JavaScript object, it enumerates array-index keys first.
+function * iterateOverrideMembers(members) {
+	const arrayIndexMembers = [];
+	const stringMembers = [];
+
+	for (const member of members) {
+		const index = getArrayIndex(getKey(member));
+
+		if (index === undefined) {
+			stringMembers.push(member);
+		} else {
+			arrayIndexMembers.push({index, member});
+		}
+	}
+
+	arrayIndexMembers.sort((first, second) => first.index - second.index);
+
+	for (const {member} of arrayIndexMembers) {
+		yield member;
+	}
+
+	yield * stringMembers;
+}
+
 const getDirectDependencies = root => {
 	const dependencies = new Map();
 
@@ -177,7 +212,7 @@ const create = context => {
 
 			const matchedOverridePackageNames = new Set();
 
-			for (const member of overrides.value.members) {
+			for (const member of iterateOverrideMembers(overrides.value.members)) {
 				const override = parseOverrideKey(getKey(member));
 
 				if (!override) {
@@ -206,14 +241,14 @@ const create = context => {
 				if (overrideSpecifier.startsWith('$')) {
 					const referencedSpecifier = directDependencies.get(overrideSpecifier.slice(1));
 
-					if (referencedSpecifier === undefined) {
+					if (!referencedSpecifier) {
 						continue;
 					}
 
 					overrideSpecifier = referencedSpecifier;
 				}
 
-				if (overrideSpecifier === directSpecifier) {
+				if (overrideSpecifier === directSpecifier || overrideSpecifier.startsWith('$')) {
 					continue;
 				}
 
