@@ -16,14 +16,16 @@ npm install --save-dev eslint eslint-package-json
 
 ## Usage
 
-Add the recommended config to your `eslint.config.js`:
+Use ESLint's `defineConfig()` with the recommended config in your `eslint.config.js`:
 
 ```js
+import {defineConfig} from 'eslint/config';
 import packageJson from 'eslint-package-json';
 
-export default [
-	packageJson.configs.recommended,
-];
+export default defineConfig({
+	files: ['**/package.json'],
+	extends: [packageJson.configs.recommended]
+});
 ```
 
 This lints every `package.json` in your project. To tweak individual rules, add a config block after the preset:

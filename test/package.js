@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Linter} from 'eslint';
+import {defineConfig} from 'eslint/config';
 import json from '@eslint/json';
 import semver from 'semver';
 import plugin from '../index.js';
@@ -163,6 +164,20 @@ test('SemVer result cache is bounded', () => {
 	} finally {
 		semver.validRange = originalValidRange;
 	}
+});
+
+test('the recommended config works with `extends` without registering the plugin', () => {
+	const linter = new Linter();
+	const config = defineConfig({
+		files: ['**/package.json'],
+		extends: [plugin.configs.recommended],
+	});
+
+	const problems = linter.verify('{"name": "Foo"}', config, {filename: 'package.json'});
+	assert.ok(
+		problems.some(message => message.ruleId === 'package-json/valid-fields'),
+		'an invalid name should be reported via the recommended config',
+	);
 });
 
 test('no rule crashes on a non-object or unusual root', () => {
