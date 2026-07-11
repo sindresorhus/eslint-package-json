@@ -5,6 +5,7 @@ import {
 	getIndentString,
 	getNewline,
 	isSameOrder,
+	lineIndentOf,
 	pathFields,
 } from './utils/index.js';
 
@@ -177,21 +178,18 @@ Build a reordered files array while preserving the document's indentation and ne
 function buildReorderedArray(sourceCode, arrayNode, orderedElements) {
 	const newline = getNewline(sourceCode);
 	const indentation = getIndentString(sourceCode);
+	const arrayIndentation = lineIndentOf(sourceCode, arrayNode);
 	const firstElementStart = arrayNode.elements[0].value.range[0];
 	const textBeforeFirstElement = sourceCode.text.slice(arrayNode.range[0] + 1, firstElementStart);
-	let elementIndentation = indentation.repeat(2);
-
-	if (textBeforeFirstElement.includes('\n')) {
-		elementIndentation = textBeforeFirstElement.slice(textBeforeFirstElement.lastIndexOf('\n') + 1);
-	}
+	const elementIndentation = textBeforeFirstElement.includes('\n')
+		? textBeforeFirstElement.slice(textBeforeFirstElement.lastIndexOf('\n') + 1)
+		: arrayIndentation + indentation;
 
 	const lastElementEnd = arrayNode.elements.at(-1).value.range[1];
 	const textBeforeClosingBracket = sourceCode.text.slice(lastElementEnd, arrayNode.range[1] - 1);
-	let closingIndentation = elementIndentation.slice(indentation.length);
-
-	if (textBeforeClosingBracket.includes('\n')) {
-		closingIndentation = textBeforeClosingBracket.slice(textBeforeClosingBracket.lastIndexOf('\n') + 1);
-	}
+	const closingIndentation = textBeforeClosingBracket.includes('\n')
+		? textBeforeClosingBracket.slice(textBeforeClosingBracket.lastIndexOf('\n') + 1)
+		: arrayIndentation;
 
 	return '['
 		+ newline

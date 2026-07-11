@@ -64,6 +64,8 @@ test.snapshot({
 		'{"main": "./index.js", "types": "./index.d.ts", "bin": {"cli": "./cli.js"}, "files": ["assets", "cli.js", "index.d.ts", "index.js"]}',
 		// Runtime and declaration globs are paired.
 		'{"files": ["src/**/*.d.ts", "src/**/*.js"]}',
+		// A single-line package keeps the closing bracket at the root indentation.
+		'{"files":["index.d.ts","index.js"]}',
 		// Stem groups produce a deterministic canonical order.
 		'{"files": ["foo.js", "foo.e.js", "foo.d.ts"]}',
 		// Direct string exports take priority over unrelated paths.
