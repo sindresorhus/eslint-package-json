@@ -142,7 +142,34 @@ Output:
 
 `;
 
-exports[`invalid(6): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n\t\t\"build\": \"tsc\"\r\n\t}\r\n} 1`] = `
+exports[`invalid(6): {\n  \"scripts\": { \"test\": \"node --test\", \"build\": \"tsc\"}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 |   "scripts": { "test": "node --test", "build": "tsc"}
+  3 | }
+
+`;
+
+exports[`invalid(6): {\n  \"scripts\": { \"test\": \"node --test\", \"build\": \"tsc\"}\n} 2`] = `
+
+Message:
+  1 | {
+> 2 |   "scripts": { "test": "node --test", "build": "tsc"}
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Script names should be sorted alphabetically.
+  3 | }
+
+Output:
+  1 | {
+  2 |   "scripts": {
+  3 |     "build": "tsc",
+  4 |     "test": "node --test"
+  5 |   }
+  6 | }
+
+`;
+
+exports[`invalid(7): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n\t\t\"build\": \"tsc\"\r\n\t}\r\n} 1`] = `
 
 [Input]
   1 | {
@@ -154,7 +181,7 @@ exports[`invalid(6): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n
 
 `;
 
-exports[`invalid(6): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n\t\t\"build\": \"tsc\"\r\n\t}\r\n} 2`] = `
+exports[`invalid(7): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n\t\t\"build\": \"tsc\"\r\n\t}\r\n} 2`] = `
 
 Message:
   1 | {
