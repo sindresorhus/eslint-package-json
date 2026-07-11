@@ -73,18 +73,34 @@ Message:
 
 `;
 
-exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\"} 1`] = `
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"browser\": {\"./server.js\": \"./browser.js\"}} 1`] = `
 
 [Input]
-  1 | {"exports": "./index.js", "main": "./index.js"}
+  1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
 
 `;
 
-exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\"} 2`] = `
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"browser\": {\"./server.js\": \"./browser.js\"}} 2`] = `
 
 Message:
-> 1 | {"exports": "./index.js", "main": "./index.js"}
+> 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
     |                           ^^^^^^ Define entry points through the \`exports\` field instead of \`main\`.
+
+`;
+
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"browser\": {\"./server.js\": \"./browser.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
+    |                                                 ^^^^^^^ Define entry points through the \`exports\` field instead of \`types\`.
+
+`;
+
+exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"browser\": {\"./server.js\": \"./browser.js\"}} 4`] = `
+
+Message:
+> 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
+    |                                                                          ^^^^^^^^^ Define entry points through the \`exports\` field instead of \`browser\`.
 
 `;
 

@@ -6,7 +6,7 @@ const messages = {
 	[MESSAGE_ID]: 'Define entry points through the `exports` field instead of `{{field}}`.',
 };
 
-// Legacy entry-point fields that `exports` (with its conditions) supersedes. A top-level `types`/`typings` is silently ignored by modern TypeScript module resolution once `exports` is present, so those belong inside an `exports` `types` condition too.
+// Fields this opinionated rule encourages package authors to replace with `exports` conditions. Object-form `browser` mappings can also replace internal modules, so this is not always an equivalent migration.
 const legacyFields = [
 	'main',
 	'module',
@@ -45,7 +45,7 @@ const config = {
 		type: 'suggestion',
 		docs: {
 			description: 'Prefer the `exports` field over legacy entry-point fields.',
-			recommended: true,
+			recommended: false,
 		},
 		schema: [],
 		messages,

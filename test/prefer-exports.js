@@ -15,8 +15,8 @@ test.snapshot({
 		'{"browser": "./index.browser.js"}',
 		'{"types": "./index.d.ts"}',
 		'{"typings": "./index.d.ts"}',
-		// Legacy field alongside `exports` is still flagged.
-		'{"exports": "./index.js", "main": "./index.js"}',
+		// Legacy fields alongside `exports` are still flagged.
+		'{"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}',
 		// Multiple legacy fields.
 		'{"main": "./index.js", "module": "./index.mjs", "types": "./index.d.ts"}',
 	],
