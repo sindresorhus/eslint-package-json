@@ -1,0 +1,128 @@
+exports[`invalid(1): {\"dependencies\": {\"one\": \"workspace:*\"}, \"devDependencies\": {\"two\": \"workspace:^\"}, \"optionalDependencies\": {\"three\": \"workspace:~\"}, \"peerDependencies\": {\"four\": \"workspace:^1.2.3\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"one": "workspace:*"}, "devDependencies": {"two": "workspace:^"}, "optionalDependencies": {"three": "workspace:~"}, "peerDependencies": {"four": "workspace:^1.2.3"}}
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"one\": \"workspace:*\"}, \"devDependencies\": {\"two\": \"workspace:^\"}, \"optionalDependencies\": {\"three\": \"workspace:~\"}, \"peerDependencies\": {\"four\": \"workspace:^1.2.3\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"one": "workspace:*"}, "devDependencies": {"two": "workspace:^"}, "optionalDependencies": {"three": "workspace:~"}, "peerDependencies": {"four": "workspace:^1.2.3"}}
+    |                          ^^^^^^^^^^^^^ Workspace dependency \`one\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"one\": \"workspace:*\"}, \"devDependencies\": {\"two\": \"workspace:^\"}, \"optionalDependencies\": {\"three\": \"workspace:~\"}, \"peerDependencies\": {\"four\": \"workspace:^1.2.3\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"one": "workspace:*"}, "devDependencies": {"two": "workspace:^"}, "optionalDependencies": {"three": "workspace:~"}, "peerDependencies": {"four": "workspace:^1.2.3"}}
+    |                                                                     ^^^^^^^^^^^^^ Workspace dependency \`two\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"one\": \"workspace:*\"}, \"devDependencies\": {\"two\": \"workspace:^\"}, \"optionalDependencies\": {\"three\": \"workspace:~\"}, \"peerDependencies\": {\"four\": \"workspace:^1.2.3\"}} 4`] = `
+
+Message:
+> 1 | {"dependencies": {"one": "workspace:*"}, "devDependencies": {"two": "workspace:^"}, "optionalDependencies": {"three": "workspace:~"}, "peerDependencies": {"four": "workspace:^1.2.3"}}
+    |                                                                                                                       ^^^^^^^^^^^^^ Workspace dependency \`three\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(1): {\"dependencies\": {\"one\": \"workspace:*\"}, \"devDependencies\": {\"two\": \"workspace:^\"}, \"optionalDependencies\": {\"three\": \"workspace:~\"}, \"peerDependencies\": {\"four\": \"workspace:^1.2.3\"}} 5`] = `
+
+Message:
+> 1 | {"dependencies": {"one": "workspace:*"}, "devDependencies": {"two": "workspace:^"}, "optionalDependencies": {"three": "workspace:~"}, "peerDependencies": {"four": "workspace:^1.2.3"}}
+    |                                                                                                                                                                    ^^^^^^^^^^^^^^^^^^ Workspace dependency \`four\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(2): {\"private\": false, \"dependencies\": {\"one\": \"workspace:*\"}} 1`] = `
+
+[Input]
+  1 | {"private": false, "dependencies": {"one": "workspace:*"}}
+
+`;
+
+exports[`invalid(2): {\"private\": false, \"dependencies\": {\"one\": \"workspace:*\"}} 2`] = `
+
+Message:
+> 1 | {"private": false, "dependencies": {"one": "workspace:*"}}
+    |                                            ^^^^^^^^^^^^^ Workspace dependency \`one\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(3): {\"private\": \"true\", \"dependencies\": {\"one\": \"workspace:*\"}} 1`] = `
+
+[Input]
+  1 | {"private": "true", "dependencies": {"one": "workspace:*"}}
+
+`;
+
+exports[`invalid(3): {\"private\": \"true\", \"dependencies\": {\"one\": \"workspace:*\"}} 2`] = `
+
+Message:
+> 1 | {"private": "true", "dependencies": {"one": "workspace:*"}}
+    |                                             ^^^^^^^^^^^^^ Workspace dependency \`one\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(4): {\"private\": 1, \"dependencies\": {\"one\": \"workspace:*\"}} 1`] = `
+
+[Input]
+  1 | {"private": 1, "dependencies": {"one": "workspace:*"}}
+
+`;
+
+exports[`invalid(4): {\"private\": 1, \"dependencies\": {\"one\": \"workspace:*\"}} 2`] = `
+
+Message:
+> 1 | {"private": 1, "dependencies": {"one": "workspace:*"}}
+    |                                        ^^^^^^^^^^^^^ Workspace dependency \`one\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(5): {\"private\": {}, \"dependencies\": {\"one\": \"workspace:*\"}} 1`] = `
+
+[Input]
+  1 | {"private": {}, "dependencies": {"one": "workspace:*"}}
+
+`;
+
+exports[`invalid(5): {\"private\": {}, \"dependencies\": {\"one\": \"workspace:*\"}} 2`] = `
+
+Message:
+> 1 | {"private": {}, "dependencies": {"one": "workspace:*"}}
+    |                                         ^^^^^^^^^^^^^ Workspace dependency \`one\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(6): {\"private\": [], \"dependencies\": {\"one\": \"workspace:*\"}} 1`] = `
+
+[Input]
+  1 | {"private": [], "dependencies": {"one": "workspace:*"}}
+
+`;
+
+exports[`invalid(6): {\"private\": [], \"dependencies\": {\"one\": \"workspace:*\"}} 2`] = `
+
+Message:
+> 1 | {"private": [], "dependencies": {"one": "workspace:*"}}
+    |                                         ^^^^^^^^^^^^^ Workspace dependency \`one\` requires a package-manager rewrite before publication.
+
+`;
+
+exports[`invalid(7): {\"private\": null, \"dependencies\": {\"one\": \"workspace:*\"}} 1`] = `
+
+[Input]
+  1 | {"private": null, "dependencies": {"one": "workspace:*"}}
+
+`;
+
+exports[`invalid(7): {\"private\": null, \"dependencies\": {\"one\": \"workspace:*\"}} 2`] = `
+
+Message:
+> 1 | {"private": null, "dependencies": {"one": "workspace:*"}}
+    |                                           ^^^^^^^^^^^^^ Workspace dependency \`one\` requires a package-manager rewrite before publication.
+
+`;

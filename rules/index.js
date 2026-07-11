@@ -31,6 +31,7 @@ export {default as 'no-restricted-fields'} from './no-restricted-fields.js';
 export {default as 'no-self-dependency'} from './no-self-dependency.js';
 export {default as 'no-typo-fields'} from './no-typo-fields.js';
 export {default as 'no-wildcard-dependencies'} from './no-wildcard-dependencies.js';
+export {default as 'no-workspace-protocol-in-published-package'} from './no-workspace-protocol-in-published-package.js';
 export {default as 'peer-dependencies-as-dev-dependencies'} from './peer-dependencies-as-dev-dependencies.js';
 export {default as 'prefer-engines-range'} from './prefer-engines-range.js';
 export {default as 'prefer-exports'} from './prefer-exports.js';
