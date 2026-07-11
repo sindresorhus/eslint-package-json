@@ -107,6 +107,7 @@ export default [
 | [no-local-dependencies](docs/rules/no-local-dependencies.md)                                 | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
 | [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                 | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
 | [no-orphan-types](docs/rules/no-orphan-types.md)                                             | Disallow `@types/*` packages without a corresponding dependency.                          | ✅  |    | 💡 |
+| [no-overrides-in-published-package](docs/rules/no-overrides-in-published-package.md)         | Disallow `overrides` in packages that can be published.                                   | ✅  |    | 💡 |
 | [no-package-manager-engines](docs/rules/no-package-manager-engines.md)                       | Disallow package manager versions in the `engines` field.                                 | ✅  |    | 💡 |
 | [no-pre-release-dependencies](docs/rules/no-pre-release-dependencies.md)                     | Disallow pre-release versions as dependency specifiers.                                   |    |    |    |
 | [no-redundant-files](docs/rules/no-redundant-files.md)                                       | Disallow redundant entries in the `files` field.                                          | ✅  | 🔧 |    |
