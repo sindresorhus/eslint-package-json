@@ -49,8 +49,6 @@ The following fields are validated:
 - `bundledDependencies`
 - `overrides`
 
-In `peerDependenciesMeta`, `optional` only changes npm's behavior when it is `true`. Setting it to `false` is redundant and is removed automatically.
-
 ## Examples
 
 ```json
@@ -106,32 +104,6 @@ In `peerDependenciesMeta`, `optional` only changes npm's behavior when it is `tr
 {
 	"engines": {
 		"node": "^18.0.0 || ^20.0.0"
-	}
-}
-```
-
-```json
-// ❌
-{
-	"peerDependencies": {
-		"react": "^19.0.0"
-	},
-	"peerDependenciesMeta": {
-		"react": {
-			"optional": false
-		}
-	}
-}
-```
-
-```json
-// ✅
-{
-	"peerDependencies": {
-		"react": "^19.0.0"
-	},
-	"peerDependenciesMeta": {
-		"react": {}
 	}
 }
 ```
