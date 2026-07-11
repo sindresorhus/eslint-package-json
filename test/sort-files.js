@@ -7,6 +7,24 @@ import {getTester} from './utils/test.js';
 
 const {test} = getTester(import.meta);
 
+const linterConfig = {
+	files: ['**'],
+	language: 'json/json',
+	plugins: {
+		json,
+		'rule-to-test': {
+			rules: {
+				'sort-files': sortFiles,
+			},
+		},
+	},
+	rules: {
+		'rule-to-test/sort-files': 'error',
+	},
+};
+
+const verifyAndFix = code => new Linter().verifyAndFix(code, linterConfig, {filename: 'package.json'});
+
 test.snapshot({
 	valid: [
 		// No files field.
@@ -144,24 +162,16 @@ test.snapshot({
 });
 
 nodeTest('preserves CRLF line endings in an autofix', () => {
-	const linter = new Linter();
-	const result = linter.verifyAndFix('{\r\n\t"files": [\r\n\t\t"index.d.ts",\r\n\t\t"index.js"\r\n\t]\r\n}', {
-		files: ['**'],
-		language: 'json/json',
-		plugins: {
-			json,
-			'rule-to-test': {
-				rules: {
-					'sort-files': sortFiles,
-				},
-			},
-		},
-		rules: {
-			'rule-to-test/sort-files': 'error',
-		},
-	}, {filename: 'package.json'});
+	const result = verifyAndFix('{\r\n\t"files": [\r\n\t\t"index.d.ts",\r\n\t\t"index.js"\r\n\t]\r\n}');
 
 	assert.equal(result.fixed, true);
 	assert.match(result.output, /\r\n/u);
 	assert.doesNotMatch(result.output, /(^|[^\r])\n/u);
+});
+
+nodeTest('does not report after fixing a single-line package', () => {
+	const result = verifyAndFix('{"files":["index.d.ts","index.js"]}');
+
+	assert.equal(result.fixed, true);
+	assert.deepEqual(result.messages, []);
 });
