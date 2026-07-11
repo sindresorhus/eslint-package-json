@@ -87,11 +87,32 @@ const getDirectDependencies = root => {
 		for (const member of group.value.members) {
 			if (member.value.type === 'String') {
 				dependencies.set(getKey(member), member.value.value);
+			} else {
+				dependencies.delete(getKey(member));
 			}
 		}
 	}
 
 	return dependencies;
+};
+
+const getReferencedSpecifier = (root, name) => {
+	for (const groupName of dependencyGroupPrecedence.toReversed()) {
+		const group = findLastMember(root, groupName);
+		const member = findLastMember(group?.value, name);
+
+		if (!member) {
+			continue;
+		}
+
+		if (member.value.type !== 'String') {
+			return undefined;
+		}
+
+		if (member.value.value) {
+			return member.value.value;
+		}
+	}
 };
 
 const parseOverrideKey = name => {
@@ -255,7 +276,7 @@ const create = context => {
 				let overrideSpecifier = effectiveOverride.specifier;
 
 				if (overrideSpecifier.startsWith('$')) {
-					const referencedSpecifier = directDependencies.get(overrideSpecifier.slice(1));
+					const referencedSpecifier = getReferencedSpecifier(root, overrideSpecifier.slice(1));
 
 					if (!referencedSpecifier) {
 						continue;
