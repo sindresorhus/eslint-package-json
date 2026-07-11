@@ -25,7 +25,13 @@ test.snapshot({
 		'{"name": "foo", "overrides": []}',
 		// Explicitly non-private packages can be published.
 		'{"private": false, "overrides": {"foo": "1.0.0"}}',
-		// Only a boolean `true` prevents publication.
-		'{"private": "true", "overrides": {"foo": "1.0.0"}}',
+		// Non-boolean `private` values do not meet the package's private-package contract.
+		'{"private": "true", "overrides": {}}',
+		'{"private": 1, "overrides": {}}',
+		'{"private": {}, "overrides": {}}',
+		'{"private": [], "overrides": {}}',
+		'{"private": "", "overrides": {}}',
+		'{"private": 0, "overrides": {}}',
+		'{"private": null, "overrides": {}}',
 	],
 });

@@ -20,6 +20,78 @@ Suggestion 1/1: Remove the \`overrides\` field.:
 
 `;
 
+exports[`invalid(10): {\"private\": [], \"overrides\": {}} 1`] = `
+
+[Input]
+  1 | {"private": [], "overrides": {}}
+
+`;
+
+exports[`invalid(10): {\"private\": [], \"overrides\": {}} 2`] = `
+
+Message:
+> 1 | {"private": [], "overrides": {}}
+    |                 ^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
+
+Suggestion 1/1: Remove the \`overrides\` field.:
+  1 | {"private": []}
+
+`;
+
+exports[`invalid(11): {\"private\": \"\", \"overrides\": {}} 1`] = `
+
+[Input]
+  1 | {"private": "", "overrides": {}}
+
+`;
+
+exports[`invalid(11): {\"private\": \"\", \"overrides\": {}} 2`] = `
+
+Message:
+> 1 | {"private": "", "overrides": {}}
+    |                 ^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
+
+Suggestion 1/1: Remove the \`overrides\` field.:
+  1 | {"private": ""}
+
+`;
+
+exports[`invalid(12): {\"private\": 0, \"overrides\": {}} 1`] = `
+
+[Input]
+  1 | {"private": 0, "overrides": {}}
+
+`;
+
+exports[`invalid(12): {\"private\": 0, \"overrides\": {}} 2`] = `
+
+Message:
+> 1 | {"private": 0, "overrides": {}}
+    |                ^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
+
+Suggestion 1/1: Remove the \`overrides\` field.:
+  1 | {"private": 0}
+
+`;
+
+exports[`invalid(13): {\"private\": null, \"overrides\": {}} 1`] = `
+
+[Input]
+  1 | {"private": null, "overrides": {}}
+
+`;
+
+exports[`invalid(13): {\"private\": null, \"overrides\": {}} 2`] = `
+
+Message:
+> 1 | {"private": null, "overrides": {}}
+    |                   ^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
+
+Suggestion 1/1: Remove the \`overrides\` field.:
+  1 | {"private": null}
+
+`;
+
 exports[`invalid(2): {\n\t\"overrides\": {\n\t\t\"foo\": \"1.0.0\"\n\t},\n\t\"name\": \"foo\"\n} 1`] = `
 
 [Input]
@@ -153,20 +225,56 @@ Suggestion 1/1: Remove the \`overrides\` field.:
 
 `;
 
-exports[`invalid(7): {\"private\": \"true\", \"overrides\": {\"foo\": \"1.0.0\"}} 1`] = `
+exports[`invalid(7): {\"private\": \"true\", \"overrides\": {}} 1`] = `
 
 [Input]
-  1 | {"private": "true", "overrides": {"foo": "1.0.0"}}
+  1 | {"private": "true", "overrides": {}}
 
 `;
 
-exports[`invalid(7): {\"private\": \"true\", \"overrides\": {\"foo\": \"1.0.0\"}} 2`] = `
+exports[`invalid(7): {\"private\": \"true\", \"overrides\": {}} 2`] = `
 
 Message:
-> 1 | {"private": "true", "overrides": {"foo": "1.0.0"}}
+> 1 | {"private": "true", "overrides": {}}
     |                     ^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
 
 Suggestion 1/1: Remove the \`overrides\` field.:
   1 | {"private": "true"}
+
+`;
+
+exports[`invalid(8): {\"private\": 1, \"overrides\": {}} 1`] = `
+
+[Input]
+  1 | {"private": 1, "overrides": {}}
+
+`;
+
+exports[`invalid(8): {\"private\": 1, \"overrides\": {}} 2`] = `
+
+Message:
+> 1 | {"private": 1, "overrides": {}}
+    |                ^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
+
+Suggestion 1/1: Remove the \`overrides\` field.:
+  1 | {"private": 1}
+
+`;
+
+exports[`invalid(9): {\"private\": {}, \"overrides\": {}} 1`] = `
+
+[Input]
+  1 | {"private": {}, "overrides": {}}
+
+`;
+
+exports[`invalid(9): {\"private\": {}, \"overrides\": {}} 2`] = `
+
+Message:
+> 1 | {"private": {}, "overrides": {}}
+    |                 ^^^^^^^^^^^ The \`overrides\` field is ignored when this package is installed as a dependency.
+
+Suggestion 1/1: Remove the \`overrides\` field.:
+  1 | {"private": {}}
 
 `;
