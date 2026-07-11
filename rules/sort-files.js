@@ -5,6 +5,7 @@ import {
 	getIndentString,
 	getNewline,
 	isSameOrder,
+	pathFields,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'sort-files';
@@ -12,14 +13,6 @@ const MESSAGE_ID = 'sort-files';
 const messages = {
 	[MESSAGE_ID]: 'Entries in `files` should be in the canonical order.',
 };
-
-const entryPointFields = [
-	'main',
-	'module',
-	'browser',
-	'types',
-	'typings',
-];
 
 const declarationPathPattern = /^(.*)\.d\.(?:ts|mts|cts)$/u;
 
@@ -74,7 +67,7 @@ function * iterateEntryPointTargets(root) {
 		yield * iterateExportsTargets(exportsMember.value);
 	}
 
-	for (const field of entryPointFields) {
+	for (const field of pathFields) {
 		const member = findMember(root, field);
 
 		if (member?.value.type === 'String') {
@@ -172,14 +165,24 @@ function compareFilesEntries(firstValue, secondValue, entryPointOrder) {
 /**
 Build a reordered files array while preserving the document's indentation and newline style.
 */
-function buildReorderedArray(sourceCode, arrayNode, orderedElements, fallbackIndentation) {
+function buildReorderedArray(sourceCode, arrayNode, orderedElements) {
 	const newline = getNewline(sourceCode);
 	const indentation = getIndentString(sourceCode);
 	const firstElementStart = arrayNode.elements[0].value.range[0];
 	const textBeforeFirstElement = sourceCode.text.slice(arrayNode.range[0] + 1, firstElementStart);
-	const existingIndentation = textBeforeFirstElement.slice(textBeforeFirstElement.lastIndexOf('\n') + 1);
-	const elementIndentation = existingIndentation.length > 0 ? existingIndentation : fallbackIndentation;
-	const closingIndentation = elementIndentation.slice(indentation.length);
+	let elementIndentation = indentation.repeat(2);
+
+	if (textBeforeFirstElement.includes('\n')) {
+		elementIndentation = textBeforeFirstElement.slice(textBeforeFirstElement.lastIndexOf('\n') + 1);
+	}
+
+	const lastElementEnd = arrayNode.elements.at(-1).value.range[1];
+	const textBeforeClosingBracket = sourceCode.text.slice(lastElementEnd, arrayNode.range[1] - 1);
+	let closingIndentation = elementIndentation.slice(indentation.length);
+
+	if (textBeforeClosingBracket.includes('\n')) {
+		closingIndentation = textBeforeClosingBracket.slice(textBeforeClosingBracket.lastIndexOf('\n') + 1);
+	}
 
 	return '['
 		+ newline
@@ -223,7 +226,7 @@ const create = context => {
 			context.report({
 				node: filesMember.value,
 				messageId: MESSAGE_ID,
-				fix: fixer => fixer.replaceText(filesMember.value, buildReorderedArray(sourceCode, filesMember.value, orderedElements, getIndentString(sourceCode).repeat(2))),
+				fix: fixer => fixer.replaceText(filesMember.value, buildReorderedArray(sourceCode, filesMember.value, orderedElements)),
 			});
 		},
 	};
