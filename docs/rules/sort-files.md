@@ -9,7 +9,7 @@
 
 Keeping the `files` allowlist in a predictable order makes it easier to verify what a package publishes.
 
-This rule puts exact paths referenced by `exports`, top-level entry-point fields, and `bin` first. It then orders remaining paths, directories, and glob patterns by path, keeping runtime files before their `.d.ts`, `.d.mts`, or `.d.cts` declarations.
+This rule puts exact paths referenced by `exports`, top-level entry-point fields, and `bin` first. It then groups the remaining paths, directories, and glob patterns by path stem, keeping runtime files before their `.d.ts`, `.d.mts`, or `.d.cts` declarations.
 
 The rule intentionally skips a `files` array containing a `!` negation. npm applies negations in sequence, so changing their order could change the package contents.
 

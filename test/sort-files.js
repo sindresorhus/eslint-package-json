@@ -26,6 +26,8 @@ test.snapshot({
 		'{"files": ["bin/cli", "bin/cli.d.ts"]}',
 		// Exact entry-point targets take precedence over declaration pairing.
 		'{"types": "./index.d.ts", "files": ["index.d.ts", "index.js"]}',
+		// Versioned TypeScript conditions follow their runtime target.
+		'{"exports": {"types@>=5.2": "./ts5.d.ts", "types": "./index.d.ts", "default": "./index.js"}, "files": ["index.js", "ts5.d.ts", "index.d.ts"]}',
 		// Every supported declaration extension is paired with its runtime file.
 		'{"files": ["index.mjs", "index.d.mts"]}',
 		'{"files": ["index.cjs", "index.d.cts"]}',
@@ -62,6 +64,8 @@ test.snapshot({
 		'{"main": "./index.js", "types": "./index.d.ts", "bin": {"cli": "./cli.js"}, "files": ["assets", "cli.js", "index.d.ts", "index.js"]}',
 		// Runtime and declaration globs are paired.
 		'{"files": ["src/**/*.d.ts", "src/**/*.js"]}',
+		// Stem groups produce a deterministic canonical order.
+		'{"files": ["foo.js", "foo.e.js", "foo.d.ts"]}',
 		// Direct string exports take priority over unrelated paths.
 		'{"exports": "./index.js", "files": ["other.js", "index.js"]}',
 		// Exports fallback arrays preserve their target order.

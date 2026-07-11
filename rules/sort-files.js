@@ -17,6 +17,15 @@ const messages = {
 const declarationPathPattern = /^(.*)\.d\.(?:ts|mts|cts)$/u;
 
 /**
+Check whether an exports condition selects a TypeScript declaration target.
+*/
+const isTypesCondition = member => {
+	const key = getKey(member);
+
+	return key === 'types' || key.startsWith('types@');
+};
+
+/**
 Remove the optional `./` prefix used by entry-point fields so it can match a files entry.
 */
 function getNormalizedPath(value) {
@@ -45,13 +54,13 @@ function * iterateExportsTargets(node) {
 	}
 
 	for (const member of node.members) {
-		if (getKey(member) !== 'types') {
+		if (!isTypesCondition(member)) {
 			yield * iterateExportsTargets(member.value);
 		}
 	}
 
 	for (const member of node.members) {
-		if (getKey(member) === 'types') {
+		if (isTypesCondition(member)) {
 			yield * iterateExportsTargets(member.value);
 		}
 	}
