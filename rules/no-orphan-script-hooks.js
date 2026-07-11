@@ -117,7 +117,7 @@ const config = {
 		type: 'suggestion',
 		docs: {
 			description: 'Disallow `pre`/`post` script hooks without a corresponding script.',
-			recommended: false,
+			recommended: true,
 		},
 		schema: optionsSchema({
 			ignore: {

@@ -106,7 +106,7 @@ export default [
 | [no-install-scripts](docs/rules/no-install-scripts.md)                                       | Disallow `install` lifecycle scripts.                                                     | ✅  |    | 💡 |
 | [no-local-dependencies](docs/rules/no-local-dependencies.md)                                 | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
 | [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                 | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
-| [no-orphan-script-hooks](docs/rules/no-orphan-script-hooks.md)                               | Disallow `pre`/`post` script hooks without a corresponding script.                        |    |    |    |
+| [no-orphan-script-hooks](docs/rules/no-orphan-script-hooks.md)                               | Disallow `pre`/`post` script hooks without a corresponding script.                        | ✅  |    |    |
 | [no-orphan-types](docs/rules/no-orphan-types.md)                                             | Disallow `@types/*` packages without a corresponding dependency.                          | ✅  |    | 💡 |
 | [no-package-manager-engines](docs/rules/no-package-manager-engines.md)                       | Disallow package manager versions in the `engines` field.                                 | ✅  |    | 💡 |
 | [no-pre-release-dependencies](docs/rules/no-pre-release-dependencies.md)                     | Disallow pre-release versions as dependency specifiers.                                   |    |    |    |
