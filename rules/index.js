@@ -18,6 +18,7 @@ export {default as 'no-http-dependencies'} from './no-http-dependencies.js';
 export {default as 'no-install-scripts'} from './no-install-scripts.js';
 export {default as 'no-local-dependencies'} from './no-local-dependencies.js';
 export {default as 'no-manual-maintainers'} from './no-manual-maintainers.js';
+export {default as 'no-orphan-script-hooks'} from './no-orphan-script-hooks.js';
 export {default as 'no-orphan-types'} from './no-orphan-types.js';
 export {default as 'no-package-manager-engines'} from './no-package-manager-engines.js';
 export {default as 'no-pre-release-dependencies'} from './no-pre-release-dependencies.js';

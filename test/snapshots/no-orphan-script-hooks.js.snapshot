@@ -1,0 +1,110 @@
+exports[`invalid(1): {\n\t\"scripts\": {\n\t\t\"prebuild\": \"npm run clean\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"scripts": {
+  3 | 		"prebuild": "npm run clean"
+  4 | 	}
+  5 | }
+
+`;
+
+exports[`invalid(1): {\n\t\"scripts\": {\n\t\t\"prebuild\": \"npm run clean\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"scripts": {
+> 3 | 		"prebuild": "npm run clean"
+    | 		^^^^^^^^^^ The \`prebuild\` script has no corresponding \`build\` script.
+  4 | 	}
+  5 | }
+
+`;
+
+exports[`invalid(2): {\"scripts\": {\"posttest\": \"npm run clean\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"posttest": "npm run clean"}}
+
+`;
+
+exports[`invalid(2): {\"scripts\": {\"posttest\": \"npm run clean\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"posttest": "npm run clean"}}
+    |              ^^^^^^^^^^ The \`posttest\` script has no corresponding \`test\` script.
+
+`;
+
+exports[`invalid(3): {\"scripts\": {\"prestart\": \"npm run setup\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"prestart": "npm run setup"}}
+
+`;
+
+exports[`invalid(3): {\"scripts\": {\"prestart\": \"npm run setup\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"prestart": "npm run setup"}}
+    |              ^^^^^^^^^^ The \`prestart\` script has no corresponding \`start\` script.
+
+`;
+
+exports[`invalid(4): {\"scripts\": {\"prebuild\": \"npm run clean\", \"posttest\": \"npm run clean\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"prebuild": "npm run clean", "posttest": "npm run clean"}}
+
+`;
+
+exports[`invalid(4): {\"scripts\": {\"prebuild\": \"npm run clean\", \"posttest\": \"npm run clean\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"prebuild": "npm run clean", "posttest": "npm run clean"}}
+    |              ^^^^^^^^^^ The \`prebuild\` script has no corresponding \`build\` script.
+
+`;
+
+exports[`invalid(4): {\"scripts\": {\"prebuild\": \"npm run clean\", \"posttest\": \"npm run clean\"}} 3`] = `
+
+Message:
+> 1 | {"scripts": {"prebuild": "npm run clean", "posttest": "npm run clean"}}
+    |                                           ^^^^^^^^^^ The \`posttest\` script has no corresponding \`test\` script.
+
+`;
+
+exports[`invalid(5): {\"scripts\": {\"prettier\": \"prettier --check .\", \"postcss\": \"postcss src/index.css\"}} 1`] = `
+
+[Input]
+Options:
+- ignore:
+    - 'prettier'
+
+Code:
+  1 | {"scripts": {"prettier": "prettier --check .", "postcss": "postcss src/index.css"}}
+
+`;
+
+exports[`invalid(5): {\"scripts\": {\"prettier\": \"prettier --check .\", \"postcss\": \"postcss src/index.css\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"prettier": "prettier --check .", "postcss": "postcss src/index.css"}}
+    |                                                ^^^^^^^^^ The \`postcss\` script has no corresponding \`css\` script.
+
+`;
+
+exports[`invalid(6): {\"scripts\": {\"prettier\": \"prettier --check .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"prettier": "prettier --check ."}}
+
+`;
+
+exports[`invalid(6): {\"scripts\": {\"prettier\": \"prettier --check .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"prettier": "prettier --check ."}}
+    |              ^^^^^^^^^^ The \`prettier\` script has no corresponding \`ttier\` script.
+
+`;
