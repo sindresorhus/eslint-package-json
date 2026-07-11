@@ -7,12 +7,12 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-When the `exports` field is present, TypeScript's `node16`/`nodenext` module resolution ignores the top-level `types`/`typings` field. Types must instead be exposed through a `types` condition inside `exports`, otherwise consumers using modern resolution will not find your type declarations.
+When TypeScript resolves a package through `exports`, its `node16`, `nodenext`, and `bundler` module resolution modes ignore the top-level `types`/`typings` field. TypeScript can infer a declaration file from a JavaScript export target through extension substitution, but a `types` condition declares the package's type entry point explicitly.
 
-This rule reports when the package ships types via a top-level `types`/`typings` field but no `types` condition appears anywhere in `exports`.
+This rule reports when the package ships types via a top-level `types`/`typings` field but no `types` condition appears anywhere in `exports`. It enforces explicit type entry points rather than relying on extension substitution.
 
 > [!NOTE]
-> The legacy `node` and `bundler` resolution modes still read the top-level `types` field, so this only affects `node16`/`nodenext`. Keeping the top-level field as a fallback alongside the `exports` condition is fine.
+> The legacy `node10` resolution mode, and configurations that disable `resolvePackageJsonExports`, still read the top-level `types` field. Keeping the top-level field as a fallback alongside the `exports` condition is fine.
 
 ## Examples
 

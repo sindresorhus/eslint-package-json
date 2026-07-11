@@ -9,7 +9,7 @@ exports[`invalid(1): {\"main\": \"./index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": "./index.js"}
-    |  ^^^^^^ Define entry points through the \`exports\` field instead of \`main\`.
+    |  ^^^^^^ Prefer an \`exports\`-first package interface instead of \`main\`.
 
 `;
 
@@ -24,7 +24,7 @@ exports[`invalid(2): {\"module\": \"./index.mjs\"} 2`] = `
 
 Message:
 > 1 | {"module": "./index.mjs"}
-    |  ^^^^^^^^ Define entry points through the \`exports\` field instead of \`module\`.
+    |  ^^^^^^^^ Prefer an \`exports\`-first package interface instead of \`module\`.
 
 `;
 
@@ -39,7 +39,7 @@ exports[`invalid(3): {\"browser\": \"./index.browser.js\"} 2`] = `
 
 Message:
 > 1 | {"browser": "./index.browser.js"}
-    |  ^^^^^^^^^ Define entry points through the \`exports\` field instead of \`browser\`.
+    |  ^^^^^^^^^ Prefer an \`exports\`-first package interface instead of \`browser\`.
 
 `;
 
@@ -54,7 +54,7 @@ exports[`invalid(4): {\"types\": \"./index.d.ts\"} 2`] = `
 
 Message:
 > 1 | {"types": "./index.d.ts"}
-    |  ^^^^^^^ Define entry points through the \`exports\` field instead of \`types\`.
+    |  ^^^^^^^ Prefer an \`exports\`-first package interface instead of \`types\`.
 
 `;
 
@@ -69,7 +69,7 @@ exports[`invalid(5): {\"typings\": \"./index.d.ts\"} 2`] = `
 
 Message:
 > 1 | {"typings": "./index.d.ts"}
-    |  ^^^^^^^^^ Define entry points through the \`exports\` field instead of \`typings\`.
+    |  ^^^^^^^^^ Prefer an \`exports\`-first package interface instead of \`typings\`.
 
 `;
 
@@ -84,7 +84,7 @@ exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"t
 
 Message:
 > 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
-    |                           ^^^^^^ Define entry points through the \`exports\` field instead of \`main\`.
+    |                           ^^^^^^ Prefer an \`exports\`-first package interface instead of \`main\`.
 
 `;
 
@@ -92,7 +92,7 @@ exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"t
 
 Message:
 > 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
-    |                                                 ^^^^^^^ Define entry points through the \`exports\` field instead of \`types\`.
+    |                                                 ^^^^^^^ Prefer an \`exports\`-first package interface instead of \`types\`.
 
 `;
 
@@ -100,7 +100,7 @@ exports[`invalid(6): {\"exports\": \"./index.js\", \"main\": \"./index.js\", \"t
 
 Message:
 > 1 | {"exports": "./index.js", "main": "./index.js", "types": "./index.d.ts", "browser": {"./server.js": "./browser.js"}}
-    |                                                                          ^^^^^^^^^ Define entry points through the \`exports\` field instead of \`browser\`.
+    |                                                                          ^^^^^^^^^ Prefer an \`exports\`-first package interface instead of \`browser\`.
 
 `;
 
@@ -115,7 +115,7 @@ exports[`invalid(7): {\"main\": \"./index.js\", \"module\": \"./index.mjs\", \"t
 
 Message:
 > 1 | {"main": "./index.js", "module": "./index.mjs", "types": "./index.d.ts"}
-    |  ^^^^^^ Define entry points through the \`exports\` field instead of \`main\`.
+    |  ^^^^^^ Prefer an \`exports\`-first package interface instead of \`main\`.
 
 `;
 
@@ -123,7 +123,7 @@ exports[`invalid(7): {\"main\": \"./index.js\", \"module\": \"./index.mjs\", \"t
 
 Message:
 > 1 | {"main": "./index.js", "module": "./index.mjs", "types": "./index.d.ts"}
-    |                        ^^^^^^^^ Define entry points through the \`exports\` field instead of \`module\`.
+    |                        ^^^^^^^^ Prefer an \`exports\`-first package interface instead of \`module\`.
 
 `;
 
@@ -131,6 +131,6 @@ exports[`invalid(7): {\"main\": \"./index.js\", \"module\": \"./index.mjs\", \"t
 
 Message:
 > 1 | {"main": "./index.js", "module": "./index.mjs", "types": "./index.d.ts"}
-    |                                                 ^^^^^^^ Define entry points through the \`exports\` field instead of \`types\`.
+    |                                                 ^^^^^^^ Prefer an \`exports\`-first package interface instead of \`types\`.
 
 `;

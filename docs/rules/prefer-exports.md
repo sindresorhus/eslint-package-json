@@ -1,6 +1,6 @@
 # prefer-exports
 
-📝 Prefer the `exports` field over legacy entry-point fields.
+📝 Prefer an `exports`-first package interface.
 
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->

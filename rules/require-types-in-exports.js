@@ -3,7 +3,7 @@ import {getRootObject, findMember, getKey} from './utils/index.js';
 const MESSAGE_ID = 'require-types-in-exports';
 
 const messages = {
-	[MESSAGE_ID]: '`{{field}}` is not exposed through `exports`, so it will not be found by TypeScript `node16`/`nodenext` resolution. Add a `types` condition inside `exports`.',
+	[MESSAGE_ID]: '`{{field}}` is not declared through `exports`. Add a `types` condition inside `exports`.',
 };
 
 /**

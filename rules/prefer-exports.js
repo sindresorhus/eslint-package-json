@@ -3,10 +3,10 @@ import {getRootObject, findMember} from './utils/index.js';
 const MESSAGE_ID = 'prefer-exports';
 
 const messages = {
-	[MESSAGE_ID]: 'Define entry points through the `exports` field instead of `{{field}}`.',
+	[MESSAGE_ID]: 'Prefer an `exports`-first package interface instead of `{{field}}`.',
 };
 
-// Fields this opinionated rule encourages package authors to replace with `exports` conditions. Object-form `browser` mappings can also replace internal modules, so this is not always an equivalent migration.
+// Fields this opinionated rule reports to enforce an `exports`-first package interface.
 const legacyFields = [
 	'main',
 	'module',
@@ -44,7 +44,7 @@ const config = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			description: 'Prefer the `exports` field over legacy entry-point fields.',
+			description: 'Prefer an `exports`-first package interface.',
 			recommended: false,
 		},
 		schema: [],
