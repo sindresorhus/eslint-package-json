@@ -1,19 +1,17 @@
 # prefer-side-effects-field
 
-📝 Recommend declaring the `sideEffects` field for packages with an `exports` field and bundler conditions in `exports` or `imports`.
+📝 Recommend declaring the `sideEffects` field for packages.
 
 💼 This rule is enabled in the ✅ `recommended` [config](https://github.com/sindresorhus/eslint-package-json#configs).
 
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-Bundlers can remove unused modules more aggressively when a package declares which files have import-time side effects. The `sideEffects` field is optional and is not required by npm.
+The optional `sideEffects` field tells bundlers which files have import-time effects, enabling more aggressive tree-shaking. npm does not require it.
 
-This rule reports when `sideEffects` is missing and the package has an `exports` field with a nested `module` or `browser` condition in `exports` or `imports`.
+This rule reports when `sideEffects` is missing, `exports` exists, and either `exports` or `imports` contains a `module` or `browser` condition, including nested conditions. Top-level `main`, `module`, and `browser` fields, and `imports` without `exports`, are ignored.
 
-Top-level `main`, `module`, and `browser` fields do not trigger this rule. An `imports` condition without an `exports` field does not trigger it either.
-
-The rule cannot determine whether a package is actually side-effect-free. Audit all importable files before using `false`, including CSS imports, polyfills, global registrations, and prototype modifications. If only some files have side effects, list them instead. Existing `sideEffects` values, including invalid ones, are left to [`valid-fields`](valid-fields.md).
+The rule cannot infer a safe value. Setting `false` asserts that all importable files are side-effect-free, so audit import-time behavior first, including CSS, polyfills, global registrations, and prototype modifications. Use an array of file globs when only some files have side effects. Existing values, including invalid ones, are handled by [`valid-fields`](valid-fields.md).
 
 Private packages are included because workspace packages can still be consumed by bundlers.
 

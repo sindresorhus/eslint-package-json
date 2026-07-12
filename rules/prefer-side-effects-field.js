@@ -76,7 +76,7 @@ const config = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			description: 'Recommend declaring the `sideEffects` field for packages with an `exports` field and bundler conditions in `exports` or `imports`.',
+			description: 'Recommend declaring the `sideEffects` field for packages.',
 			recommended: true,
 		},
 		schema: [],
