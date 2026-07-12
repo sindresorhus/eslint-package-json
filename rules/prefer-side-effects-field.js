@@ -1,74 +1,68 @@
-import {getRootObject, findMember, getKey} from './utils/index.js';
+import {
+	getRootObject,
+	findMember,
+	getKey,
+	getIndentString,
+	getNewline,
+	fieldOrder,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-side-effects-field';
+const FALSE_SUGGESTION_ID = 'setFalse';
+const TRUE_SUGGESTION_ID = 'setTrue';
 
 const messages = {
 	[MESSAGE_ID]: 'Declare a `sideEffects` field so bundlers can optimize unused modules.',
+	[FALSE_SUGGESTION_ID]: 'Add `"sideEffects": false`.',
+	[TRUE_SUGGESTION_ID]: 'Add `"sideEffects": true`.',
 };
 
-const bundlerConditionNames = new Set(['browser', 'module']);
+const sideEffectsOrder = fieldOrder.indexOf('sideEffects');
 
-const hasBundlerCondition = value => {
-	if (value.type === 'Array') {
-		for (const element of value.elements) {
-			if (hasBundlerCondition(element.value)) {
-				return true;
-			}
-		}
+const addSideEffects = (fixer, sourceCode, root, value) => {
+	const entry = `"sideEffects": ${JSON.stringify(value)}`;
+	const separator = root.loc.start.line === root.loc.end.line
+		? ' '
+		: getNewline(sourceCode) + getIndentString(sourceCode);
+	const anchor = root.members.find(member => {
+		const order = fieldOrder.indexOf(getKey(member));
+		return order === -1 || order > sideEffectsOrder;
+	});
 
-		return false;
-	}
-
-	if (value.type !== 'Object') {
-		return false;
-	}
-
-	const effectiveMembers = new Map();
-
-	for (const member of value.members) {
-		effectiveMembers.set(getKey(member), member);
-	}
-
-	for (const member of effectiveMembers.values()) {
-		if (bundlerConditionNames.has(getKey(member)) || hasBundlerCondition(member.value)) {
-			return true;
-		}
-	}
-
-	return false;
-};
-
-const hasBundlerSignal = root => {
-	const exportsMember = findMember(root, 'exports');
-
-	if (!exportsMember) {
-		return false;
-	}
-
-	if (hasBundlerCondition(exportsMember.value)) {
-		return true;
-	}
-
-	const importsMember = findMember(root, 'imports');
-
-	return Boolean(importsMember && hasBundlerCondition(importsMember.value));
+	return anchor
+		? fixer.insertTextBefore(anchor, `${entry},${separator}`)
+		: fixer.insertTextAfter(root.members.at(-1), `,${separator}${entry}`);
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */
-const create = context => ({
-	Document(node) {
-		const root = getRootObject(node);
+const create = context => {
+	const {sourceCode} = context;
 
-		if (!root || findMember(root, 'sideEffects') || !hasBundlerSignal(root)) {
-			return;
-		}
+	return {
+		Document(node) {
+			const root = getRootObject(node);
 
-		context.report({
-			node: root,
-			messageId: MESSAGE_ID,
-		});
-	},
-});
+			if (!root || findMember(root, 'sideEffects') || !findMember(root, 'exports')) {
+				return;
+			}
+
+			context.report({
+				node: root,
+				messageId: MESSAGE_ID,
+				suggest: [
+					{
+						messageId: FALSE_SUGGESTION_ID,
+						fix: fixer => addSideEffects(fixer, sourceCode, root, false),
+					},
+					{
+						messageId: TRUE_SUGGESTION_ID,
+						fix: fixer => addSideEffects(fixer, sourceCode, root, true),
+					},
+				],
+			});
+		},
+	};
+};
 
 /** @type {import('eslint').Rule.RuleModule} */
 const config = {
@@ -79,6 +73,7 @@ const config = {
 			description: 'Recommend declaring the `sideEffects` field for packages.',
 			recommended: true,
 		},
+		hasSuggestions: true,
 		schema: [],
 		messages,
 		languages: ['json/json'],
