@@ -41,6 +41,7 @@ const config = [
 		ignores: [
 			'coverage',
 			'.ai-temporary',
+			'test/fixtures/require-bin-shebang/**',
 			'test/**/snapshots/**',
 			'**/*.ts',
 		],

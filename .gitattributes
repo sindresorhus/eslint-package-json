@@ -1,1 +1,2 @@
 * text=auto eol=lf
+test/fixtures/require-bin-shebang/crlf.js text eol=crlf
