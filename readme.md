@@ -104,6 +104,7 @@ export default [
 | [no-git-dependencies](docs/rules/no-git-dependencies.md)                                     | Disallow git URLs as dependency specifiers.                                               |    |    |    |
 | [no-http-dependencies](docs/rules/no-http-dependencies.md)                                   | Disallow HTTP URLs as dependency specifiers.                                              | ✅  |    |    |
 | [no-install-scripts](docs/rules/no-install-scripts.md)                                       | Disallow `install` lifecycle scripts.                                                     | ✅  |    | 💡 |
+| [no-invalid-direct-overrides](docs/rules/no-invalid-direct-overrides.md)                     | Disallow npm overrides that conflict with direct dependencies.                            | ✅  | 🔧 |    |
 | [no-local-dependencies](docs/rules/no-local-dependencies.md)                                 | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
 | [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                 | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
 | [no-orphan-script-hooks](docs/rules/no-orphan-script-hooks.md)                               | Disallow `pre`/`post` script hooks without a corresponding script.                        | ✅  |    |    |

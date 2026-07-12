@@ -53,6 +53,7 @@
 		"@eslint/json": "^2.0.1",
 		"detect-indent": "^7.0.2",
 		"hosted-git-info": "^10.1.1",
+		"npm-package-arg": "^14.0.0",
 		"semver": "^7.8.5",
 		"spdx-expression-parse": "^4.0.0",
 		"validate-npm-package-name": "^7.0.2"
