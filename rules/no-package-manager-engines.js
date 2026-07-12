@@ -40,13 +40,20 @@ const getMinimumVersion = value => {
 };
 
 function * migrateToPackageManager(fixer, sourceCode, {engines, member, packageManagerValue}) {
+	const packageManagerText = `"packageManager": ${JSON.stringify(packageManagerValue)}`;
+
+	if (engines.value.members.length === 1) {
+		yield fixer.replaceText(engines, packageManagerText);
+		return;
+	}
+
 	const lineStart = sourceCode.text.lastIndexOf('\n', engines.range[0] - 1) + 1;
 	const memberPrefix = sourceCode.text.slice(lineStart, engines.range[0]);
 	const separator = memberPrefix.trim() === ''
 		? `,${getNewline(sourceCode)}${lineIndentOf(sourceCode, engines)}`
 		: ', ';
 
-	yield fixer.insertTextAfter(engines, `${separator}"packageManager": ${JSON.stringify(packageManagerValue)}`);
+	yield fixer.insertTextAfter(engines, `${separator}${packageManagerText}`);
 	yield * removeMember(fixer, sourceCode, member);
 }
 
@@ -77,11 +84,12 @@ const create = context => ({
 				continue;
 			}
 
+			const memberToRemove = engines.value.members.length === 1 ? engines : member;
 			const suggest = [
 				{
 					messageId: REMOVE_SUGGESTION_ID,
 					* fix(fixer) {
-						yield * removeMember(fixer, sourceCode, member);
+						yield * removeMember(fixer, sourceCode, memberToRemove);
 					},
 				},
 			];

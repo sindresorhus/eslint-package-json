@@ -43,8 +43,9 @@ test.snapshot({
 		}`,
 		// Multiple package manager engines cannot be migrated into one field.
 		'{"engines": {"npm": ">=10", "yarn": ">=4"}}',
-		// Do not replace an existing package manager field.
+		// Do not replace an existing package manager field, regardless of its value type.
 		'{"packageManager": "npm@10.0.0", "engines": {"npm": ">=10"}}',
+		'{"packageManager": true, "engines": {"npm": ">=10"}}',
 		// Ranges without a lower bound cannot be safely pinned.
 		'{"engines": {"npm": "<11"}}',
 		// Compound ranges use their lowest semver version.
