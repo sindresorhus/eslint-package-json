@@ -16,13 +16,15 @@ test.snapshot({
 		'{"exports": {"import": "./index.js", "default": "./index.js"}}',
 		'{"exports": {"./browser": "./browser.js"}}',
 		'{"imports": {"#module": "./module.js"}}',
+		'{"exports": {"module2": "./index.js", "browserify": "./browser.js"}}',
+		'{"exports": "./index.js", "imports": {"#feature": {"module2": "./module.js", "browserify": "./browser.js"}}}',
 		'{"exports": "./index.js", "module": "./module.js", "browser": "./browser.js"}',
 		// An existing field is out of scope, regardless of its value.
 		'{"module": "./index.js", "sideEffects": false}',
-		'{"browser": "./browser.js", "sideEffects": true}',
+		'{"exports": {"browser": "./browser.js"}, "sideEffects": true}',
 		'{"exports": {"module": "./index.js"}, "sideEffects": ["*.css"]}',
 		'{"exports": "./index.js", "imports": {"#feature": {"module": "./module.js"}}, "sideEffects": false}',
-		'{"module": "./index.js", "sideEffects": "false"}',
+		'{"exports": {"module": "./index.js"}, "sideEffects": "false"}',
 	],
 	invalid: [
 		// Nested conditions in `exports` and `imports`.
