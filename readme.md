@@ -122,7 +122,7 @@ export default [
 | [no-workspace-protocol-in-published-package](docs/rules/no-workspace-protocol-in-published-package.md) | Disallow `workspace:` dependency specifiers in packages that can be published.            | ✅  |    |    |
 | [peer-dependencies-as-dev-dependencies](docs/rules/peer-dependencies-as-dev-dependencies.md)           | Enforce peer dependencies to also be listed in `devDependencies` at a compatible version. | ✅  |    | 💡 |
 | [prefer-engines-range](docs/rules/prefer-engines-range.md)                                             | Prefer open-ended `>=` ranges in the `engines` field.                                     | ✅  |    | 💡 |
-| [prefer-exports](docs/rules/prefer-exports.md)                                                         | Prefer the `exports` field over legacy entry-point fields.                                | ✅  |    |    |
+| [prefer-exports](docs/rules/prefer-exports.md)                                                         | Prefer an `exports`-first package interface.                                              | ✅  |    |    |
 | [prefer-files-field](docs/rules/prefer-files-field.md)                                                 | Require a `files` allowlist.                                                              | ✅  |    |    |
 | [prefer-https-urls](docs/rules/prefer-https-urls.md)                                                   | Prefer `https://` URLs in metadata fields.                                                | ✅  | 🔧 |    |
 | [prefer-provenance](docs/rules/prefer-provenance.md)                                                   | Enforce npm provenance via `publishConfig.provenance`.                                    |    |    | 💡 |

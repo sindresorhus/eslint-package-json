@@ -3,10 +3,10 @@ import {getRootObject, findMember} from './utils/index.js';
 const MESSAGE_ID = 'prefer-exports';
 
 const messages = {
-	[MESSAGE_ID]: 'Define entry points through the `exports` field instead of `{{field}}`.',
+	[MESSAGE_ID]: 'Prefer an `exports`-first package interface instead of `{{field}}`.',
 };
 
-// Legacy entry-point fields that `exports` (with its conditions) supersedes. A top-level `types`/`typings` is silently ignored by modern TypeScript module resolution once `exports` is present, so those belong inside an `exports` `types` condition too.
+// Fields this opinionated rule reports to enforce an `exports`-first package interface.
 const legacyFields = [
 	'main',
 	'module',
@@ -44,7 +44,7 @@ const config = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			description: 'Prefer the `exports` field over legacy entry-point fields.',
+			description: 'Prefer an `exports`-first package interface.',
 			recommended: true,
 		},
 		schema: [],
