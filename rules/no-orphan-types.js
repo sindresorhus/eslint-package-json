@@ -18,11 +18,11 @@ const messages = {
 const defaultIgnore = ['@types/node', '@types/bun'];
 
 /**
-Map an `@types/*` package name to the runtime package it provides types for.
+Get the runtime package name for an `@types/*` package.
 
 `@types/foo` → `foo`; `@types/foo__bar` → `@foo/bar` (the scoped-types convention).
 */
-const typesTarget = name => {
+const getTypesTarget = name => {
 	const subject = name.slice('@types/'.length);
 
 	return subject.includes('__') ? '@' + subject.replace('__', '/') : subject;
@@ -56,7 +56,7 @@ const create = context => {
 			}
 
 			for (const {member, name} of typeEntries) {
-				const target = typesTarget(name);
+				const target = getTypesTarget(name);
 
 				if (ignore.has(name) || ignore.has(target)) {
 					continue;
