@@ -1,0 +1,172 @@
+exports[`invalid(1): {\"bin\": \"invalid.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "invalid.js"}
+
+`;
+
+exports[`invalid(1): {\"bin\": \"invalid.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "invalid.js"}
+    |         ^^^^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(10): {\"bin\": \"invalid.cjs\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "invalid.cjs"}
+
+`;
+
+exports[`invalid(10): {\"bin\": \"invalid.cjs\"} 2`] = `
+
+Message:
+> 1 | {"bin": "invalid.cjs"}
+    |         ^^^^^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(11): {\"bin\": \"invalid.mjs\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "invalid.mjs"}
+
+`;
+
+exports[`invalid(11): {\"bin\": \"invalid.mjs\"} 2`] = `
+
+Message:
+> 1 | {"bin": "invalid.mjs"}
+    |         ^^^^^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(2): {\"bin\": \"wrong-shebang.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "wrong-shebang.js"}
+
+`;
+
+exports[`invalid(2): {\"bin\": \"wrong-shebang.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "wrong-shebang.js"}
+    |         ^^^^^^^^^^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(3): {\"bin\": \"wrong-interpreter.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "wrong-interpreter.js"}
+
+`;
+
+exports[`invalid(3): {\"bin\": \"wrong-interpreter.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "wrong-interpreter.js"}
+    |         ^^^^^^^^^^^^^^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(4): {\"bin\": \"crlf.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "crlf.js"}
+
+`;
+
+exports[`invalid(4): {\"bin\": \"crlf.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "crlf.js"}
+    |         ^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(5): {\"bin\": \"bom.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "bom.js"}
+
+`;
+
+exports[`invalid(5): {\"bin\": \"bom.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "bom.js"}
+    |         ^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(6): {\"bin\": \"invalid-no-newline.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "invalid-no-newline.js"}
+
+`;
+
+exports[`invalid(6): {\"bin\": \"invalid-no-newline.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "invalid-no-newline.js"}
+    |         ^^^^^^^^^^^^^^^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(7): {\"bin\": {\"foo\": \"invalid.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": {"foo": "invalid.js"}}
+
+`;
+
+exports[`invalid(7): {\"bin\": {\"foo\": \"invalid.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "invalid.js"}}
+    |                 ^^^^^^^^^^^^ The \`bin\` file for \`foo\` must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(8): {\"bin\": {\"foo\": \"invalid.js\", \"bar\": \"wrong-shebang.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": {"foo": "invalid.js", "bar": "wrong-shebang.js"}}
+
+`;
+
+exports[`invalid(8): {\"bin\": {\"foo\": \"invalid.js\", \"bar\": \"wrong-shebang.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "invalid.js", "bar": "wrong-shebang.js"}}
+    |                 ^^^^^^^^^^^^ The \`bin\` file for \`foo\` must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(8): {\"bin\": {\"foo\": \"invalid.js\", \"bar\": \"wrong-shebang.js\"}} 3`] = `
+
+Message:
+> 1 | {"bin": {"foo": "invalid.js", "bar": "wrong-shebang.js"}}
+    |                                      ^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`bar\` must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(9): {\"bin\": \"inside.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "inside.js"}
+
+`;
+
+exports[`invalid(9): {\"bin\": \"inside.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "inside.js"}
+    |         ^^^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;

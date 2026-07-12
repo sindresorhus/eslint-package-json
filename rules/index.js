@@ -40,6 +40,7 @@ export {default as 'prefer-https-urls'} from './prefer-https-urls.js';
 export {default as 'prefer-provenance'} from './prefer-provenance.js';
 export {default as 'prefer-shorthand'} from './prefer-shorthand.js';
 export {default as 'prefer-type-module'} from './prefer-type-module.js';
+export {default as 'require-bin-shebang'} from './require-bin-shebang.js';
 export {default as 'require-default-condition'} from './require-default-condition.js';
 export {default as 'require-engines'} from './require-engines.js';
 export {default as 'require-entry-point'} from './require-entry-point.js';

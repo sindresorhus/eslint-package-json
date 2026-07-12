@@ -128,6 +128,7 @@ export default [
 | [prefer-provenance](docs/rules/prefer-provenance.md)                                                   | Enforce npm provenance via `publishConfig.provenance`.                                    |    |    | 💡 |
 | [prefer-shorthand](docs/rules/prefer-shorthand.md)                                                     | Prefer the shorthand string form of fields where possible.                                | ✅  | 🔧 |    |
 | [prefer-type-module](docs/rules/prefer-type-module.md)                                                 | Enforce the `type` field to be `module`.                                                  | ✅  |    | 💡 |
+| [require-bin-shebang](docs/rules/require-bin-shebang.md)                                               | Require `bin` files to start with a Node.js shebang.                                      | ✅  |    |    |
 | [require-default-condition](docs/rules/require-default-condition.md)                                   | Require a `default` entry in `exports`/`imports` conditions objects.                      | ✅  |    |    |
 | [require-engines](docs/rules/require-engines.md)                                                       | Require the `engines.node` field.                                                         | ✅  |    |    |
 | [require-entry-point](docs/rules/require-entry-point.md)                                               | Require an entry point field.                                                             | ✅  |    |    |
