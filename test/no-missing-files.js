@@ -36,6 +36,7 @@ test.snapshot({
 		'{"files": ["{rules,docs/rules}/*.md"]}',
 		'{"files": ["rules/@(no-missing-files|sort-files).js"]}',
 		'{"files": ["rules"]}',
+		'{"files": ["./"]}',
 		'{"files": ["./../missing", "foo/../../missing"]}',
 		{
 			code: '{"exports": "./no-missing-files.js", "files": ["no-missing-files.js"]}',

@@ -16,10 +16,10 @@ const messages = {
 };
 
 const windowsAbsolutePathPattern = /^[a-z]:[/\\]/iu;
-const extglobPattern = /[!+@]\(/u;
+const atExtglobPattern = /@\(/u;
 const invalidExportTargetPattern = /(?:^|\/)(?:\.{1,2}|node_modules)(?:\/|$)|%2e|%2f|%5c|(?:^|\/)%6eode_modules(?:\/|$)/iu;
 
-const isGlobPattern = value => hasGlob(value) || extglobPattern.test(value);
+const isGlobPattern = value => hasGlob(value) || atExtglobPattern.test(value);
 
 /**
 Check whether a relative path is safe to resolve inside the package directory.
@@ -34,7 +34,11 @@ Check whether a literal relative path exists with the exact casing used in the p
 const hasExactPath = (packageDirectory, value, requiresFile) => {
 	const relativePath = value.slice(2);
 
-	if (!relativePath || !isSafePackagePath(relativePath)) {
+	if (!relativePath) {
+		return !requiresFile;
+	}
+
+	if (!isSafePackagePath(relativePath)) {
 		return false;
 	}
 
