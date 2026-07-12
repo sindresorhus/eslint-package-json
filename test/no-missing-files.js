@@ -37,6 +37,8 @@ test.snapshot({
 		'{"files": ["rules/@(no-missing-files|sort-files).js"]}',
 		'{"files": ["rules"]}',
 		'{"files": ["./"]}',
+		'{"files": [".//missing", "./C:/missing"]}',
+		'{"files": ["{missing,/tmp}/*"]}',
 		'{"files": ["./../missing", "foo/../../missing"]}',
 		{
 			code: '{"exports": "./no-missing-files.js", "files": ["no-missing-files.js"]}',
@@ -58,6 +60,7 @@ test.snapshot({
 		'{"exports": {"./rules/*": "./missing/*.js"}}',
 		'{"exports": {"./rules/*": "./rules/*.JS"}}',
 		'{"exports": {"./rules/*": "./rules/{no-missing-files,no-redundant-files}.js"}}',
+		'{"exports": {"./*": "./{missing,/tmp}/*.js"}}',
 		'{"exports": {"./*": "./*/package.json"}}',
 		'{"exports": ["./missing.js", "./also-missing.js"]}',
 		'{"exports": [{"import": "./missing-import.js"}, {"default": "./also-missing.js"}]}',
@@ -69,5 +72,6 @@ test.snapshot({
 		'{"files": ["missing/*.js"]}',
 		'{"files": ["rules/*.JS"]}',
 		'{"files": ["index.js", "missing"]}',
+		'{"files": ["missing{,/also-missing}"]}',
 	],
 });

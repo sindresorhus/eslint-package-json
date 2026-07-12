@@ -12,7 +12,7 @@ The rule checks the filesystem when ESLint runs. Generated output such as `dist`
 
 For `exports`, conditional branches are checked independently. Export arrays are treated as fallbacks and are valid when at least one candidate exists. Node's `*` target patterns use string replacement semantics, so `*` can match nested path segments. They only need to match at least one file because the complete set of possible subpaths cannot be determined statically. Other glob characters are treated as literal target characters. Directory targets are not considered valid export targets.
 
-For `files`, positive paths and Node glob patterns must match a file or directory. Negated patterns are exclusions and are ignored by this rule. The check only verifies matches under the package root. It does not reproduce npm's complete packlist behavior, so use `npm pack --dry-run` to verify the final package contents.
+For `files`, positive paths and glob patterns must match a file or directory. Negated patterns are exclusions and are ignored by this rule. The check only verifies matches under the package root. It does not reproduce npm's complete packlist behavior, so use `npm pack --dry-run` to verify the final package contents.
 
 This rule focuses on existence, not path syntax. Malformed values are ignored rather than reported as missing. It intentionally does not check legacy fields such as `main`, `module`, `browser`, `types`, `typings`, `es2015`, `jsnext:main`, `bin`, `man`, or `directories`. It also does not check `imports` or custom metadata fields.
 

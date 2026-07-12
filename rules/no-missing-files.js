@@ -17,6 +17,7 @@ const messages = {
 
 const windowsAbsolutePathPattern = /^[a-z]:[/\\]/iu;
 const atExtglobPattern = /@\(/u;
+const absolutePathPattern = /^(?:\/|[a-z]:[/\\])/iu;
 const invalidExportTargetPattern = /(?:^|\/)(?:\.{1,2}|node_modules)(?:\/|$)|%2e|%2f|%5c|(?:^|\/)%6eode_modules(?:\/|$)/iu;
 
 const isGlobPattern = value => hasGlob(value) || atExtglobPattern.test(value);
@@ -24,7 +25,8 @@ const isGlobPattern = value => hasGlob(value) || atExtglobPattern.test(value);
 /**
 Check whether a relative path is safe to resolve inside the package directory.
 */
-const isSafePackagePath = value => !value.includes('\0')
+const isSafePackagePath = value => !value.startsWith('/')
+	&& !value.includes('\0')
 	&& !value.includes('\\')
 	&& !value.split('/').includes('..');
 
@@ -229,6 +231,13 @@ const expandAtExtglobPatterns = pattern => {
 };
 
 /**
+Check whether a glob pattern cannot expand to an absolute path.
+*/
+const isSafeGlobPattern = pattern => expandBracePatterns(pattern)
+	.flatMap(pattern => expandAtExtglobPatterns(pattern))
+	.every(pattern => !absolutePathPattern.test(pattern));
+
+/**
 Match one character-class segment of a glob pattern.
 */
 const matchCharacterClass = ({valueSegment, patternSegment, valueIndex, patternIndex, match}) => {
@@ -358,6 +367,10 @@ const getDotFilePattern = pattern => pattern.split('/').map(segment =>
 Check whether a filesystem glob has an exact-case match.
 */
 const hasMatchingGlob = (packageDirectory, pattern, requiresFile) => {
+	if (!isSafeGlobPattern(pattern)) {
+		return false;
+	}
+
 	try {
 		return fs.globSync(getDotFilePattern(pattern), {
 			cwd: packageDirectory,
@@ -425,8 +438,14 @@ const hasMatchingExportTarget = (packageDirectory, value) => {
 		return hasExactPath(packageDirectory, value, true);
 	}
 
+	const scanPattern = getExportScanPattern(pattern);
+
+	if (!isSafeGlobPattern(scanPattern)) {
+		return false;
+	}
+
 	try {
-		return fs.globSync(getDotFilePattern(getExportScanPattern(pattern)), {
+		return fs.globSync(getDotFilePattern(scanPattern), {
 			cwd: packageDirectory,
 		}).some(match => {
 			const relativePath = match.replaceAll(path.sep, '/');
@@ -584,7 +603,9 @@ const create = context => ({
 				|| value.startsWith('!')
 				|| value.startsWith('/')
 				|| windowsAbsolutePathPattern.test(value)
+				|| windowsAbsolutePathPattern.test(relativePath)
 				|| !isSafePackagePath(relativePath)
+				|| (isGlobPattern(value) && !isSafeGlobPattern(relativePath))
 			) {
 				continue;
 			}
