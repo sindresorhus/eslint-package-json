@@ -86,61 +86,62 @@ export default [
 🔧 Automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/user-guide/command-line-interface#--fix).\
 💡 Manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions).
 
-| Name                                                                                         | Description                                                                               | 💼 | 🔧 | 💡 |
-| :------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- | :- | :- | :- |
-| [consistent-name-casing](docs/rules/consistent-name-casing.md)                               | Enforce kebab-case for keys in `scripts` and `bin` objects.                               |    |    |    |
-| [consistent-path-prefix](docs/rules/consistent-path-prefix.md)                               | Enforce consistent `./` prefix on local path fields.                                      | ✅  | 🔧 |    |
-| [dependency-version-range](docs/rules/dependency-version-range.md)                           | Enforce a consistent version range style for dependencies.                                | ✅  |    | 💡 |
-| [description-format](docs/rules/description-format.md)                                       | Enforce formatting of the `description` field.                                            |    | 🔧 |    |
-| [no-absolute-paths](docs/rules/no-absolute-paths.md)                                         | Disallow absolute paths in path fields.                                                   | ✅  |    |    |
-| [no-backslash-paths](docs/rules/no-backslash-paths.md)                                       | Enforce forward slashes in path fields.                                                   | ✅  | 🔧 |    |
-| [no-core-module-dependencies](docs/rules/no-core-module-dependencies.md)                     | Disallow dependencies that shadow Node.js built-in modules.                               | ✅  |    | 💡 |
-| [no-deprecated-fields](docs/rules/no-deprecated-fields.md)                                   | Disallow fields and scripts that npm has deprecated.                                      | ✅  |    |    |
-| [no-dist-tag-dependencies](docs/rules/no-dist-tag-dependencies.md)                           | Disallow dist-tags as dependency specifiers.                                              | ✅  |    |    |
-| [no-duplicate-dependencies](docs/rules/no-duplicate-dependencies.md)                         | Disallow a dependency listed in multiple dependency groups.                               | ✅  | 🔧 |    |
-| [no-empty-fields](docs/rules/no-empty-fields.md)                                             | Disallow empty fields.                                                                    | ✅  |    | 💡 |
-| [no-exact-peer-dependencies](docs/rules/no-exact-peer-dependencies.md)                       | Disallow exact versions for peer dependencies.                                            |    |    | 💡 |
-| [no-exports-trailing-slash](docs/rules/no-exports-trailing-slash.md)                         | Disallow deprecated trailing-slash folder mappings in `exports`/`imports`.                | ✅  | 🔧 |    |
-| [no-git-dependencies](docs/rules/no-git-dependencies.md)                                     | Disallow git URLs as dependency specifiers.                                               |    |    |    |
-| [no-http-dependencies](docs/rules/no-http-dependencies.md)                                   | Disallow HTTP URLs as dependency specifiers.                                              | ✅  |    |    |
-| [no-install-scripts](docs/rules/no-install-scripts.md)                                       | Disallow `install` lifecycle scripts.                                                     | ✅  |    | 💡 |
-| [no-invalid-direct-overrides](docs/rules/no-invalid-direct-overrides.md)                     | Disallow npm overrides that conflict with direct dependencies.                            | ✅  | 🔧 |    |
-| [no-local-dependencies](docs/rules/no-local-dependencies.md)                                 | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
-| [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                 | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
-| [no-orphan-script-hooks](docs/rules/no-orphan-script-hooks.md)                               | Disallow `pre`/`post` script hooks without a corresponding script.                        | ✅  |    |    |
-| [no-orphan-types](docs/rules/no-orphan-types.md)                                             | Disallow `@types/*` packages without a corresponding dependency.                          | ✅  |    | 💡 |
-| [no-overrides-in-published-package](docs/rules/no-overrides-in-published-package.md)         | Disallow `overrides` in packages that can be published.                                   | ✅  |    | 💡 |
-| [no-package-manager-engines](docs/rules/no-package-manager-engines.md)                       | Disallow package manager versions in the `engines` field.                                 | ✅  |    | 💡 |
-| [no-pre-release-dependencies](docs/rules/no-pre-release-dependencies.md)                     | Disallow pre-release versions as dependency specifiers.                                   |    |    |    |
-| [no-redundant-files](docs/rules/no-redundant-files.md)                                       | Disallow redundant entries in the `files` field.                                          | ✅  | 🔧 |    |
-| [no-redundant-repository-fields](docs/rules/no-redundant-repository-fields.md)               | Disallow `bugs`/`homepage` values that duplicate what npm infers from `repository`.       |    | 🔧 |    |
-| [no-restricted-dependencies](docs/rules/no-restricted-dependencies.md)                       | Disallow specific dependencies.                                                           |    |    |    |
-| [no-restricted-fields](docs/rules/no-restricted-fields.md)                                   | Disallow specific fields.                                                                 |    |    | 💡 |
-| [no-self-dependency](docs/rules/no-self-dependency.md)                                       | Disallow a package depending on itself.                                                   | ✅  |    | 💡 |
-| [no-typo-fields](docs/rules/no-typo-fields.md)                                               | Disallow misspelled package.json field names.                                             | ✅  | 🔧 |    |
-| [no-wildcard-dependencies](docs/rules/no-wildcard-dependencies.md)                           | Disallow wildcard version ranges for dependencies.                                        | ✅  |    |    |
-| [peer-dependencies-as-dev-dependencies](docs/rules/peer-dependencies-as-dev-dependencies.md) | Enforce peer dependencies to also be listed in `devDependencies` at a compatible version. | ✅  |    | 💡 |
-| [prefer-engines-range](docs/rules/prefer-engines-range.md)                                   | Prefer open-ended `>=` ranges in the `engines` field.                                     | ✅  |    | 💡 |
-| [prefer-exports](docs/rules/prefer-exports.md)                                               | Prefer the `exports` field over legacy entry-point fields.                                | ✅  |    |    |
-| [prefer-files-field](docs/rules/prefer-files-field.md)                                       | Require a `files` allowlist.                                                              | ✅  |    |    |
-| [prefer-https-urls](docs/rules/prefer-https-urls.md)                                         | Prefer `https://` URLs in metadata fields.                                                | ✅  | 🔧 |    |
-| [prefer-provenance](docs/rules/prefer-provenance.md)                                         | Enforce npm provenance via `publishConfig.provenance`.                                    |    |    | 💡 |
-| [prefer-shorthand](docs/rules/prefer-shorthand.md)                                           | Prefer the shorthand string form of fields where possible.                                | ✅  | 🔧 |    |
-| [prefer-type-module](docs/rules/prefer-type-module.md)                                       | Enforce the `type` field to be `module`.                                                  | ✅  |    | 💡 |
-| [require-default-condition](docs/rules/require-default-condition.md)                         | Require a `default` entry in `exports`/`imports` conditions objects.                      | ✅  |    |    |
-| [require-engines](docs/rules/require-engines.md)                                             | Require the `engines.node` field.                                                         | ✅  |    |    |
-| [require-entry-point](docs/rules/require-entry-point.md)                                     | Require an entry point field.                                                             | ✅  |    |    |
-| [require-exports-root](docs/rules/require-exports-root.md)                                   | Require a `.` root entry in the `exports` field.                                          |    |    |    |
-| [require-fields](docs/rules/require-fields.md)                                               | Require specific fields to be present, always or only for published packages.             | ✅  |    |    |
-| [require-private-when-workspaces](docs/rules/require-private-when-workspaces.md)             | Require `private` when `workspaces` is set.                                               | ✅  |    | 💡 |
-| [require-types-in-exports](docs/rules/require-types-in-exports.md)                           | Enforce that types are exposed through the `exports` field.                               | ✅  |    |    |
-| [restrict-fields-when-private](docs/rules/restrict-fields-when-private.md)                   | Disallow fields that have no effect when the package is private.                          |    |    | 💡 |
-| [sort-dependencies](docs/rules/sort-dependencies.md)                                         | Enforce alphabetical ordering of dependencies.                                            | ✅  | 🔧 |    |
-| [sort-files](docs/rules/sort-files.md)                                                       | Enforce a canonical order for entries in the `files` field.                               | ✅  | 🔧 |    |
-| [sort-properties](docs/rules/sort-properties.md)                                             | Enforce a canonical order for top-level package.json fields.                              | ✅  | 🔧 |    |
-| [sort-scripts](docs/rules/sort-scripts.md)                                                   | Enforce alphabetical ordering of scripts.                                                 |    | 🔧 |    |
-| [types-in-dev-dependencies](docs/rules/types-in-dev-dependencies.md)                         | Enforce `@types/*` packages to be in `devDependencies`.                                   |    |    | 💡 |
-| [valid-fields](docs/rules/valid-fields.md)                                                   | Enforce valid values for package.json fields.                                             | ✅  | 🔧 | 💡 |
+| Name                                                                                                   | Description                                                                               | 💼 | 🔧 | 💡 |
+| :----------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- | :- | :- | :- |
+| [consistent-name-casing](docs/rules/consistent-name-casing.md)                                         | Enforce kebab-case for keys in `scripts` and `bin` objects.                               |    |    |    |
+| [consistent-path-prefix](docs/rules/consistent-path-prefix.md)                                         | Enforce consistent `./` prefix on local path fields.                                      | ✅  | 🔧 |    |
+| [dependency-version-range](docs/rules/dependency-version-range.md)                                     | Enforce a consistent version range style for dependencies.                                | ✅  |    | 💡 |
+| [description-format](docs/rules/description-format.md)                                                 | Enforce formatting of the `description` field.                                            |    | 🔧 |    |
+| [no-absolute-paths](docs/rules/no-absolute-paths.md)                                                   | Disallow absolute paths in path fields.                                                   | ✅  |    |    |
+| [no-backslash-paths](docs/rules/no-backslash-paths.md)                                                 | Enforce forward slashes in path fields.                                                   | ✅  | 🔧 |    |
+| [no-core-module-dependencies](docs/rules/no-core-module-dependencies.md)                               | Disallow dependencies that shadow Node.js built-in modules.                               | ✅  |    | 💡 |
+| [no-deprecated-fields](docs/rules/no-deprecated-fields.md)                                             | Disallow fields and scripts that npm has deprecated.                                      | ✅  |    |    |
+| [no-dist-tag-dependencies](docs/rules/no-dist-tag-dependencies.md)                                     | Disallow dist-tags as dependency specifiers.                                              | ✅  |    |    |
+| [no-duplicate-dependencies](docs/rules/no-duplicate-dependencies.md)                                   | Disallow a dependency listed in multiple dependency groups.                               | ✅  | 🔧 |    |
+| [no-empty-fields](docs/rules/no-empty-fields.md)                                                       | Disallow empty fields.                                                                    | ✅  |    | 💡 |
+| [no-exact-peer-dependencies](docs/rules/no-exact-peer-dependencies.md)                                 | Disallow exact versions for peer dependencies.                                            |    |    | 💡 |
+| [no-exports-trailing-slash](docs/rules/no-exports-trailing-slash.md)                                   | Disallow deprecated trailing-slash folder mappings in `exports`/`imports`.                | ✅  | 🔧 |    |
+| [no-git-dependencies](docs/rules/no-git-dependencies.md)                                               | Disallow git URLs as dependency specifiers.                                               |    |    |    |
+| [no-http-dependencies](docs/rules/no-http-dependencies.md)                                             | Disallow HTTP URLs as dependency specifiers.                                              | ✅  |    |    |
+| [no-install-scripts](docs/rules/no-install-scripts.md)                                                 | Disallow `install` lifecycle scripts.                                                     | ✅  |    | 💡 |
+| [no-invalid-direct-overrides](docs/rules/no-invalid-direct-overrides.md)                               | Disallow npm overrides that conflict with direct dependencies.                            | ✅  | 🔧 |    |
+| [no-local-dependencies](docs/rules/no-local-dependencies.md)                                           | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
+| [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                           | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
+| [no-orphan-script-hooks](docs/rules/no-orphan-script-hooks.md)                                         | Disallow `pre`/`post` script hooks without a corresponding script.                        | ✅  |    |    |
+| [no-orphan-types](docs/rules/no-orphan-types.md)                                                       | Disallow `@types/*` packages without a corresponding dependency.                          | ✅  |    | 💡 |
+| [no-overrides-in-published-package](docs/rules/no-overrides-in-published-package.md)                   | Disallow `overrides` in packages that can be published.                                   | ✅  |    | 💡 |
+| [no-package-manager-engines](docs/rules/no-package-manager-engines.md)                                 | Disallow package manager versions in the `engines` field.                                 | ✅  |    | 💡 |
+| [no-pre-release-dependencies](docs/rules/no-pre-release-dependencies.md)                               | Disallow pre-release versions as dependency specifiers.                                   |    |    |    |
+| [no-redundant-files](docs/rules/no-redundant-files.md)                                                 | Disallow redundant entries in the `files` field.                                          | ✅  | 🔧 |    |
+| [no-redundant-repository-fields](docs/rules/no-redundant-repository-fields.md)                         | Disallow `bugs`/`homepage` values that duplicate what npm infers from `repository`.       |    | 🔧 |    |
+| [no-restricted-dependencies](docs/rules/no-restricted-dependencies.md)                                 | Disallow specific dependencies.                                                           |    |    |    |
+| [no-restricted-fields](docs/rules/no-restricted-fields.md)                                             | Disallow specific fields.                                                                 |    |    | 💡 |
+| [no-self-dependency](docs/rules/no-self-dependency.md)                                                 | Disallow a package depending on itself.                                                   | ✅  |    | 💡 |
+| [no-typo-fields](docs/rules/no-typo-fields.md)                                                         | Disallow misspelled package.json field names.                                             | ✅  | 🔧 |    |
+| [no-wildcard-dependencies](docs/rules/no-wildcard-dependencies.md)                                     | Disallow wildcard version ranges for dependencies.                                        | ✅  |    |    |
+| [no-workspace-protocol-in-published-package](docs/rules/no-workspace-protocol-in-published-package.md) | Disallow `workspace:` dependency specifiers in packages that can be published.            | ✅  |    |    |
+| [peer-dependencies-as-dev-dependencies](docs/rules/peer-dependencies-as-dev-dependencies.md)           | Enforce peer dependencies to also be listed in `devDependencies` at a compatible version. | ✅  |    | 💡 |
+| [prefer-engines-range](docs/rules/prefer-engines-range.md)                                             | Prefer open-ended `>=` ranges in the `engines` field.                                     | ✅  |    | 💡 |
+| [prefer-exports](docs/rules/prefer-exports.md)                                                         | Prefer the `exports` field over legacy entry-point fields.                                | ✅  |    |    |
+| [prefer-files-field](docs/rules/prefer-files-field.md)                                                 | Require a `files` allowlist.                                                              | ✅  |    |    |
+| [prefer-https-urls](docs/rules/prefer-https-urls.md)                                                   | Prefer `https://` URLs in metadata fields.                                                | ✅  | 🔧 |    |
+| [prefer-provenance](docs/rules/prefer-provenance.md)                                                   | Enforce npm provenance via `publishConfig.provenance`.                                    |    |    | 💡 |
+| [prefer-shorthand](docs/rules/prefer-shorthand.md)                                                     | Prefer the shorthand string form of fields where possible.                                | ✅  | 🔧 |    |
+| [prefer-type-module](docs/rules/prefer-type-module.md)                                                 | Enforce the `type` field to be `module`.                                                  | ✅  |    | 💡 |
+| [require-default-condition](docs/rules/require-default-condition.md)                                   | Require a `default` entry in `exports`/`imports` conditions objects.                      | ✅  |    |    |
+| [require-engines](docs/rules/require-engines.md)                                                       | Require the `engines.node` field.                                                         | ✅  |    |    |
+| [require-entry-point](docs/rules/require-entry-point.md)                                               | Require an entry point field.                                                             | ✅  |    |    |
+| [require-exports-root](docs/rules/require-exports-root.md)                                             | Require a `.` root entry in the `exports` field.                                          |    |    |    |
+| [require-fields](docs/rules/require-fields.md)                                                         | Require specific fields to be present, always or only for published packages.             | ✅  |    |    |
+| [require-private-when-workspaces](docs/rules/require-private-when-workspaces.md)                       | Require `private` when `workspaces` is set.                                               | ✅  |    | 💡 |
+| [require-types-in-exports](docs/rules/require-types-in-exports.md)                                     | Enforce that types are exposed through the `exports` field.                               | ✅  |    |    |
+| [restrict-fields-when-private](docs/rules/restrict-fields-when-private.md)                             | Disallow fields that have no effect when the package is private.                          |    |    | 💡 |
+| [sort-dependencies](docs/rules/sort-dependencies.md)                                                   | Enforce alphabetical ordering of dependencies.                                            | ✅  | 🔧 |    |
+| [sort-files](docs/rules/sort-files.md)                                                                 | Enforce a canonical order for entries in the `files` field.                               | ✅  | 🔧 |    |
+| [sort-properties](docs/rules/sort-properties.md)                                                       | Enforce a canonical order for top-level package.json fields.                              | ✅  | 🔧 |    |
+| [sort-scripts](docs/rules/sort-scripts.md)                                                             | Enforce alphabetical ordering of scripts.                                                 |    | 🔧 |    |
+| [types-in-dev-dependencies](docs/rules/types-in-dev-dependencies.md)                                   | Enforce `@types/*` packages to be in `devDependencies`.                                   |    |    | 💡 |
+| [valid-fields](docs/rules/valid-fields.md)                                                             | Enforce valid values for package.json fields.                                             | ✅  | 🔧 | 💡 |
 
 <!-- end auto-generated rules list -->
 

@@ -111,10 +111,10 @@ export function getRootObject(document) {
 }
 
 /**
-Find a member by key in an object node, or `undefined`.
+Find the final member by key in an object node, matching JSON parsing semantics, or `undefined`.
 */
 export function findMember(objectNode, key) {
-	return objectNode?.members.find(member => getKey(member) === key);
+	return objectNode?.members.findLast(member => getKey(member) === key);
 }
 
 /**
@@ -126,7 +126,7 @@ export function isPrivatePackage(rootObject) {
 }
 
 /**
-Iterate every dependency entry across the given dependency groups that are present as objects.
+Iterate the effective dependency entries across the given dependency groups that are present as objects.
 
 Yields `{groupName, group, member, name}` where `group` is the group member (e.g. the `dependencies` member) and `member` is an individual `name: range` entry.
 */
@@ -134,9 +134,15 @@ export function * iterateDependencies(rootObject, types = dependencyTypes) {
 	for (const groupName of types) {
 		const group = findMember(rootObject, groupName);
 		if (group?.value.type === 'Object') {
+			const effectiveMembers = new Map();
+
 			for (const member of group.value.members) {
+				effectiveMembers.set(getKey(member), member);
+			}
+
+			for (const [name, member] of effectiveMembers) {
 				yield {
-					groupName, group, member, name: getKey(member),
+					groupName, group, member, name,
 				};
 			}
 		}
