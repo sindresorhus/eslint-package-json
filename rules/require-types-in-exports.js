@@ -8,20 +8,21 @@ const MESSAGE_ID_TYPES_VALUE = 'typesValue';
 
 const messages = {
 	[MESSAGE_ID_MISSING]: 'Exported JavaScript target `{{value}}` has no corresponding `types` condition.',
-	[MESSAGE_ID_TYPES_FIRST]: 'The `types` condition must be first in a conditions object.',
+	[MESSAGE_ID_TYPES_FIRST]: 'Type conditions must come before runtime conditions in a conditions object.',
 	[MESSAGE_ID_TYPES_EXTENSION]: 'The `types` condition `{{value}}` must point at a declaration file ending in `.d.ts`, `.d.mts`, or `.d.cts`.',
 	[MESSAGE_ID_MODULE_FORMAT]: 'Type declaration `{{types}}` uses {{actual}} format but its JavaScript target uses {{expected}} format.',
 	[MESSAGE_ID_TYPES_VALUE]: 'The `types` condition must point to a declaration file.',
 };
 
 const declarationPathPattern = /\.d\.(?:ts|mts|cts)$/u;
+const javascriptPathPattern = /\.(?:c|m)?js$/u;
 
 function isTypesCondition(key) {
 	return key === 'types' || key.startsWith('types@');
 }
 
 function isRuntimeTarget(value) {
-	return !declarationPathPattern.test(value);
+	return javascriptPathPattern.test(value);
 }
 
 function * iterateStringLeaves(node) {
@@ -50,14 +51,49 @@ function * iterateStringLeaves(node) {
 	}
 }
 
-function hasNonEmptyStringLeaf(node) {
-	for (const leaf of iterateStringLeaves(node)) {
-		if (leaf.value !== '') {
+function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
+	if (runtimeKey) {
+		const matchingMember = node.members.find(member => getKey(member) === runtimeKey);
+
+		if (matchingMember) {
+			return hasTypesCoverage(matchingMember.value, runtimeNode);
+		}
+	}
+
+	for (const member of node.members) {
+		const key = getKey(member);
+
+		if ((isTypesCondition(key) || key === 'default') && hasTypesCoverage(member.value, runtimeNode)) {
 			return true;
 		}
 	}
 
-	return false;
+	if (runtimeNode.type !== 'Object') {
+		return false;
+	}
+
+	const runtimeMembers = runtimeNode.members.filter(member => !isTypesCondition(getKey(member)));
+	return runtimeMembers.length > 0 && runtimeMembers.every(member => hasTypesCoverage(node, member.value, getKey(member)));
+}
+
+function hasTypesCoverage(node, runtimeNode, runtimeKey) {
+	switch (node.type) {
+		case 'String': {
+			return node.value !== '';
+		}
+
+		case 'Object': {
+			return hasObjectTypesCoverage(node, runtimeNode, runtimeKey);
+		}
+
+		case 'Array': {
+			return node.elements.some(element => hasTypesCoverage(element.value, runtimeNode, runtimeKey));
+		}
+
+		default: {
+			return false;
+		}
+	}
 }
 
 function * iterateRuntimeStringLeaves(node) {
@@ -85,6 +121,63 @@ function * iterateRuntimeStringLeaves(node) {
 		case 'Array': {
 			for (const element of node.elements) {
 				yield * iterateRuntimeStringLeaves(element.value);
+			}
+
+			break;
+		}
+	// No default
+	}
+}
+
+function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
+	switch (typeNode.type) {
+		case 'String': {
+			for (const runtimeTarget of iterateRuntimeStringLeaves(runtimeNode)) {
+				yield [typeNode, runtimeTarget];
+			}
+
+			break;
+		}
+
+		case 'Object': {
+			if (runtimeKey) {
+				const matchingMember = typeNode.members.find(member => getKey(member) === runtimeKey);
+
+				if (matchingMember) {
+					yield * iterateTypeRuntimePairs(matchingMember.value, runtimeNode);
+					return;
+				}
+
+				const fallbackMember = typeNode.members.find(member => getKey(member) === 'default');
+
+				if (fallbackMember) {
+					yield * iterateTypeRuntimePairs(fallbackMember.value, runtimeNode);
+				}
+
+				return;
+			}
+
+			const typesMember = typeNode.members.find(member => isTypesCondition(getKey(member)));
+
+			if (typesMember) {
+				yield * iterateTypeRuntimePairs(typesMember.value, runtimeNode);
+				return;
+			}
+
+			if (runtimeNode.type === 'Object') {
+				for (const runtimeMember of runtimeNode.members) {
+					if (!isTypesCondition(getKey(runtimeMember))) {
+						yield * iterateTypeRuntimePairs(typeNode, runtimeMember.value, getKey(runtimeMember));
+					}
+				}
+			}
+
+			break;
+		}
+
+		case 'Array': {
+			for (const element of typeNode.elements) {
+				yield * iterateTypeRuntimePairs(element.value, runtimeNode, runtimeKey);
 			}
 
 			break;
@@ -143,6 +236,37 @@ function getDeclarationFormat(value, packageType) {
 	return undefined;
 }
 
+function getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reportedFormats) {
+	const actual = getDeclarationFormat(typeTarget.value, packageType);
+
+	if (!actual) {
+		return;
+	}
+
+	const expected = getRuntimeFormat(runtimeTarget.value, packageType);
+
+	if (!expected || actual === expected) {
+		return;
+	}
+
+	const key = `${typeTarget.value}:${runtimeTarget.value}`;
+
+	if (reportedFormats.has(key)) {
+		return;
+	}
+
+	reportedFormats.add(key);
+	return {
+		node: typeTarget,
+		messageId: MESSAGE_ID_MODULE_FORMAT,
+		data: {
+			types: typeTarget.value,
+			actual,
+			expected,
+		},
+	};
+}
+
 function * checkTypesObject(objectNode, packageType) {
 	const typesMembers = objectNode.members.filter(member => isTypesCondition(getKey(member)));
 
@@ -150,7 +274,7 @@ function * checkTypesObject(objectNode, packageType) {
 		const index = objectNode.members.indexOf(member);
 		const typeTargets = [...iterateStringLeaves(member.value)];
 
-		if (index > 0) {
+		if (objectNode.members.slice(0, index).some(member => !isTypesCondition(getKey(member)))) {
 			yield {
 				node: member.name,
 				messageId: MESSAGE_ID_TYPES_FIRST,
@@ -175,35 +299,14 @@ function * checkTypesObject(objectNode, packageType) {
 		}
 	}
 
-	const typeTargets = typesMembers.flatMap(member => [...iterateStringLeaves(member.value)]);
-	const runtimeTargets = [...iterateRuntimeStringLeaves(objectNode)];
 	const reportedFormats = new Set();
 
-	for (const typeTarget of typeTargets) {
-		const actual = getDeclarationFormat(typeTarget.value, packageType);
+	for (const member of typesMembers) {
+		for (const [typeTarget, runtimeTarget] of iterateTypeRuntimePairs(member.value, objectNode)) {
+			const problem = getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reportedFormats);
 
-		if (!actual) {
-			continue;
-		}
-
-		for (const runtimeTarget of runtimeTargets) {
-			const expected = getRuntimeFormat(runtimeTarget.value, packageType);
-
-			if (expected && actual !== expected) {
-				const key = `${typeTarget.value}:${runtimeTarget.value}`;
-
-				if (!reportedFormats.has(key)) {
-					reportedFormats.add(key);
-					yield {
-						node: typeTarget,
-						messageId: MESSAGE_ID_MODULE_FORMAT,
-						data: {
-							types: typeTarget.value,
-							actual,
-							expected,
-						},
-					};
-				}
+			if (problem) {
+				yield problem;
 			}
 		}
 	}
@@ -212,10 +315,9 @@ function * checkTypesObject(objectNode, packageType) {
 function * checkNode(node, packageType, hasInheritedTypes = false) {
 	switch (node.type) {
 		case 'Object': {
-			const hasOwnTypes = node.members.some(member => isTypesCondition(getKey(member)) && hasNonEmptyStringLeaf(member.value));
-			const hasTypesCondition = node.members.some(member => isTypesCondition(getKey(member)));
+			const typesMembers = node.members.filter(member => isTypesCondition(getKey(member)));
 
-			if (hasTypesCondition) {
+			if (typesMembers.length > 0) {
 				yield * checkTypesObject(node, packageType);
 			}
 
@@ -224,6 +326,7 @@ function * checkNode(node, packageType, hasInheritedTypes = false) {
 					continue;
 				}
 
+				const hasOwnTypes = typesMembers.length > 0 && typesMembers.every(typesMember => hasTypesCoverage(typesMember.value, member.value, getKey(member)));
 				yield * checkNode(member.value, packageType, hasInheritedTypes || hasOwnTypes);
 			}
 

@@ -9,7 +9,7 @@
 
 When the `exports` field is present, TypeScript's `node16`/`nodenext` module resolution ignores the top-level `types`/`typings` field. Types must instead be exposed through a `types` condition inside `exports`, otherwise consumers using modern resolution will not find your type declarations.
 
-This rule checks type conditions when the package declares types through a top-level `types`/`typings` field or inside `exports`. It supports versioned conditions such as `types@>=5`, requires every type condition to be first, and requires each exported JavaScript branch to have corresponding type coverage.
+This rule checks type conditions when the package declares types through a top-level `types`/`typings` field or inside `exports`. It supports versioned conditions such as `types@>=5`, requires all type conditions to precede runtime conditions, and requires each known exported JavaScript branch to have corresponding type coverage.
 
 It also performs static checks that type targets use `.d.ts`, `.d.mts`, or `.d.cts`, and that those extensions agree with known `.mjs`, `.cjs`, and package-`type` formats. It does not check whether declaration files exist, are published, or contain matching declarations. Use package-aware tools for those checks.
 

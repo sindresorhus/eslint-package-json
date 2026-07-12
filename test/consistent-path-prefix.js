@@ -14,6 +14,8 @@ test.snapshot({
 		'{"bin": {"mycli": "./bin/cli.js"}}',
 		// Absolute paths are skipped.
 		'{"main": "/usr/local/bin/foo"}',
+		'{"main": "C:/foo/index.js"}',
+		String.raw`{"main": "C:\\foo\\index.js"}`,
 		// URLs are skipped.
 		'{"browser": "https://cdn.example.com/foo.js"}',
 		// Globs are skipped.

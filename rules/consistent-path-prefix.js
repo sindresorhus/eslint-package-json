@@ -16,6 +16,8 @@ const messages = {
 	[MESSAGE_ID_OUTSIDE_PACKAGE]: 'Path `{{value}}` must not escape the package with a `..` segment.',
 };
 
+const absolutePathPattern = /^(?:[/\\]|[a-z]:)/iu;
+
 /**
 Check if a string value looks like a local relative path (not a glob, not a URL, not absolute).
 */
@@ -24,7 +26,7 @@ const isLocalRelativePath = value => {
 		return false;
 	}
 
-	if (value.startsWith('/')) {
+	if (absolutePathPattern.test(value)) {
 		return false;
 	}
 

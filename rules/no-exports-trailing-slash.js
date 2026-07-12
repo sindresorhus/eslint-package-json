@@ -9,17 +9,21 @@ const messages = {
 /**
 Recursively walk an `exports`/`imports` value tree, yielding every trailing-slash subpath key and string value.
 */
-function * findTrailingSlashes(node, subpathPrefix) {
+function * findTrailingSlashes(node, subpathPrefix, canFixTarget = false) {
 	switch (node.type) {
 		case 'Object': {
 			for (const member of node.members) {
 				const key = getKey(member);
+				const isFolderMapping = key.startsWith(subpathPrefix)
+					&& key.endsWith('/')
+					&& member.value.type === 'String'
+					&& member.value.value.endsWith('/');
 
 				if (key.startsWith(subpathPrefix) && key.endsWith('/')) {
-					yield member.name;
+					yield {node: member.name, canFix: isFolderMapping};
 				}
 
-				yield * findTrailingSlashes(member.value, subpathPrefix);
+				yield * findTrailingSlashes(member.value, subpathPrefix, isFolderMapping);
 			}
 
 			break;
@@ -27,7 +31,7 @@ function * findTrailingSlashes(node, subpathPrefix) {
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * findTrailingSlashes(element.value, subpathPrefix);
+				yield * findTrailingSlashes(element.value, subpathPrefix, canFixTarget);
 			}
 
 			break;
@@ -35,7 +39,7 @@ function * findTrailingSlashes(node, subpathPrefix) {
 
 		case 'String': {
 			if (node.value.endsWith('/')) {
-				yield node;
+				yield {node, canFix: canFixTarget};
 			}
 
 			break;
@@ -61,15 +65,20 @@ const create = context => ({
 			}
 
 			for (const target of findTrailingSlashes(member.value, subpathPrefix)) {
-				const {value} = target;
+				const {node: targetNode, canFix} = target;
+				const {value} = targetNode;
 				const suggestion = value + '*';
-
-				context.report({
-					node: target,
+				const report = {
+					node: targetNode,
 					messageId: MESSAGE_ID,
 					data: {field, value, suggestion},
-					fix: fixer => fixer.replaceText(target, JSON.stringify(suggestion)),
-				});
+				};
+
+				if (canFix) {
+					report.fix = fixer => fixer.replaceText(targetNode, JSON.stringify(suggestion));
+				}
+
+				context.report(report);
 			}
 		}
 	},

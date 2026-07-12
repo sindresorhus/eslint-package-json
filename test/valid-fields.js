@@ -83,7 +83,7 @@ test.snapshot({
 		'{"main": "./index.js", "module": "./index.mjs", "types": "./index.d.ts", "typings": "./index.d.ts"}',
 		'{"browser": "./browser.js"}',
 		'{"browser": "../browser.js"}',
-		'{"browser": {"./server.js": "./browser.js", "./fs.js": false}}',
+		'{"browser": {"fs": "./browser.js", "./server.js": "./browser.js", "./fs.js": false}}',
 		'{"browser": {"../server.js": "./browser.js", "./server/../server.js": "./browser.js", "./server.js": "../browser.js", "./other.js": "./browser/../browser.js"}}',
 		// Empty string is handled by `no-empty-fields`.
 		'{"type": ""}',
@@ -142,6 +142,7 @@ test.snapshot({
 		'{"imports": {"#nested": "foo/node_modules/bar"}}',
 		'{"imports": {"#colon": "foo/bar:baz"}}',
 		'{"imports": {"#percent": "foo/%25"}}',
+		'{"imports": {"#scope": "@scope/package/subpath"}}',
 		// Correctly ordered conditions inside an entry.
 		'{"imports": {"#dep": {"types": "./dep.d.ts", "import": "./dep.mjs", "default": "./dep.js"}}}',
 		// An array fallback of plain targets.
@@ -429,6 +430,7 @@ test.snapshot({
 		'{"imports": {"#dep": "."}}',
 		'{"imports": {"#dep": "node:"}}',
 		'{"imports": {"#fs": "node:fs"}}',
+		'{"imports": {"#scope": "@scope"}}',
 		'{"imports": {"#percent": "foo/%"}}',
 		'{"imports": {"#percent": "foo/%zz"}}',
 		'{"imports": {"#percent": "foo/%2"}}',
