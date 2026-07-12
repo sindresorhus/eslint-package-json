@@ -131,7 +131,7 @@ const config = {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Require `bin` files to start with a Node.js shebang.',
+			description: 'Require `bin` files to start with the exact `#!/usr/bin/env node` shebang.',
 			recommended: true,
 		},
 		schema: [],
