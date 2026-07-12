@@ -18,6 +18,9 @@ test.snapshot({
 		'{"imports": {"#module": "./module.js"}}',
 		'{"exports": {"module2": "./index.js", "browserify": "./browser.js"}}',
 		'{"exports": "./index.js", "imports": {"#feature": {"module2": "./module.js", "browserify": "./browser.js"}}}',
+		// Duplicate keys use the final value, matching npm's JSON parsing.
+		'{"exports": {"./feature": {"module": "./module.js"}, "./feature": "./index.js"}}',
+		'{"exports": "./index.js", "imports": {"#feature": {"browser": "./browser.js"}, "#feature": "./feature.js"}}',
 		'{"exports": "./index.js", "module": "./module.js", "browser": "./browser.js"}',
 		// An existing field is out of scope, regardless of its value.
 		'{"module": "./index.js", "sideEffects": false}',

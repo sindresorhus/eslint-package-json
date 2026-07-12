@@ -23,7 +23,13 @@ const hasBundlerCondition = value => {
 		return false;
 	}
 
+	const effectiveMembers = new Map();
+
 	for (const member of value.members) {
+		effectiveMembers.set(getKey(member), member);
+	}
+
+	for (const member of effectiveMembers.values()) {
 		if (bundlerConditionNames.has(getKey(member)) || hasBundlerCondition(member.value)) {
 			return true;
 		}
