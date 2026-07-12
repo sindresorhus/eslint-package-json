@@ -20,7 +20,19 @@ This rule flags a `@types/*` package in `dependencies`/`devDependencies` that ha
 Type: `string[]`\
 Default: `[]`
 
-Additional `@types/*` package names to allow without a corresponding dependency. The built-in defaults (`@types/node`, `@types/bun`) are always ignored.
+Additional `@types/*` package names or corresponding runtime package names to allow without a corresponding dependency. For example, both `@types/foo` and `foo` ignore the `@types/foo` package. For scoped packages, both `@types/foo__bar` and `@foo/bar` are accepted. The built-in defaults (`@types/node`, `@types/bun`) are always ignored.
+
+```js
+'package-json/no-orphan-types': [
+	'error',
+	{
+		ignore: [
+			'chrome',
+			'react',
+		],
+	},
+]
+```
 
 ## Examples
 
