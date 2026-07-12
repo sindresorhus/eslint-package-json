@@ -223,6 +223,43 @@ export function validVersion(version) {
 }
 
 /**
+Check whether a package target contains a path segment that Node rejects after the initial `./`.
+*/
+const invalidPackageTargetSegments = new Set(['', '.', '..', 'node_modules']);
+
+export function hasInvalidPackageTargetSegment(value) {
+	if (!value.startsWith('./')) {
+		return false;
+	}
+
+	return value.slice(2).split(/[/\\]/u).some(segment => {
+		let decodedSegment;
+
+		try {
+			decodedSegment = decodeURIComponent(segment);
+		} catch {
+			return true;
+		}
+
+		return [segment, decodedSegment].some(candidate => invalidPackageTargetSegments.has(candidate.toLowerCase()))
+			|| decodedSegment.includes('/')
+			|| decodedSegment.includes('\\');
+	});
+}
+
+/**
+Check whether a string is an ECMAScript array index property key.
+*/
+export function isArrayIndexKey(value) {
+	if (value !== '0' && !/^[1-9]\d*$/u.test(value)) {
+		return false;
+	}
+
+	const number = Number(value);
+	return Number.isSafeInteger(number) && number < ((2 ** 32) - 1);
+}
+
+/**
 Check whether a string is a valid `http(s)` URL.
 */
 export function isHttpUrl(string) {
@@ -482,7 +519,7 @@ function * moveMemberFix(fixer, sourceCode, {member, anchor, position}) {
 /**
 Find ordering violations among the conditions of an `exports`/`imports` object: `types` should be first, `module` should precede `require`, and `default` must be last.
 */
-function getConditionOrderProblems(objectNode) {
+function getConditionOrderProblems(objectNode, {checkDefault = true, checkTypes = true} = {}) {
 	const {members} = objectNode;
 	const problems = [];
 
@@ -494,7 +531,7 @@ function getConditionOrderProblems(objectNode) {
 
 	const defaultIndex = indexOf('default');
 
-	if (defaultIndex !== -1 && defaultIndex !== members.length - 1) {
+	if (checkDefault && defaultIndex !== -1 && defaultIndex !== members.length - 1) {
 		const lastOther = members.findLast(member => getKey(member) !== 'default');
 		problems.push({
 			kind: 'defaultLast', member: members[defaultIndex], anchor: lastOther, position: 'after',
@@ -503,7 +540,7 @@ function getConditionOrderProblems(objectNode) {
 
 	const typesIndex = indexOf('types');
 
-	if (typesIndex > 0) {
+	if (checkTypes && typesIndex > 0) {
 		problems.push({
 			kind: 'typesFirst', member: members[typesIndex], anchor: members[0], position: 'before',
 		});
@@ -543,8 +580,8 @@ export const conditionOrderMessages = {
 /**
 Yield reports (with reordering suggestions) for condition-ordering problems in an `exports`/`imports` object.
 */
-export function * checkConditionOrder(sourceCode, objectNode) {
-	for (const problem of getConditionOrderProblems(objectNode)) {
+export function * checkConditionOrder(sourceCode, objectNode, options = {}) {
+	for (const problem of getConditionOrderProblems(objectNode, options)) {
 		const {messageId, suggestionId} = conditionOrderIds[problem.kind];
 
 		yield {

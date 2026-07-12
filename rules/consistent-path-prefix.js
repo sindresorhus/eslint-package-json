@@ -8,10 +8,12 @@ import {
 
 const MESSAGE_ID_MISSING = 'missing';
 const MESSAGE_ID_EXTRA = 'extra';
+const MESSAGE_ID_OUTSIDE_PACKAGE = 'outsidePackage';
 
 const messages = {
 	[MESSAGE_ID_MISSING]: 'Path `{{value}}` should start with `./`.',
 	[MESSAGE_ID_EXTRA]: 'Path `{{value}}` should not start with `./`.',
+	[MESSAGE_ID_OUTSIDE_PACKAGE]: 'Path `{{value}}` must not escape the package with a `..` segment.',
 };
 
 /**
@@ -48,6 +50,15 @@ const create = context => {
 		const {value} = valueNode;
 
 		if (!isLocalRelativePath(value)) {
+			return;
+		}
+
+		if (value.split('/').includes('..')) {
+			context.report({
+				node: valueNode,
+				messageId: MESSAGE_ID_OUTSIDE_PACKAGE,
+				data: {value},
+			});
 			return;
 		}
 

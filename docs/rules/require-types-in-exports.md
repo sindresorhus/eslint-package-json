@@ -1,15 +1,20 @@
 # require-types-in-exports
 
-📝 Enforce that types are exposed through the `exports` field.
+📝 Require correctly ordered and module-compatible types in `exports`.
 
 💼 This rule is enabled in the ✅ `recommended` [config](https://github.com/sindresorhus/eslint-package-json#configs).
 
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-When TypeScript resolves a package through `exports`, its `node16`, `nodenext`, and `bundler` module resolution modes ignore the top-level `types`/`typings` field. TypeScript can infer a declaration file from a JavaScript export target through extension substitution, but a `types` condition declares the package's type entry point explicitly.
+When the `exports` field is present, TypeScript's `node16`/`nodenext` module resolution ignores the top-level `types`/`typings` field. Types must instead be exposed through a `types` condition inside `exports`, otherwise consumers using modern resolution will not find your type declarations.
 
-This rule reports when the package ships types via a top-level `types`/`typings` field but no `types` condition appears anywhere in `exports`. It enforces explicit type entry points rather than relying on extension substitution.
+This rule checks type conditions when the package declares types through a top-level `types`/`typings` field or inside `exports`. It supports versioned conditions such as `types@>=5`, requires every type condition to be first, and requires each exported JavaScript branch to have corresponding type coverage.
+
+It also performs static checks that type targets use `.d.ts`, `.d.mts`, or `.d.cts`, and that those extensions agree with known `.mjs`, `.cjs`, and package-`type` formats. It does not check whether declaration files exist, are published, or contain matching declarations. Use package-aware tools for those checks.
+
+> [!NOTE]
+> The legacy `node` and `bundler` resolution modes still read the top-level `types` field, so this is primarily important for `node16`/`nodenext`. Keeping the top-level field as a fallback alongside the `exports` condition is fine.
 
 ## Examples
 

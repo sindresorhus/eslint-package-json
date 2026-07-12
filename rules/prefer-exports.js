@@ -27,7 +27,7 @@ const create = context => ({
 		for (const field of legacyFields) {
 			const member = findMember(root, field);
 
-			if (member) {
+			if (member && (field !== 'browser' || member.value.type === 'String')) {
 				context.report({
 					node: member.name,
 					messageId: MESSAGE_ID,

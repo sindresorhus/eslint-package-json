@@ -86,3 +86,33 @@ Message:
   7 | 		}
 
 `;
+
+exports[`invalid(4): {\"exports\": {\"default\": \"./index.js\", \"import\": \"./index.mjs\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": "./index.js", "import": "./index.mjs"}}
+
+`;
+
+exports[`invalid(4): {\"exports\": {\"default\": \"./index.js\", \"import\": \"./index.mjs\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": "./index.js", "import": "./index.mjs"}}
+    |              ^^^^^^^^^^^^^^^^^^^^^^^ The \`default\` condition must be the last entry in a conditions object.
+
+`;
+
+exports[`invalid(5): {\"imports\": {\"#dep\": {\"default\": \"./dep.js\", \"node\": \"./node.js\"}}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}
+
+`;
+
+exports[`invalid(5): {\"imports\": {\"#dep\": {\"default\": \"./dep.js\", \"node\": \"./node.js\"}}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}
+    |                       ^^^^^^^^^^^^^^^^^^^^^ The \`default\` condition must be the last entry in a conditions object.
+
+`;

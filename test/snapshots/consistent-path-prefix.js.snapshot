@@ -45,6 +45,55 @@ Output:
 
 `;
 
+exports[`invalid(11): {\"main\": \"../sibling/index.js\"} 1`] = `
+
+[Input]
+  1 | {"main": "../sibling/index.js"}
+
+`;
+
+exports[`invalid(11): {\"main\": \"../sibling/index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "../sibling/index.js"}
+    |          ^^^^^^^^^^^^^^^^^^^^^ Path \`../sibling/index.js\` must not escape the package with a \`..\` segment.
+
+`;
+
+exports[`invalid(12): {\"main\": \"./../sibling/index.js\"} 1`] = `
+
+[Input]
+  1 | {"main": "./../sibling/index.js"}
+
+`;
+
+exports[`invalid(12): {\"main\": \"./../sibling/index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "./../sibling/index.js"}
+    |          ^^^^^^^^^^^^^^^^^^^^^^^ Path \`./../sibling/index.js\` must not escape the package with a \`..\` segment.
+
+`;
+
+exports[`invalid(13): {\"main\": \"../sibling/index.js\"} 1`] = `
+
+[Input]
+Options:
+- prefix: 'never'
+
+Code:
+  1 | {"main": "../sibling/index.js"}
+
+`;
+
+exports[`invalid(13): {\"main\": \"../sibling/index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "../sibling/index.js"}
+    |          ^^^^^^^^^^^^^^^^^^^^^ Path \`../sibling/index.js\` must not escape the package with a \`..\` segment.
+
+`;
+
 exports[`invalid(2): {\"module\": \"index.mjs\"} 1`] = `
 
 [Input]

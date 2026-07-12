@@ -1,15 +1,13 @@
 # prefer-type-module
 
-📝 Enforce the `type` field to be `module`.
-
-💼 This rule is enabled in the ✅ `recommended` [config](https://github.com/sindresorhus/eslint-package-json#configs).
+📝 Prefer the `type` field to be `module`.
 
 💡 This rule is manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions).
 
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-Enforce that the package is an ES module by setting `"type": "module"`. This rule reports any value other than `"module"`, including a missing `type` (which defaults to `commonjs`), so new packages are ESM by default.
+Prefer that the package is an ES module by setting `"type": "module"`. This opt-in rule reports an explicit `"type": "commonjs"` value. Missing `type` is handled separately by [`prefer-explicit-type`](prefer-explicit-type.md), and malformed values are handled by [`valid-fields`](valid-fields.md).
 
 It offers a suggestion, not an autofix: switching to ES modules also requires updating the package's code, so it is opt-in.
 
@@ -19,13 +17,6 @@ It offers a suggestion, not an autofix: switching to ES modules also requires up
 // ❌
 {
 	"type": "commonjs"
-}
-```
-
-```json
-// ❌
-{
-	"name": "foo"
 }
 ```
 

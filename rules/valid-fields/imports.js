@@ -3,16 +3,104 @@ import {
 	getKey,
 	checkConditionOrder,
 	conditionOrderMessages,
+	hasInvalidPackageTargetSegment,
+	isArrayIndexKey,
 } from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const KEY_MESSAGE_ID = 'key';
+const TARGET_TYPE_MESSAGE_ID = 'targetType';
+const TARGET_VALUE_MESSAGE_ID = 'targetValue';
+const CONDITION_KEY_MESSAGE_ID = 'conditionKey';
 
 export const messages = {
 	...conditionOrderMessages,
 	[TYPE_MESSAGE_ID]: 'The `imports` field must be an object.',
 	[KEY_MESSAGE_ID]: 'The `imports` key `{{key}}` must start with `#`.',
+	[TARGET_TYPE_MESSAGE_ID]: 'An `imports` target must be a string, `null`, an object, or an array.',
+	[TARGET_VALUE_MESSAGE_ID]: 'The `imports` target `{{value}}` is not a valid local path or package specifier.',
+	[CONDITION_KEY_MESSAGE_ID]: 'Condition key `{{key}}` must not be an array index.',
 };
+
+const externalTargetPattern = /^(?:@[^/]+\/)?[^/]+(?:\/[^/]+)*$/u;
+
+function isValidExternalTarget(value) {
+	return (value.startsWith('node:') && value.length > 'node:'.length)
+		|| (externalTargetPattern.test(value) && !value.startsWith('#') && !value.includes(':') && value.split('/').every(segment => !['.', '..', 'node_modules'].includes(segment)));
+}
+
+function * checkTargetNode(node) {
+	switch (node.type) {
+		case 'String': {
+			const {value} = node;
+
+			if (value.startsWith('./')) {
+				if (hasInvalidPackageTargetSegment(value)) {
+					yield {
+						node,
+						messageId: TARGET_VALUE_MESSAGE_ID,
+						data: {value},
+					};
+				}
+
+				break;
+			}
+
+			if (
+				value === ''
+				|| value.startsWith('/')
+				|| value.startsWith('../')
+				|| value.includes('://')
+				|| !isValidExternalTarget(value)
+			) {
+				yield {
+					node,
+					messageId: TARGET_VALUE_MESSAGE_ID,
+					data: {value},
+				};
+			}
+
+			break;
+		}
+
+		case 'Object': {
+			for (const member of node.members) {
+				if (isArrayIndexKey(getKey(member))) {
+					yield {
+						node: member.name,
+						messageId: CONDITION_KEY_MESSAGE_ID,
+						data: {key: getKey(member)},
+					};
+				}
+			}
+
+			for (const member of node.members) {
+				yield * checkTargetNode(member.value);
+			}
+
+			break;
+		}
+
+		case 'Array': {
+			for (const element of node.elements) {
+				yield * checkTargetNode(element.value);
+			}
+
+			break;
+		}
+
+		case 'Null': {
+			break;
+		}
+
+		default: {
+			yield {
+				node,
+				messageId: TARGET_TYPE_MESSAGE_ID,
+			};
+		}
+	}
+}
 
 /**
 Recursively check the condition objects nested within an `imports` entry value, yielding problems.
@@ -20,7 +108,7 @@ Recursively check the condition objects nested within an `imports` entry value, 
 function * checkImportsNode(node, sourceCode) {
 	switch (node.type) {
 		case 'Object': {
-			yield * checkConditionOrder(sourceCode, node);
+			yield * checkConditionOrder(sourceCode, node, {checkDefault: false, checkTypes: false});
 
 			for (const member of node.members) {
 				yield * checkImportsNode(member.value, sourceCode);
@@ -68,6 +156,8 @@ export function * check(root, context) {
 				data: {key},
 			};
 		}
+
+		yield * checkTargetNode(member.value);
 
 		// The conditions live in the entry values, so check those.
 		for (const problem of checkImportsNode(member.value, sourceCode)) {

@@ -8,6 +8,8 @@ test.snapshot({
 		'{"name": "foo"}',
 		// Non-entry fields are untouched.
 		'{"name": "foo", "bin": "./cli.js"}',
+		// Browser object mappings can include replacements and false browser shims.
+		'{"browser": {"./server.js": "./browser.js", "./fs.js": false}}',
 	],
 	invalid: [
 		'{"main": "./index.js"}',

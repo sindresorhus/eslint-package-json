@@ -1,70 +1,15 @@
-exports[`invalid(1): {\"name\": \"foo\"} 1`] = `
-
-[Input]
-  1 | {"name": "foo"}
-
-`;
-
-exports[`invalid(1): {\"name\": \"foo\"} 2`] = `
-
-Message:
-> 1 | {"name": "foo"}
-    | ^^^^^^^^^^^^^^^ The \`type\` field should be \`"module"\`.
-
-Suggestion 1/1: Set \`"type": "module"\`.:
-  1 | {"name": "foo",
-  2 | 	"type": "module"}
-
-`;
-
-exports[`invalid(2): {\"type\": \"commonjs\"} 1`] = `
+exports[`invalid(1): {\"type\": \"commonjs\"} 1`] = `
 
 [Input]
   1 | {"type": "commonjs"}
 
 `;
 
-exports[`invalid(2): {\"type\": \"commonjs\"} 2`] = `
+exports[`invalid(1): {\"type\": \"commonjs\"} 2`] = `
 
 Message:
 > 1 | {"type": "commonjs"}
-    |          ^^^^^^^^^^ The \`type\` field should be \`"module"\`.
-
-Suggestion 1/1: Set \`"type": "module"\`.:
-  1 | {"type": "module"}
-
-`;
-
-exports[`invalid(3): {\"type\": \"esm\"} 1`] = `
-
-[Input]
-  1 | {"type": "esm"}
-
-`;
-
-exports[`invalid(3): {\"type\": \"esm\"} 2`] = `
-
-Message:
-> 1 | {"type": "esm"}
-    |          ^^^^^ The \`type\` field should be \`"module"\`.
-
-Suggestion 1/1: Set \`"type": "module"\`.:
-  1 | {"type": "module"}
-
-`;
-
-exports[`invalid(4): {} 1`] = `
-
-[Input]
-  1 | {}
-
-`;
-
-exports[`invalid(4): {} 2`] = `
-
-Message:
-> 1 | {}
-    | ^^ The \`type\` field should be \`"module"\`.
+    |          ^^^^^^^^^^ The \`type\` field should be \`"module"\` instead of \`"commonjs"\`.
 
 Suggestion 1/1: Set \`"type": "module"\`.:
   1 | {"type": "module"}

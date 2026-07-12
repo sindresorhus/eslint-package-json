@@ -33,6 +33,8 @@ test.snapshot({
 				}
 			}
 		}`,
+		// `default` is already last in a nested conditions object.
+		'{"exports": {".": {"import": "./index.mjs", "default": "./index.js"}}}',
 		// A malformed object that mixes a condition key with a subpath key is treated as a subpath map (key mixing is reported by `valid-fields`), so no missing-`default` report.
 		`{
 			"exports": {
@@ -72,5 +74,8 @@ test.snapshot({
 				}
 			}
 		}`,
+		// `default` must be last.
+		'{"exports": {"default": "./index.js", "import": "./index.mjs"}}',
+		'{"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}',
 	],
 });

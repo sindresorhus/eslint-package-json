@@ -1,0 +1,29 @@
+exports[`invalid(1): {\"name\": \"foo\"} 1`] = `
+
+[Input]
+  1 | {"name": "foo"}
+
+`;
+
+exports[`invalid(1): {\"name\": \"foo\"} 2`] = `
+
+Message:
+> 1 | {"name": "foo"}
+    | ^^^^^^^^^^^^^^^ Declare the package module format explicitly with a \`type\` field.
+
+`;
+
+exports[`invalid(2): {} 1`] = `
+
+[Input]
+  1 | {}
+
+`;
+
+exports[`invalid(2): {} 2`] = `
+
+Message:
+> 1 | {}
+    | ^^ Declare the package module format explicitly with a \`type\` field.
+
+`;

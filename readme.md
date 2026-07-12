@@ -125,21 +125,22 @@ export default [
 | [no-workspace-protocol-in-published-package](docs/rules/no-workspace-protocol-in-published-package.md) | Disallow `workspace:` dependency specifiers in packages that can be published.            | ✅  |    |    |
 | [peer-dependencies-as-dev-dependencies](docs/rules/peer-dependencies-as-dev-dependencies.md)           | Enforce peer dependencies to also be listed in `devDependencies` at a compatible version. | ✅  |    | 💡 |
 | [prefer-engines-range](docs/rules/prefer-engines-range.md)                                             | Prefer open-ended `>=` ranges in the `engines` field.                                     | ✅  |    | 💡 |
+| [prefer-explicit-type](docs/rules/prefer-explicit-type.md)                                             | Require an explicit `type` field.                                                         | ✅  |    |    |
 | [prefer-exports](docs/rules/prefer-exports.md)                                                         | Prefer an `exports`-first package interface.                                              | ✅  |    |    |
-| [prefer-files-field](docs/rules/prefer-files-field.md)                                                 | Require a `files` allowlist.                                                              | ✅  |    |    |
+| [prefer-files-field](docs/rules/prefer-files-field.md)                                                 | Require a `files` allowlist that covers published entry points.                           | ✅  |    |    |
 | [prefer-https-urls](docs/rules/prefer-https-urls.md)                                                   | Prefer `https://` URLs in metadata fields.                                                | ✅  | 🔧 |    |
 | [prefer-provenance](docs/rules/prefer-provenance.md)                                                   | Enforce npm provenance via `publishConfig.provenance`.                                    |    |    | 💡 |
 | [prefer-shorthand](docs/rules/prefer-shorthand.md)                                                     | Prefer the shorthand string form of fields where possible.                                | ✅  | 🔧 |    |
 | [prefer-side-effects-field](docs/rules/prefer-side-effects-field.md)                                   | Recommend declaring the `sideEffects` field for packages.                                 | ✅  |    | 💡 |
-| [prefer-type-module](docs/rules/prefer-type-module.md)                                                 | Enforce the `type` field to be `module`.                                                  | ✅  |    | 💡 |
+| [prefer-type-module](docs/rules/prefer-type-module.md)                                                 | Prefer the `type` field to be `module`.                                                   |    |    | 💡 |
 | [require-bin-shebang](docs/rules/require-bin-shebang.md)                                               | Require `bin` files to start with the exact `#!/usr/bin/env node` shebang.                | ✅  |    |    |
-| [require-default-condition](docs/rules/require-default-condition.md)                                   | Require a `default` entry in `exports`/`imports` conditions objects.                      | ✅  |    |    |
+| [require-default-condition](docs/rules/require-default-condition.md)                                   | Require a last `default` entry in `exports`/`imports` conditions objects.                 | ✅  |    |    |
 | [require-engines](docs/rules/require-engines.md)                                                       | Require the `engines.node` field.                                                         | ✅  |    |    |
 | [require-entry-point](docs/rules/require-entry-point.md)                                               | Require an entry point field.                                                             | ✅  |    |    |
-| [require-exports-root](docs/rules/require-exports-root.md)                                             | Require a `.` root entry in the `exports` field.                                          |    |    |    |
+| [require-exports-root](docs/rules/require-exports-root.md)                                             | Require a usable `.` root entry in the `exports` field.                                   |    |    |    |
 | [require-fields](docs/rules/require-fields.md)                                                         | Require specific fields to be present, always or only for published packages.             | ✅  |    |    |
 | [require-private-when-workspaces](docs/rules/require-private-when-workspaces.md)                       | Require `private` when `workspaces` is set.                                               | ✅  |    | 💡 |
-| [require-types-in-exports](docs/rules/require-types-in-exports.md)                                     | Enforce that types are exposed through the `exports` field.                               | ✅  |    |    |
+| [require-types-in-exports](docs/rules/require-types-in-exports.md)                                     | Require correctly ordered and module-compatible types in `exports`.                       | ✅  |    |    |
 | [restrict-fields-when-private](docs/rules/restrict-fields-when-private.md)                             | Disallow fields that have no effect when the package is private.                          |    |    | 💡 |
 | [sort-dependencies](docs/rules/sort-dependencies.md)                                                   | Enforce alphabetical ordering of dependencies.                                            | ✅  | 🔧 |    |
 | [sort-files](docs/rules/sort-files.md)                                                                 | Enforce a canonical order for entries in the `files` field.                               | ✅  | 🔧 |    |
@@ -162,31 +163,7 @@ Both lint `package.json` through ESLint, and `eslint-plugin-package-json` is a g
 
 ### Why not [`npm-package-json-lint`](https://github.com/tclindner/npm-package-json-lint)?
 
-It's a separate CLI with its own config format and no autofix. This plugin lives inside ESLint, so it shares your editor integration, `--fix`, and flat config.
-
-### How do I disable a rule for `package.json`?
-
-`package.json` must be valid JSON, so it cannot contain comments.
-
-Disable the rule in `eslint.config.js` instead:
-
-```js
-import packageJson from 'eslint-package-json';
-
-export default [
-	packageJson.configs.recommended,
-	{
-		files: [
-			'**/package.json',
-		],
-		rules: {
-			'package-json/no-orphan-types': 'off',
-		},
-	},
-];
-```
-
-Use a more specific `files` pattern when the rule should be disabled for only one package.
+It's a separate CLI with its own config format and no autofix. This plugin lives inside ESLint, so it shares your editor integration, `--fix`, disable comments, and config.
 
 ## Related
 

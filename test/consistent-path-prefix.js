@@ -12,8 +12,6 @@ test.snapshot({
 		'{"browser": "./dist/browser.js"}',
 		'{"bin": "./cli.js"}',
 		'{"bin": {"mycli": "./bin/cli.js"}}',
-		// ../ paths are left alone with prefix=always.
-		'{"main": "../sibling/index.js"}',
 		// Absolute paths are skipped.
 		'{"main": "/usr/local/bin/foo"}',
 		// URLs are skipped.
@@ -60,5 +58,12 @@ test.snapshot({
 		},
 		// Multiple fields at once.
 		'{"main": "index.js", "types": "index.d.ts"}',
+		// Paths must not escape the package.
+		'{"main": "../sibling/index.js"}',
+		'{"main": "./../sibling/index.js"}',
+		{
+			code: '{"main": "../sibling/index.js"}',
+			options: [{prefix: 'never'}],
+		},
 	],
 });

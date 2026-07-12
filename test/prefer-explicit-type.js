@@ -5,14 +5,13 @@ const {test} = getTester(import.meta);
 test.snapshot({
 	valid: [
 		'{"type": "module"}',
-		'{"name": "foo", "type": "module"}',
-		// A missing or malformed `type` is handled by `prefer-explicit-type` or `valid-fields`.
-		'{"name": "foo"}',
+		'{"type": "commonjs"}',
+		// Invalid values are owned by `valid-fields`.
 		'{"type": true}',
-		'{"type": 42}',
 		'{"type": "esm"}',
 	],
 	invalid: [
-		'{"type": "commonjs"}',
+		'{"name": "foo"}',
+		'{}',
 	],
 });

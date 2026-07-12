@@ -40,3 +40,48 @@ Message:
   6 | 		}
 
 `;
+
+exports[`invalid(3): {\"exports\": {\".\": null}} 1`] = `
+
+[Input]
+  1 | {"exports": {".": null}}
+
+`;
+
+exports[`invalid(3): {\"exports\": {\".\": null}} 2`] = `
+
+Message:
+> 1 | {"exports": {".": null}}
+    |                   ^^^^ The \`exports\` root must expose a runtime entry point, not only types or a blocked target.
+
+`;
+
+exports[`invalid(4): {\"exports\": {\".\": {\"types\": \"./index.d.ts\"}}} 1`] = `
+
+[Input]
+  1 | {"exports": {".": {"types": "./index.d.ts"}}}
+
+`;
+
+exports[`invalid(4): {\"exports\": {\".\": {\"types\": \"./index.d.ts\"}}} 2`] = `
+
+Message:
+> 1 | {"exports": {".": {"types": "./index.d.ts"}}}
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^ The \`exports\` root must expose a runtime entry point, not only types or a blocked target.
+
+`;
+
+exports[`invalid(5): {\"main\": \"./index.js\", \"exports\": {\".\": \"./index.mjs\"}} 1`] = `
+
+[Input]
+  1 | {"main": "./index.js", "exports": {".": "./index.mjs"}}
+
+`;
+
+exports[`invalid(5): {\"main\": \"./index.js\", \"exports\": {\".\": \"./index.mjs\"}} 2`] = `
+
+Message:
+> 1 | {"main": "./index.js", "exports": {".": "./index.mjs"}}
+    |                                         ^^^^^^^^^^^^^ The \`exports\` root does not expose the package \`main\` entry point \`./index.js\`.
+
+`;

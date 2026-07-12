@@ -1,99 +1,248 @@
-exports[`invalid(1): {\n\t\t\t\"types\": \"./index.d.ts\",\n\t\t\t\"exports\": {\n\t\t\t\t\"import\": \"./index.js\",\n\t\t\t\t\"require\": \"./index.cjs\"\n\t\t\t}\n\t\t} 1`] = `
+exports[`invalid(1): {\"types\": \"./index.d.ts\", \"exports\": \"./index.js\"} 1`] = `
 
 [Input]
-  1 | {
-  2 | 			"types": "./index.d.ts",
-  3 | 			"exports": {
-  4 | 				"import": "./index.js",
-  5 | 				"require": "./index.cjs"
-  6 | 			}
-  7 | 		}
+  1 | {"types": "./index.d.ts", "exports": "./index.js"}
 
 `;
 
-exports[`invalid(1): {\n\t\t\t\"types\": \"./index.d.ts\",\n\t\t\t\"exports\": {\n\t\t\t\t\"import\": \"./index.js\",\n\t\t\t\t\"require\": \"./index.cjs\"\n\t\t\t}\n\t\t} 2`] = `
+exports[`invalid(1): {\"types\": \"./index.d.ts\", \"exports\": \"./index.js\"} 2`] = `
 
 Message:
-  1 | {
-> 2 | 			"types": "./index.d.ts",
-    | 			^^^^^^^ \`types\` is not declared through \`exports\`. Add a \`types\` condition inside \`exports\`.
-  3 | 			"exports": {
-  4 | 				"import": "./index.js",
-  5 | 				"require": "./index.cjs"
-  6 | 			}
-  7 | 		}
+> 1 | {"types": "./index.d.ts", "exports": "./index.js"}
+    |                                      ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(2): {\n\t\t\t\"typings\": \"./index.d.ts\",\n\t\t\t\"exports\": \"./index.js\"\n\t\t} 1`] = `
+exports[`invalid(10): {\"exports\": {\"types\": [\"\", \"./index.d.ts\"], \"default\": \"./index.js\"}} 1`] = `
 
 [Input]
-  1 | {
-  2 | 			"typings": "./index.d.ts",
-  3 | 			"exports": "./index.js"
-  4 | 		}
+  1 | {"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}
 
 `;
 
-exports[`invalid(2): {\n\t\t\t\"typings\": \"./index.d.ts\",\n\t\t\t\"exports\": \"./index.js\"\n\t\t} 2`] = `
+exports[`invalid(10): {\"exports\": {\"types\": [\"\", \"./index.d.ts\"], \"default\": \"./index.js\"}} 2`] = `
 
 Message:
-  1 | {
-> 2 | 			"typings": "./index.d.ts",
-    | 			^^^^^^^^^ \`typings\` is not declared through \`exports\`. Add a \`types\` condition inside \`exports\`.
-  3 | 			"exports": "./index.js"
-  4 | 		}
+> 1 | {"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}
+    |                       ^^^^^^^^^^^^^^^^^^^^ The \`types\` condition must point to a declaration file.
 
 `;
 
-exports[`invalid(3): {\n\t\t\t\"types\": \"./index.d.ts\",\n\t\t\t\"exports\": {\n\t\t\t\t\".\": \"./index.js\"\n\t\t\t}\n\t\t} 1`] = `
+exports[`invalid(11): {\"type\": \"module\", \"exports\": {\"types\": \"./index.d.cts\", \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {
-  2 | 			"types": "./index.d.ts",
-  3 | 			"exports": {
-  4 | 				".": "./index.js"
-  5 | 			}
-  6 | 		}
+  1 | {"type": "module", "exports": {"types": "./index.d.cts", "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(3): {\n\t\t\t\"types\": \"./index.d.ts\",\n\t\t\t\"exports\": {\n\t\t\t\t\".\": \"./index.js\"\n\t\t\t}\n\t\t} 2`] = `
+exports[`invalid(11): {\"type\": \"module\", \"exports\": {\"types\": \"./index.d.cts\", \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-  1 | {
-> 2 | 			"types": "./index.d.ts",
-    | 			^^^^^^^ \`types\` is not declared through \`exports\`. Add a \`types\` condition inside \`exports\`.
-  3 | 			"exports": {
-  4 | 				".": "./index.js"
-  5 | 			}
-  6 | 		}
+> 1 | {"type": "module", "exports": {"types": "./index.d.cts", "default": "./index.mjs"}}
+    |                                         ^^^^^^^^^^^^^^^ Type declaration \`./index.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
 
 `;
 
-exports[`invalid(4): {\n\t\t\t\"types\": 1,\n\t\t\t\"typings\": \"./index.d.ts\",\n\t\t\t\"exports\": {\n\t\t\t\t\"import\": \"./index.js\"\n\t\t\t}\n\t\t} 1`] = `
+exports[`invalid(12): {\"type\": \"commonjs\", \"exports\": {\"types\": \"./index.d.mts\", \"default\": \"./index.cjs\"}} 1`] = `
 
 [Input]
-  1 | {
-  2 | 			"types": 1,
-  3 | 			"typings": "./index.d.ts",
-  4 | 			"exports": {
-  5 | 				"import": "./index.js"
-  6 | 			}
-  7 | 		}
+  1 | {"type": "commonjs", "exports": {"types": "./index.d.mts", "default": "./index.cjs"}}
 
 `;
 
-exports[`invalid(4): {\n\t\t\t\"types\": 1,\n\t\t\t\"typings\": \"./index.d.ts\",\n\t\t\t\"exports\": {\n\t\t\t\t\"import\": \"./index.js\"\n\t\t\t}\n\t\t} 2`] = `
+exports[`invalid(12): {\"type\": \"commonjs\", \"exports\": {\"types\": \"./index.d.mts\", \"default\": \"./index.cjs\"}} 2`] = `
 
 Message:
-  1 | {
-  2 | 			"types": 1,
-> 3 | 			"typings": "./index.d.ts",
-    | 			^^^^^^^^^ \`typings\` is not declared through \`exports\`. Add a \`types\` condition inside \`exports\`.
-  4 | 			"exports": {
-  5 | 				"import": "./index.js"
-  6 | 			}
-  7 | 		}
+> 1 | {"type": "commonjs", "exports": {"types": "./index.d.mts", "default": "./index.cjs"}}
+    |                                           ^^^^^^^^^^^^^^^ Type declaration \`./index.d.mts\` uses ES module format but its JavaScript target uses CommonJS format.
+
+`;
+
+exports[`invalid(13): {\"exports\": {\"types\": \"./index.d.ts\", \"default\": \"./index.mjs\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": "./index.d.ts", "default": "./index.mjs"}}
+
+`;
+
+exports[`invalid(13): {\"exports\": {\"types\": \"./index.d.ts\", \"default\": \"./index.mjs\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": "./index.d.ts", "default": "./index.mjs"}}
+    |                       ^^^^^^^^^^^^^^ Type declaration \`./index.d.ts\` uses CommonJS format but its JavaScript target uses ES module format.
+
+`;
+
+exports[`invalid(14): {\"types\": \"./index.d.ts\", \"exports\": {\"import\": {\"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}, \"require\": \"./index.cjs\"}} 1`] = `
+
+[Input]
+  1 | {"types": "./index.d.ts", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": "./index.cjs"}}
+
+`;
+
+exports[`invalid(14): {\"types\": \"./index.d.ts\", \"exports\": {\"import\": {\"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}, \"require\": \"./index.cjs\"}} 2`] = `
+
+Message:
+> 1 | {"types": "./index.d.ts", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": "./index.cjs"}}
+    |                                                                                                                  ^^^^^^^^^^^^^ Exported JavaScript target \`./index.cjs\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(15): {\"exports\": {\"import\": {\"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}, \"require\": {\"default\": \"./index.cjs\"}}} 1`] = `
+
+[Input]
+  1 | {"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"default": "./index.cjs"}}}
+
+`;
+
+exports[`invalid(15): {\"exports\": {\"import\": {\"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}, \"require\": {\"default\": \"./index.cjs\"}}} 2`] = `
+
+Message:
+> 1 | {"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"default": "./index.cjs"}}}
+    |                                                                                                     ^^^^^^^^^^^^^ Exported JavaScript target \`./index.cjs\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(2): {\"typings\": \"./index.d.ts\", \"exports\": {\".\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"typings": "./index.d.ts", "exports": {".": "./index.js"}}
+
+`;
+
+exports[`invalid(2): {\"typings\": \"./index.d.ts\", \"exports\": {\".\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"typings": "./index.d.ts", "exports": {".": "./index.js"}}
+    |                                              ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"default\": \"./index.js\", \"types\": \"./index.d.ts\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": "./index.js", "types": "./index.d.ts"}}
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"default\": \"./index.js\", \"types\": \"./index.d.ts\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": "./index.js", "types": "./index.d.ts"}}
+    |                                       ^^^^^^^ The \`types\` condition must be first in a conditions object.
+
+`;
+
+exports[`invalid(4): {\"exports\": {\"default\": \"./index.mjs\", \"types@>=5\": \"./index.d.mts\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": "./index.mjs", "types@>=5": "./index.d.mts"}}
+
+`;
+
+exports[`invalid(4): {\"exports\": {\"default\": \"./index.mjs\", \"types@>=5\": \"./index.d.mts\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": "./index.mjs", "types@>=5": "./index.d.mts"}}
+    |                                        ^^^^^^^^^^^ The \`types\` condition must be first in a conditions object.
+
+`;
+
+exports[`invalid(5): {\"exports\": {\"types\": \"./index.js\", \"default\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": "./index.js", "default": "./index.js"}}
+
+`;
+
+exports[`invalid(5): {\"exports\": {\"types\": \"./index.js\", \"default\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": "./index.js", "default": "./index.js"}}
+    |                       ^^^^^^^^^^^^ The \`types\` condition \`./index.js\` must point at a declaration file ending in \`.d.ts\`, \`.d.mts\`, or \`.d.cts\`.
+
+`;
+
+exports[`invalid(6): {\"exports\": {\"types\": \"./index.ts\", \"default\": \"./index.mjs\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": "./index.ts", "default": "./index.mjs"}}
+
+`;
+
+exports[`invalid(6): {\"exports\": {\"types\": \"./index.ts\", \"default\": \"./index.mjs\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": "./index.ts", "default": "./index.mjs"}}
+    |                       ^^^^^^^^^^^^ The \`types\` condition \`./index.ts\` must point at a declaration file ending in \`.d.ts\`, \`.d.mts\`, or \`.d.cts\`.
+
+`;
+
+exports[`invalid(7): {\"exports\": {\"types\": null, \"default\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": null, "default": "./index.js"}}
+
+`;
+
+exports[`invalid(7): {\"exports\": {\"types\": null, \"default\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": null, "default": "./index.js"}}
+    |                       ^^^^ The \`types\` condition must point to a declaration file.
+
+`;
+
+exports[`invalid(7): {\"exports\": {\"types\": null, \"default\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types": null, "default": "./index.js"}}
+    |                                        ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(8): {\"exports\": {\"types\": true, \"default\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": true, "default": "./index.js"}}
+
+`;
+
+exports[`invalid(8): {\"exports\": {\"types\": true, \"default\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": true, "default": "./index.js"}}
+    |                       ^^^^ The \`types\` condition must point to a declaration file.
+
+`;
+
+exports[`invalid(8): {\"exports\": {\"types\": true, \"default\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types": true, "default": "./index.js"}}
+    |                                        ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(9): {\"exports\": {\"types\": \"\", \"default\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": "", "default": "./index.js"}}
+
+`;
+
+exports[`invalid(9): {\"exports\": {\"types\": \"\", \"default\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": "", "default": "./index.js"}}
+    |                       ^^ The \`types\` condition must point to a declaration file.
+
+`;
+
+exports[`invalid(9): {\"exports\": {\"types\": \"\", \"default\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types": "", "default": "./index.js"}}
+    |                                      ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
 
 `;
