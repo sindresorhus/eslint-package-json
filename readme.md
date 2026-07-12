@@ -156,7 +156,31 @@ Both lint `package.json` through ESLint, and `eslint-plugin-package-json` is a g
 
 ### Why not [`npm-package-json-lint`](https://github.com/tclindner/npm-package-json-lint)?
 
-It's a separate CLI with its own config format and no autofix. This plugin lives inside ESLint, so it shares your editor integration, `--fix`, disable comments, and config.
+It's a separate CLI with its own config format and no autofix. This plugin lives inside ESLint, so it shares your editor integration, `--fix`, and flat config.
+
+### How do I disable a rule for `package.json`?
+
+`package.json` must be valid JSON, so it cannot contain comments.
+
+Disable the rule in `eslint.config.js` instead:
+
+```js
+import packageJson from 'eslint-package-json';
+
+export default [
+	packageJson.configs.recommended,
+	{
+		files: [
+			'**/package.json',
+		],
+		rules: {
+			'package-json/no-orphan-types': 'off',
+		},
+	},
+];
+```
+
+Use a more specific `files` pattern when the rule should be disabled for only one package.
 
 ## Related
 
