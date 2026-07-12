@@ -15,7 +15,24 @@ const messages = {
 };
 
 // Ambient type packages that have no runtime counterpart.
-const defaultIgnore = ['@types/node', '@types/bun'];
+const defaultIgnore = [
+	'@types/node',
+	'@types/bun',
+	'@types/chrome',
+	'@types/deno',
+	'@types/firefox-webext-browser',
+	'@types/google-apps-script',
+	'@types/serviceworker',
+	'@types/cordova',
+	'@types/trusted-types',
+	'@types/web-bluetooth',
+	'@types/webxr',
+	'@types/w3c-web-usb',
+	'@types/w3c-web-hid',
+	'@types/w3c-web-serial',
+	'@types/w3c-image-capture',
+	'@types/webgl-ext',
+];
 
 /**
 Get the runtime package name for an `@types/*` package.

@@ -17,6 +17,20 @@ test.snapshot({
 		// Ambient type packages with no runtime counterpart are ignored by default.
 		'{"devDependencies": {"@types/node": "^20.0.0"}}',
 		'{"devDependencies": {"@types/bun": "^1.0.0"}}',
+		'{"devDependencies": {"@types/chrome": "^0.0.1"}}',
+		'{"devDependencies": {"@types/deno": "^1.0.0"}}',
+		'{"devDependencies": {"@types/firefox-webext-browser": "^1.0.0"}}',
+		'{"devDependencies": {"@types/google-apps-script": "^1.0.0"}}',
+		'{"devDependencies": {"@types/serviceworker": "^1.0.0"}}',
+		'{"devDependencies": {"@types/cordova": "^1.0.0"}}',
+		'{"devDependencies": {"@types/trusted-types": "^1.0.0"}}',
+		'{"devDependencies": {"@types/web-bluetooth": "^1.0.0"}}',
+		'{"devDependencies": {"@types/webxr": "^1.0.0"}}',
+		'{"devDependencies": {"@types/w3c-web-usb": "^1.0.0"}}',
+		'{"devDependencies": {"@types/w3c-web-hid": "^1.0.0"}}',
+		'{"devDependencies": {"@types/w3c-web-serial": "^1.0.0"}}',
+		'{"devDependencies": {"@types/w3c-image-capture": "^1.0.0"}}',
+		'{"devDependencies": {"@types/webgl-ext": "^1.0.0"}}',
 		// Scoped types map to the scoped package.
 		'{"dependencies": {"@foo/bar": "^1.0.0"}, "devDependencies": {"@types/foo__bar": "^1.0.0"}}',
 		// User-supplied `ignore` accepts either the type package or runtime package name.
