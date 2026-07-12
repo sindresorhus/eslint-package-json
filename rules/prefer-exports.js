@@ -45,7 +45,7 @@ const config = {
 		type: 'suggestion',
 		docs: {
 			description: 'Prefer an `exports`-first package interface.',
-			recommended: false,
+			recommended: true,
 		},
 		schema: [],
 		messages,

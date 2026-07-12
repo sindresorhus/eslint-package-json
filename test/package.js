@@ -62,10 +62,9 @@ test('recommended config contains exactly the recommended rules', () => {
 	assert.deepEqual(actual.toSorted(byName), expected.toSorted(byName));
 });
 
-test('prefer-exports is opt-in', () => {
+test('prefer-exports is recommended', () => {
 	const ruleKey = 'package-json/prefer-exports';
-	assert.ok(!Object.hasOwn(plugin.configs.recommended.rules, ruleKey));
-	assert.equal(plugin.configs.all.rules[ruleKey], 'error');
+	assert.equal(plugin.configs.recommended.rules[ruleKey], 'error');
 });
 
 test('all config contains every rule set to error', () => {
@@ -82,6 +81,12 @@ test('the recommended config works end-to-end through ESLint', () => {
 	assert.ok(
 		problems.some(message => message.ruleId === 'package-json/valid-fields'),
 		'an invalid name should be reported via the recommended config',
+	);
+
+	const legacyEntryPointProblems = linter.verify('{"exports": "./index.js", "main": "./index.js"}', config, {filename: 'package.json'});
+	assert.ok(
+		legacyEntryPointProblems.some(message => message.ruleId === 'package-json/prefer-exports'),
+		'legacy entry points should be reported via the recommended config',
 	);
 
 	const cleanInput = JSON.stringify({

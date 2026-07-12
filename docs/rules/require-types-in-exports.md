@@ -11,9 +11,6 @@ When TypeScript resolves a package through `exports`, its `node16`, `nodenext`, 
 
 This rule reports when the package ships types via a top-level `types`/`typings` field but no `types` condition appears anywhere in `exports`. It enforces explicit type entry points rather than relying on extension substitution.
 
-> [!NOTE]
-> The legacy `node10` resolution mode, and configurations that disable `resolvePackageJsonExports`, still read the top-level `types`/`typings` field. Keeping the top-level field as a fallback alongside the `exports` condition is fine.
-
 ## Examples
 
 ```json
