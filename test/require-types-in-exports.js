@@ -13,6 +13,15 @@ test.snapshot({
 		// The versioned TypeScript condition is also a type condition and must be first.
 		'{"exports": {"types@>=5": "./index.d.mts", "default": "./index.mjs"}}',
 		'{"exports": {"types@>=5.2": "./ts5.d.ts", "types@>=4.7": "./ts4.7.d.ts", "types": "./index.d.ts", "default": "./index.js"}}',
+		`{
+	"exports": {
+		"types@>=5.2": {"import": "./import.d.ts"},
+		"types": {"import": "./import.d.ts", "require": "./require.d.ts"},
+		"import": "./import.js",
+		"require": "./require.js"
+	}
+}`,
+		'{"exports": {"types": {"import": {"browser": "./browser.d.ts"}, "default": "./fallback.d.ts"}, "import": "./import.js"}}',
 		// Each nested runtime branch has a matching declaration format.
 		'{"type": "module", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}',
 		'{"type": "commonjs", "exports": {"types": "./index.d.ts", "default": "./index.js"}}',
@@ -33,6 +42,7 @@ test.snapshot({
 		// Type conditions must come before runtime conditions, including versioned ones.
 		'{"exports": {"default": "./index.js", "types": "./index.d.ts"}}',
 		'{"exports": {"default": "./index.mjs", "types@>=5": "./index.d.mts"}}',
+		'{"exports": {"types@>=5": "./index.d.ts", "default": "./index.js", "types@>=4": "./index.d.ts"}}',
 		// Type conditions must point to declaration files.
 		'{"exports": {"types": "./index.js", "default": "./index.js"}}',
 		'{"exports": {"types": "./index.ts", "default": "./index.mjs"}}',
@@ -53,7 +63,6 @@ test.snapshot({
 	"exports": {
 		"types@>=5.2": {"import": "./import.d.ts"},
 		"types@>=4.7": {"require": "./require.d.ts"},
-		"types": {"import": "./import.d.ts", "require": "./require.d.ts"},
 		"import": "./import.js",
 		"require": "./require.js"
 	}

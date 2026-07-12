@@ -12,6 +12,7 @@ test.snapshot({
 	],
 	invalid: [
 		'{"exports": {"./foo/": "./dist/foo/"}}',
+		'{"exports": {"./foo/": "./dist/*/"}}',
 		'{"exports": {".": "./lib/"}}',
 		`{
 			"exports": {

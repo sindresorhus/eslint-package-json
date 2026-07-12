@@ -75,7 +75,22 @@ Message:
 
 `;
 
-exports[`invalid(13): {\"main\": \"../sibling/index.js\"} 1`] = `
+exports[`invalid(13): {\"main\": \"..\\\\sibling\\\\index.js\"} 1`] = `
+
+[Input]
+  1 | {"main": "..\\\\sibling\\\\index.js"}
+
+`;
+
+exports[`invalid(13): {\"main\": \"..\\\\sibling\\\\index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "..\\\\sibling\\\\index.js"}
+    |          ^^^^^^^^^^^^^^^^^^^^^^^ Path \`..\\sibling\\index.js\` must not escape the package with a \`..\` segment.
+
+`;
+
+exports[`invalid(14): {\"main\": \"../sibling/index.js\"} 1`] = `
 
 [Input]
 Options:
@@ -86,7 +101,7 @@ Code:
 
 `;
 
-exports[`invalid(13): {\"main\": \"../sibling/index.js\"} 2`] = `
+exports[`invalid(14): {\"main\": \"../sibling/index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": "../sibling/index.js"}

@@ -1,4 +1,3 @@
-import validateNpmPackageName from 'validate-npm-package-name';
 import {
 	findMember,
 	getKey,
@@ -42,7 +41,7 @@ function isValidExternalTarget(value) {
 		? value.split('/', 2).join('/')
 		: value.split('/', 1)[0];
 
-	return validateNpmPackageName(packageName).validForNewPackages
+	return (!packageName.startsWith('@') || packageName.includes('/'))
 		&& !value.includes('\\')
 		&& !packageName.includes('%')
 		&& !/%(?:2f|5c)/iu.test(value);

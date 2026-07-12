@@ -16,8 +16,10 @@ function * findTrailingSlashes(node, subpathPrefix, canFixTarget = false) {
 				const key = getKey(member);
 				const isFolderMapping = key.startsWith(subpathPrefix)
 					&& key.endsWith('/')
+					&& !key.includes('*')
 					&& member.value.type === 'String'
-					&& member.value.value.endsWith('/');
+					&& member.value.value.endsWith('/')
+					&& !member.value.value.includes('*');
 
 				if (key.startsWith(subpathPrefix) && key.endsWith('/')) {
 					yield {node: member.name, canFix: isFolderMapping};

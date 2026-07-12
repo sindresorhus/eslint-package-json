@@ -56,7 +56,11 @@ function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
 		const matchingMember = node.members.find(member => getKey(member) === runtimeKey);
 
 		if (matchingMember) {
-			return hasTypesCoverage(matchingMember.value, runtimeNode);
+			const hasMatchingTypes = hasTypesCoverage(matchingMember.value, runtimeNode);
+
+			if (hasMatchingTypes || matchingMember.value.type !== 'Object') {
+				return hasMatchingTypes;
+			}
 		}
 	}
 
@@ -144,8 +148,16 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 				const matchingMember = typeNode.members.find(member => getKey(member) === runtimeKey);
 
 				if (matchingMember) {
-					yield * iterateTypeRuntimePairs(matchingMember.value, runtimeNode);
-					return;
+					let hasMatchingPairs = false;
+
+					for (const pair of iterateTypeRuntimePairs(matchingMember.value, runtimeNode)) {
+						hasMatchingPairs = true;
+						yield pair;
+					}
+
+					if (hasMatchingPairs || matchingMember.value.type !== 'Object') {
+						return;
+					}
 				}
 
 				const fallbackMember = typeNode.members.find(member => getKey(member) === 'default');
@@ -326,7 +338,9 @@ function * checkNode(node, packageType, hasInheritedTypes = false) {
 					continue;
 				}
 
-				const hasOwnTypes = typesMembers.length > 0 && typesMembers.every(typesMember => hasTypesCoverage(typesMember.value, member.value, getKey(member)));
+				// A versioned condition may fall through to a complete unversioned `types` condition when its nested conditions do not match.
+				const hasCompleteFallback = typesMembers.some(typesMember => getKey(typesMember) === 'types' && hasTypesCoverage(typesMember.value, member.value, getKey(member)));
+				const hasOwnTypes = typesMembers.length > 0 && (hasCompleteFallback || typesMembers.every(typesMember => hasTypesCoverage(typesMember.value, member.value, getKey(member))));
 				yield * checkNode(member.value, packageType, hasInheritedTypes || hasOwnTypes);
 			}
 

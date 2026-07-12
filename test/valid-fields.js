@@ -143,6 +143,7 @@ test.snapshot({
 		'{"imports": {"#colon": "foo/bar:baz"}}',
 		'{"imports": {"#percent": "foo/%25"}}',
 		'{"imports": {"#scope": "@scope/package/subpath"}}',
+		'{"imports": {"#fs": "fs", "#path": "path", "#legacy": "Foo"}}',
 		// Correctly ordered conditions inside an entry.
 		'{"imports": {"#dep": {"types": "./dep.d.ts", "import": "./dep.mjs", "default": "./dep.js"}}}',
 		// An array fallback of plain targets.

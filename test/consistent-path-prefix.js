@@ -63,6 +63,7 @@ test.snapshot({
 		// Paths must not escape the package.
 		'{"main": "../sibling/index.js"}',
 		'{"main": "./../sibling/index.js"}',
+		String.raw`{"main": "..\\sibling\\index.js"}`,
 		{
 			code: '{"main": "../sibling/index.js"}',
 			options: [{prefix: 'never'}],

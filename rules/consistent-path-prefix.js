@@ -55,7 +55,7 @@ const create = context => {
 			return;
 		}
 
-		if (value.split('/').includes('..')) {
+		if (value.split(/[/\\]/u).includes('..')) {
 			context.report({
 				node: valueNode,
 				messageId: MESSAGE_ID_OUTSIDE_PACKAGE,
