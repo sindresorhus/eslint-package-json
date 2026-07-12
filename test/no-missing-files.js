@@ -1,0 +1,53 @@
+import {getTester} from './utils/test.js';
+
+const {test} = getTester(import.meta);
+
+test.snapshot({
+	valid: [
+		'{}',
+		'{"exports": "./index.js"}',
+		'{"exports": {"types": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"./rules/*": "./rules/*.js"}}',
+		'{"exports": {"./rules/*": "./rules/{no-missing-files,no-redundant-files}.js"}}',
+		'{"exports": {"./feature": "./missing/*.js"}}',
+		'{"exports": "./rules/*.js"}',
+		'{"exports": "./node_modules/missing.js"}',
+		'{"exports": "./foo/../missing.js"}',
+		'{"exports": ["./missing.js", "./index.js"]}',
+		'{"exports": {"import": "./index.js", "require": "./index.js"}}',
+		'{"exports": {"./feature": {"import": "./index.js", "default": "./index.js"}}}',
+		'{"files": ["index.js", "rules/*.js"]}',
+		'{"files": ["*rc.js"]}',
+		'{"files": ["rules/**/index.js"]}',
+		'{"files": ["rules/no-[mr]*.js"]}',
+		'{"files": ["rules"]}',
+		'{"files": ["./../missing", "foo/../../missing"]}',
+		{
+			code: '{"exports": "./no-missing-files.js", "files": ["no-missing-files.js"]}',
+			filename: 'rules/package.json',
+		},
+		'{"files": ["!missing.js"]}',
+		'{"files": []}',
+		'{"files": "rules"}',
+		'{"files": [123, true]}',
+		'{"main": "./missing.js", "module": "./missing-module.js", "browser": "./missing-browser.js", "types": "./missing.d.ts", "typings": "./missing-typings.d.ts"}',
+		'{"es2015": "./missing-es2015.js", "jsnext:main": "./missing-jsnext.js", "bin": {"cli": "./missing-cli.js"}, "man": ["./missing.1"], "directories": {"lib": "missing"}}',
+		'{"imports": {"#missing": "./missing.js"}}',
+		'[]',
+		'"package"',
+	],
+	invalid: [
+		'{"exports": "./missing.js"}',
+		'{"exports": {"./rules/*": "./missing/*.js"}}',
+		'{"exports": {"./rules/*": "./rules/*.JS"}}',
+		'{"exports": ["./missing.js", "./also-missing.js"]}',
+		'{"exports": {"import": "./missing.js", "require": "./missing.js"}}',
+		'{"exports": {"import": "./missing-import.js", "default": "./index.js"}}',
+		'{"exports": {"./feature": "./Index.js"}}',
+		'{"exports": {"./rules/*": "./rules"}}',
+		'{"files": ["missing"]}',
+		'{"files": ["missing/*.js"]}',
+		'{"files": ["rules/*.JS"]}',
+		'{"files": ["index.js", "missing"]}',
+	],
+});
