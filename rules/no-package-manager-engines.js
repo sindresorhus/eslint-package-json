@@ -13,12 +13,13 @@ const REMOVE_SUGGESTION_ID = 'remove';
 const MIGRATION_SUGGESTION_ID = 'migrate';
 
 const messages = {
-	[MESSAGE_ID]: 'Specify the `{{manager}}` version in the `packageManager` field (with Corepack) instead of `engines`.',
-	[REMOVE_SUGGESTION_ID]: 'Remove the engine.',
+	[MESSAGE_ID]: 'Specify the `{{manager}}` version in the `packageManager` field instead of `engines`.',
+	[REMOVE_SUGGESTION_ID]: 'Remove the `{{manager}}` engine.',
 	[MIGRATION_SUGGESTION_ID]: 'Set `packageManager` to `{{packageManager}}`.',
 };
 
-const packageManagers = new Set(['npm', 'yarn', 'pnpm', 'bun']);
+const corepackPackageManagers = new Set(['npm', 'yarn', 'pnpm']);
+const packageManagers = new Set([...corepackPackageManagers, 'bun']);
 
 const hasLowerBound = comparators => comparators.some(comparator => ['>=', '>'].includes(comparator.operator) || (comparator.operator === '' && comparator.value !== ''));
 
@@ -74,8 +75,8 @@ const create = context => ({
 
 		const {sourceCode} = context;
 		const packageManagerMember = findMember(root, 'packageManager');
-		const packageManagerEngineMembers = engines.value.members.filter(member => packageManagers.has(getKey(member)));
-		const canMigrate = !packageManagerMember && packageManagerEngineMembers.length === 1;
+		const recognizedManagerEngineMembers = engines.value.members.filter(member => packageManagers.has(getKey(member)));
+		const canMigrate = !packageManagerMember && recognizedManagerEngineMembers.length === 1;
 
 		for (const member of engines.value.members) {
 			const manager = getKey(member);
@@ -88,13 +89,14 @@ const create = context => ({
 			const suggest = [
 				{
 					messageId: REMOVE_SUGGESTION_ID,
+					data: {manager},
 					* fix(fixer) {
 						yield * removeMember(fixer, sourceCode, memberToRemove);
 					},
 				},
 			];
 
-			if (canMigrate && member.value.type === 'String') {
+			if (canMigrate && corepackPackageManagers.has(manager) && member.value.type === 'String') {
 				const version = getMinimumVersion(member.value.value);
 
 				if (version) {

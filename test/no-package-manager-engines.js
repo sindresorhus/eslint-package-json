@@ -17,6 +17,7 @@ test.snapshot({
 		'{"engines": {"npm": ">=10"}}',
 		'{"engines": {"yarn": ">=4"}}',
 		'{"engines": {"pnpm": ">=9"}}',
+		// Bun is reported but cannot be migrated through Corepack.
 		'{"engines": {"bun": ">=1"}}',
 		// Mixed with the allowed `node` engine.
 		`{
@@ -41,6 +42,14 @@ test.snapshot({
 			},
 			"scripts": {}
 		}`,
+		// Replace a sole manager engine without disturbing surrounding top-level fields.
+		`{
+			"name": "foo",
+			"engines": {
+				"npm": ">=10"
+			},
+			"scripts": {}
+		}`,
 		// Multiple package manager engines cannot be migrated into one field.
 		'{"engines": {"npm": ">=10", "yarn": ">=4"}}',
 		// Do not replace an existing package manager field, regardless of its value type.
@@ -58,6 +67,8 @@ test.snapshot({
 		'{"engines": {"npm": ">=10.0.0-beta.1"}}',
 		// An unbounded alternative cannot be safely pinned.
 		'{"engines": {"npm": ">=10 || *"}}',
+		// Every bounded alternative can be migrated.
+		'{"engines": {"npm": ">=10 || >=12"}}',
 		// Preserve top-level single-line formatting when `engines` is multiline.
 		'{"engines": {\n\t"node": ">=18",\n\t"npm": ">=10"\n}}',
 		// Preserve CRLF formatting.
