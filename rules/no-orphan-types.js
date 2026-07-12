@@ -56,11 +56,11 @@ const create = context => {
 			}
 
 			for (const {member, name} of typeEntries) {
-				if (ignore.has(name)) {
+				const target = typesTarget(name);
+
+				if (ignore.has(name) || ignore.has(target)) {
 					continue;
 				}
-
-				const target = typesTarget(name);
 
 				if (allNames.has(target)) {
 					continue;

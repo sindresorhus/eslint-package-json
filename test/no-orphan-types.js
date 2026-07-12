@@ -14,8 +14,10 @@ test.snapshot({
 		'{"devDependencies": {"@types/bun": "^1.0.0"}}',
 		// Scoped types map to the scoped package.
 		'{"dependencies": {"@foo/bar": "^1.0.0"}, "devDependencies": {"@types/foo__bar": "^1.0.0"}}',
-		// User-supplied `ignore` exempts a package.
+		// User-supplied `ignore` accepts either the type package or runtime package name.
 		{code: '{"devDependencies": {"@types/foo": "^1.0.0"}}', options: [{ignore: ['@types/foo']}]},
+		{code: '{"devDependencies": {"@types/foo": "^1.0.0"}}', options: [{ignore: ['foo']}]},
+		{code: '{"devDependencies": {"@types/foo__bar": "^1.0.0"}}', options: [{ignore: ['@foo/bar']}]},
 	],
 	invalid: [
 		`{
