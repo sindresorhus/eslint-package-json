@@ -34,6 +34,7 @@ test.snapshot({
 		}`,
 		// Remove a manager that is not the last nested member and preserve following top-level fields.
 		`{
+			"name": "foo",
 			"engines": {
 				"npm": ">=11",
 				"node": ">=24"

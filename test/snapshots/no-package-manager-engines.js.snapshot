@@ -425,47 +425,51 @@ Suggestion 2/2: Set \`packageManager\` to \`npm@11.0.0\`.:
 
 `;
 
-exports[`invalid(7): {\n\t\t\t\"engines\": {\n\t\t\t\t\"npm\": \">=11\",\n\t\t\t\t\"node\": \">=24\"\n\t\t\t},\n\t\t\t\"scripts\": {}\n\t\t} 1`] = `
+exports[`invalid(7): {\n\t\t\t\"name\": \"foo\",\n\t\t\t\"engines\": {\n\t\t\t\t\"npm\": \">=11\",\n\t\t\t\t\"node\": \">=24\"\n\t\t\t},\n\t\t\t\"scripts\": {}\n\t\t} 1`] = `
 
 [Input]
   1 | {
-  2 | 			"engines": {
-  3 | 				"npm": ">=11",
-  4 | 				"node": ">=24"
-  5 | 			},
-  6 | 			"scripts": {}
-  7 | 		}
+  2 | 			"name": "foo",
+  3 | 			"engines": {
+  4 | 				"npm": ">=11",
+  5 | 				"node": ">=24"
+  6 | 			},
+  7 | 			"scripts": {}
+  8 | 		}
 
 `;
 
-exports[`invalid(7): {\n\t\t\t\"engines\": {\n\t\t\t\t\"npm\": \">=11\",\n\t\t\t\t\"node\": \">=24\"\n\t\t\t},\n\t\t\t\"scripts\": {}\n\t\t} 2`] = `
+exports[`invalid(7): {\n\t\t\t\"name\": \"foo\",\n\t\t\t\"engines\": {\n\t\t\t\t\"npm\": \">=11\",\n\t\t\t\t\"node\": \">=24\"\n\t\t\t},\n\t\t\t\"scripts\": {}\n\t\t} 2`] = `
 
 Message:
   1 | {
-  2 | 			"engines": {
-> 3 | 				"npm": ">=11",
+  2 | 			"name": "foo",
+  3 | 			"engines": {
+> 4 | 				"npm": ">=11",
     | 				^^^^^ Specify the \`npm\` version in the \`packageManager\` field (with Corepack) instead of \`engines\`.
+  5 | 				"node": ">=24"
+  6 | 			},
+  7 | 			"scripts": {}
+  8 | 		}
+
+Suggestion 1/2: Remove the engine.:
+  1 | {
+  2 | 			"name": "foo",
+  3 | 			"engines": {
   4 | 				"node": ">=24"
   5 | 			},
   6 | 			"scripts": {}
   7 | 		}
 
-Suggestion 1/2: Remove the engine.:
-  1 | {
-  2 | 			"engines": {
-  3 | 				"node": ">=24"
-  4 | 			},
-  5 | 			"scripts": {}
-  6 | 		}
-
 Suggestion 2/2: Set \`packageManager\` to \`npm@11.0.0\`.:
   1 | {
-  2 | 			"engines": {
-  3 | 				"node": ">=24"
-  4 | 			},
-  5 | 			"packageManager": "npm@11.0.0",
-  6 | 			"scripts": {}
-  7 | 		}
+  2 | 			"name": "foo",
+  3 | 			"engines": {
+  4 | 				"node": ">=24"
+  5 | 			},
+  6 | 			"packageManager": "npm@11.0.0",
+  7 | 			"scripts": {}
+  8 | 		}
 
 `;
 
