@@ -47,6 +47,7 @@ export {default as 'require-private-when-workspaces'} from './require-private-wh
 export {default as 'require-types-in-exports'} from './require-types-in-exports.js';
 export {default as 'restrict-fields-when-private'} from './restrict-fields-when-private.js';
 export {default as 'sort-dependencies'} from './sort-dependencies.js';
+export {default as 'sort-files'} from './sort-files.js';
 export {default as 'sort-properties'} from './sort-properties.js';
 export {default as 'types-in-dev-dependencies'} from './types-in-dev-dependencies.js';
 export {default as 'valid-fields'} from './valid-fields.js';

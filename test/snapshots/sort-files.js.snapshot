@@ -1,0 +1,586 @@
+exports[`invalid(1): {\"exports\": {\"types\": \"./index.d.ts\", \"default\": \"./index.js\"}, \"bin\": \"./cli.js\", \"files\": [\"assets\", \"cli.js\", \"index.d.ts\", \"index.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": "./index.d.ts", "default": "./index.js"}, "bin": "./cli.js", "files": ["assets", "cli.js", "index.d.ts", "index.js"]}
+
+`;
+
+exports[`invalid(1): {\"exports\": {\"types\": \"./index.d.ts\", \"default\": \"./index.js\"}, \"bin\": \"./cli.js\", \"files\": [\"assets\", \"cli.js\", \"index.d.ts\", \"index.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": "./index.d.ts", "default": "./index.js"}, "bin": "./cli.js", "files": ["assets", "cli.js", "index.d.ts", "index.js"]}
+    |                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"exports": {"types": "./index.d.ts", "default": "./index.js"}, "bin": "./cli.js", "files": [
+  2 | 	"index.js",
+  3 | 	"index.d.ts",
+  4 | 	"cli.js",
+  5 | 	"assets"
+  6 | ]}
+
+`;
+
+exports[`invalid(10): {\"files\": [\"bin/cli.d.ts\", \"bin/cli\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["bin/cli.d.ts", "bin/cli"]}
+
+`;
+
+exports[`invalid(10): {\"files\": [\"bin/cli.d.ts\", \"bin/cli\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["bin/cli.d.ts", "bin/cli"]}
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"files": [
+  2 | 	"bin/cli",
+  3 | 	"bin/cli.d.ts"
+  4 | ]}
+
+`;
+
+exports[`invalid(11): {\"main\": \"./index.js\", \"files\": [\"other.js\", \"./index.js\"]} 1`] = `
+
+[Input]
+  1 | {"main": "./index.js", "files": ["other.js", "./index.js"]}
+
+`;
+
+exports[`invalid(11): {\"main\": \"./index.js\", \"files\": [\"other.js\", \"./index.js\"]} 2`] = `
+
+Message:
+> 1 | {"main": "./index.js", "files": ["other.js", "./index.js"]}
+    |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"main": "./index.js", "files": [
+  2 | 	"./index.js",
+  3 | 	"other.js"
+  4 | ]}
+
+`;
+
+exports[`invalid(12): {\n\t\"main\": \"./index.js\",\n\t\"module\": \"./module.js\",\n\t\"browser\": \"./browser.js\",\n\t\"types\": \"./index.d.ts\",\n\t\"typings\": \"./legacy.d.ts\",\n\t\"bin\": {\n\t\t\"first\": \"./cli.js\",\n\t\t\"second\": \"./other-cli.js\"\n\t},\n\t\"files\": [\"z.js\", \"other-cli.js\", \"legacy.d.ts\", \"cli.js\", \"index.d.ts\", \"browser.js\", \"module.js\", \"index.js\"]\n} 1`] = `
+
+[Input]
+   1 | {
+   2 | 	"main": "./index.js",
+   3 | 	"module": "./module.js",
+   4 | 	"browser": "./browser.js",
+   5 | 	"types": "./index.d.ts",
+   6 | 	"typings": "./legacy.d.ts",
+   7 | 	"bin": {
+   8 | 		"first": "./cli.js",
+   9 | 		"second": "./other-cli.js"
+  10 | 	},
+  11 | 	"files": ["z.js", "other-cli.js", "legacy.d.ts", "cli.js", "index.d.ts", "browser.js", "module.js", "index.js"]
+  12 | }
+
+`;
+
+exports[`invalid(12): {\n\t\"main\": \"./index.js\",\n\t\"module\": \"./module.js\",\n\t\"browser\": \"./browser.js\",\n\t\"types\": \"./index.d.ts\",\n\t\"typings\": \"./legacy.d.ts\",\n\t\"bin\": {\n\t\t\"first\": \"./cli.js\",\n\t\t\"second\": \"./other-cli.js\"\n\t},\n\t\"files\": [\"z.js\", \"other-cli.js\", \"legacy.d.ts\", \"cli.js\", \"index.d.ts\", \"browser.js\", \"module.js\", \"index.js\"]\n} 2`] = `
+
+Message:
+   1 | {
+   2 | 	"main": "./index.js",
+   3 | 	"module": "./module.js",
+   4 | 	"browser": "./browser.js",
+   5 | 	"types": "./index.d.ts",
+   6 | 	"typings": "./legacy.d.ts",
+   7 | 	"bin": {
+   8 | 		"first": "./cli.js",
+   9 | 		"second": "./other-cli.js"
+  10 | 	},
+> 11 | 	"files": ["z.js", "other-cli.js", "legacy.d.ts", "cli.js", "index.d.ts", "browser.js", "module.js", "index.js"]
+     | 	         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+  12 | }
+
+Output:
+   1 | {
+   2 | 	"main": "./index.js",
+   3 | 	"module": "./module.js",
+   4 | 	"browser": "./browser.js",
+   5 | 	"types": "./index.d.ts",
+   6 | 	"typings": "./legacy.d.ts",
+   7 | 	"bin": {
+   8 | 		"first": "./cli.js",
+   9 | 		"second": "./other-cli.js"
+  10 | 	},
+  11 | 	"files": [
+  12 | 		"index.js",
+  13 | 		"module.js",
+  14 | 		"browser.js",
+  15 | 		"index.d.ts",
+  16 | 		"legacy.d.ts",
+  17 | 		"cli.js",
+  18 | 		"other-cli.js",
+  19 | 		"z.js"
+  20 | 	]
+  21 | }
+
+`;
+
+exports[`invalid(13): {\"files\": [\"src/**/*.d.ts\", \"z\", \"dist/*.js\", \"dist\", \"src/**/*.js\", \"dist/*.d.ts\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["src/**/*.d.ts", "z", "dist/*.js", "dist", "src/**/*.js", "dist/*.d.ts"]}
+
+`;
+
+exports[`invalid(13): {\"files\": [\"src/**/*.d.ts\", \"z\", \"dist/*.js\", \"dist\", \"src/**/*.js\", \"dist/*.d.ts\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["src/**/*.d.ts", "z", "dist/*.js", "dist", "src/**/*.js", "dist/*.d.ts"]}
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"files": [
+  2 | 	"dist",
+  3 | 	"dist/*.js",
+  4 | 	"dist/*.d.ts",
+  5 | 	"src/**/*.js",
+  6 | 	"src/**/*.d.ts",
+  7 | 	"z"
+  8 | ]}
+
+`;
+
+exports[`invalid(14): {\"exports\": {\"./feature/*\": \"./dist/feature/*.js\"}, \"files\": [\"src\", \"dist/feature/*.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": {"./feature/*": "./dist/feature/*.js"}, "files": ["src", "dist/feature/*.js"]}
+
+`;
+
+exports[`invalid(14): {\"exports\": {\"./feature/*\": \"./dist/feature/*.js\"}, \"files\": [\"src\", \"dist/feature/*.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": {"./feature/*": "./dist/feature/*.js"}, "files": ["src", "dist/feature/*.js"]}
+    |                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"exports": {"./feature/*": "./dist/feature/*.js"}, "files": [
+  2 | 	"dist/feature/*.js",
+  3 | 	"src"
+  4 | ]}
+
+`;
+
+exports[`invalid(15): {\n\t\"exports\": {\n\t\t\".\": {\n\t\t\t\"node\": {\n\t\t\t\t\"types\": \"./node.d.ts\",\n\t\t\t\t\"import\": \"./node.js\"\n\t\t\t},\n\t\t\t\"default\": {\n\t\t\t\t\"types\": \"./default.d.ts\",\n\t\t\t\t\"import\": \"./default.js\"\n\t\t\t}\n\t\t},\n\t\t\"./node\": \"./node.js\"\n\t},\n\t\"files\": [\"default.js\", \"default.d.ts\", \"node.js\", \"node.d.ts\"]\n} 1`] = `
+
+[Input]
+   1 | {
+   2 | 	"exports": {
+   3 | 		".": {
+   4 | 			"node": {
+   5 | 				"types": "./node.d.ts",
+   6 | 				"import": "./node.js"
+   7 | 			},
+   8 | 			"default": {
+   9 | 				"types": "./default.d.ts",
+  10 | 				"import": "./default.js"
+  11 | 			}
+  12 | 		},
+  13 | 		"./node": "./node.js"
+  14 | 	},
+  15 | 	"files": ["default.js", "default.d.ts", "node.js", "node.d.ts"]
+  16 | }
+
+`;
+
+exports[`invalid(15): {\n\t\"exports\": {\n\t\t\".\": {\n\t\t\t\"node\": {\n\t\t\t\t\"types\": \"./node.d.ts\",\n\t\t\t\t\"import\": \"./node.js\"\n\t\t\t},\n\t\t\t\"default\": {\n\t\t\t\t\"types\": \"./default.d.ts\",\n\t\t\t\t\"import\": \"./default.js\"\n\t\t\t}\n\t\t},\n\t\t\"./node\": \"./node.js\"\n\t},\n\t\"files\": [\"default.js\", \"default.d.ts\", \"node.js\", \"node.d.ts\"]\n} 2`] = `
+
+Message:
+   1 | {
+   2 | 	"exports": {
+   3 | 		".": {
+   4 | 			"node": {
+   5 | 				"types": "./node.d.ts",
+   6 | 				"import": "./node.js"
+   7 | 			},
+   8 | 			"default": {
+   9 | 				"types": "./default.d.ts",
+  10 | 				"import": "./default.js"
+  11 | 			}
+  12 | 		},
+  13 | 		"./node": "./node.js"
+  14 | 	},
+> 15 | 	"files": ["default.js", "default.d.ts", "node.js", "node.d.ts"]
+     | 	         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+  16 | }
+
+Output:
+   1 | {
+   2 | 	"exports": {
+   3 | 		".": {
+   4 | 			"node": {
+   5 | 				"types": "./node.d.ts",
+   6 | 				"import": "./node.js"
+   7 | 			},
+   8 | 			"default": {
+   9 | 				"types": "./default.d.ts",
+  10 | 				"import": "./default.js"
+  11 | 			}
+  12 | 		},
+  13 | 		"./node": "./node.js"
+  14 | 	},
+  15 | 	"files": [
+  16 | 		"node.js",
+  17 | 		"node.d.ts",
+  18 | 		"default.js",
+  19 | 		"default.d.ts"
+  20 | 	]
+  21 | }
+
+`;
+
+exports[`invalid(16): {\n\t\"files\": [\n\t\t\"index.d.ts\",\n\t\t\"index.js\",\n\t\t\"rules\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"index.d.ts",
+  4 | 		"index.js",
+  5 | 		"rules"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(16): {\n\t\"files\": [\n\t\t\"index.d.ts\",\n\t\t\"index.js\",\n\t\t\"rules\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+> 2 | 	"files": [
+    | 	         ^
+> 3 | 		"index.d.ts",
+    | ^^^^^^^^^^^^^^^
+> 4 | 		"index.js",
+    | ^^^^^^^^^^^^^
+> 5 | 		"rules"
+    | ^^^^^^^^^
+> 6 | 	]
+    | ^^ Entries in \`files\` should be in the canonical order.
+  7 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"index.js",
+  4 | 		"index.d.ts",
+  5 | 		"rules"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(17): {\n  \"files\": [\n    \"src/**/*.d.ts\",\n    \"src/**/*.js\"\n  ]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 |   "files": [
+  3 |     "src/**/*.d.ts",
+  4 |     "src/**/*.js"
+  5 |   ]
+  6 | }
+
+`;
+
+exports[`invalid(17): {\n  \"files\": [\n    \"src/**/*.d.ts\",\n    \"src/**/*.js\"\n  ]\n} 2`] = `
+
+Message:
+  1 | {
+> 2 |   "files": [
+    |            ^
+> 3 |     "src/**/*.d.ts",
+    | ^^^^^^^^^^^^^^^^^^^^
+> 4 |     "src/**/*.js"
+    | ^^^^^^^^^^^^^^^^^
+> 5 |   ]
+    | ^^^ Entries in \`files\` should be in the canonical order.
+  6 | }
+
+Output:
+  1 | {
+  2 |   "files": [
+  3 |     "src/**/*.js",
+  4 |     "src/**/*.d.ts"
+  5 |   ]
+  6 | }
+
+`;
+
+exports[`invalid(18): {\n  \"files\": [ \"index.d.ts\", \"index.js\" ]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 |   "files": [ "index.d.ts", "index.js" ]
+  3 | }
+
+`;
+
+exports[`invalid(18): {\n  \"files\": [ \"index.d.ts\", \"index.js\" ]\n} 2`] = `
+
+Message:
+  1 | {
+> 2 |   "files": [ "index.d.ts", "index.js" ]
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+  3 | }
+
+Output:
+  1 | {
+  2 |   "files": [
+  3 |     "index.js",
+  4 |     "index.d.ts"
+  5 |   ]
+  6 | }
+
+`;
+
+exports[`invalid(19): {\n  \"files\": [\n    \"index.d.ts\",\n    \"index.js\"\n ]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 |   "files": [
+  3 |     "index.d.ts",
+  4 |     "index.js"
+  5 |  ]
+  6 | }
+
+`;
+
+exports[`invalid(19): {\n  \"files\": [\n    \"index.d.ts\",\n    \"index.js\"\n ]\n} 2`] = `
+
+Message:
+  1 | {
+> 2 |   "files": [
+    |            ^
+> 3 |     "index.d.ts",
+    | ^^^^^^^^^^^^^^^^^
+> 4 |     "index.js"
+    | ^^^^^^^^^^^^^^
+> 5 |  ]
+    | ^^ Entries in \`files\` should be in the canonical order.
+  6 | }
+
+Output:
+  1 | {
+  2 |   "files": [
+  3 |     "index.js",
+  4 |     "index.d.ts"
+  5 |  ]
+  6 | }
+
+`;
+
+exports[`invalid(2): {\"exports\": \"./exports.js\", \"main\": \"./main.js\", \"bin\": \"./cli.js\", \"files\": [\"cli.js\", \"main.js\", \"exports.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": "./exports.js", "main": "./main.js", "bin": "./cli.js", "files": ["cli.js", "main.js", "exports.js"]}
+
+`;
+
+exports[`invalid(2): {\"exports\": \"./exports.js\", \"main\": \"./main.js\", \"bin\": \"./cli.js\", \"files\": [\"cli.js\", \"main.js\", \"exports.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": "./exports.js", "main": "./main.js", "bin": "./cli.js", "files": ["cli.js", "main.js", "exports.js"]}
+    |                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"exports": "./exports.js", "main": "./main.js", "bin": "./cli.js", "files": [
+  2 | 	"exports.js",
+  3 | 	"main.js",
+  4 | 	"cli.js"
+  5 | ]}
+
+`;
+
+exports[`invalid(20): {\r\n\t\"files\": [\r\n\t\t\"index.d.ts\",\r\n\t\t\"index.js\"\r\n\t]\r\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"index.d.ts",
+  4 | 		"index.js"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(20): {\r\n\t\"files\": [\r\n\t\t\"index.d.ts\",\r\n\t\t\"index.js\"\r\n\t]\r\n} 2`] = `
+
+Message:
+  1 | {
+> 2 | 	"files": [
+    | 	         ^
+> 3 | 		"index.d.ts",
+    | ^^^^^^^^^^^^^^^
+> 4 | 		"index.js"
+    | ^^^^^^^^^^^^
+> 5 | 	]
+    | ^^ Entries in \`files\` should be in the canonical order.
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"index.js",
+  4 | 		"index.d.ts"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(3): {\"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"bin\": {\"cli\": \"./cli.js\"}, \"files\": [\"assets\", \"cli.js\", \"index.d.ts\", \"index.js\"]} 1`] = `
+
+[Input]
+  1 | {"main": "./index.js", "types": "./index.d.ts", "bin": {"cli": "./cli.js"}, "files": ["assets", "cli.js", "index.d.ts", "index.js"]}
+
+`;
+
+exports[`invalid(3): {\"main\": \"./index.js\", \"types\": \"./index.d.ts\", \"bin\": {\"cli\": \"./cli.js\"}, \"files\": [\"assets\", \"cli.js\", \"index.d.ts\", \"index.js\"]} 2`] = `
+
+Message:
+> 1 | {"main": "./index.js", "types": "./index.d.ts", "bin": {"cli": "./cli.js"}, "files": ["assets", "cli.js", "index.d.ts", "index.js"]}
+    |                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"main": "./index.js", "types": "./index.d.ts", "bin": {"cli": "./cli.js"}, "files": [
+  2 | 	"index.js",
+  3 | 	"index.d.ts",
+  4 | 	"cli.js",
+  5 | 	"assets"
+  6 | ]}
+
+`;
+
+exports[`invalid(4): {\"files\": [\"src/**/*.d.ts\", \"src/**/*.js\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["src/**/*.d.ts", "src/**/*.js"]}
+
+`;
+
+exports[`invalid(4): {\"files\": [\"src/**/*.d.ts\", \"src/**/*.js\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["src/**/*.d.ts", "src/**/*.js"]}
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"files": [
+  2 | 	"src/**/*.js",
+  3 | 	"src/**/*.d.ts"
+  4 | ]}
+
+`;
+
+exports[`invalid(5): {\"files\":[\"index.d.ts\",\"index.js\"]} 1`] = `
+
+[Input]
+  1 | {"files":["index.d.ts","index.js"]}
+
+`;
+
+exports[`invalid(5): {\"files\":[\"index.d.ts\",\"index.js\"]} 2`] = `
+
+Message:
+> 1 | {"files":["index.d.ts","index.js"]}
+    |          ^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"files":[
+  2 | 	"index.js",
+  3 | 	"index.d.ts"
+  4 | ]}
+
+`;
+
+exports[`invalid(6): {\"files\": [\"foo.js\", \"foo.e.js\", \"foo.d.ts\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["foo.js", "foo.e.js", "foo.d.ts"]}
+
+`;
+
+exports[`invalid(6): {\"files\": [\"foo.js\", \"foo.e.js\", \"foo.d.ts\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["foo.js", "foo.e.js", "foo.d.ts"]}
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"files": [
+  2 | 	"foo.js",
+  3 | 	"foo.d.ts",
+  4 | 	"foo.e.js"
+  5 | ]}
+
+`;
+
+exports[`invalid(7): {\"exports\": \"./index.js\", \"files\": [\"other.js\", \"index.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": "./index.js", "files": ["other.js", "index.js"]}
+
+`;
+
+exports[`invalid(7): {\"exports\": \"./index.js\", \"files\": [\"other.js\", \"index.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": "./index.js", "files": ["other.js", "index.js"]}
+    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"exports": "./index.js", "files": [
+  2 | 	"index.js",
+  3 | 	"other.js"
+  4 | ]}
+
+`;
+
+exports[`invalid(8): {\"exports\": [\"./index.js\", \"./fallback.js\"], \"files\": [\"other.js\", \"fallback.js\", \"index.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": ["./index.js", "./fallback.js"], "files": ["other.js", "fallback.js", "index.js"]}
+
+`;
+
+exports[`invalid(8): {\"exports\": [\"./index.js\", \"./fallback.js\"], \"files\": [\"other.js\", \"fallback.js\", \"index.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": ["./index.js", "./fallback.js"], "files": ["other.js", "fallback.js", "index.js"]}
+    |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"exports": ["./index.js", "./fallback.js"], "files": [
+  2 | 	"index.js",
+  3 | 	"fallback.js",
+  4 | 	"other.js"
+  5 | ]}
+
+`;
+
+exports[`invalid(9): {\"types\": \"./index.d.ts\", \"files\": [\"index.js\", \"index.d.ts\"]} 1`] = `
+
+[Input]
+  1 | {"types": "./index.d.ts", "files": ["index.js", "index.d.ts"]}
+
+`;
+
+exports[`invalid(9): {\"types\": \"./index.d.ts\", \"files\": [\"index.js\", \"index.d.ts\"]} 2`] = `
+
+Message:
+> 1 | {"types": "./index.d.ts", "files": ["index.js", "index.d.ts"]}
+    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^ Entries in \`files\` should be in the canonical order.
+
+Output:
+  1 | {"types": "./index.d.ts", "files": [
+  2 | 	"index.d.ts",
+  3 | 	"index.js"
+  4 | ]}
+
+`;
