@@ -215,6 +215,51 @@ Message:
 
 `;
 
+exports[`invalid(20): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.mts\"}, \"default\": \"./fallback.d.cts\"}, \"import\": {\"browser\": \"./browser.mjs\", \"node\": \"./node.js\"}}} 1`] = `
+
+[Input]
+  1 | {"type": "module", "exports": {"types": {"import": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "import": {"browser": "./browser.mjs", "node": "./node.js"}}}
+
+`;
+
+exports[`invalid(20): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.mts\"}, \"default\": \"./fallback.d.cts\"}, \"import\": {\"browser\": \"./browser.mjs\", \"node\": \"./node.js\"}}} 2`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"import": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "import": {"browser": "./browser.mjs", "node": "./node.js"}}}
+    |                                                                                               ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+
+`;
+
+exports[`invalid(21): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"default\": \"./index.d.cts\"}}, \"import\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"type": "module", "exports": {"types": {"import": {"default": "./index.d.cts"}}, "import": "./index.js"}}
+
+`;
+
+exports[`invalid(21): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"default\": \"./index.d.cts\"}}, \"import\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"import": {"default": "./index.d.cts"}}, "import": "./index.js"}}
+    |                                                                ^^^^^^^^^^^^^^^ Type declaration \`./index.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+
+`;
+
+exports[`invalid(22): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": \"./fallback.d.cts\"}, \"import\": \"./import.js\"}} 1`] = `
+
+[Input]
+  1 | {"type": "module", "exports": {"types": {"import": [], "default": "./fallback.d.cts"}, "import": "./import.js"}}
+
+`;
+
+exports[`invalid(22): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": \"./fallback.d.cts\"}, \"import\": \"./import.js\"}} 2`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"import": [], "default": "./fallback.d.cts"}, "import": "./import.js"}}
+    |                                                                   ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+
+`;
+
 exports[`invalid(3): {\"exports\": {\"default\": \"./index.js\", \"types\": \"./index.d.ts\"}} 1`] = `
 
 [Input]

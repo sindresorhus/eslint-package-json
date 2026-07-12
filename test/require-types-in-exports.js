@@ -22,6 +22,8 @@ test.snapshot({
 	}
 }`,
 		'{"exports": {"types": {"import": {"browser": "./browser.d.ts"}, "default": "./fallback.d.ts"}, "import": "./import.js"}}',
+		// An empty type-target array falls through to the parent default.
+		'{"exports": {"types": {"import": [], "default": "./fallback.d.ts"}, "import": "./import.js"}}',
 		// Each nested runtime branch has a matching declaration format.
 		'{"type": "module", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}',
 		'{"type": "commonjs", "exports": {"types": "./index.d.ts", "default": "./index.js"}}',
@@ -67,5 +69,11 @@ test.snapshot({
 		"require": "./require.js"
 	}
 }`,
+		// Format mismatches must also be checked when a nested type condition falls through to a parent default.
+		'{"type": "module", "exports": {"types": {"import": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "import": {"browser": "./browser.mjs", "node": "./node.js"}}}',
+		// A nested type default must be paired with a string runtime target.
+		'{"type": "module", "exports": {"types": {"import": {"default": "./index.d.cts"}}, "import": "./index.js"}}',
+		// An empty type-target array must also fall through for module-format checks.
+		'{"type": "module", "exports": {"types": {"import": [], "default": "./fallback.d.cts"}, "import": "./import.js"}}',
 	],
 });

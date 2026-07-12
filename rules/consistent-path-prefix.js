@@ -64,6 +64,11 @@ const create = context => {
 			return;
 		}
 
+		// Backslash normalization belongs to `no-backslash-paths`; skipping it here avoids conflicting fixes.
+		if (value.includes('\\')) {
+			return;
+		}
+
 		if (prefix === 'always') {
 			if (!value.startsWith('./') && !value.startsWith('../')) {
 				const fixed = './' + value;

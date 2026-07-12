@@ -16,6 +16,7 @@ test.snapshot({
 		'{"main": "/usr/local/bin/foo"}',
 		'{"main": "C:/foo/index.js"}',
 		String.raw`{"main": "C:\\foo\\index.js"}`,
+		String.raw`{"main": ".\\dist\\index.js"}`,
 		// URLs are skipped.
 		'{"browser": "https://cdn.example.com/foo.js"}',
 		// Globs are skipped.

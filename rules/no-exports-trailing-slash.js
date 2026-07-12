@@ -1,19 +1,22 @@
 import {getRootObject, findMember, getKey} from './utils/index.js';
 
 const MESSAGE_ID = 'no-exports-trailing-slash';
+const MESSAGE_ID_PATTERN = 'pattern';
 
 const messages = {
 	[MESSAGE_ID]: 'Trailing-slash folder mapping `{{value}}` in `{{field}}` is deprecated; use a subpath pattern like `{{suggestion}}` instead.',
+	[MESSAGE_ID_PATTERN]: 'Trailing-slash mapping `{{value}}` in `{{field}}` is deprecated; use a subpath pattern without a trailing slash.',
 };
 
 /**
 Recursively walk an `exports`/`imports` value tree, yielding every trailing-slash subpath key and string value.
 */
-function * findTrailingSlashes(node, subpathPrefix, canFixTarget = false) {
+function * findTrailingSlashes(node, subpathPrefix, canFixTarget = false, isPattern = false) {
 	switch (node.type) {
 		case 'Object': {
 			for (const member of node.members) {
 				const key = getKey(member);
+				const memberIsPattern = isPattern || key.includes('*');
 				const isFolderMapping = key.startsWith(subpathPrefix)
 					&& key.endsWith('/')
 					&& !key.includes('*')
@@ -22,10 +25,10 @@ function * findTrailingSlashes(node, subpathPrefix, canFixTarget = false) {
 					&& !member.value.value.includes('*');
 
 				if (key.startsWith(subpathPrefix) && key.endsWith('/')) {
-					yield {node: member.name, canFix: isFolderMapping};
+					yield {node: member.name, canFix: isFolderMapping, isPattern: memberIsPattern};
 				}
 
-				yield * findTrailingSlashes(member.value, subpathPrefix, isFolderMapping);
+				yield * findTrailingSlashes(member.value, subpathPrefix, isFolderMapping, memberIsPattern);
 			}
 
 			break;
@@ -41,7 +44,7 @@ function * findTrailingSlashes(node, subpathPrefix, canFixTarget = false) {
 
 		case 'String': {
 			if (node.value.endsWith('/')) {
-				yield {node, canFix: canFixTarget};
+				yield {node, canFix: canFixTarget, isPattern: isPattern || node.value.includes('*')};
 			}
 
 			break;
@@ -69,11 +72,12 @@ const create = context => ({
 			for (const target of findTrailingSlashes(member.value, subpathPrefix)) {
 				const {node: targetNode, canFix} = target;
 				const {value} = targetNode;
+				const isPattern = target.isPattern || value.includes('*');
 				const suggestion = value + '*';
 				const report = {
 					node: targetNode,
-					messageId: MESSAGE_ID,
-					data: {field, value, suggestion},
+					messageId: isPattern ? MESSAGE_ID_PATTERN : MESSAGE_ID,
+					data: isPattern ? {field, value} : {field, value, suggestion},
 				};
 
 				if (canFix) {

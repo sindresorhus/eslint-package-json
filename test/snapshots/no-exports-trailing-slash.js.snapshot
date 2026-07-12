@@ -46,18 +46,41 @@ exports[`invalid(2): {\"exports\": {\"./foo/\": \"./dist/*/\"}} 3`] = `
 
 Message:
 > 1 | {"exports": {"./foo/": "./dist/*/"}}
-    |                        ^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/*/\` in \`exports\` is deprecated; use a subpath pattern like \`./dist/*/*\` instead.
+    |                        ^^^^^^^^^^^ Trailing-slash mapping \`./dist/*/\` in \`exports\` is deprecated; use a subpath pattern without a trailing slash.
 
 `;
 
-exports[`invalid(3): {\"exports\": {\".\": \"./lib/\"}} 1`] = `
+exports[`invalid(3): {\"exports\": {\"./foo/*/\": \"./dist/foo/\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./foo/*/": "./dist/foo/"}}
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"./foo/*/\": \"./dist/foo/\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./foo/*/": "./dist/foo/"}}
+    |              ^^^^^^^^^^ Trailing-slash mapping \`./foo/*/\` in \`exports\` is deprecated; use a subpath pattern without a trailing slash.
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"./foo/*/\": \"./dist/foo/\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./foo/*/": "./dist/foo/"}}
+    |                          ^^^^^^^^^^^^^ Trailing-slash mapping \`./dist/foo/\` in \`exports\` is deprecated; use a subpath pattern without a trailing slash.
+
+`;
+
+exports[`invalid(4): {\"exports\": {\".\": \"./lib/\"}} 1`] = `
 
 [Input]
   1 | {"exports": {".": "./lib/"}}
 
 `;
 
-exports[`invalid(3): {\"exports\": {\".\": \"./lib/\"}} 2`] = `
+exports[`invalid(4): {\"exports\": {\".\": \"./lib/\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {".": "./lib/"}}
@@ -65,7 +88,7 @@ Message:
 
 `;
 
-exports[`invalid(4): {\n\t\t\t\"exports\": {\n\t\t\t\t\".\": {\n\t\t\t\t\t\"import\": \"./dist/\"\n\t\t\t\t}\n\t\t\t}\n\t\t} 1`] = `
+exports[`invalid(5): {\n\t\t\t\"exports\": {\n\t\t\t\t\".\": {\n\t\t\t\t\t\"import\": \"./dist/\"\n\t\t\t\t}\n\t\t\t}\n\t\t} 1`] = `
 
 [Input]
   1 | {
@@ -78,7 +101,7 @@ exports[`invalid(4): {\n\t\t\t\"exports\": {\n\t\t\t\t\".\": {\n\t\t\t\t\t\"impo
 
 `;
 
-exports[`invalid(4): {\n\t\t\t\"exports\": {\n\t\t\t\t\".\": {\n\t\t\t\t\t\"import\": \"./dist/\"\n\t\t\t\t}\n\t\t\t}\n\t\t} 2`] = `
+exports[`invalid(5): {\n\t\t\t\"exports\": {\n\t\t\t\t\".\": {\n\t\t\t\t\t\"import\": \"./dist/\"\n\t\t\t\t}\n\t\t\t}\n\t\t} 2`] = `
 
 Message:
   1 | {
@@ -92,14 +115,14 @@ Message:
 
 `;
 
-exports[`invalid(5): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 1`] = `
+exports[`invalid(6): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 1`] = `
 
 [Input]
   1 | {"imports": {"#internal/": "./src/internal/"}}
 
 `;
 
-exports[`invalid(5): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 2`] = `
+exports[`invalid(6): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#internal/": "./src/internal/"}}
@@ -110,7 +133,7 @@ Output:
 
 `;
 
-exports[`invalid(5): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 3`] = `
+exports[`invalid(6): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 3`] = `
 
 Message:
 > 1 | {"imports": {"#internal/": "./src/internal/"}}
@@ -121,14 +144,14 @@ Output:
 
 `;
 
-exports[`invalid(6): {\"exports\": \"./dist/\"} 1`] = `
+exports[`invalid(7): {\"exports\": \"./dist/\"} 1`] = `
 
 [Input]
   1 | {"exports": "./dist/"}
 
 `;
 
-exports[`invalid(6): {\"exports\": \"./dist/\"} 2`] = `
+exports[`invalid(7): {\"exports\": \"./dist/\"} 2`] = `
 
 Message:
 > 1 | {"exports": "./dist/"}
@@ -136,14 +159,14 @@ Message:
 
 `;
 
-exports[`invalid(7): {\"imports\": {\"#dep\": \"./src/\"}} 1`] = `
+exports[`invalid(8): {\"imports\": {\"#dep\": \"./src/\"}} 1`] = `
 
 [Input]
   1 | {"imports": {"#dep": "./src/"}}
 
 `;
 
-exports[`invalid(7): {\"imports\": {\"#dep\": \"./src/\"}} 2`] = `
+exports[`invalid(8): {\"imports\": {\"#dep\": \"./src/\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": "./src/"}}
@@ -151,14 +174,14 @@ Message:
 
 `;
 
-exports[`invalid(8): {\"exports\": {\".\": [\"./dist/\", \"./other.js\"]}} 1`] = `
+exports[`invalid(9): {\"exports\": {\".\": [\"./dist/\", \"./other.js\"]}} 1`] = `
 
 [Input]
   1 | {"exports": {".": ["./dist/", "./other.js"]}}
 
 `;
 
-exports[`invalid(8): {\"exports\": {\".\": [\"./dist/\", \"./other.js\"]}} 2`] = `
+exports[`invalid(9): {\"exports\": {\".\": [\"./dist/\", \"./other.js\"]}} 2`] = `
 
 Message:
 > 1 | {"exports": {".": ["./dist/", "./other.js"]}}

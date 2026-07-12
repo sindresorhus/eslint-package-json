@@ -58,7 +58,7 @@ function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
 		if (matchingMember) {
 			const hasMatchingTypes = hasTypesCoverage(matchingMember.value, runtimeNode);
 
-			if (hasMatchingTypes || matchingMember.value.type !== 'Object') {
+			if (hasMatchingTypes || (matchingMember.value.type !== 'Object' && matchingMember.value.type !== 'Array')) {
 				return hasMatchingTypes;
 			}
 		}
@@ -133,6 +133,21 @@ function * iterateRuntimeStringLeaves(node) {
 	}
 }
 
+function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode) {
+	if (runtimeNode.type !== 'Object') {
+		yield * iterateTypeRuntimePairs(fallbackNode, runtimeNode);
+		return;
+	}
+
+	for (const runtimeMember of runtimeNode.members) {
+		const key = getKey(runtimeMember);
+
+		if (!isTypesCondition(key) && !hasTypesCoverage(matchingNode, runtimeMember.value, key)) {
+			yield * iterateTypeRuntimePairs(fallbackNode, runtimeMember.value, key);
+		}
+	}
+}
+
 function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 	switch (typeNode.type) {
 		case 'String': {
@@ -144,23 +159,29 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 		}
 
 		case 'Object': {
+			const fallbackMember = typeNode.members.find(member => getKey(member) === 'default');
+
 			if (runtimeKey) {
 				const matchingMember = typeNode.members.find(member => getKey(member) === runtimeKey);
 
 				if (matchingMember) {
-					let hasMatchingPairs = false;
-
 					for (const pair of iterateTypeRuntimePairs(matchingMember.value, runtimeNode)) {
-						hasMatchingPairs = true;
 						yield pair;
 					}
 
-					if (hasMatchingPairs || matchingMember.value.type !== 'Object') {
+					const hasMatchingTypes = hasTypesCoverage(matchingMember.value, runtimeNode);
+					const canFallThrough = matchingMember.value.type === 'Object' || matchingMember.value.type === 'Array';
+
+					if (hasMatchingTypes || !canFallThrough) {
 						return;
 					}
-				}
 
-				const fallbackMember = typeNode.members.find(member => getKey(member) === 'default');
+					if (fallbackMember) {
+						yield * iterateUncoveredFallbackPairs(fallbackMember.value, matchingMember.value, runtimeNode);
+					}
+
+					return;
+				}
 
 				if (fallbackMember) {
 					yield * iterateTypeRuntimePairs(fallbackMember.value, runtimeNode);
@@ -182,6 +203,8 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 						yield * iterateTypeRuntimePairs(typeNode, runtimeMember.value, getKey(runtimeMember));
 					}
 				}
+			} else if (fallbackMember) {
+				yield * iterateTypeRuntimePairs(fallbackMember.value, runtimeNode);
 			}
 
 			break;
