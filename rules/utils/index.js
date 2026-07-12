@@ -233,7 +233,7 @@ export function getIndentString(sourceCode) {
 }
 
 /**
-Detect the newline sequence used by the document, defaulting to `\n`.
+Detect the LF or CRLF newline sequence used by the document, defaulting to `\n`.
 */
 export function getNewline(sourceCode) {
 	return sourceCode.text.includes('\r\n') ? '\r\n' : '\n';
@@ -284,19 +284,25 @@ export function * removeElement(fixer, sourceCode, element) {
 
 /**
 Build the source text for an object with its members reordered, preserving the file's existing indentation and newline.
-
-`fallbackIndent` is used only for single-line objects, where there is no existing per-member indentation to reuse.
 */
-export function buildReorderedObject(sourceCode, objectNode, orderedMembers, fallbackIndent) {
+export function buildReorderedObject(sourceCode, objectNode, orderedMembers) {
 	const newline = getNewline(sourceCode);
 	const indent = getIndentString(sourceCode);
+	const objectIndent = lineIndentOf(sourceCode, objectNode);
 
 	// The member indentation is whatever follows the last newline before the first member.
 	const firstMemberStart = objectNode.members[0].range[0];
 	const textBefore = sourceCode.text.slice(objectNode.range[0] + 1, firstMemberStart);
-	const existingIndent = textBefore.slice(textBefore.lastIndexOf('\n') + 1);
-	const memberIndent = existingIndent.length > 0 ? existingIndent : fallbackIndent;
-	const closingIndent = memberIndent.slice(indent.length);
+	const hasExistingMemberIndent = textBefore.includes('\n');
+	const existingIndent = hasExistingMemberIndent
+		? textBefore.slice(textBefore.lastIndexOf('\n') + 1)
+		: '';
+	const memberIndent = hasExistingMemberIndent ? existingIndent : objectIndent + indent;
+	const lastMemberEnd = objectNode.members.at(-1).range[1];
+	const textBeforeClosing = sourceCode.text.slice(lastMemberEnd, objectNode.range[1] - 1);
+	const closingIndent = textBeforeClosing.includes('\n')
+		? textBeforeClosing.slice(textBeforeClosing.lastIndexOf('\n') + 1)
+		: objectIndent;
 
 	return '{'
 		+ newline

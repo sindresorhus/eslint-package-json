@@ -138,6 +138,7 @@ export default [
 | [sort-dependencies](docs/rules/sort-dependencies.md)                                         | Enforce alphabetical ordering of dependencies.                                            | ✅  | 🔧 |    |
 | [sort-files](docs/rules/sort-files.md)                                                       | Enforce a canonical order for entries in the `files` field.                               | ✅  | 🔧 |    |
 | [sort-properties](docs/rules/sort-properties.md)                                             | Enforce a canonical order for top-level package.json fields.                              | ✅  | 🔧 |    |
+| [sort-scripts](docs/rules/sort-scripts.md)                                                   | Enforce alphabetical ordering of scripts.                                                 |    | 🔧 |    |
 | [types-in-dev-dependencies](docs/rules/types-in-dev-dependencies.md)                         | Enforce `@types/*` packages to be in `devDependencies`.                                   |    |    | 💡 |
 | [valid-fields](docs/rules/valid-fields.md)                                                   | Enforce valid values for package.json fields.                                             | ✅  | 🔧 | 💡 |
 

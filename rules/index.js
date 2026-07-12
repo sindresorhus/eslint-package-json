@@ -50,5 +50,6 @@ export {default as 'restrict-fields-when-private'} from './restrict-fields-when-
 export {default as 'sort-dependencies'} from './sort-dependencies.js';
 export {default as 'sort-files'} from './sort-files.js';
 export {default as 'sort-properties'} from './sort-properties.js';
+export {default as 'sort-scripts'} from './sort-scripts.js';
 export {default as 'types-in-dev-dependencies'} from './types-in-dev-dependencies.js';
 export {default as 'valid-fields'} from './valid-fields.js';

@@ -12,7 +12,7 @@ Alphabetically sorted dependency lists are easier to scan and produce cleaner di
 
 npm agrees: it alphabetically re-sorts dependency groups itself whenever `npm install`/`npm uninstall` rewrites `package.json`, so an unsorted list only stays that way until the next install.
 
-By default this rule checks `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`, and `peerDependenciesMeta`. The `scripts` field is intentionally excluded because lifecycle script order can be meaningful.
+By default this rule checks `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`, and `peerDependenciesMeta`. Use [`sort-scripts`](sort-scripts.md) to sort the `scripts` field.
 
 ## Options
 
