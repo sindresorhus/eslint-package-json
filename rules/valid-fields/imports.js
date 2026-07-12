@@ -31,6 +31,12 @@ function isValidExternalTarget(value) {
 		return false;
 	}
 
+	try {
+		decodeURIComponent(value);
+	} catch {
+		return false;
+	}
+
 	const packageName = value.startsWith('@')
 		? value.split('/', 2).join('/')
 		: value.split('/', 1)[0];
@@ -123,7 +129,7 @@ function * checkTargetNode(node) {
 }
 
 /**
-Recursively check the condition objects nested within an `imports` entry value, yielding problems.
+Recursively checks the condition objects nested within an `imports` entry value, yielding problems.
 */
 function * checkImportsNode(node, sourceCode) {
 	switch (node.type) {

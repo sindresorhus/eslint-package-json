@@ -87,14 +87,29 @@ Message:
 
 `;
 
-exports[`invalid(4): {\"exports\": {\"default\": \"./index.js\", \"import\": \"./index.mjs\"}} 1`] = `
+exports[`invalid(4): {\"imports\": {\"#dep\": {\"#custom\": \"./dep.js\"}}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep": {"#custom": "./dep.js"}}}
+
+`;
+
+exports[`invalid(4): {\"imports\": {\"#dep\": {\"#custom\": \"./dep.js\"}}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep": {"#custom": "./dep.js"}}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^ A conditions object should include a \`default\` entry as a fallback.
+
+`;
+
+exports[`invalid(5): {\"exports\": {\"default\": \"./index.js\", \"import\": \"./index.mjs\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"default": "./index.js", "import": "./index.mjs"}}
 
 `;
 
-exports[`invalid(4): {\"exports\": {\"default\": \"./index.js\", \"import\": \"./index.mjs\"}} 2`] = `
+exports[`invalid(5): {\"exports\": {\"default\": \"./index.js\", \"import\": \"./index.mjs\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"default": "./index.js", "import": "./index.mjs"}}
@@ -102,14 +117,14 @@ Message:
 
 `;
 
-exports[`invalid(5): {\"imports\": {\"#dep\": {\"default\": \"./dep.js\", \"node\": \"./node.js\"}}} 1`] = `
+exports[`invalid(6): {\"imports\": {\"#dep\": {\"default\": \"./dep.js\", \"node\": \"./node.js\"}}} 1`] = `
 
 [Input]
   1 | {"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}
 
 `;
 
-exports[`invalid(5): {\"imports\": {\"#dep\": {\"default\": \"./dep.js\", \"node\": \"./node.js\"}}} 2`] = `
+exports[`invalid(6): {\"imports\": {\"#dep\": {\"default\": \"./dep.js\", \"node\": \"./node.js\"}}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}

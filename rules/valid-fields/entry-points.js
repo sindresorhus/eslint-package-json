@@ -15,9 +15,10 @@ export const messages = {
 };
 
 const entryPointFields = ['main', 'module', 'types', 'typings'];
+const absolutePathPattern = /^(?:[/\\]|[a-z]:)/iu;
 
 function isInvalidBrowserPath(value) {
-	return value.startsWith('/')
+	return absolutePathPattern.test(value)
 		|| value.includes('://');
 }
 

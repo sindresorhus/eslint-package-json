@@ -9,19 +9,19 @@ const messages = {
 };
 
 /**
-Whether an object node holds conditions (keys like `import`/`node`) rather than subpaths. An object with any subpath key (starting with `subpathPrefix`) is treated as a subpath map, matching `require-exports-root`; key mixing is reported separately by `valid-fields`.
+Whether an object node holds conditions (keys like `import`/`node`) rather than subpaths. This distinction only applies to the top-level `exports` or `imports` object; nested objects are condition objects.
 */
 function isConditionsObject(objectNode, subpathPrefix) {
 	return objectNode.members.length > 0 && objectNode.members.every(member => !getKey(member).startsWith(subpathPrefix));
 }
 
 /**
-Recursively yield condition objects that lack `default` or place it before another condition.
+Recursively yields condition objects that lack `default` or place it before another condition.
 */
-function * checkNode(node, subpathPrefix) {
+function * checkNode(node, subpathPrefix, isRoot = true) {
 	switch (node.type) {
 		case 'Object': {
-			if (isConditionsObject(node, subpathPrefix)) {
+			if (!isRoot || isConditionsObject(node, subpathPrefix)) {
 				const defaultIndex = node.members.findIndex(member => getKey(member) === 'default');
 
 				if (defaultIndex === -1) {
@@ -35,7 +35,7 @@ function * checkNode(node, subpathPrefix) {
 			}
 
 			for (const member of node.members) {
-				yield * checkNode(member.value, subpathPrefix);
+				yield * checkNode(member.value, subpathPrefix, false);
 			}
 
 			break;
@@ -43,7 +43,7 @@ function * checkNode(node, subpathPrefix) {
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * checkNode(element.value, subpathPrefix);
+				yield * checkNode(element.value, subpathPrefix, false);
 			}
 
 			break;

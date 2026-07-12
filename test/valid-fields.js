@@ -141,6 +141,7 @@ test.snapshot({
 		'{"imports": {"#external": "foo/../bar"}}',
 		'{"imports": {"#nested": "foo/node_modules/bar"}}',
 		'{"imports": {"#colon": "foo/bar:baz"}}',
+		'{"imports": {"#percent": "foo/%25"}}',
 		// Correctly ordered conditions inside an entry.
 		'{"imports": {"#dep": {"types": "./dep.d.ts", "import": "./dep.mjs", "default": "./dep.js"}}}',
 		// An array fallback of plain targets.
@@ -359,6 +360,9 @@ test.snapshot({
 		'{"typings": null}',
 		'{"browser": 42}',
 		'{"browser": {"./server.js": []}}',
+		'{"browser": "C:/browser.js"}',
+		String.raw`{"browser": "C:\\browser.js"}`,
+		String.raw`{"browser": "\\\\server\\share\\browser.js"}`,
 		'{"browser": {"./server.js": "https://cdn.example.com/browser.js"}}',
 		'{"type": true}',
 		'{"type": 42}',
@@ -425,6 +429,9 @@ test.snapshot({
 		'{"imports": {"#dep": "."}}',
 		'{"imports": {"#dep": "node:"}}',
 		'{"imports": {"#fs": "node:fs"}}',
+		'{"imports": {"#percent": "foo/%"}}',
+		'{"imports": {"#percent": "foo/%zz"}}',
+		'{"imports": {"#percent": "foo/%2"}}',
 		'{"imports": {"#dep": {"0": "./dep.js"}}}',
 		// `module` after `require` inside an entry's conditions.
 		`{

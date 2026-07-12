@@ -32,7 +32,7 @@ export const messages = {
 };
 
 /**
-Recurse a value node yielding every `String` leaf (a file target).
+Recursively yields every `String` leaf (a file target) in a value node.
 */
 function * iterateStringLeaves(node) {
 	switch (node.type) {

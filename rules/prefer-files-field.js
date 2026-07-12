@@ -1,7 +1,6 @@
 import {
 	getRootObject,
 	findMember,
-	getKey,
 	isPrivatePackage,
 	pathFields,
 	hasGlob,
