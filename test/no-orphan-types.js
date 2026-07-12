@@ -11,6 +11,9 @@ test.snapshot({
 		'{"peerDependencies": {"react": "^18.0.0"}, "devDependencies": {"@types/react": "^18.0.0"}}',
 		// Matching through optionalDependencies.
 		'{"optionalDependencies": {"foo": "^1.0.0"}, "devDependencies": {"@types/foo": "^1.0.0"}}',
+		// @types packages in optionalDependencies and peerDependencies are outside this rule's scope.
+		'{"optionalDependencies": {"@types/foo": "^1.0.0"}}',
+		'{"peerDependencies": {"@types/foo": "^1.0.0"}}',
 		// Ambient type packages with no runtime counterpart are ignored by default.
 		'{"devDependencies": {"@types/node": "^20.0.0"}}',
 		'{"devDependencies": {"@types/bun": "^1.0.0"}}',
