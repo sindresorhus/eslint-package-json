@@ -16,15 +16,56 @@ const messages = {
 };
 
 const windowsAbsolutePathPattern = /^[a-z]:[/\\]/iu;
+const extglobPattern = /[!+@]\(/u;
+const invalidExportTargetPattern = /(?:^|\/)(?:\.{1,2}|node_modules)(?:\/|$)|%2e|%2f|%5c|(?:^|\/)%6eode_modules(?:\/|$)/iu;
+
+const isGlobPattern = value => hasGlob(value) || extglobPattern.test(value);
 
 /**
 Check whether a relative path is safe to resolve inside the package directory.
 */
-const isSafePackagePath = value => {
-	const normalized = path.posix.normalize(value);
-	return normalized !== '..'
-		&& !normalized.startsWith('../')
-		&& !value.split('/').includes('..');
+const isSafePackagePath = value => !value.includes('\0')
+	&& !value.includes('\\')
+	&& !value.split('/').includes('..');
+
+/**
+Check whether a literal relative path exists with the exact casing used in the path.
+*/
+const hasExactPath = (packageDirectory, value, requiresFile) => {
+	const relativePath = value.slice(2);
+
+	if (!relativePath || !isSafePackagePath(relativePath)) {
+		return false;
+	}
+
+	let currentDirectory = packageDirectory;
+
+	for (const segment of relativePath.split('/')) {
+		if (!segment || segment === '.') {
+			continue;
+		}
+
+		let entries;
+
+		try {
+			entries = fs.readdirSync(currentDirectory, {withFileTypes: true});
+		} catch {
+			return false;
+		}
+
+		if (entries.every(entry => entry.name !== segment)) {
+			return false;
+		}
+
+		currentDirectory = path.join(currentDirectory, segment);
+	}
+
+	try {
+		const statistics = fs.statSync(currentDirectory);
+		return !requiresFile || statistics.isFile();
+	} catch {
+		return false;
+	}
 };
 
 /**
@@ -69,6 +110,121 @@ const findClosingBrace = (value, openingIndex) => {
 };
 
 /**
+Expand brace alternatives that span path segments before applying the exact-case matcher.
+*/
+const expandBracePatterns = pattern => {
+	const openingIndex = pattern.indexOf('{');
+
+	if (openingIndex === -1) {
+		return [pattern];
+	}
+
+	const closingIndex = findClosingBrace(pattern, openingIndex);
+
+	if (closingIndex === -1) {
+		return [pattern];
+	}
+
+	const content = pattern.slice(openingIndex + 1, closingIndex);
+	const alternatives = [];
+	let depth = 0;
+	let startIndex = 0;
+
+	for (let index = 0; index < content.length; index++) {
+		if (content[index] === '{') {
+			depth++;
+		} else if (content[index] === '}') {
+			depth--;
+		} else if (content[index] === ',' && depth === 0) {
+			alternatives.push(content.slice(startIndex, index));
+			startIndex = index + 1;
+		}
+	}
+
+	if (alternatives.length === 0) {
+		const prefix = pattern.slice(0, closingIndex + 1);
+		const suffixPatterns = expandBracePatterns(pattern.slice(closingIndex + 1));
+		return suffixPatterns.map(suffix => prefix + suffix);
+	}
+
+	alternatives.push(content.slice(startIndex));
+	const prefix = pattern.slice(0, openingIndex);
+	const suffix = pattern.slice(closingIndex + 1);
+	const expandedPatterns = [];
+
+	for (const alternative of alternatives) {
+		expandedPatterns.push(...expandBracePatterns(prefix + alternative + suffix));
+	}
+
+	return expandedPatterns;
+};
+
+/**
+Find the closing parenthesis for a glob extglob expression.
+*/
+const findClosingParenthesis = (value, openingIndex) => {
+	let depth = 0;
+
+	for (let index = openingIndex; index < value.length; index++) {
+		if (value[index] === '(') {
+			depth++;
+		} else if (value[index] === ')') {
+			depth--;
+
+			if (depth === 0) {
+				return index;
+			}
+		}
+	}
+
+	return -1;
+};
+
+/**
+Expand simple `@()` extglobs before applying the exact-case matcher.
+*/
+const expandAtExtglobPatterns = pattern => {
+	const openingIndex = pattern.indexOf('@(');
+
+	if (openingIndex === -1) {
+		return [pattern];
+	}
+
+	const closingIndex = findClosingParenthesis(pattern, openingIndex + 1);
+
+	if (closingIndex === -1) {
+		return [pattern];
+	}
+
+	const content = pattern.slice(openingIndex + 2, closingIndex);
+	const alternatives = [];
+	let depth = 0;
+	let startIndex = 0;
+
+	for (let index = 0; index < content.length; index++) {
+		if (content[index] === '(') {
+			depth++;
+		} else if (content[index] === ')') {
+			depth--;
+		} else if (content[index] === '|' && depth === 0) {
+			alternatives.push(content.slice(startIndex, index));
+			startIndex = index + 1;
+		}
+	}
+
+	alternatives.push(content.slice(startIndex));
+	const prefix = pattern.slice(0, openingIndex);
+	const suffix = pattern.slice(closingIndex + 1);
+	const expandedPatterns = [];
+
+	for (const alternative of alternatives) {
+		expandedPatterns.push(...expandAtExtglobPatterns(prefix + alternative + suffix));
+	}
+
+	return expandedPatterns;
+};
+
+/**
 Match one character-class segment of a glob pattern.
 */
 const matchCharacterClass = ({valueSegment, patternSegment, valueIndex, patternIndex, match}) => {
@@ -86,73 +242,21 @@ const matchCharacterClass = ({valueSegment, patternSegment, valueIndex, patternI
 };
 
 /**
-Match one brace-expression segment of a glob pattern.
-*/
-const matchBraceExpression = ({valueSegment, patternSegment, valueIndex, patternIndex, match, matchesSegment}) => {
-	const closingBrace = findClosingBrace(patternSegment, patternIndex);
-
-	if (closingBrace === -1) {
-		return valueIndex < valueSegment.length
-			&& valueSegment[valueIndex] === patternSegment[patternIndex]
-			&& match(valueIndex + 1, patternIndex + 1);
-	}
-
-	const alternatives = patternSegment.slice(patternIndex + 1, closingBrace).split(',');
-	const suffix = patternSegment.slice(closingBrace + 1);
-
-	if (alternatives.length > 1) {
-		return alternatives.some(alternative => matchesSegment(valueSegment.slice(valueIndex), alternative + suffix));
-	}
-
-	return valueIndex < valueSegment.length
-		&& valueSegment[valueIndex] === patternSegment[patternIndex]
-		&& match(valueIndex + 1, patternIndex + 1);
-};
-
-/**
-Check whether a literal relative path exists with the exact casing used in the path.
-*/
-const hasExactPath = (packageDirectory, value, requiresFile) => {
-	const relativePath = value.slice(2);
-
-	if (!relativePath || !isSafePackagePath(relativePath)) {
-		return false;
-	}
-
-	let currentDirectory = packageDirectory;
-
-	for (const segment of relativePath.split('/')) {
-		if (!segment || segment === '.') {
-			continue;
-		}
-
-		let entries;
-
-		try {
-			entries = fs.readdirSync(currentDirectory, {withFileTypes: true});
-		} catch {
-			return false;
-		}
-
-		if (entries.every(entry => entry.name !== segment)) {
-			return false;
-		}
-
-		currentDirectory = path.join(currentDirectory, segment);
-	}
-
-	try {
-		const statistics = fs.statSync(currentDirectory);
-		return !requiresFile || statistics.isFile();
-	} catch {
-		return false;
-	}
-};
-
-/**
 Check whether a filesystem path matches a glob pattern with exact casing.
 */
 const matchesGlobExactly = (value, pattern) => {
+	const bracePatterns = expandBracePatterns(pattern);
+
+	if (bracePatterns.length > 1) {
+		return bracePatterns.some(bracePattern => matchesGlobExactly(value, bracePattern));
+	}
+
+	const extglobPatterns = expandAtExtglobPatterns(pattern);
+
+	if (extglobPatterns.length > 1) {
+		return extglobPatterns.some(extglobPattern => matchesGlobExactly(value, extglobPattern));
+	}
+
 	const valueSegments = value.replaceAll(path.sep, '/').replace(/^\.\//u, '').split('/');
 	const patternSegments = pattern.replace(/^\.\//u, '').split('/');
 
@@ -188,14 +292,6 @@ const matchesGlobExactly = (value, pattern) => {
 					case '[': {
 						result = matchCharacterClass({
 							valueSegment, patternSegment, valueIndex, patternIndex, match,
-						});
-
-						break;
-					}
-
-					case '{': {
-						result = matchBraceExpression({
-							valueSegment, patternSegment, valueIndex, patternIndex, match, matchesSegment,
 						});
 
 						break;
@@ -248,39 +344,109 @@ const matchesGlobExactly = (value, pattern) => {
 };
 
 /**
-Check whether a relative path or glob has at least one exact-case match in the package.
+Add dot-file alternatives to a filesystem glob pattern because Node's glob does not include dotfiles by default.
 */
-const hasMatchingPath = (packageDirectory, value, requiresFile = false) => {
-	if (!value.startsWith('./') || value.includes('\0') || !isSafePackagePath(value.slice(2))) {
-		return false;
-	}
+const getDotFilePattern = pattern => pattern.split('/').map(segment =>
+	segment.startsWith('.') || segment.startsWith('{') ? segment : `{.,}${segment}`,
+).join('/');
 
-	if (!hasGlob(value)) {
-		return hasExactPath(packageDirectory, value, requiresFile);
-	}
-
-	const pattern = value.slice(2);
-
+/**
+Check whether a filesystem glob has an exact-case match.
+*/
+const hasMatchingGlob = (packageDirectory, pattern, requiresFile) => {
 	try {
-		const dotFilePattern = pattern.split('/').map(segment => segment.startsWith('.') || segment.startsWith('{') ? segment : `{.,}${segment}`).join('/');
-
-		return fs.globSync(dotFilePattern, {
+		return fs.globSync(getDotFilePattern(pattern), {
 			cwd: packageDirectory,
 		}).some(match => {
-			if (!matchesGlobExactly(match, pattern)) {
-				return false;
-			}
-
-			try {
-				const statistics = fs.statSync(path.resolve(packageDirectory, match));
-				return !requiresFile || statistics.isFile();
-			} catch {
-				return false;
-			}
+			const relativePath = match.replaceAll(path.sep, '/');
+			return matchesGlobExactly(relativePath, pattern)
+				&& hasExactPath(packageDirectory, `./${relativePath}`, requiresFile);
 		});
 	} catch {
 		return false;
 	}
+};
+
+/**
+Check whether an exports target matches a path using Node's `*` replacement semantics.
+*/
+const matchesExportPattern = (value, pattern) => {
+	const parts = pattern.split('*');
+
+	if (parts.length === 1) {
+		return value === pattern;
+	}
+
+	if (!value.startsWith(parts[0])) {
+		return false;
+	}
+
+	if (parts.length === 2) {
+		return value.length >= pattern.length - 1 && value.endsWith(parts[1]);
+	}
+
+	for (let wildcardLength = 0; wildcardLength <= value.length - parts[0].length; wildcardLength++) {
+		const replacement = value.slice(parts[0].length, parts[0].length + wildcardLength);
+		let expectedValue = parts[0];
+
+		for (const part of parts.slice(1)) {
+			expectedValue += replacement + part;
+		}
+
+		if (expectedValue === value) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+/**
+Get the smallest directory tree that can contain an exports target match.
+*/
+const getExportScanPattern = pattern => {
+	const wildcardIndex = pattern.indexOf('*');
+	const directorySeparatorIndex = pattern.lastIndexOf('/', wildcardIndex);
+
+	return directorySeparatorIndex === -1 ? '**' : `${pattern.slice(0, directorySeparatorIndex)}/**`;
+};
+
+/**
+Check whether an exports target has at least one exact-case file match.
+*/
+const hasMatchingExportTarget = (packageDirectory, value) => {
+	const pattern = value.slice(2);
+
+	if (!pattern.includes('*')) {
+		return hasExactPath(packageDirectory, value, true);
+	}
+
+	try {
+		return fs.globSync(getDotFilePattern(getExportScanPattern(pattern)), {
+			cwd: packageDirectory,
+		}).some(match => {
+			const relativePath = match.replaceAll(path.sep, '/');
+
+			return !invalidExportTargetPattern.test(relativePath)
+				&& matchesExportPattern(relativePath, pattern)
+				&& hasExactPath(packageDirectory, `./${relativePath}`, true);
+		});
+	} catch {
+		return false;
+	}
+};
+
+/**
+Check whether a relative path or glob has at least one exact-case match in the package.
+*/
+const hasMatchingPath = (packageDirectory, value, requiresFile = false) => {
+	if (!value.startsWith('./') || !isSafePackagePath(value.slice(2))) {
+		return false;
+	}
+
+	return isGlobPattern(value)
+		? hasMatchingGlob(packageDirectory, value.slice(2), requiresFile)
+		: hasExactPath(packageDirectory, value, requiresFile);
 };
 
 /**
@@ -319,13 +485,13 @@ const createExportChecker = (context, packageDirectory) => {
 					!node.value.startsWith('./')
 					|| !relativePath
 					|| !isSafePackagePath(relativePath)
-					|| relativePath.split('/').includes('node_modules')
-					|| (hasGlob(node.value) && !isPatternAllowed)
+					|| invalidExportTargetPattern.test(relativePath)
+					|| (node.value.includes('*') && !isPatternAllowed)
 				) {
 					return {hasTarget: false, resolves: true};
 				}
 
-				const resolves = hasMatchingPath(packageDirectory, node.value, true);
+				const resolves = hasMatchingExportTarget(packageDirectory, node.value);
 
 				if (!resolves && shouldReport) {
 					reportMissingTarget(node);
@@ -402,27 +568,30 @@ const create = context => ({
 		for (const element of filesMember.value.elements) {
 			const valueNode = element.value;
 
+			if (valueNode.type !== 'String') {
+				continue;
+			}
+
+			const {value} = valueNode;
+			const relativePath = value.startsWith('./') ? value.slice(2) : value;
+
 			if (
-				valueNode.type !== 'String'
-				|| valueNode.value === ''
-				|| valueNode.value.includes('\0')
-				|| valueNode.value.startsWith('!')
-				|| valueNode.value.startsWith('/')
-				|| valueNode.value.startsWith('../')
-				|| windowsAbsolutePathPattern.test(valueNode.value)
-				|| valueNode.value.includes('\\')
-				|| !isSafePackagePath(valueNode.value.startsWith('./') ? valueNode.value.slice(2) : valueNode.value)
+				value === ''
+				|| value.startsWith('!')
+				|| value.startsWith('/')
+				|| windowsAbsolutePathPattern.test(value)
+				|| !isSafePackagePath(relativePath)
 			) {
 				continue;
 			}
 
-			const value = valueNode.value.startsWith('./') ? valueNode.value : `./${valueNode.value}`;
+			const packagePath = value.startsWith('./') ? value : `./${value}`;
 
-			if (!hasMatchingPath(packageDirectory, value)) {
+			if (!hasMatchingPath(packageDirectory, packagePath)) {
 				context.report({
 					node: valueNode,
 					messageId: MESSAGE_ID_FILES,
-					data: {value: valueNode.value},
+					data: {value},
 				});
 			}
 		}
