@@ -82,7 +82,9 @@ test.snapshot({
 		// Entry-point fields accept strings.
 		'{"main": "./index.js", "module": "./index.mjs", "types": "./index.d.ts", "typings": "./index.d.ts"}',
 		'{"browser": "./browser.js"}',
+		'{"browser": "../browser.js"}',
 		'{"browser": {"./server.js": "./browser.js", "./fs.js": false}}',
+		'{"browser": {"../server.js": "./browser.js", "./server/../server.js": "./browser.js", "./server.js": "../browser.js", "./other.js": "./browser/../browser.js"}}',
 		// Empty string is handled by `no-empty-fields`.
 		'{"type": ""}',
 		// `exports`
@@ -135,7 +137,10 @@ test.snapshot({
 		'{"name": "foo"}',
 		'{"imports": {"#dep": "./src/dep.js"}}',
 		'{"imports": {"#internal/*.js": "./src/internal/*.js"}}',
-		'{"imports": {"#fs": "node:fs"}}',
+		'{"imports": {"#/internal": "./src/internal.js"}}',
+		'{"imports": {"#external": "foo/../bar"}}',
+		'{"imports": {"#nested": "foo/node_modules/bar"}}',
+		'{"imports": {"#colon": "foo/bar:baz"}}',
 		// Correctly ordered conditions inside an entry.
 		'{"imports": {"#dep": {"types": "./dep.d.ts", "import": "./dep.mjs", "default": "./dep.js"}}}',
 		// An array fallback of plain targets.
@@ -354,10 +359,6 @@ test.snapshot({
 		'{"typings": null}',
 		'{"browser": 42}',
 		'{"browser": {"./server.js": []}}',
-		'{"browser": {"../server.js": "./browser.js"}}',
-		'{"browser": {"./server/../server.js": "./browser.js"}}',
-		'{"browser": {"./server.js": "../browser.js"}}',
-		'{"browser": {"./server.js": "./browser/../browser.js"}}',
 		'{"browser": {"./server.js": "https://cdn.example.com/browser.js"}}',
 		'{"type": true}',
 		'{"type": 42}',
@@ -417,10 +418,13 @@ test.snapshot({
 		'{"imports": {"#dep": "../dep.js"}}',
 		'{"imports": {"#dep": "./dep/../index.js"}}',
 		'{"imports": {"#dep": "./dist/%2e%2e/index.js"}}',
+		'{"imports": {"#": "./dep.js"}}',
+		'{"imports": {"#dep/": "./dep.js"}}',
+		'{"imports": {"#dep/../other": "./dep.js"}}',
 		'{"imports": {"#dep": "https://example.com/dep.js"}}',
-		'{"imports": {"#dep": "foo/../bar"}}',
 		'{"imports": {"#dep": "."}}',
 		'{"imports": {"#dep": "node:"}}',
+		'{"imports": {"#fs": "node:fs"}}',
 		'{"imports": {"#dep": {"0": "./dep.js"}}}',
 		// `module` after `require` inside an entry's conditions.
 		`{

@@ -1,4 +1,4 @@
-import {findMember, hasInvalidPackageTargetSegment} from '../utils/index.js';
+import {findMember} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const BROWSER_TYPE_MESSAGE_ID = 'browserType';
@@ -18,10 +18,7 @@ const entryPointFields = ['main', 'module', 'types', 'typings'];
 
 function isInvalidBrowserPath(value) {
 	return value.startsWith('/')
-		|| value.startsWith('../')
-		|| value.split('/').includes('..')
-		|| value.includes('://')
-		|| (value.startsWith('./') && hasInvalidPackageTargetSegment(value));
+		|| value.includes('://');
 }
 
 function * checkBrowserValue(node, key) {

@@ -9,6 +9,7 @@ import {
 
 const TYPE_MESSAGE_ID = 'type';
 const KEY_MESSAGE_ID = 'key';
+const INVALID_KEY_MESSAGE_ID = 'invalidKey';
 const TARGET_TYPE_MESSAGE_ID = 'targetType';
 const TARGET_VALUE_MESSAGE_ID = 'targetValue';
 const CONDITION_KEY_MESSAGE_ID = 'conditionKey';
@@ -17,6 +18,7 @@ export const messages = {
 	...conditionOrderMessages,
 	[TYPE_MESSAGE_ID]: 'The `imports` field must be an object.',
 	[KEY_MESSAGE_ID]: 'The `imports` key `{{key}}` must start with `#`.',
+	[INVALID_KEY_MESSAGE_ID]: 'The `imports` key `{{key}}` is not a valid package subpath.',
 	[TARGET_TYPE_MESSAGE_ID]: 'An `imports` target must be a string, `null`, an object, or an array.',
 	[TARGET_VALUE_MESSAGE_ID]: 'The `imports` target `{{value}}` is not a valid local path or package specifier.',
 	[CONDITION_KEY_MESSAGE_ID]: 'Condition key `{{key}}` must not be an array index.',
@@ -25,8 +27,26 @@ export const messages = {
 const externalTargetPattern = /^(?:@[^/]+\/)?[^/]+(?:\/[^/]+)*$/u;
 
 function isValidExternalTarget(value) {
-	return (value.startsWith('node:') && value.length > 'node:'.length)
-		|| (externalTargetPattern.test(value) && !value.startsWith('#') && !value.includes(':') && value.split('/').every(segment => !['.', '..', 'node_modules'].includes(segment)));
+	if (!externalTargetPattern.test(value) || value.startsWith('#') || value.startsWith('.')) {
+		return false;
+	}
+
+	const packageName = value.startsWith('@')
+		? value.split('/', 2).join('/')
+		: value.split('/', 1)[0];
+
+	return !value.includes('\\')
+		&& !packageName.includes('%')
+		&& !/%(?:2f|5c)/iu.test(value);
+}
+
+function isValidUrl(value) {
+	return URL.canParse(value);
+}
+
+function isInvalidImportsKey(value) {
+	const path = value.startsWith('#/') ? value.slice(2) : value.slice(1);
+	return hasInvalidPackageTargetSegment('./' + path);
 }
 
 function * checkTargetNode(node) {
@@ -50,7 +70,7 @@ function * checkTargetNode(node) {
 				value === ''
 				|| value.startsWith('/')
 				|| value.startsWith('../')
-				|| value.includes('://')
+				|| isValidUrl(value)
 				|| !isValidExternalTarget(value)
 			) {
 				yield {
@@ -153,6 +173,12 @@ export function * check(root, context) {
 			yield {
 				node: member.name,
 				messageId: KEY_MESSAGE_ID,
+				data: {key},
+			};
+		} else if (isInvalidImportsKey(key)) {
+			yield {
+				node: member.name,
+				messageId: INVALID_KEY_MESSAGE_ID,
 				data: {key},
 			};
 		}

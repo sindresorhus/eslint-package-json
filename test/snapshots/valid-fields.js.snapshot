@@ -28,74 +28,14 @@ Message:
 
 `;
 
-exports[`invalid(100): {\"imports\": [\"#dep\"]} 1`] = `
-
-[Input]
-  1 | {"imports": ["#dep"]}
-
-`;
-
-exports[`invalid(100): {\"imports\": [\"#dep\"]} 2`] = `
-
-Message:
-> 1 | {"imports": ["#dep"]}
-    |             ^^^^^^^^ The \`imports\` field must be an object.
-
-`;
-
-exports[`invalid(101): {\"imports\": {\"#dep\": 123}} 1`] = `
-
-[Input]
-  1 | {"imports": {"#dep": 123}}
-
-`;
-
-exports[`invalid(101): {\"imports\": {\"#dep\": 123}} 2`] = `
-
-Message:
-> 1 | {"imports": {"#dep": 123}}
-    |                      ^^^ An \`imports\` target must be a string, \`null\`, an object, or an array.
-
-`;
-
-exports[`invalid(102): {\"imports\": {\"#dep\": \"../dep.js\"}} 1`] = `
-
-[Input]
-  1 | {"imports": {"#dep": "../dep.js"}}
-
-`;
-
-exports[`invalid(102): {\"imports\": {\"#dep\": \"../dep.js\"}} 2`] = `
-
-Message:
-> 1 | {"imports": {"#dep": "../dep.js"}}
-    |                      ^^^^^^^^^^^ The \`imports\` target \`../dep.js\` is not a valid local path or package specifier.
-
-`;
-
-exports[`invalid(103): {\"imports\": {\"#dep\": \"./dep/../index.js\"}} 1`] = `
-
-[Input]
-  1 | {"imports": {"#dep": "./dep/../index.js"}}
-
-`;
-
-exports[`invalid(103): {\"imports\": {\"#dep\": \"./dep/../index.js\"}} 2`] = `
-
-Message:
-> 1 | {"imports": {"#dep": "./dep/../index.js"}}
-    |                      ^^^^^^^^^^^^^^^^^^^ The \`imports\` target \`./dep/../index.js\` is not a valid local path or package specifier.
-
-`;
-
-exports[`invalid(104): {\"imports\": {\"#dep\": \"./dist/%2e%2e/index.js\"}} 1`] = `
+exports[`invalid(100): {\"imports\": {\"#dep\": \"./dist/%2e%2e/index.js\"}} 1`] = `
 
 [Input]
   1 | {"imports": {"#dep": "./dist/%2e%2e/index.js"}}
 
 `;
 
-exports[`invalid(104): {\"imports\": {\"#dep\": \"./dist/%2e%2e/index.js\"}} 2`] = `
+exports[`invalid(100): {\"imports\": {\"#dep\": \"./dist/%2e%2e/index.js\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": "./dist/%2e%2e/index.js"}}
@@ -103,14 +43,59 @@ Message:
 
 `;
 
-exports[`invalid(105): {\"imports\": {\"#dep\": \"https://example.com/dep.js\"}} 1`] = `
+exports[`invalid(101): {\"imports\": {\"#\": \"./dep.js\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#": "./dep.js"}}
+
+`;
+
+exports[`invalid(101): {\"imports\": {\"#\": \"./dep.js\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#": "./dep.js"}}
+    |              ^^^ The \`imports\` key \`#\` is not a valid package subpath.
+
+`;
+
+exports[`invalid(102): {\"imports\": {\"#dep/\": \"./dep.js\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep/": "./dep.js"}}
+
+`;
+
+exports[`invalid(102): {\"imports\": {\"#dep/\": \"./dep.js\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep/": "./dep.js"}}
+    |              ^^^^^^^ The \`imports\` key \`#dep/\` is not a valid package subpath.
+
+`;
+
+exports[`invalid(103): {\"imports\": {\"#dep/../other\": \"./dep.js\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep/../other": "./dep.js"}}
+
+`;
+
+exports[`invalid(103): {\"imports\": {\"#dep/../other\": \"./dep.js\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep/../other": "./dep.js"}}
+    |              ^^^^^^^^^^^^^^^ The \`imports\` key \`#dep/../other\` is not a valid package subpath.
+
+`;
+
+exports[`invalid(104): {\"imports\": {\"#dep\": \"https://example.com/dep.js\"}} 1`] = `
 
 [Input]
   1 | {"imports": {"#dep": "https://example.com/dep.js"}}
 
 `;
 
-exports[`invalid(105): {\"imports\": {\"#dep\": \"https://example.com/dep.js\"}} 2`] = `
+exports[`invalid(104): {\"imports\": {\"#dep\": \"https://example.com/dep.js\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": "https://example.com/dep.js"}}
@@ -118,29 +103,14 @@ Message:
 
 `;
 
-exports[`invalid(106): {\"imports\": {\"#dep\": \"foo/../bar\"}} 1`] = `
-
-[Input]
-  1 | {"imports": {"#dep": "foo/../bar"}}
-
-`;
-
-exports[`invalid(106): {\"imports\": {\"#dep\": \"foo/../bar\"}} 2`] = `
-
-Message:
-> 1 | {"imports": {"#dep": "foo/../bar"}}
-    |                      ^^^^^^^^^^^^ The \`imports\` target \`foo/../bar\` is not a valid local path or package specifier.
-
-`;
-
-exports[`invalid(107): {\"imports\": {\"#dep\": \".\"}} 1`] = `
+exports[`invalid(105): {\"imports\": {\"#dep\": \".\"}} 1`] = `
 
 [Input]
   1 | {"imports": {"#dep": "."}}
 
 `;
 
-exports[`invalid(107): {\"imports\": {\"#dep\": \".\"}} 2`] = `
+exports[`invalid(105): {\"imports\": {\"#dep\": \".\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": "."}}
@@ -148,14 +118,14 @@ Message:
 
 `;
 
-exports[`invalid(108): {\"imports\": {\"#dep\": \"node:\"}} 1`] = `
+exports[`invalid(106): {\"imports\": {\"#dep\": \"node:\"}} 1`] = `
 
 [Input]
   1 | {"imports": {"#dep": "node:"}}
 
 `;
 
-exports[`invalid(108): {\"imports\": {\"#dep\": \"node:\"}} 2`] = `
+exports[`invalid(106): {\"imports\": {\"#dep\": \"node:\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": "node:"}}
@@ -163,14 +133,29 @@ Message:
 
 `;
 
-exports[`invalid(109): {\"imports\": {\"#dep\": {\"0\": \"./dep.js\"}}} 1`] = `
+exports[`invalid(107): {\"imports\": {\"#fs\": \"node:fs\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#fs": "node:fs"}}
+
+`;
+
+exports[`invalid(107): {\"imports\": {\"#fs\": \"node:fs\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#fs": "node:fs"}}
+    |                     ^^^^^^^^^ The \`imports\` target \`node:fs\` is not a valid local path or package specifier.
+
+`;
+
+exports[`invalid(108): {\"imports\": {\"#dep\": {\"0\": \"./dep.js\"}}} 1`] = `
 
 [Input]
   1 | {"imports": {"#dep": {"0": "./dep.js"}}}
 
 `;
 
-exports[`invalid(109): {\"imports\": {\"#dep\": {\"0\": \"./dep.js\"}}} 2`] = `
+exports[`invalid(108): {\"imports\": {\"#dep\": {\"0\": \"./dep.js\"}}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": {"0": "./dep.js"}}}
@@ -178,22 +163,7 @@ Message:
 
 `;
 
-exports[`invalid(11): {\"version\": \"latest\"} 1`] = `
-
-[Input]
-  1 | {"version": "latest"}
-
-`;
-
-exports[`invalid(11): {\"version\": \"latest\"} 2`] = `
-
-Message:
-> 1 | {"version": "latest"}
-    |             ^^^^^^^^ \`latest\` is not a valid semver version.
-
-`;
-
-exports[`invalid(110): {\n\t\"imports\": {\n\t\t\"#dep\": {\n\t\t\t\"require\": \"./dep.cjs\",\n\t\t\t\"module\": \"./dep.mjs\",\n\t\t\t\"default\": \"./dep.js\"\n\t\t}\n\t}\n} 1`] = `
+exports[`invalid(109): {\n\t\"imports\": {\n\t\t\"#dep\": {\n\t\t\t\"require\": \"./dep.cjs\",\n\t\t\t\"module\": \"./dep.mjs\",\n\t\t\t\"default\": \"./dep.js\"\n\t\t}\n\t}\n} 1`] = `
 
 [Input]
   1 | {
@@ -208,7 +178,7 @@ exports[`invalid(110): {\n\t\"imports\": {\n\t\t\"#dep\": {\n\t\t\t\"require\": 
 
 `;
 
-exports[`invalid(110): {\n\t\"imports\": {\n\t\t\"#dep\": {\n\t\t\t\"require\": \"./dep.cjs\",\n\t\t\t\"module\": \"./dep.mjs\",\n\t\t\t\"default\": \"./dep.js\"\n\t\t}\n\t}\n} 2`] = `
+exports[`invalid(109): {\n\t\"imports\": {\n\t\t\"#dep\": {\n\t\t\t\"require\": \"./dep.cjs\",\n\t\t\t\"module\": \"./dep.mjs\",\n\t\t\t\"default\": \"./dep.js\"\n\t\t}\n\t}\n} 2`] = `
 
 Message:
   1 | {
@@ -235,14 +205,29 @@ Suggestion 1/1: Move \`module\` before \`require\`.:
 
 `;
 
-exports[`invalid(111): {\"bin\": [\"./cli.js\"]} 1`] = `
+exports[`invalid(11): {\"version\": \"latest\"} 1`] = `
+
+[Input]
+  1 | {"version": "latest"}
+
+`;
+
+exports[`invalid(11): {\"version\": \"latest\"} 2`] = `
+
+Message:
+> 1 | {"version": "latest"}
+    |             ^^^^^^^^ \`latest\` is not a valid semver version.
+
+`;
+
+exports[`invalid(110): {\"bin\": [\"./cli.js\"]} 1`] = `
 
 [Input]
   1 | {"bin": ["./cli.js"]}
 
 `;
 
-exports[`invalid(111): {\"bin\": [\"./cli.js\"]} 2`] = `
+exports[`invalid(110): {\"bin\": [\"./cli.js\"]} 2`] = `
 
 Message:
 > 1 | {"bin": ["./cli.js"]}
@@ -250,14 +235,14 @@ Message:
 
 `;
 
-exports[`invalid(112): {\"bin\": true} 1`] = `
+exports[`invalid(111): {\"bin\": true} 1`] = `
 
 [Input]
   1 | {"bin": true}
 
 `;
 
-exports[`invalid(112): {\"bin\": true} 2`] = `
+exports[`invalid(111): {\"bin\": true} 2`] = `
 
 Message:
 > 1 | {"bin": true}
@@ -265,14 +250,14 @@ Message:
 
 `;
 
-exports[`invalid(113): {\"bin\": null} 1`] = `
+exports[`invalid(112): {\"bin\": null} 1`] = `
 
 [Input]
   1 | {"bin": null}
 
 `;
 
-exports[`invalid(113): {\"bin\": null} 2`] = `
+exports[`invalid(112): {\"bin\": null} 2`] = `
 
 Message:
 > 1 | {"bin": null}
@@ -280,14 +265,14 @@ Message:
 
 `;
 
-exports[`invalid(114): {\"bin\": {\"foo\": true}} 1`] = `
+exports[`invalid(113): {\"bin\": {\"foo\": true}} 1`] = `
 
 [Input]
   1 | {"bin": {"foo": true}}
 
 `;
 
-exports[`invalid(114): {\"bin\": {\"foo\": true}} 2`] = `
+exports[`invalid(113): {\"bin\": {\"foo\": true}} 2`] = `
 
 Message:
 > 1 | {"bin": {"foo": true}}
@@ -295,14 +280,14 @@ Message:
 
 `;
 
-exports[`invalid(115): {\"bin\": {\"foo\": \"./foo.js\", \"bar\": \"\"}} 1`] = `
+exports[`invalid(114): {\"bin\": {\"foo\": \"./foo.js\", \"bar\": \"\"}} 1`] = `
 
 [Input]
   1 | {"bin": {"foo": "./foo.js", "bar": ""}}
 
 `;
 
-exports[`invalid(115): {\"bin\": {\"foo\": \"./foo.js\", \"bar\": \"\"}} 2`] = `
+exports[`invalid(114): {\"bin\": {\"foo\": \"./foo.js\", \"bar\": \"\"}} 2`] = `
 
 Message:
 > 1 | {"bin": {"foo": "./foo.js", "bar": ""}}
@@ -310,14 +295,14 @@ Message:
 
 `;
 
-exports[`invalid(116): {\"bin\": \"./cli.js\", \"directories\": {\"bin\": \"./bin\"}} 1`] = `
+exports[`invalid(115): {\"bin\": \"./cli.js\", \"directories\": {\"bin\": \"./bin\"}} 1`] = `
 
 [Input]
   1 | {"bin": "./cli.js", "directories": {"bin": "./bin"}}
 
 `;
 
-exports[`invalid(116): {\"bin\": \"./cli.js\", \"directories\": {\"bin\": \"./bin\"}} 2`] = `
+exports[`invalid(115): {\"bin\": \"./cli.js\", \"directories\": {\"bin\": \"./bin\"}} 2`] = `
 
 Message:
 > 1 | {"bin": "./cli.js", "directories": {"bin": "./bin"}}
@@ -325,14 +310,14 @@ Message:
 
 `;
 
-exports[`invalid(117): {\"man\": \"./doc/foo\"} 1`] = `
+exports[`invalid(116): {\"man\": \"./doc/foo\"} 1`] = `
 
 [Input]
   1 | {"man": "./doc/foo"}
 
 `;
 
-exports[`invalid(117): {\"man\": \"./doc/foo\"} 2`] = `
+exports[`invalid(116): {\"man\": \"./doc/foo\"} 2`] = `
 
 Message:
 > 1 | {"man": "./doc/foo"}
@@ -340,14 +325,14 @@ Message:
 
 `;
 
-exports[`invalid(118): {\"man\": [\"./doc/foo.1\", \"./doc/bar\"]} 1`] = `
+exports[`invalid(117): {\"man\": [\"./doc/foo.1\", \"./doc/bar\"]} 1`] = `
 
 [Input]
   1 | {"man": ["./doc/foo.1", "./doc/bar"]}
 
 `;
 
-exports[`invalid(118): {\"man\": [\"./doc/foo.1\", \"./doc/bar\"]} 2`] = `
+exports[`invalid(117): {\"man\": [\"./doc/foo.1\", \"./doc/bar\"]} 2`] = `
 
 Message:
 > 1 | {"man": ["./doc/foo.1", "./doc/bar"]}
@@ -355,18 +340,33 @@ Message:
 
 `;
 
-exports[`invalid(119): {\"man\": 42} 1`] = `
+exports[`invalid(118): {\"man\": 42} 1`] = `
 
 [Input]
   1 | {"man": 42}
 
 `;
 
-exports[`invalid(119): {\"man\": 42} 2`] = `
+exports[`invalid(118): {\"man\": 42} 2`] = `
 
 Message:
 > 1 | {"man": 42}
     |         ^^ The \`man\` field must be a string or an array of strings.
+
+`;
+
+exports[`invalid(119): {\"man\": [42]} 1`] = `
+
+[Input]
+  1 | {"man": [42]}
+
+`;
+
+exports[`invalid(119): {\"man\": [42]} 2`] = `
+
+Message:
+> 1 | {"man": [42]}
+    |          ^^ Each \`man\` entry must be a string.
 
 `;
 
@@ -385,29 +385,14 @@ Message:
 
 `;
 
-exports[`invalid(120): {\"man\": [42]} 1`] = `
-
-[Input]
-  1 | {"man": [42]}
-
-`;
-
-exports[`invalid(120): {\"man\": [42]} 2`] = `
-
-Message:
-> 1 | {"man": [42]}
-    |          ^^ Each \`man\` entry must be a string.
-
-`;
-
-exports[`invalid(121): {\"man\": \"./foo.1.br\"} 1`] = `
+exports[`invalid(120): {\"man\": \"./foo.1.br\"} 1`] = `
 
 [Input]
   1 | {"man": "./foo.1.br"}
 
 `;
 
-exports[`invalid(121): {\"man\": \"./foo.1.br\"} 2`] = `
+exports[`invalid(120): {\"man\": \"./foo.1.br\"} 2`] = `
 
 Message:
 > 1 | {"man": "./foo.1.br"}
@@ -415,14 +400,14 @@ Message:
 
 `;
 
-exports[`invalid(122): {\"sideEffects\": \"false\"} 1`] = `
+exports[`invalid(121): {\"sideEffects\": \"false\"} 1`] = `
 
 [Input]
   1 | {"sideEffects": "false"}
 
 `;
 
-exports[`invalid(122): {\"sideEffects\": \"false\"} 2`] = `
+exports[`invalid(121): {\"sideEffects\": \"false\"} 2`] = `
 
 Message:
 > 1 | {"sideEffects": "false"}
@@ -433,14 +418,14 @@ Output:
 
 `;
 
-exports[`invalid(123): {\"sideEffects\": \"true\"} 1`] = `
+exports[`invalid(122): {\"sideEffects\": \"true\"} 1`] = `
 
 [Input]
   1 | {"sideEffects": "true"}
 
 `;
 
-exports[`invalid(123): {\"sideEffects\": \"true\"} 2`] = `
+exports[`invalid(122): {\"sideEffects\": \"true\"} 2`] = `
 
 Message:
 > 1 | {"sideEffects": "true"}
@@ -451,14 +436,14 @@ Output:
 
 `;
 
-exports[`invalid(124): {\"sideEffects\": \"./src/polyfill.js\"} 1`] = `
+exports[`invalid(123): {\"sideEffects\": \"./src/polyfill.js\"} 1`] = `
 
 [Input]
   1 | {"sideEffects": "./src/polyfill.js"}
 
 `;
 
-exports[`invalid(124): {\"sideEffects\": \"./src/polyfill.js\"} 2`] = `
+exports[`invalid(123): {\"sideEffects\": \"./src/polyfill.js\"} 2`] = `
 
 Message:
 > 1 | {"sideEffects": "./src/polyfill.js"}
@@ -466,14 +451,14 @@ Message:
 
 `;
 
-exports[`invalid(125): {\"sideEffects\": 0} 1`] = `
+exports[`invalid(124): {\"sideEffects\": 0} 1`] = `
 
 [Input]
   1 | {"sideEffects": 0}
 
 `;
 
-exports[`invalid(125): {\"sideEffects\": 0} 2`] = `
+exports[`invalid(124): {\"sideEffects\": 0} 2`] = `
 
 Message:
 > 1 | {"sideEffects": 0}
@@ -481,14 +466,14 @@ Message:
 
 `;
 
-exports[`invalid(126): {\"sideEffects\": {}} 1`] = `
+exports[`invalid(125): {\"sideEffects\": {}} 1`] = `
 
 [Input]
   1 | {"sideEffects": {}}
 
 `;
 
-exports[`invalid(126): {\"sideEffects\": {}} 2`] = `
+exports[`invalid(125): {\"sideEffects\": {}} 2`] = `
 
 Message:
 > 1 | {"sideEffects": {}}
@@ -496,14 +481,14 @@ Message:
 
 `;
 
-exports[`invalid(127): {\"sideEffects\": [\"./src/polyfill.js\", 1]} 1`] = `
+exports[`invalid(126): {\"sideEffects\": [\"./src/polyfill.js\", 1]} 1`] = `
 
 [Input]
   1 | {"sideEffects": ["./src/polyfill.js", 1]}
 
 `;
 
-exports[`invalid(127): {\"sideEffects\": [\"./src/polyfill.js\", 1]} 2`] = `
+exports[`invalid(126): {\"sideEffects\": [\"./src/polyfill.js\", 1]} 2`] = `
 
 Message:
 > 1 | {"sideEffects": ["./src/polyfill.js", 1]}
@@ -511,14 +496,14 @@ Message:
 
 `;
 
-exports[`invalid(128): {\"sideEffects\": [\"./src/polyfill.js\", null]} 1`] = `
+exports[`invalid(127): {\"sideEffects\": [\"./src/polyfill.js\", null]} 1`] = `
 
 [Input]
   1 | {"sideEffects": ["./src/polyfill.js", null]}
 
 `;
 
-exports[`invalid(128): {\"sideEffects\": [\"./src/polyfill.js\", null]} 2`] = `
+exports[`invalid(127): {\"sideEffects\": [\"./src/polyfill.js\", null]} 2`] = `
 
 Message:
 > 1 | {"sideEffects": ["./src/polyfill.js", null]}
@@ -526,18 +511,33 @@ Message:
 
 `;
 
-exports[`invalid(129): {\"engines\": {\"node\": \">=foo\"}} 1`] = `
+exports[`invalid(128): {\"engines\": {\"node\": \">=foo\"}} 1`] = `
 
 [Input]
   1 | {"engines": {"node": ">=foo"}}
 
 `;
 
-exports[`invalid(129): {\"engines\": {\"node\": \">=foo\"}} 2`] = `
+exports[`invalid(128): {\"engines\": {\"node\": \">=foo\"}} 2`] = `
 
 Message:
 > 1 | {"engines": {"node": ">=foo"}}
     |                      ^^^^^^^ \`node\` has an invalid version range \`>=foo\`.
+
+`;
+
+exports[`invalid(129): {\"engines\": {\"node\": \"not a range\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "not a range"}}
+
+`;
+
+exports[`invalid(129): {\"engines\": {\"node\": \"not a range\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "not a range"}}
+    |                      ^^^^^^^^^^^^^ \`node\` has an invalid version range \`not a range\`.
 
 `;
 
@@ -556,29 +556,14 @@ Message:
 
 `;
 
-exports[`invalid(130): {\"engines\": {\"node\": \"not a range\"}} 1`] = `
-
-[Input]
-  1 | {"engines": {"node": "not a range"}}
-
-`;
-
-exports[`invalid(130): {\"engines\": {\"node\": \"not a range\"}} 2`] = `
-
-Message:
-> 1 | {"engines": {"node": "not a range"}}
-    |                      ^^^^^^^^^^^^^ \`node\` has an invalid version range \`not a range\`.
-
-`;
-
-exports[`invalid(131): {\"engines\": {\"node\": \">=18\", \"npm\": \"garbage\"}} 1`] = `
+exports[`invalid(130): {\"engines\": {\"node\": \">=18\", \"npm\": \"garbage\"}} 1`] = `
 
 [Input]
   1 | {"engines": {"node": ">=18", "npm": "garbage"}}
 
 `;
 
-exports[`invalid(131): {\"engines\": {\"node\": \">=18\", \"npm\": \"garbage\"}} 2`] = `
+exports[`invalid(130): {\"engines\": {\"node\": \">=18\", \"npm\": \"garbage\"}} 2`] = `
 
 Message:
 > 1 | {"engines": {"node": ">=18", "npm": "garbage"}}
@@ -586,14 +571,14 @@ Message:
 
 `;
 
-exports[`invalid(132): {\"engines\": {\"node\": \">= 18 || garbage\"}} 1`] = `
+exports[`invalid(131): {\"engines\": {\"node\": \">= 18 || garbage\"}} 1`] = `
 
 [Input]
   1 | {"engines": {"node": ">= 18 || garbage"}}
 
 `;
 
-exports[`invalid(132): {\"engines\": {\"node\": \">= 18 || garbage\"}} 2`] = `
+exports[`invalid(131): {\"engines\": {\"node\": \">= 18 || garbage\"}} 2`] = `
 
 Message:
 > 1 | {"engines": {"node": ">= 18 || garbage"}}
@@ -601,14 +586,14 @@ Message:
 
 `;
 
-exports[`invalid(133): {\"engines\": {\"node\": \"\"}} 1`] = `
+exports[`invalid(132): {\"engines\": {\"node\": \"\"}} 1`] = `
 
 [Input]
   1 | {"engines": {"node": ""}}
 
 `;
 
-exports[`invalid(133): {\"engines\": {\"node\": \"\"}} 2`] = `
+exports[`invalid(132): {\"engines\": {\"node\": \"\"}} 2`] = `
 
 Message:
 > 1 | {"engines": {"node": ""}}
@@ -616,14 +601,14 @@ Message:
 
 `;
 
-exports[`invalid(134): {\"engines\": {\"node\": \"  \"}} 1`] = `
+exports[`invalid(133): {\"engines\": {\"node\": \"  \"}} 1`] = `
 
 [Input]
   1 | {"engines": {"node": "  "}}
 
 `;
 
-exports[`invalid(134): {\"engines\": {\"node\": \"  \"}} 2`] = `
+exports[`invalid(133): {\"engines\": {\"node\": \"  \"}} 2`] = `
 
 Message:
 > 1 | {"engines": {"node": "  "}}
@@ -631,14 +616,14 @@ Message:
 
 `;
 
-exports[`invalid(135): {\"engines\": \">=18\"} 1`] = `
+exports[`invalid(134): {\"engines\": \">=18\"} 1`] = `
 
 [Input]
   1 | {"engines": ">=18"}
 
 `;
 
-exports[`invalid(135): {\"engines\": \">=18\"} 2`] = `
+exports[`invalid(134): {\"engines\": \">=18\"} 2`] = `
 
 Message:
 > 1 | {"engines": ">=18"}
@@ -646,14 +631,14 @@ Message:
 
 `;
 
-exports[`invalid(136): {\"engines\": [\"node\"]} 1`] = `
+exports[`invalid(135): {\"engines\": [\"node\"]} 1`] = `
 
 [Input]
   1 | {"engines": ["node"]}
 
 `;
 
-exports[`invalid(136): {\"engines\": [\"node\"]} 2`] = `
+exports[`invalid(135): {\"engines\": [\"node\"]} 2`] = `
 
 Message:
 > 1 | {"engines": ["node"]}
@@ -661,14 +646,14 @@ Message:
 
 `;
 
-exports[`invalid(137): {\"engines\": null} 1`] = `
+exports[`invalid(136): {\"engines\": null} 1`] = `
 
 [Input]
   1 | {"engines": null}
 
 `;
 
-exports[`invalid(137): {\"engines\": null} 2`] = `
+exports[`invalid(136): {\"engines\": null} 2`] = `
 
 Message:
 > 1 | {"engines": null}
@@ -676,14 +661,14 @@ Message:
 
 `;
 
-exports[`invalid(138): {\"devEngines\": [\"node\"]} 1`] = `
+exports[`invalid(137): {\"devEngines\": [\"node\"]} 1`] = `
 
 [Input]
   1 | {"devEngines": ["node"]}
 
 `;
 
-exports[`invalid(138): {\"devEngines\": [\"node\"]} 2`] = `
+exports[`invalid(137): {\"devEngines\": [\"node\"]} 2`] = `
 
 Message:
 > 1 | {"devEngines": ["node"]}
@@ -691,18 +676,33 @@ Message:
 
 `;
 
-exports[`invalid(139): {\"devEngines\": \"node\"} 1`] = `
+exports[`invalid(138): {\"devEngines\": \"node\"} 1`] = `
 
 [Input]
   1 | {"devEngines": "node"}
 
 `;
 
-exports[`invalid(139): {\"devEngines\": \"node\"} 2`] = `
+exports[`invalid(138): {\"devEngines\": \"node\"} 2`] = `
 
 Message:
 > 1 | {"devEngines": "node"}
     |                ^^^^^^ The \`devEngines\` field must be an object.
+
+`;
+
+exports[`invalid(139): {\"devEngines\": {\"runtime\": \"node\"}} 1`] = `
+
+[Input]
+  1 | {"devEngines": {"runtime": "node"}}
+
+`;
+
+exports[`invalid(139): {\"devEngines\": {\"runtime\": \"node\"}} 2`] = `
+
+Message:
+> 1 | {"devEngines": {"runtime": "node"}}
+    |                            ^^^^^^ The \`devEngines.runtime\` field must be an object or an array of objects.
 
 `;
 
@@ -724,29 +724,14 @@ Output:
 
 `;
 
-exports[`invalid(140): {\"devEngines\": {\"runtime\": \"node\"}} 1`] = `
-
-[Input]
-  1 | {"devEngines": {"runtime": "node"}}
-
-`;
-
-exports[`invalid(140): {\"devEngines\": {\"runtime\": \"node\"}} 2`] = `
-
-Message:
-> 1 | {"devEngines": {"runtime": "node"}}
-    |                            ^^^^^^ The \`devEngines.runtime\` field must be an object or an array of objects.
-
-`;
-
-exports[`invalid(141): {\"devEngines\": {\"runtime\": [\"node\"]}} 1`] = `
+exports[`invalid(140): {\"devEngines\": {\"runtime\": [\"node\"]}} 1`] = `
 
 [Input]
   1 | {"devEngines": {"runtime": ["node"]}}
 
 `;
 
-exports[`invalid(141): {\"devEngines\": {\"runtime\": [\"node\"]}} 2`] = `
+exports[`invalid(140): {\"devEngines\": {\"runtime\": [\"node\"]}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"runtime": ["node"]}}
@@ -754,14 +739,14 @@ Message:
 
 `;
 
-exports[`invalid(142): {\"devEngines\": {\"packageManager\": [{\"name\": \"npm\"}, \"pnpm\"]}} 1`] = `
+exports[`invalid(141): {\"devEngines\": {\"packageManager\": [{\"name\": \"npm\"}, \"pnpm\"]}} 1`] = `
 
 [Input]
   1 | {"devEngines": {"packageManager": [{"name": "npm"}, "pnpm"]}}
 
 `;
 
-exports[`invalid(142): {\"devEngines\": {\"packageManager\": [{\"name\": \"npm\"}, \"pnpm\"]}} 2`] = `
+exports[`invalid(141): {\"devEngines\": {\"packageManager\": [{\"name\": \"npm\"}, \"pnpm\"]}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"packageManager": [{"name": "npm"}, "pnpm"]}}
@@ -769,14 +754,14 @@ Message:
 
 `;
 
-exports[`invalid(143): {\"devEngines\": {\"runtime\": {\"version\": \">=20\"}}} 1`] = `
+exports[`invalid(142): {\"devEngines\": {\"runtime\": {\"version\": \">=20\"}}} 1`] = `
 
 [Input]
   1 | {"devEngines": {"runtime": {"version": ">=20"}}}
 
 `;
 
-exports[`invalid(143): {\"devEngines\": {\"runtime\": {\"version\": \">=20\"}}} 2`] = `
+exports[`invalid(142): {\"devEngines\": {\"runtime\": {\"version\": \">=20\"}}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"runtime": {"version": ">=20"}}}
@@ -784,14 +769,14 @@ Message:
 
 `;
 
-exports[`invalid(144): {\"devEngines\": {\"runtime\": {\"name\": 1}}} 1`] = `
+exports[`invalid(143): {\"devEngines\": {\"runtime\": {\"name\": 1}}} 1`] = `
 
 [Input]
   1 | {"devEngines": {"runtime": {"name": 1}}}
 
 `;
 
-exports[`invalid(144): {\"devEngines\": {\"runtime\": {\"name\": 1}}} 2`] = `
+exports[`invalid(143): {\"devEngines\": {\"runtime\": {\"name\": 1}}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"runtime": {"name": 1}}}
@@ -799,14 +784,14 @@ Message:
 
 `;
 
-exports[`invalid(145): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": 20}}} 1`] = `
+exports[`invalid(144): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": 20}}} 1`] = `
 
 [Input]
   1 | {"devEngines": {"runtime": {"name": "node", "version": 20}}}
 
 `;
 
-exports[`invalid(145): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": 20}}} 2`] = `
+exports[`invalid(144): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": 20}}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"runtime": {"name": "node", "version": 20}}}
@@ -814,14 +799,14 @@ Message:
 
 `;
 
-exports[`invalid(146): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": \"not-a-range\"}}} 1`] = `
+exports[`invalid(145): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": \"not-a-range\"}}} 1`] = `
 
 [Input]
   1 | {"devEngines": {"runtime": {"name": "node", "version": "not-a-range"}}}
 
 `;
 
-exports[`invalid(146): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": \"not-a-range\"}}} 2`] = `
+exports[`invalid(145): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": \"not-a-range\"}}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"runtime": {"name": "node", "version": "not-a-range"}}}
@@ -829,14 +814,14 @@ Message:
 
 `;
 
-exports[`invalid(147): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": \"\"}}} 1`] = `
+exports[`invalid(146): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": \"\"}}} 1`] = `
 
 [Input]
   1 | {"devEngines": {"runtime": {"name": "node", "version": ""}}}
 
 `;
 
-exports[`invalid(147): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": \"\"}}} 2`] = `
+exports[`invalid(146): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"version\": \"\"}}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"runtime": {"name": "node", "version": ""}}}
@@ -844,14 +829,14 @@ Message:
 
 `;
 
-exports[`invalid(148): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"onFail\": \"explode\"}}} 1`] = `
+exports[`invalid(147): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"onFail\": \"explode\"}}} 1`] = `
 
 [Input]
   1 | {"devEngines": {"runtime": {"name": "node", "onFail": "explode"}}}
 
 `;
 
-exports[`invalid(148): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"onFail\": \"explode\"}}} 2`] = `
+exports[`invalid(147): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"onFail\": \"explode\"}}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"runtime": {"name": "node", "onFail": "explode"}}}
@@ -859,18 +844,33 @@ Message:
 
 `;
 
-exports[`invalid(149): {\"os\": [\"macos\"]} 1`] = `
+exports[`invalid(148): {\"os\": [\"macos\"]} 1`] = `
 
 [Input]
   1 | {"os": ["macos"]}
 
 `;
 
-exports[`invalid(149): {\"os\": [\"macos\"]} 2`] = `
+exports[`invalid(148): {\"os\": [\"macos\"]} 2`] = `
 
 Message:
 > 1 | {"os": ["macos"]}
     |         ^^^^^^^ \`macos\` is not a recognized \`os\` value.
+
+`;
+
+exports[`invalid(149): {\"os\": [\"windows\"]} 1`] = `
+
+[Input]
+  1 | {"os": ["windows"]}
+
+`;
+
+exports[`invalid(149): {\"os\": [\"windows\"]} 2`] = `
+
+Message:
+> 1 | {"os": ["windows"]}
+    |         ^^^^^^^^^ \`windows\` is not a recognized \`os\` value.
 
 `;
 
@@ -892,29 +892,14 @@ Output:
 
 `;
 
-exports[`invalid(150): {\"os\": [\"windows\"]} 1`] = `
-
-[Input]
-  1 | {"os": ["windows"]}
-
-`;
-
-exports[`invalid(150): {\"os\": [\"windows\"]} 2`] = `
-
-Message:
-> 1 | {"os": ["windows"]}
-    |         ^^^^^^^^^ \`windows\` is not a recognized \`os\` value.
-
-`;
-
-exports[`invalid(151): {\"os\": [\"darwin\", \"osx\"]} 1`] = `
+exports[`invalid(150): {\"os\": [\"darwin\", \"osx\"]} 1`] = `
 
 [Input]
   1 | {"os": ["darwin", "osx"]}
 
 `;
 
-exports[`invalid(151): {\"os\": [\"darwin\", \"osx\"]} 2`] = `
+exports[`invalid(150): {\"os\": [\"darwin\", \"osx\"]} 2`] = `
 
 Message:
 > 1 | {"os": ["darwin", "osx"]}
@@ -922,14 +907,14 @@ Message:
 
 `;
 
-exports[`invalid(152): {\"os\": \"darwin\"} 1`] = `
+exports[`invalid(151): {\"os\": \"darwin\"} 1`] = `
 
 [Input]
   1 | {"os": "darwin"}
 
 `;
 
-exports[`invalid(152): {\"os\": \"darwin\"} 2`] = `
+exports[`invalid(151): {\"os\": \"darwin\"} 2`] = `
 
 Message:
 > 1 | {"os": "darwin"}
@@ -937,14 +922,14 @@ Message:
 
 `;
 
-exports[`invalid(153): {\"os\": [\"darwin\", \"!win32\"]} 1`] = `
+exports[`invalid(152): {\"os\": [\"darwin\", \"!win32\"]} 1`] = `
 
 [Input]
   1 | {"os": ["darwin", "!win32"]}
 
 `;
 
-exports[`invalid(153): {\"os\": [\"darwin\", \"!win32\"]} 2`] = `
+exports[`invalid(152): {\"os\": [\"darwin\", \"!win32\"]} 2`] = `
 
 Message:
 > 1 | {"os": ["darwin", "!win32"]}
@@ -952,14 +937,14 @@ Message:
 
 `;
 
-exports[`invalid(154): {\"os\": [42]} 1`] = `
+exports[`invalid(153): {\"os\": [42]} 1`] = `
 
 [Input]
   1 | {"os": [42]}
 
 `;
 
-exports[`invalid(154): {\"os\": [42]} 2`] = `
+exports[`invalid(153): {\"os\": [42]} 2`] = `
 
 Message:
 > 1 | {"os": [42]}
@@ -967,14 +952,14 @@ Message:
 
 `;
 
-exports[`invalid(155): {\"cpu\": [\"amd64\"]} 1`] = `
+exports[`invalid(154): {\"cpu\": [\"amd64\"]} 1`] = `
 
 [Input]
   1 | {"cpu": ["amd64"]}
 
 `;
 
-exports[`invalid(155): {\"cpu\": [\"amd64\"]} 2`] = `
+exports[`invalid(154): {\"cpu\": [\"amd64\"]} 2`] = `
 
 Message:
 > 1 | {"cpu": ["amd64"]}
@@ -982,14 +967,14 @@ Message:
 
 `;
 
-exports[`invalid(156): {\"cpu\": [\"x86_64\"]} 1`] = `
+exports[`invalid(155): {\"cpu\": [\"x86_64\"]} 1`] = `
 
 [Input]
   1 | {"cpu": ["x86_64"]}
 
 `;
 
-exports[`invalid(156): {\"cpu\": [\"x86_64\"]} 2`] = `
+exports[`invalid(155): {\"cpu\": [\"x86_64\"]} 2`] = `
 
 Message:
 > 1 | {"cpu": ["x86_64"]}
@@ -997,14 +982,14 @@ Message:
 
 `;
 
-exports[`invalid(157): {\"cpu\": [\"aarch64\"]} 1`] = `
+exports[`invalid(156): {\"cpu\": [\"aarch64\"]} 1`] = `
 
 [Input]
   1 | {"cpu": ["aarch64"]}
 
 `;
 
-exports[`invalid(157): {\"cpu\": [\"aarch64\"]} 2`] = `
+exports[`invalid(156): {\"cpu\": [\"aarch64\"]} 2`] = `
 
 Message:
 > 1 | {"cpu": ["aarch64"]}
@@ -1012,14 +997,14 @@ Message:
 
 `;
 
-exports[`invalid(158): {\"cpu\": \"x64\"} 1`] = `
+exports[`invalid(157): {\"cpu\": \"x64\"} 1`] = `
 
 [Input]
   1 | {"cpu": "x64"}
 
 `;
 
-exports[`invalid(158): {\"cpu\": \"x64\"} 2`] = `
+exports[`invalid(157): {\"cpu\": \"x64\"} 2`] = `
 
 Message:
 > 1 | {"cpu": "x64"}
@@ -1027,18 +1012,33 @@ Message:
 
 `;
 
-exports[`invalid(159): {\"cpu\": [\"x64\", \"!ia32\"]} 1`] = `
+exports[`invalid(158): {\"cpu\": [\"x64\", \"!ia32\"]} 1`] = `
 
 [Input]
   1 | {"cpu": ["x64", "!ia32"]}
 
 `;
 
-exports[`invalid(159): {\"cpu\": [\"x64\", \"!ia32\"]} 2`] = `
+exports[`invalid(158): {\"cpu\": [\"x64\", \"!ia32\"]} 2`] = `
 
 Message:
 > 1 | {"cpu": ["x64", "!ia32"]}
     |         ^^^^^^^^^^^^^^^^ Do not mix included and excluded (\`!\`-prefixed) \`cpu\` values.
+
+`;
+
+exports[`invalid(159): {\"cpu\": [42]} 1`] = `
+
+[Input]
+  1 | {"cpu": [42]}
+
+`;
+
+exports[`invalid(159): {\"cpu\": [42]} 2`] = `
+
+Message:
+> 1 | {"cpu": [42]}
+    |          ^^ Each \`cpu\` value must be a string.
 
 `;
 
@@ -1060,29 +1060,14 @@ Output:
 
 `;
 
-exports[`invalid(160): {\"cpu\": [42]} 1`] = `
-
-[Input]
-  1 | {"cpu": [42]}
-
-`;
-
-exports[`invalid(160): {\"cpu\": [42]} 2`] = `
-
-Message:
-> 1 | {"cpu": [42]}
-    |          ^^ Each \`cpu\` value must be a string.
-
-`;
-
-exports[`invalid(161): {\"publishConfig\": \"public\"} 1`] = `
+exports[`invalid(160): {\"publishConfig\": \"public\"} 1`] = `
 
 [Input]
   1 | {"publishConfig": "public"}
 
 `;
 
-exports[`invalid(161): {\"publishConfig\": \"public\"} 2`] = `
+exports[`invalid(160): {\"publishConfig\": \"public\"} 2`] = `
 
 Message:
 > 1 | {"publishConfig": "public"}
@@ -1090,14 +1075,14 @@ Message:
 
 `;
 
-exports[`invalid(162): {\"publishConfig\": {\"access\": \"private\"}} 1`] = `
+exports[`invalid(161): {\"publishConfig\": {\"access\": \"private\"}} 1`] = `
 
 [Input]
   1 | {"publishConfig": {"access": "private"}}
 
 `;
 
-exports[`invalid(162): {\"publishConfig\": {\"access\": \"private\"}} 2`] = `
+exports[`invalid(161): {\"publishConfig\": {\"access\": \"private\"}} 2`] = `
 
 Message:
 > 1 | {"publishConfig": {"access": "private"}}
@@ -1105,14 +1090,14 @@ Message:
 
 `;
 
-exports[`invalid(163): {\"publishConfig\": {\"access\": true}} 1`] = `
+exports[`invalid(162): {\"publishConfig\": {\"access\": true}} 1`] = `
 
 [Input]
   1 | {"publishConfig": {"access": true}}
 
 `;
 
-exports[`invalid(163): {\"publishConfig\": {\"access\": true}} 2`] = `
+exports[`invalid(162): {\"publishConfig\": {\"access\": true}} 2`] = `
 
 Message:
 > 1 | {"publishConfig": {"access": true}}
@@ -1120,14 +1105,14 @@ Message:
 
 `;
 
-exports[`invalid(164): {\"publishConfig\": {\"provenance\": \"true\"}} 1`] = `
+exports[`invalid(163): {\"publishConfig\": {\"provenance\": \"true\"}} 1`] = `
 
 [Input]
   1 | {"publishConfig": {"provenance": "true"}}
 
 `;
 
-exports[`invalid(164): {\"publishConfig\": {\"provenance\": \"true\"}} 2`] = `
+exports[`invalid(163): {\"publishConfig\": {\"provenance\": \"true\"}} 2`] = `
 
 Message:
 > 1 | {"publishConfig": {"provenance": "true"}}
@@ -1135,14 +1120,14 @@ Message:
 
 `;
 
-exports[`invalid(165): {\"name\": \"foo\", \"publishConfig\": {\"access\": \"public\"}} 1`] = `
+exports[`invalid(164): {\"name\": \"foo\", \"publishConfig\": {\"access\": \"public\"}} 1`] = `
 
 [Input]
   1 | {"name": "foo", "publishConfig": {"access": "public"}}
 
 `;
 
-exports[`invalid(165): {\"name\": \"foo\", \"publishConfig\": {\"access\": \"public\"}} 2`] = `
+exports[`invalid(164): {\"name\": \"foo\", \"publishConfig\": {\"access\": \"public\"}} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "publishConfig": {"access": "public"}}
@@ -1153,14 +1138,14 @@ Suggestion 1/1: Remove the \`access\` field.:
 
 `;
 
-exports[`invalid(166): {\"name\": \"foo\", \"publishConfig\": {\"access\": \"restricted\"}} 1`] = `
+exports[`invalid(165): {\"name\": \"foo\", \"publishConfig\": {\"access\": \"restricted\"}} 1`] = `
 
 [Input]
   1 | {"name": "foo", "publishConfig": {"access": "restricted"}}
 
 `;
 
-exports[`invalid(166): {\"name\": \"foo\", \"publishConfig\": {\"access\": \"restricted\"}} 2`] = `
+exports[`invalid(165): {\"name\": \"foo\", \"publishConfig\": {\"access\": \"restricted\"}} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "publishConfig": {"access": "restricted"}}
@@ -1171,14 +1156,14 @@ Suggestion 1/1: Remove the \`access\` field.:
 
 `;
 
-exports[`invalid(167): {\"publishConfig\": {\"tag\": \"\"}} 1`] = `
+exports[`invalid(166): {\"publishConfig\": {\"tag\": \"\"}} 1`] = `
 
 [Input]
   1 | {"publishConfig": {"tag": ""}}
 
 `;
 
-exports[`invalid(167): {\"publishConfig\": {\"tag\": \"\"}} 2`] = `
+exports[`invalid(166): {\"publishConfig\": {\"tag\": \"\"}} 2`] = `
 
 Message:
 > 1 | {"publishConfig": {"tag": ""}}
@@ -1186,14 +1171,14 @@ Message:
 
 `;
 
-exports[`invalid(168): {\"publishConfig\": {\"tag\": 42}} 1`] = `
+exports[`invalid(167): {\"publishConfig\": {\"tag\": 42}} 1`] = `
 
 [Input]
   1 | {"publishConfig": {"tag": 42}}
 
 `;
 
-exports[`invalid(168): {\"publishConfig\": {\"tag\": 42}} 2`] = `
+exports[`invalid(167): {\"publishConfig\": {\"tag\": 42}} 2`] = `
 
 Message:
 > 1 | {"publishConfig": {"tag": 42}}
@@ -1201,18 +1186,33 @@ Message:
 
 `;
 
-exports[`invalid(169): {\"publishConfig\": {\"registry\": \"npm.example.com\"}} 1`] = `
+exports[`invalid(168): {\"publishConfig\": {\"registry\": \"npm.example.com\"}} 1`] = `
 
 [Input]
   1 | {"publishConfig": {"registry": "npm.example.com"}}
 
 `;
 
-exports[`invalid(169): {\"publishConfig\": {\"registry\": \"npm.example.com\"}} 2`] = `
+exports[`invalid(168): {\"publishConfig\": {\"registry\": \"npm.example.com\"}} 2`] = `
 
 Message:
 > 1 | {"publishConfig": {"registry": "npm.example.com"}}
     |                                ^^^^^^^^^^^^^^^^^ The \`publishConfig.registry\` field must be a valid \`http(s)\` URL.
+
+`;
+
+exports[`invalid(169): {\"publishConfig\": {\"registry\": true}} 1`] = `
+
+[Input]
+  1 | {"publishConfig": {"registry": true}}
+
+`;
+
+exports[`invalid(169): {\"publishConfig\": {\"registry\": true}} 2`] = `
+
+Message:
+> 1 | {"publishConfig": {"registry": true}}
+    |                                ^^^^ The \`publishConfig.registry\` field must be a valid \`http(s)\` URL.
 
 `;
 
@@ -1231,29 +1231,14 @@ Message:
 
 `;
 
-exports[`invalid(170): {\"publishConfig\": {\"registry\": true}} 1`] = `
-
-[Input]
-  1 | {"publishConfig": {"registry": true}}
-
-`;
-
-exports[`invalid(170): {\"publishConfig\": {\"registry\": true}} 2`] = `
-
-Message:
-> 1 | {"publishConfig": {"registry": true}}
-    |                                ^^^^ The \`publishConfig.registry\` field must be a valid \`http(s)\` URL.
-
-`;
-
-exports[`invalid(171): {\"packageManager\": \"pnpm\"} 1`] = `
+exports[`invalid(170): {\"packageManager\": \"pnpm\"} 1`] = `
 
 [Input]
   1 | {"packageManager": "pnpm"}
 
 `;
 
-exports[`invalid(171): {\"packageManager\": \"pnpm\"} 2`] = `
+exports[`invalid(170): {\"packageManager\": \"pnpm\"} 2`] = `
 
 Message:
 > 1 | {"packageManager": "pnpm"}
@@ -1261,14 +1246,14 @@ Message:
 
 `;
 
-exports[`invalid(172): {\"packageManager\": \"pnpm@latest\"} 1`] = `
+exports[`invalid(171): {\"packageManager\": \"pnpm@latest\"} 1`] = `
 
 [Input]
   1 | {"packageManager": "pnpm@latest"}
 
 `;
 
-exports[`invalid(172): {\"packageManager\": \"pnpm@latest\"} 2`] = `
+exports[`invalid(171): {\"packageManager\": \"pnpm@latest\"} 2`] = `
 
 Message:
 > 1 | {"packageManager": "pnpm@latest"}
@@ -1276,14 +1261,14 @@ Message:
 
 `;
 
-exports[`invalid(173): {\"packageManager\": \"yarn@^3\"} 1`] = `
+exports[`invalid(172): {\"packageManager\": \"yarn@^3\"} 1`] = `
 
 [Input]
   1 | {"packageManager": "yarn@^3"}
 
 `;
 
-exports[`invalid(173): {\"packageManager\": \"yarn@^3\"} 2`] = `
+exports[`invalid(172): {\"packageManager\": \"yarn@^3\"} 2`] = `
 
 Message:
 > 1 | {"packageManager": "yarn@^3"}
@@ -1291,14 +1276,14 @@ Message:
 
 `;
 
-exports[`invalid(174): {\"packageManager\": \"pnpm@8\"} 1`] = `
+exports[`invalid(173): {\"packageManager\": \"pnpm@8\"} 1`] = `
 
 [Input]
   1 | {"packageManager": "pnpm@8"}
 
 `;
 
-exports[`invalid(174): {\"packageManager\": \"pnpm@8\"} 2`] = `
+exports[`invalid(173): {\"packageManager\": \"pnpm@8\"} 2`] = `
 
 Message:
 > 1 | {"packageManager": "pnpm@8"}
@@ -1306,14 +1291,14 @@ Message:
 
 `;
 
-exports[`invalid(175): {\"packageManager\": \"deno@1.0.0\"} 1`] = `
+exports[`invalid(174): {\"packageManager\": \"deno@1.0.0\"} 1`] = `
 
 [Input]
   1 | {"packageManager": "deno@1.0.0"}
 
 `;
 
-exports[`invalid(175): {\"packageManager\": \"deno@1.0.0\"} 2`] = `
+exports[`invalid(174): {\"packageManager\": \"deno@1.0.0\"} 2`] = `
 
 Message:
 > 1 | {"packageManager": "deno@1.0.0"}
@@ -1321,14 +1306,14 @@ Message:
 
 `;
 
-exports[`invalid(176): {\"scripts\": []} 1`] = `
+exports[`invalid(175): {\"scripts\": []} 1`] = `
 
 [Input]
   1 | {"scripts": []}
 
 `;
 
-exports[`invalid(176): {\"scripts\": []} 2`] = `
+exports[`invalid(175): {\"scripts\": []} 2`] = `
 
 Message:
 > 1 | {"scripts": []}
@@ -1336,14 +1321,14 @@ Message:
 
 `;
 
-exports[`invalid(177): {\"scripts\": \"build\"} 1`] = `
+exports[`invalid(176): {\"scripts\": \"build\"} 1`] = `
 
 [Input]
   1 | {"scripts": "build"}
 
 `;
 
-exports[`invalid(177): {\"scripts\": \"build\"} 2`] = `
+exports[`invalid(176): {\"scripts\": \"build\"} 2`] = `
 
 Message:
 > 1 | {"scripts": "build"}
@@ -1351,14 +1336,14 @@ Message:
 
 `;
 
-exports[`invalid(178): {\"scripts\": {\"build\": 1}} 1`] = `
+exports[`invalid(177): {\"scripts\": {\"build\": 1}} 1`] = `
 
 [Input]
   1 | {"scripts": {"build": 1}}
 
 `;
 
-exports[`invalid(178): {\"scripts\": {\"build\": 1}} 2`] = `
+exports[`invalid(177): {\"scripts\": {\"build\": 1}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"build": 1}}
@@ -1366,18 +1351,33 @@ Message:
 
 `;
 
-exports[`invalid(179): {\"scripts\": {\"build\": \"tsc\", \"test\": false}} 1`] = `
+exports[`invalid(178): {\"scripts\": {\"build\": \"tsc\", \"test\": false}} 1`] = `
 
 [Input]
   1 | {"scripts": {"build": "tsc", "test": false}}
 
 `;
 
-exports[`invalid(179): {\"scripts\": {\"build\": \"tsc\", \"test\": false}} 2`] = `
+exports[`invalid(178): {\"scripts\": {\"build\": \"tsc\", \"test\": false}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"build": "tsc", "test": false}}
     |                                      ^^^^^ The \`test\` script must be a string.
+
+`;
+
+exports[`invalid(179): {\"files\": \"dist\"} 1`] = `
+
+[Input]
+  1 | {"files": "dist"}
+
+`;
+
+exports[`invalid(179): {\"files\": \"dist\"} 2`] = `
+
+Message:
+> 1 | {"files": "dist"}
+    |           ^^^^^^ The \`files\` field must be an array.
 
 `;
 
@@ -1396,29 +1396,14 @@ Message:
 
 `;
 
-exports[`invalid(180): {\"files\": \"dist\"} 1`] = `
-
-[Input]
-  1 | {"files": "dist"}
-
-`;
-
-exports[`invalid(180): {\"files\": \"dist\"} 2`] = `
-
-Message:
-> 1 | {"files": "dist"}
-    |           ^^^^^^ The \`files\` field must be an array.
-
-`;
-
-exports[`invalid(181): {\"files\": [\"node_modules\"]} 1`] = `
+exports[`invalid(180): {\"files\": [\"node_modules\"]} 1`] = `
 
 [Input]
   1 | {"files": ["node_modules"]}
 
 `;
 
-exports[`invalid(181): {\"files\": [\"node_modules\"]} 2`] = `
+exports[`invalid(180): {\"files\": [\"node_modules\"]} 2`] = `
 
 Message:
 > 1 | {"files": ["node_modules"]}
@@ -1429,14 +1414,14 @@ Output:
 
 `;
 
-exports[`invalid(182): {\"files\": [\"node_modules/foo\"]} 1`] = `
+exports[`invalid(181): {\"files\": [\"node_modules/foo\"]} 1`] = `
 
 [Input]
   1 | {"files": ["node_modules/foo"]}
 
 `;
 
-exports[`invalid(182): {\"files\": [\"node_modules/foo\"]} 2`] = `
+exports[`invalid(181): {\"files\": [\"node_modules/foo\"]} 2`] = `
 
 Message:
 > 1 | {"files": ["node_modules/foo"]}
@@ -1447,14 +1432,14 @@ Output:
 
 `;
 
-exports[`invalid(183): {\"files\": [\"yarn.lock\"]} 1`] = `
+exports[`invalid(182): {\"files\": [\"yarn.lock\"]} 1`] = `
 
 [Input]
   1 | {"files": ["yarn.lock"]}
 
 `;
 
-exports[`invalid(183): {\"files\": [\"yarn.lock\"]} 2`] = `
+exports[`invalid(182): {\"files\": [\"yarn.lock\"]} 2`] = `
 
 Message:
 > 1 | {"files": ["yarn.lock"]}
@@ -1465,14 +1450,14 @@ Output:
 
 `;
 
-exports[`invalid(184): {\"files\": [\"bun.lock\"]} 1`] = `
+exports[`invalid(183): {\"files\": [\"bun.lock\"]} 1`] = `
 
 [Input]
   1 | {"files": ["bun.lock"]}
 
 `;
 
-exports[`invalid(184): {\"files\": [\"bun.lock\"]} 2`] = `
+exports[`invalid(183): {\"files\": [\"bun.lock\"]} 2`] = `
 
 Message:
 > 1 | {"files": ["bun.lock"]}
@@ -1483,14 +1468,14 @@ Output:
 
 `;
 
-exports[`invalid(185): {\"files\": [\"dist\", \".git\"]} 1`] = `
+exports[`invalid(184): {\"files\": [\"dist\", \".git\"]} 1`] = `
 
 [Input]
   1 | {"files": ["dist", ".git"]}
 
 `;
 
-exports[`invalid(185): {\"files\": [\"dist\", \".git\"]} 2`] = `
+exports[`invalid(184): {\"files\": [\"dist\", \".git\"]} 2`] = `
 
 Message:
 > 1 | {"files": ["dist", ".git"]}
@@ -1501,14 +1486,14 @@ Output:
 
 `;
 
-exports[`invalid(186): {\"files\": [1]} 1`] = `
+exports[`invalid(185): {\"files\": [1]} 1`] = `
 
 [Input]
   1 | {"files": [1]}
 
 `;
 
-exports[`invalid(186): {\"files\": [1]} 2`] = `
+exports[`invalid(185): {\"files\": [1]} 2`] = `
 
 Message:
 > 1 | {"files": [1]}
@@ -1516,14 +1501,14 @@ Message:
 
 `;
 
-exports[`invalid(187): {\"files\": [\"dist\", \"\"]} 1`] = `
+exports[`invalid(186): {\"files\": [\"dist\", \"\"]} 1`] = `
 
 [Input]
   1 | {"files": ["dist", ""]}
 
 `;
 
-exports[`invalid(187): {\"files\": [\"dist\", \"\"]} 2`] = `
+exports[`invalid(186): {\"files\": [\"dist\", \"\"]} 2`] = `
 
 Message:
 > 1 | {"files": ["dist", ""]}
@@ -1534,14 +1519,14 @@ Output:
 
 `;
 
-exports[`invalid(188): {\"workspaces\": \"packages/*\"} 1`] = `
+exports[`invalid(187): {\"workspaces\": \"packages/*\"} 1`] = `
 
 [Input]
   1 | {"workspaces": "packages/*"}
 
 `;
 
-exports[`invalid(188): {\"workspaces\": \"packages/*\"} 2`] = `
+exports[`invalid(187): {\"workspaces\": \"packages/*\"} 2`] = `
 
 Message:
 > 1 | {"workspaces": "packages/*"}
@@ -1549,18 +1534,33 @@ Message:
 
 `;
 
-exports[`invalid(189): {\"workspaces\": [\"packages/*\", 1]} 1`] = `
+exports[`invalid(188): {\"workspaces\": [\"packages/*\", 1]} 1`] = `
 
 [Input]
   1 | {"workspaces": ["packages/*", 1]}
 
 `;
 
-exports[`invalid(189): {\"workspaces\": [\"packages/*\", 1]} 2`] = `
+exports[`invalid(188): {\"workspaces\": [\"packages/*\", 1]} 2`] = `
 
 Message:
 > 1 | {"workspaces": ["packages/*", 1]}
     |                               ^ Each \`workspaces\` entry must be a string.
+
+`;
+
+exports[`invalid(189): {\"workspaces\": null} 1`] = `
+
+[Input]
+  1 | {"workspaces": null}
+
+`;
+
+exports[`invalid(189): {\"workspaces\": null} 2`] = `
+
+Message:
+> 1 | {"workspaces": null}
+    |                ^^^^ The \`workspaces\` field must be an array of globs.
 
 `;
 
@@ -1579,29 +1579,14 @@ Message:
 
 `;
 
-exports[`invalid(190): {\"workspaces\": null} 1`] = `
-
-[Input]
-  1 | {"workspaces": null}
-
-`;
-
-exports[`invalid(190): {\"workspaces\": null} 2`] = `
-
-Message:
-> 1 | {"workspaces": null}
-    |                ^^^^ The \`workspaces\` field must be an array of globs.
-
-`;
-
-exports[`invalid(191): {\"keywords\": \"eslint\"} 1`] = `
+exports[`invalid(190): {\"keywords\": \"eslint\"} 1`] = `
 
 [Input]
   1 | {"keywords": "eslint"}
 
 `;
 
-exports[`invalid(191): {\"keywords\": \"eslint\"} 2`] = `
+exports[`invalid(190): {\"keywords\": \"eslint\"} 2`] = `
 
 Message:
 > 1 | {"keywords": "eslint"}
@@ -1609,14 +1594,14 @@ Message:
 
 `;
 
-exports[`invalid(192): {\"keywords\": {\"0\": \"eslint\"}} 1`] = `
+exports[`invalid(191): {\"keywords\": {\"0\": \"eslint\"}} 1`] = `
 
 [Input]
   1 | {"keywords": {"0": "eslint"}}
 
 `;
 
-exports[`invalid(192): {\"keywords\": {\"0\": \"eslint\"}} 2`] = `
+exports[`invalid(191): {\"keywords\": {\"0\": \"eslint\"}} 2`] = `
 
 Message:
 > 1 | {"keywords": {"0": "eslint"}}
@@ -1624,14 +1609,14 @@ Message:
 
 `;
 
-exports[`invalid(193): {\"keywords\": [\"eslint\", 1]} 1`] = `
+exports[`invalid(192): {\"keywords\": [\"eslint\", 1]} 1`] = `
 
 [Input]
   1 | {"keywords": ["eslint", 1]}
 
 `;
 
-exports[`invalid(193): {\"keywords\": [\"eslint\", 1]} 2`] = `
+exports[`invalid(192): {\"keywords\": [\"eslint\", 1]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["eslint", 1]}
@@ -1639,14 +1624,14 @@ Message:
 
 `;
 
-exports[`invalid(194): {\"keywords\": [\"eslint\", \"\"]} 1`] = `
+exports[`invalid(193): {\"keywords\": [\"eslint\", \"\"]} 1`] = `
 
 [Input]
   1 | {"keywords": ["eslint", ""]}
 
 `;
 
-exports[`invalid(194): {\"keywords\": [\"eslint\", \"\"]} 2`] = `
+exports[`invalid(193): {\"keywords\": [\"eslint\", \"\"]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["eslint", ""]}
@@ -1657,14 +1642,14 @@ Suggestion 1/1: Remove this keyword.:
 
 `;
 
-exports[`invalid(195): {\"keywords\": [\"eslint\", \"  \"]} 1`] = `
+exports[`invalid(194): {\"keywords\": [\"eslint\", \"  \"]} 1`] = `
 
 [Input]
   1 | {"keywords": ["eslint", "  "]}
 
 `;
 
-exports[`invalid(195): {\"keywords\": [\"eslint\", \"  \"]} 2`] = `
+exports[`invalid(194): {\"keywords\": [\"eslint\", \"  \"]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["eslint", "  "]}
@@ -1675,14 +1660,14 @@ Suggestion 1/1: Remove this keyword.:
 
 `;
 
-exports[`invalid(196): {\"keywords\": [\"eslint, json, package\"]} 1`] = `
+exports[`invalid(195): {\"keywords\": [\"eslint, json, package\"]} 1`] = `
 
 [Input]
   1 | {"keywords": ["eslint, json, package"]}
 
 `;
 
-exports[`invalid(196): {\"keywords\": [\"eslint, json, package\"]} 2`] = `
+exports[`invalid(195): {\"keywords\": [\"eslint, json, package\"]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["eslint, json, package"]}
@@ -1690,14 +1675,14 @@ Message:
 
 `;
 
-exports[`invalid(197): {\"keywords\": [\"eslint\", \" json\"]} 1`] = `
+exports[`invalid(196): {\"keywords\": [\"eslint\", \" json\"]} 1`] = `
 
 [Input]
   1 | {"keywords": ["eslint", " json"]}
 
 `;
 
-exports[`invalid(197): {\"keywords\": [\"eslint\", \" json\"]} 2`] = `
+exports[`invalid(196): {\"keywords\": [\"eslint\", \" json\"]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["eslint", " json"]}
@@ -1705,14 +1690,14 @@ Message:
 
 `;
 
-exports[`invalid(198): {\"keywords\": [\"react \", \"vue\"]} 1`] = `
+exports[`invalid(197): {\"keywords\": [\"react \", \"vue\"]} 1`] = `
 
 [Input]
   1 | {"keywords": ["react ", "vue"]}
 
 `;
 
-exports[`invalid(198): {\"keywords\": [\"react \", \"vue\"]} 2`] = `
+exports[`invalid(197): {\"keywords\": [\"react \", \"vue\"]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["react ", "vue"]}
@@ -1720,14 +1705,14 @@ Message:
 
 `;
 
-exports[`invalid(199): {\"name\": \"ky\", \"keywords\": [\"ky\", \"http\"]} 1`] = `
+exports[`invalid(198): {\"name\": \"ky\", \"keywords\": [\"ky\", \"http\"]} 1`] = `
 
 [Input]
   1 | {"name": "ky", "keywords": ["ky", "http"]}
 
 `;
 
-exports[`invalid(199): {\"name\": \"ky\", \"keywords\": [\"ky\", \"http\"]} 2`] = `
+exports[`invalid(198): {\"name\": \"ky\", \"keywords\": [\"ky\", \"http\"]} 2`] = `
 
 Message:
 > 1 | {"name": "ky", "keywords": ["ky", "http"]}
@@ -1735,6 +1720,24 @@ Message:
 
 Suggestion 1/1: Remove this keyword.:
   1 | {"name": "ky", "keywords": ["http"]}
+
+`;
+
+exports[`invalid(199): {\"name\": \"ky\", \"keywords\": [\"Ky\"]} 1`] = `
+
+[Input]
+  1 | {"name": "ky", "keywords": ["Ky"]}
+
+`;
+
+exports[`invalid(199): {\"name\": \"ky\", \"keywords\": [\"Ky\"]} 2`] = `
+
+Message:
+> 1 | {"name": "ky", "keywords": ["Ky"]}
+    |                             ^^^^ Keyword \`Ky\` is redundant with the package name.
+
+Suggestion 1/1: Remove this keyword.:
+  1 | {"name": "ky", "keywords": []}
 
 `;
 
@@ -1768,32 +1771,14 @@ Message:
 
 `;
 
-exports[`invalid(200): {\"name\": \"ky\", \"keywords\": [\"Ky\"]} 1`] = `
-
-[Input]
-  1 | {"name": "ky", "keywords": ["Ky"]}
-
-`;
-
-exports[`invalid(200): {\"name\": \"ky\", \"keywords\": [\"Ky\"]} 2`] = `
-
-Message:
-> 1 | {"name": "ky", "keywords": ["Ky"]}
-    |                             ^^^^ Keyword \`Ky\` is redundant with the package name.
-
-Suggestion 1/1: Remove this keyword.:
-  1 | {"name": "ky", "keywords": []}
-
-`;
-
-exports[`invalid(201): {\"keywords\": [\"React\"]} 1`] = `
+exports[`invalid(200): {\"keywords\": [\"React\"]} 1`] = `
 
 [Input]
   1 | {"keywords": ["React"]}
 
 `;
 
-exports[`invalid(201): {\"keywords\": [\"React\"]} 2`] = `
+exports[`invalid(200): {\"keywords\": [\"React\"]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["React"]}
@@ -1804,14 +1789,14 @@ Suggestion 1/1: Convert to lowercase.:
 
 `;
 
-exports[`invalid(202): {\"keywords\": [\"eslint\", \"JSON\"]} 1`] = `
+exports[`invalid(201): {\"keywords\": [\"eslint\", \"JSON\"]} 1`] = `
 
 [Input]
   1 | {"keywords": ["eslint", "JSON"]}
 
 `;
 
-exports[`invalid(202): {\"keywords\": [\"eslint\", \"JSON\"]} 2`] = `
+exports[`invalid(201): {\"keywords\": [\"eslint\", \"JSON\"]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["eslint", "JSON"]}
@@ -1822,14 +1807,14 @@ Suggestion 1/1: Convert to lowercase.:
 
 `;
 
-exports[`invalid(203): {\"keywords\": [\"eslint\", \"json\", \"eslint\"]} 1`] = `
+exports[`invalid(202): {\"keywords\": [\"eslint\", \"json\", \"eslint\"]} 1`] = `
 
 [Input]
   1 | {"keywords": ["eslint", "json", "eslint"]}
 
 `;
 
-exports[`invalid(203): {\"keywords\": [\"eslint\", \"json\", \"eslint\"]} 2`] = `
+exports[`invalid(202): {\"keywords\": [\"eslint\", \"json\", \"eslint\"]} 2`] = `
 
 Message:
 > 1 | {"keywords": ["eslint", "json", "eslint"]}
@@ -1840,14 +1825,14 @@ Suggestion 1/1: Remove this keyword.:
 
 `;
 
-exports[`invalid(204): {\"dependencies\": [\"foo\"]} 1`] = `
+exports[`invalid(203): {\"dependencies\": [\"foo\"]} 1`] = `
 
 [Input]
   1 | {"dependencies": ["foo"]}
 
 `;
 
-exports[`invalid(204): {\"dependencies\": [\"foo\"]} 2`] = `
+exports[`invalid(203): {\"dependencies\": [\"foo\"]} 2`] = `
 
 Message:
 > 1 | {"dependencies": ["foo"]}
@@ -1855,14 +1840,14 @@ Message:
 
 `;
 
-exports[`invalid(205): {\"dependencies\": \"foo\"} 1`] = `
+exports[`invalid(204): {\"dependencies\": \"foo\"} 1`] = `
 
 [Input]
   1 | {"dependencies": "foo"}
 
 `;
 
-exports[`invalid(205): {\"dependencies\": \"foo\"} 2`] = `
+exports[`invalid(204): {\"dependencies\": \"foo\"} 2`] = `
 
 Message:
 > 1 | {"dependencies": "foo"}
@@ -1870,14 +1855,14 @@ Message:
 
 `;
 
-exports[`invalid(206): {\"devDependencies\": 1} 1`] = `
+exports[`invalid(205): {\"devDependencies\": 1} 1`] = `
 
 [Input]
   1 | {"devDependencies": 1}
 
 `;
 
-exports[`invalid(206): {\"devDependencies\": 1} 2`] = `
+exports[`invalid(205): {\"devDependencies\": 1} 2`] = `
 
 Message:
 > 1 | {"devDependencies": 1}
@@ -1885,14 +1870,14 @@ Message:
 
 `;
 
-exports[`invalid(207): {\"dependencies\": {\"foo\": 123}} 1`] = `
+exports[`invalid(206): {\"dependencies\": {\"foo\": 123}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": 123}}
 
 `;
 
-exports[`invalid(207): {\"dependencies\": {\"foo\": 123}} 2`] = `
+exports[`invalid(206): {\"dependencies\": {\"foo\": 123}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": 123}}
@@ -1900,14 +1885,14 @@ Message:
 
 `;
 
-exports[`invalid(208): {\"dependencies\": {\"foo\": null}} 1`] = `
+exports[`invalid(207): {\"dependencies\": {\"foo\": null}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": null}}
 
 `;
 
-exports[`invalid(208): {\"dependencies\": {\"foo\": null}} 2`] = `
+exports[`invalid(207): {\"dependencies\": {\"foo\": null}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": null}}
@@ -1915,18 +1900,33 @@ Message:
 
 `;
 
-exports[`invalid(209): {\"dependencies\": {\"foo\": {\"version\": \"1.0.0\"}}} 1`] = `
+exports[`invalid(208): {\"dependencies\": {\"foo\": {\"version\": \"1.0.0\"}}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": {"version": "1.0.0"}}}
 
 `;
 
-exports[`invalid(209): {\"dependencies\": {\"foo\": {\"version\": \"1.0.0\"}}} 2`] = `
+exports[`invalid(208): {\"dependencies\": {\"foo\": {\"version\": \"1.0.0\"}}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": {"version": "1.0.0"}}}
     |                          ^^^^^^^^^^^^^^^^^^^^ The version of \`foo\` in \`dependencies\` must be a string.
+
+`;
+
+exports[`invalid(209): {\"peerDependencies\": {\"foo\": true}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": true}}
+
+`;
+
+exports[`invalid(209): {\"peerDependencies\": {\"foo\": true}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": true}}
+    |                              ^^^^ The version of \`foo\` in \`peerDependencies\` must be a string.
 
 `;
 
@@ -1945,29 +1945,14 @@ Message:
 
 `;
 
-exports[`invalid(210): {\"peerDependencies\": {\"foo\": true}} 1`] = `
-
-[Input]
-  1 | {"peerDependencies": {"foo": true}}
-
-`;
-
-exports[`invalid(210): {\"peerDependencies\": {\"foo\": true}} 2`] = `
-
-Message:
-> 1 | {"peerDependencies": {"foo": true}}
-    |                              ^^^^ The version of \`foo\` in \`peerDependencies\` must be a string.
-
-`;
-
-exports[`invalid(211): {\"peerDependenciesMeta\": {\"a\": {\"optional\": true}}} 1`] = `
+exports[`invalid(210): {\"peerDependenciesMeta\": {\"a\": {\"optional\": true}}} 1`] = `
 
 [Input]
   1 | {"peerDependenciesMeta": {"a": {"optional": true}}}
 
 `;
 
-exports[`invalid(211): {\"peerDependenciesMeta\": {\"a\": {\"optional\": true}}} 2`] = `
+exports[`invalid(210): {\"peerDependenciesMeta\": {\"a\": {\"optional\": true}}} 2`] = `
 
 Message:
 > 1 | {"peerDependenciesMeta": {"a": {"optional": true}}}
@@ -1978,14 +1963,14 @@ Suggestion 1/1: Remove the orphaned entry.:
 
 `;
 
-exports[`invalid(212): {\"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 1`] = `
+exports[`invalid(211): {\"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 1`] = `
 
 [Input]
   1 | {"peerDependenciesMeta": {"a": {"optional": false}}}
 
 `;
 
-exports[`invalid(212): {\"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 2`] = `
+exports[`invalid(211): {\"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 2`] = `
 
 Message:
 > 1 | {"peerDependenciesMeta": {"a": {"optional": false}}}
@@ -1996,7 +1981,7 @@ Suggestion 1/1: Remove the orphaned entry.:
 
 `;
 
-exports[`invalid(212): {\"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 3`] = `
+exports[`invalid(211): {\"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 3`] = `
 
 Message:
 > 1 | {"peerDependenciesMeta": {"a": {"optional": false}}}
@@ -2007,14 +1992,14 @@ Output:
 
 `;
 
-exports[`invalid(213): {\"peerDependencies\": {\"a\": \"1.0.0\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": true}, \"b\": {\"optional\": true}}} 1`] = `
+exports[`invalid(212): {\"peerDependencies\": {\"a\": \"1.0.0\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": true}, \"b\": {\"optional\": true}}} 1`] = `
 
 [Input]
   1 | {"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true}, "b": {"optional": true}}}
 
 `;
 
-exports[`invalid(213): {\"peerDependencies\": {\"a\": \"1.0.0\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": true}, \"b\": {\"optional\": true}}} 2`] = `
+exports[`invalid(212): {\"peerDependencies\": {\"a\": \"1.0.0\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": true}, \"b\": {\"optional\": true}}} 2`] = `
 
 Message:
 > 1 | {"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true}, "b": {"optional": true}}}
@@ -2025,14 +2010,14 @@ Suggestion 1/1: Remove the orphaned entry.:
 
 `;
 
-exports[`invalid(214): {\"peerDependencies\": {\"a\": \"1.0.0\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 1`] = `
+exports[`invalid(213): {\"peerDependencies\": {\"a\": \"1.0.0\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 1`] = `
 
 [Input]
   1 | {"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": false}}}
 
 `;
 
-exports[`invalid(214): {\"peerDependencies\": {\"a\": \"1.0.0\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 2`] = `
+exports[`invalid(213): {\"peerDependencies\": {\"a\": \"1.0.0\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": false}}} 2`] = `
 
 Message:
 > 1 | {"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": false}}}
@@ -2043,7 +2028,7 @@ Output:
 
 `;
 
-exports[`invalid(215): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\n\t\"peerDependenciesMeta\": {\n\t\t\"a\": {\n\t\t\t\"before\": true,\n\t\t\t\"optional\": false,\n\t\t\t\"after\": true\n\t\t}\n\t}\n} 1`] = `
+exports[`invalid(214): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\n\t\"peerDependenciesMeta\": {\n\t\t\"a\": {\n\t\t\t\"before\": true,\n\t\t\t\"optional\": false,\n\t\t\t\"after\": true\n\t\t}\n\t}\n} 1`] = `
 
 [Input]
    1 | {
@@ -2061,7 +2046,7 @@ exports[`invalid(215): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\
 
 `;
 
-exports[`invalid(215): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\n\t\"peerDependenciesMeta\": {\n\t\t\"a\": {\n\t\t\t\"before\": true,\n\t\t\t\"optional\": false,\n\t\t\t\"after\": true\n\t\t}\n\t}\n} 2`] = `
+exports[`invalid(214): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\n\t\"peerDependenciesMeta\": {\n\t\t\"a\": {\n\t\t\t\"before\": true,\n\t\t\t\"optional\": false,\n\t\t\t\"after\": true\n\t\t}\n\t}\n} 2`] = `
 
 Message:
    1 | {
@@ -2093,7 +2078,7 @@ Output:
 
 `;
 
-exports[`invalid(216): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\n\t\"peerDependenciesMeta\": {\n\t\t\"a\": {\n\t\t\t\"before\": true,\n\t\t\t\"optional\": false\n\t\t}\n\t}\n} 1`] = `
+exports[`invalid(215): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\n\t\"peerDependenciesMeta\": {\n\t\t\"a\": {\n\t\t\t\"before\": true,\n\t\t\t\"optional\": false\n\t\t}\n\t}\n} 1`] = `
 
 [Input]
    1 | {
@@ -2110,7 +2095,7 @@ exports[`invalid(216): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\
 
 `;
 
-exports[`invalid(216): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\n\t\"peerDependenciesMeta\": {\n\t\t\"a\": {\n\t\t\t\"before\": true,\n\t\t\t\"optional\": false\n\t\t}\n\t}\n} 2`] = `
+exports[`invalid(215): {\n\t\"peerDependencies\": {\n\t\t\"a\": \"1.0.0\"\n\t},\n\t\"peerDependenciesMeta\": {\n\t\t\"a\": {\n\t\t\t\"before\": true,\n\t\t\t\"optional\": false\n\t\t}\n\t}\n} 2`] = `
 
 Message:
    1 | {
@@ -2140,14 +2125,14 @@ Output:
 
 `;
 
-exports[`invalid(217): {\"bundledDependencies\": \"foo\"} 1`] = `
+exports[`invalid(216): {\"bundledDependencies\": \"foo\"} 1`] = `
 
 [Input]
   1 | {"bundledDependencies": "foo"}
 
 `;
 
-exports[`invalid(217): {\"bundledDependencies\": \"foo\"} 2`] = `
+exports[`invalid(216): {\"bundledDependencies\": \"foo\"} 2`] = `
 
 Message:
 > 1 | {"bundledDependencies": "foo"}
@@ -2155,14 +2140,14 @@ Message:
 
 `;
 
-exports[`invalid(218): {\"bundledDependencies\": [1]} 1`] = `
+exports[`invalid(217): {\"bundledDependencies\": [1]} 1`] = `
 
 [Input]
   1 | {"bundledDependencies": [1]}
 
 `;
 
-exports[`invalid(218): {\"bundledDependencies\": [1]} 2`] = `
+exports[`invalid(217): {\"bundledDependencies\": [1]} 2`] = `
 
 Message:
 > 1 | {"bundledDependencies": [1]}
@@ -2170,18 +2155,33 @@ Message:
 
 `;
 
-exports[`invalid(219): {\"bundledDependencies\": [\"foo\"]} 1`] = `
+exports[`invalid(218): {\"bundledDependencies\": [\"foo\"]} 1`] = `
 
 [Input]
   1 | {"bundledDependencies": ["foo"]}
 
 `;
 
-exports[`invalid(219): {\"bundledDependencies\": [\"foo\"]} 2`] = `
+exports[`invalid(218): {\"bundledDependencies\": [\"foo\"]} 2`] = `
 
 Message:
 > 1 | {"bundledDependencies": ["foo"]}
     |                          ^^^^^ \`foo\` is bundled but not listed in \`dependencies\` or \`optionalDependencies\`.
+
+`;
+
+exports[`invalid(219): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"bundledDependencies\": [\"foo\", \"bar\"]} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "^1.0.0"}, "bundledDependencies": ["foo", "bar"]}
+
+`;
+
+exports[`invalid(219): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"bundledDependencies\": [\"foo\", \"bar\"]} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "^1.0.0"}, "bundledDependencies": ["foo", "bar"]}
+    |                                                                    ^^^^^ \`bar\` is bundled but not listed in \`dependencies\` or \`optionalDependencies\`.
 
 `;
 
@@ -2200,29 +2200,14 @@ Message:
 
 `;
 
-exports[`invalid(220): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"bundledDependencies\": [\"foo\", \"bar\"]} 1`] = `
-
-[Input]
-  1 | {"dependencies": {"foo": "^1.0.0"}, "bundledDependencies": ["foo", "bar"]}
-
-`;
-
-exports[`invalid(220): {\"dependencies\": {\"foo\": \"^1.0.0\"}, \"bundledDependencies\": [\"foo\", \"bar\"]} 2`] = `
-
-Message:
-> 1 | {"dependencies": {"foo": "^1.0.0"}, "bundledDependencies": ["foo", "bar"]}
-    |                                                                    ^^^^^ \`bar\` is bundled but not listed in \`dependencies\` or \`optionalDependencies\`.
-
-`;
-
-exports[`invalid(221): {\"peerDependencies\": {\"foo\": \">=1\"}, \"bundledDependencies\": [\"foo\"]} 1`] = `
+exports[`invalid(220): {\"peerDependencies\": {\"foo\": \">=1\"}, \"bundledDependencies\": [\"foo\"]} 1`] = `
 
 [Input]
   1 | {"peerDependencies": {"foo": ">=1"}, "bundledDependencies": ["foo"]}
 
 `;
 
-exports[`invalid(221): {\"peerDependencies\": {\"foo\": \">=1\"}, \"bundledDependencies\": [\"foo\"]} 2`] = `
+exports[`invalid(220): {\"peerDependencies\": {\"foo\": \">=1\"}, \"bundledDependencies\": [\"foo\"]} 2`] = `
 
 Message:
 > 1 | {"peerDependencies": {"foo": ">=1"}, "bundledDependencies": ["foo"]}
@@ -2230,14 +2215,14 @@ Message:
 
 `;
 
-exports[`invalid(222): {\"bundledDependencies\": true} 1`] = `
+exports[`invalid(221): {\"bundledDependencies\": true} 1`] = `
 
 [Input]
   1 | {"bundledDependencies": true}
 
 `;
 
-exports[`invalid(222): {\"bundledDependencies\": true} 2`] = `
+exports[`invalid(221): {\"bundledDependencies\": true} 2`] = `
 
 Message:
 > 1 | {"bundledDependencies": true}
@@ -2245,14 +2230,14 @@ Message:
 
 `;
 
-exports[`invalid(223): {\"overrides\": [\"foo\"]} 1`] = `
+exports[`invalid(222): {\"overrides\": [\"foo\"]} 1`] = `
 
 [Input]
   1 | {"overrides": ["foo"]}
 
 `;
 
-exports[`invalid(223): {\"overrides\": [\"foo\"]} 2`] = `
+exports[`invalid(222): {\"overrides\": [\"foo\"]} 2`] = `
 
 Message:
 > 1 | {"overrides": ["foo"]}
@@ -2260,14 +2245,14 @@ Message:
 
 `;
 
-exports[`invalid(224): {\"overrides\": \"1.0.0\"} 1`] = `
+exports[`invalid(223): {\"overrides\": \"1.0.0\"} 1`] = `
 
 [Input]
   1 | {"overrides": "1.0.0"}
 
 `;
 
-exports[`invalid(224): {\"overrides\": \"1.0.0\"} 2`] = `
+exports[`invalid(223): {\"overrides\": \"1.0.0\"} 2`] = `
 
 Message:
 > 1 | {"overrides": "1.0.0"}
@@ -2275,14 +2260,14 @@ Message:
 
 `;
 
-exports[`invalid(225): {\"overrides\": null} 1`] = `
+exports[`invalid(224): {\"overrides\": null} 1`] = `
 
 [Input]
   1 | {"overrides": null}
 
 `;
 
-exports[`invalid(225): {\"overrides\": null} 2`] = `
+exports[`invalid(224): {\"overrides\": null} 2`] = `
 
 Message:
 > 1 | {"overrides": null}
@@ -2290,14 +2275,14 @@ Message:
 
 `;
 
-exports[`invalid(226): {\"overrides\": {\"foo\": 1}} 1`] = `
+exports[`invalid(225): {\"overrides\": {\"foo\": 1}} 1`] = `
 
 [Input]
   1 | {"overrides": {"foo": 1}}
 
 `;
 
-exports[`invalid(226): {\"overrides\": {\"foo\": 1}} 2`] = `
+exports[`invalid(225): {\"overrides\": {\"foo\": 1}} 2`] = `
 
 Message:
 > 1 | {"overrides": {"foo": 1}}
@@ -2305,14 +2290,14 @@ Message:
 
 `;
 
-exports[`invalid(227): {\"overrides\": {\"foo\": true}} 1`] = `
+exports[`invalid(226): {\"overrides\": {\"foo\": true}} 1`] = `
 
 [Input]
   1 | {"overrides": {"foo": true}}
 
 `;
 
-exports[`invalid(227): {\"overrides\": {\"foo\": true}} 2`] = `
+exports[`invalid(226): {\"overrides\": {\"foo\": true}} 2`] = `
 
 Message:
 > 1 | {"overrides": {"foo": true}}
@@ -2320,14 +2305,14 @@ Message:
 
 `;
 
-exports[`invalid(228): {\"overrides\": {\"foo\": null}} 1`] = `
+exports[`invalid(227): {\"overrides\": {\"foo\": null}} 1`] = `
 
 [Input]
   1 | {"overrides": {"foo": null}}
 
 `;
 
-exports[`invalid(228): {\"overrides\": {\"foo\": null}} 2`] = `
+exports[`invalid(227): {\"overrides\": {\"foo\": null}} 2`] = `
 
 Message:
 > 1 | {"overrides": {"foo": null}}
@@ -2335,18 +2320,33 @@ Message:
 
 `;
 
-exports[`invalid(229): {\"overrides\": {\"foo\": {\"bar\": 1}}} 1`] = `
+exports[`invalid(228): {\"overrides\": {\"foo\": {\"bar\": 1}}} 1`] = `
 
 [Input]
   1 | {"overrides": {"foo": {"bar": 1}}}
 
 `;
 
-exports[`invalid(229): {\"overrides\": {\"foo\": {\"bar\": 1}}} 2`] = `
+exports[`invalid(228): {\"overrides\": {\"foo\": {\"bar\": 1}}} 2`] = `
 
 Message:
 > 1 | {"overrides": {"foo": {"bar": 1}}}
     |                               ^ The \`bar\` override must be a version string or a nested overrides object.
+
+`;
+
+exports[`invalid(229): {\"publishConfig\": {\"tag\": \"1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"publishConfig": {"tag": "1.0.0"}}
+
+`;
+
+exports[`invalid(229): {\"publishConfig\": {\"tag\": \"1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"publishConfig": {"tag": "1.0.0"}}
+    |                           ^^^^^^^ The \`publishConfig.tag\` field must be a non-empty string that is not a valid SemVer range.
 
 `;
 
@@ -2365,29 +2365,14 @@ Message:
 
 `;
 
-exports[`invalid(230): {\"publishConfig\": {\"tag\": \"1.0.0\"}} 1`] = `
-
-[Input]
-  1 | {"publishConfig": {"tag": "1.0.0"}}
-
-`;
-
-exports[`invalid(230): {\"publishConfig\": {\"tag\": \"1.0.0\"}} 2`] = `
-
-Message:
-> 1 | {"publishConfig": {"tag": "1.0.0"}}
-    |                           ^^^^^^^ The \`publishConfig.tag\` field must be a non-empty string that is not a valid SemVer range.
-
-`;
-
-exports[`invalid(231): {\"publishConfig\": {\"tag\": \"v1.4\"}} 1`] = `
+exports[`invalid(230): {\"publishConfig\": {\"tag\": \"v1.4\"}} 1`] = `
 
 [Input]
   1 | {"publishConfig": {"tag": "v1.4"}}
 
 `;
 
-exports[`invalid(231): {\"publishConfig\": {\"tag\": \"v1.4\"}} 2`] = `
+exports[`invalid(230): {\"publishConfig\": {\"tag\": \"v1.4\"}} 2`] = `
 
 Message:
 > 1 | {"publishConfig": {"tag": "v1.4"}}
@@ -3133,18 +3118,18 @@ Message:
 
 `;
 
-exports[`invalid(69): {\"browser\": {\"../server.js\": \"./browser.js\"}} 1`] = `
+exports[`invalid(69): {\"browser\": {\"./server.js\": \"https://cdn.example.com/browser.js\"}} 1`] = `
 
 [Input]
-  1 | {"browser": {"../server.js": "./browser.js"}}
+  1 | {"browser": {"./server.js": "https://cdn.example.com/browser.js"}}
 
 `;
 
-exports[`invalid(69): {\"browser\": {\"../server.js\": \"./browser.js\"}} 2`] = `
+exports[`invalid(69): {\"browser\": {\"./server.js\": \"https://cdn.example.com/browser.js\"}} 2`] = `
 
 Message:
-> 1 | {"browser": {"../server.js": "./browser.js"}}
-    |              ^^^^^^^^^^^^^^ The \`browser\` mapping key \`../server.js\` is not a valid path.
+> 1 | {"browser": {"./server.js": "https://cdn.example.com/browser.js"}}
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`browser\` mapping value \`https://cdn.example.com/browser.js\` is not a valid path or package specifier.
 
 `;
 
@@ -3163,74 +3148,14 @@ Message:
 
 `;
 
-exports[`invalid(70): {\"browser\": {\"./server/../server.js\": \"./browser.js\"}} 1`] = `
-
-[Input]
-  1 | {"browser": {"./server/../server.js": "./browser.js"}}
-
-`;
-
-exports[`invalid(70): {\"browser\": {\"./server/../server.js\": \"./browser.js\"}} 2`] = `
-
-Message:
-> 1 | {"browser": {"./server/../server.js": "./browser.js"}}
-    |              ^^^^^^^^^^^^^^^^^^^^^^^ The \`browser\` mapping key \`./server/../server.js\` is not a valid path.
-
-`;
-
-exports[`invalid(71): {\"browser\": {\"./server.js\": \"../browser.js\"}} 1`] = `
-
-[Input]
-  1 | {"browser": {"./server.js": "../browser.js"}}
-
-`;
-
-exports[`invalid(71): {\"browser\": {\"./server.js\": \"../browser.js\"}} 2`] = `
-
-Message:
-> 1 | {"browser": {"./server.js": "../browser.js"}}
-    |                             ^^^^^^^^^^^^^^^ The \`browser\` mapping value \`../browser.js\` is not a valid path or package specifier.
-
-`;
-
-exports[`invalid(72): {\"browser\": {\"./server.js\": \"./browser/../browser.js\"}} 1`] = `
-
-[Input]
-  1 | {"browser": {"./server.js": "./browser/../browser.js"}}
-
-`;
-
-exports[`invalid(72): {\"browser\": {\"./server.js\": \"./browser/../browser.js\"}} 2`] = `
-
-Message:
-> 1 | {"browser": {"./server.js": "./browser/../browser.js"}}
-    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^ The \`browser\` mapping value \`./browser/../browser.js\` is not a valid path or package specifier.
-
-`;
-
-exports[`invalid(73): {\"browser\": {\"./server.js\": \"https://cdn.example.com/browser.js\"}} 1`] = `
-
-[Input]
-  1 | {"browser": {"./server.js": "https://cdn.example.com/browser.js"}}
-
-`;
-
-exports[`invalid(73): {\"browser\": {\"./server.js\": \"https://cdn.example.com/browser.js\"}} 2`] = `
-
-Message:
-> 1 | {"browser": {"./server.js": "https://cdn.example.com/browser.js"}}
-    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`browser\` mapping value \`https://cdn.example.com/browser.js\` is not a valid path or package specifier.
-
-`;
-
-exports[`invalid(74): {\"type\": true} 1`] = `
+exports[`invalid(70): {\"type\": true} 1`] = `
 
 [Input]
   1 | {"type": true}
 
 `;
 
-exports[`invalid(74): {\"type\": true} 2`] = `
+exports[`invalid(70): {\"type\": true} 2`] = `
 
 Message:
 > 1 | {"type": true}
@@ -3238,14 +3163,14 @@ Message:
 
 `;
 
-exports[`invalid(75): {\"type\": 42} 1`] = `
+exports[`invalid(71): {\"type\": 42} 1`] = `
 
 [Input]
   1 | {"type": 42}
 
 `;
 
-exports[`invalid(75): {\"type\": 42} 2`] = `
+exports[`invalid(71): {\"type\": 42} 2`] = `
 
 Message:
 > 1 | {"type": 42}
@@ -3253,14 +3178,14 @@ Message:
 
 `;
 
-exports[`invalid(76): {\"exports\": {\"default\": \"index.js\"}} 1`] = `
+exports[`invalid(72): {\"exports\": {\"default\": \"index.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"default": "index.js"}}
 
 `;
 
-exports[`invalid(76): {\"exports\": {\"default\": \"index.js\"}} 2`] = `
+exports[`invalid(72): {\"exports\": {\"default\": \"index.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"default": "index.js"}}
@@ -3271,14 +3196,14 @@ Output:
 
 `;
 
-exports[`invalid(77): {\"exports\": {\"default\": \"../index.js\"}} 1`] = `
+exports[`invalid(73): {\"exports\": {\"default\": \"../index.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"default": "../index.js"}}
 
 `;
 
-exports[`invalid(77): {\"exports\": {\"default\": \"../index.js\"}} 2`] = `
+exports[`invalid(73): {\"exports\": {\"default\": \"../index.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"default": "../index.js"}}
@@ -3286,7 +3211,7 @@ Message:
 
 `;
 
-exports[`invalid(78): {\n\t\"exports\": {\n\t\t\"./feature\": {\n\t\t\t\"default\": \"feature/index.js\"\n\t\t}\n\t}\n\t} 1`] = `
+exports[`invalid(74): {\n\t\"exports\": {\n\t\t\"./feature\": {\n\t\t\t\"default\": \"feature/index.js\"\n\t\t}\n\t}\n\t} 1`] = `
 
 [Input]
   1 | {
@@ -3299,7 +3224,7 @@ exports[`invalid(78): {\n\t\"exports\": {\n\t\t\"./feature\": {\n\t\t\t\"default
 
 `;
 
-exports[`invalid(78): {\n\t\"exports\": {\n\t\t\"./feature\": {\n\t\t\t\"default\": \"feature/index.js\"\n\t\t}\n\t}\n\t} 2`] = `
+exports[`invalid(74): {\n\t\"exports\": {\n\t\t\"./feature\": {\n\t\t\t\"default\": \"feature/index.js\"\n\t\t}\n\t}\n\t} 2`] = `
 
 Message:
   1 | {
@@ -3322,18 +3247,78 @@ Output:
 
 `;
 
-exports[`invalid(79): {\"exports\": \"/abs/index.js\"} 1`] = `
+exports[`invalid(75): {\"exports\": \"/abs/index.js\"} 1`] = `
 
 [Input]
   1 | {"exports": "/abs/index.js"}
 
 `;
 
-exports[`invalid(79): {\"exports\": \"/abs/index.js\"} 2`] = `
+exports[`invalid(75): {\"exports\": \"/abs/index.js\"} 2`] = `
 
 Message:
 > 1 | {"exports": "/abs/index.js"}
     |             ^^^^^^^^^^^^^^^ Export target \`/abs/index.js\` must be a package-relative path starting with \`./\`.
+
+`;
+
+exports[`invalid(76): {\"exports\": {\"default\": 123}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": 123}}
+
+`;
+
+exports[`invalid(76): {\"exports\": {\"default\": 123}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": 123}}
+    |                         ^^^ An \`exports\` target must be a string, \`null\`, an object, or an array.
+
+`;
+
+exports[`invalid(77): {\"exports\": {\"default\": true}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": true}}
+
+`;
+
+exports[`invalid(77): {\"exports\": {\"default\": true}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": true}}
+    |                         ^^^^ An \`exports\` target must be a string, \`null\`, an object, or an array.
+
+`;
+
+exports[`invalid(78): {\"exports\": {\"default\": \"./dist/../index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": "./dist/../index.js"}}
+
+`;
+
+exports[`invalid(78): {\"exports\": {\"default\": \"./dist/../index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": "./dist/../index.js"}}
+    |                         ^^^^^^^^^^^^^^^^^^^^ Export target \`./dist/../index.js\` contains a path segment that Node does not allow.
+
+`;
+
+exports[`invalid(79): {\"exports\": {\"default\": \"./dist/%2e%2e/index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": "./dist/%2e%2e/index.js"}}
+
+`;
+
+exports[`invalid(79): {\"exports\": {\"default\": \"./dist/%2e%2e/index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": "./dist/%2e%2e/index.js"}}
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^ Export target \`./dist/%2e%2e/index.js\` contains a path segment that Node does not allow.
 
 `;
 
@@ -3352,74 +3337,14 @@ Message:
 
 `;
 
-exports[`invalid(80): {\"exports\": {\"default\": 123}} 1`] = `
-
-[Input]
-  1 | {"exports": {"default": 123}}
-
-`;
-
-exports[`invalid(80): {\"exports\": {\"default\": 123}} 2`] = `
-
-Message:
-> 1 | {"exports": {"default": 123}}
-    |                         ^^^ An \`exports\` target must be a string, \`null\`, an object, or an array.
-
-`;
-
-exports[`invalid(81): {\"exports\": {\"default\": true}} 1`] = `
-
-[Input]
-  1 | {"exports": {"default": true}}
-
-`;
-
-exports[`invalid(81): {\"exports\": {\"default\": true}} 2`] = `
-
-Message:
-> 1 | {"exports": {"default": true}}
-    |                         ^^^^ An \`exports\` target must be a string, \`null\`, an object, or an array.
-
-`;
-
-exports[`invalid(82): {\"exports\": {\"default\": \"./dist/../index.js\"}} 1`] = `
-
-[Input]
-  1 | {"exports": {"default": "./dist/../index.js"}}
-
-`;
-
-exports[`invalid(82): {\"exports\": {\"default\": \"./dist/../index.js\"}} 2`] = `
-
-Message:
-> 1 | {"exports": {"default": "./dist/../index.js"}}
-    |                         ^^^^^^^^^^^^^^^^^^^^ Export target \`./dist/../index.js\` contains a path segment that Node does not allow.
-
-`;
-
-exports[`invalid(83): {\"exports\": {\"default\": \"./dist/%2e%2e/index.js\"}} 1`] = `
-
-[Input]
-  1 | {"exports": {"default": "./dist/%2e%2e/index.js"}}
-
-`;
-
-exports[`invalid(83): {\"exports\": {\"default\": \"./dist/%2e%2e/index.js\"}} 2`] = `
-
-Message:
-> 1 | {"exports": {"default": "./dist/%2e%2e/index.js"}}
-    |                         ^^^^^^^^^^^^^^^^^^^^^^^^ Export target \`./dist/%2e%2e/index.js\` contains a path segment that Node does not allow.
-
-`;
-
-exports[`invalid(84): {\"exports\": {\"default\": \"./node_modules/foo.js\"}} 1`] = `
+exports[`invalid(80): {\"exports\": {\"default\": \"./node_modules/foo.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"default": "./node_modules/foo.js"}}
 
 `;
 
-exports[`invalid(84): {\"exports\": {\"default\": \"./node_modules/foo.js\"}} 2`] = `
+exports[`invalid(80): {\"exports\": {\"default\": \"./node_modules/foo.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"default": "./node_modules/foo.js"}}
@@ -3427,14 +3352,14 @@ Message:
 
 `;
 
-exports[`invalid(85): {\"exports\": {\"./utils/./helper.js\": \"./utils/helper.js\"}} 1`] = `
+exports[`invalid(81): {\"exports\": {\"./utils/./helper.js\": \"./utils/helper.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"./utils/./helper.js": "./utils/helper.js"}}
 
 `;
 
-exports[`invalid(85): {\"exports\": {\"./utils/./helper.js\": \"./utils/helper.js\"}} 2`] = `
+exports[`invalid(81): {\"exports\": {\"./utils/./helper.js\": \"./utils/helper.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./utils/./helper.js": "./utils/helper.js"}}
@@ -3442,14 +3367,14 @@ Message:
 
 `;
 
-exports[`invalid(86): {\"exports\": {\"0\": \"./index.js\"}} 1`] = `
+exports[`invalid(82): {\"exports\": {\"0\": \"./index.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"0": "./index.js"}}
 
 `;
 
-exports[`invalid(86): {\"exports\": {\"0\": \"./index.js\"}} 2`] = `
+exports[`invalid(82): {\"exports\": {\"0\": \"./index.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"0": "./index.js"}}
@@ -3457,14 +3382,14 @@ Message:
 
 `;
 
-exports[`invalid(87): {\"exports\": null} 1`] = `
+exports[`invalid(83): {\"exports\": null} 1`] = `
 
 [Input]
   1 | {"exports": null}
 
 `;
 
-exports[`invalid(87): {\"exports\": null} 2`] = `
+exports[`invalid(83): {\"exports\": null} 2`] = `
 
 Message:
 > 1 | {"exports": null}
@@ -3472,14 +3397,14 @@ Message:
 
 `;
 
-exports[`invalid(88): {\"exports\": \"index.js\"} 1`] = `
+exports[`invalid(84): {\"exports\": \"index.js\"} 1`] = `
 
 [Input]
   1 | {"exports": "index.js"}
 
 `;
 
-exports[`invalid(88): {\"exports\": \"index.js\"} 2`] = `
+exports[`invalid(84): {\"exports\": \"index.js\"} 2`] = `
 
 Message:
 > 1 | {"exports": "index.js"}
@@ -3490,14 +3415,14 @@ Output:
 
 `;
 
-exports[`invalid(89): {\"exports\": {\".\": [\"a.js\", \"./b.js\"]}} 1`] = `
+exports[`invalid(85): {\"exports\": {\".\": [\"a.js\", \"./b.js\"]}} 1`] = `
 
 [Input]
   1 | {"exports": {".": ["a.js", "./b.js"]}}
 
 `;
 
-exports[`invalid(89): {\"exports\": {\".\": [\"a.js\", \"./b.js\"]}} 2`] = `
+exports[`invalid(85): {\"exports\": {\".\": [\"a.js\", \"./b.js\"]}} 2`] = `
 
 Message:
 > 1 | {"exports": {".": ["a.js", "./b.js"]}}
@@ -3508,22 +3433,7 @@ Output:
 
 `;
 
-exports[`invalid(9): {\"version\": \"1.0\"} 1`] = `
-
-[Input]
-  1 | {"version": "1.0"}
-
-`;
-
-exports[`invalid(9): {\"version\": \"1.0\"} 2`] = `
-
-Message:
-> 1 | {"version": "1.0"}
-    |             ^^^^^ \`1.0\` is not a valid semver version.
-
-`;
-
-exports[`invalid(90): {\n\t\"exports\": {\n\t\t\"require\": \"./index.cjs\",\n\t\t\"module\": \"./index.mjs\",\n\t\t\"default\": \"./index.js\"\n\t}\n} 1`] = `
+exports[`invalid(86): {\n\t\"exports\": {\n\t\t\"require\": \"./index.cjs\",\n\t\t\"module\": \"./index.mjs\",\n\t\t\"default\": \"./index.js\"\n\t}\n} 1`] = `
 
 [Input]
   1 | {
@@ -3536,7 +3446,7 @@ exports[`invalid(90): {\n\t\"exports\": {\n\t\t\"require\": \"./index.cjs\",\n\t
 
 `;
 
-exports[`invalid(90): {\n\t\"exports\": {\n\t\t\"require\": \"./index.cjs\",\n\t\t\"module\": \"./index.mjs\",\n\t\t\"default\": \"./index.js\"\n\t}\n} 2`] = `
+exports[`invalid(86): {\n\t\"exports\": {\n\t\t\"require\": \"./index.cjs\",\n\t\t\"module\": \"./index.mjs\",\n\t\t\"default\": \"./index.js\"\n\t}\n} 2`] = `
 
 Message:
   1 | {
@@ -3559,14 +3469,14 @@ Suggestion 1/1: Move \`module\` before \`require\`.:
 
 `;
 
-exports[`invalid(91): {\"exports\": {\".\": \"./index.js\", \"import\": \"./index.mjs\"}} 1`] = `
+exports[`invalid(87): {\"exports\": {\".\": \"./index.js\", \"import\": \"./index.mjs\"}} 1`] = `
 
 [Input]
   1 | {"exports": {".": "./index.js", "import": "./index.mjs"}}
 
 `;
 
-exports[`invalid(91): {\"exports\": {\".\": \"./index.js\", \"import\": \"./index.mjs\"}} 2`] = `
+exports[`invalid(87): {\"exports\": {\".\": \"./index.js\", \"import\": \"./index.mjs\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {".": "./index.js", "import": "./index.mjs"}}
@@ -3574,14 +3484,14 @@ Message:
 
 `;
 
-exports[`invalid(92): {\"exports\": {\".foo\": \"./foo.js\"}} 1`] = `
+exports[`invalid(88): {\"exports\": {\".foo\": \"./foo.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {".foo": "./foo.js"}}
 
 `;
 
-exports[`invalid(92): {\"exports\": {\".foo\": \"./foo.js\"}} 2`] = `
+exports[`invalid(88): {\"exports\": {\".foo\": \"./foo.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {".foo": "./foo.js"}}
@@ -3589,14 +3499,14 @@ Message:
 
 `;
 
-exports[`invalid(93): {\"exports\": {\"./feature\": {\"default\": \"./dist/*.js\"}}} 1`] = `
+exports[`invalid(89): {\"exports\": {\"./feature\": {\"default\": \"./dist/*.js\"}}} 1`] = `
 
 [Input]
   1 | {"exports": {"./feature": {"default": "./dist/*.js"}}}
 
 `;
 
-exports[`invalid(93): {\"exports\": {\"./feature\": {\"default\": \"./dist/*.js\"}}} 2`] = `
+exports[`invalid(89): {\"exports\": {\"./feature\": {\"default\": \"./dist/*.js\"}}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./feature": {"default": "./dist/*.js"}}}
@@ -3604,14 +3514,29 @@ Message:
 
 `;
 
-exports[`invalid(94): {\"exports\": {\"./feature\": \"./dist/*.js\"}} 1`] = `
+exports[`invalid(9): {\"version\": \"1.0\"} 1`] = `
+
+[Input]
+  1 | {"version": "1.0"}
+
+`;
+
+exports[`invalid(9): {\"version\": \"1.0\"} 2`] = `
+
+Message:
+> 1 | {"version": "1.0"}
+    |             ^^^^^ \`1.0\` is not a valid semver version.
+
+`;
+
+exports[`invalid(90): {\"exports\": {\"./feature\": \"./dist/*.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"./feature": "./dist/*.js"}}
 
 `;
 
-exports[`invalid(94): {\"exports\": {\"./feature\": \"./dist/*.js\"}} 2`] = `
+exports[`invalid(90): {\"exports\": {\"./feature\": \"./dist/*.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./feature": "./dist/*.js"}}
@@ -3619,14 +3544,14 @@ Message:
 
 `;
 
-exports[`invalid(95): {\"exports\": {\"./feature\": {\"types\": \"./dist/feature.d.ts\", \"default\": \"./dist/feature/*.js\"}}} 1`] = `
+exports[`invalid(91): {\"exports\": {\"./feature\": {\"types\": \"./dist/feature.d.ts\", \"default\": \"./dist/feature/*.js\"}}} 1`] = `
 
 [Input]
   1 | {"exports": {"./feature": {"types": "./dist/feature.d.ts", "default": "./dist/feature/*.js"}}}
 
 `;
 
-exports[`invalid(95): {\"exports\": {\"./feature\": {\"types\": \"./dist/feature.d.ts\", \"default\": \"./dist/feature/*.js\"}}} 2`] = `
+exports[`invalid(91): {\"exports\": {\"./feature\": {\"types\": \"./dist/feature.d.ts\", \"default\": \"./dist/feature/*.js\"}}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./feature": {"types": "./dist/feature.d.ts", "default": "./dist/feature/*.js"}}}
@@ -3634,14 +3559,14 @@ Message:
 
 `;
 
-exports[`invalid(96): {\"exports\": \"./dist/*.js\"} 1`] = `
+exports[`invalid(92): {\"exports\": \"./dist/*.js\"} 1`] = `
 
 [Input]
   1 | {"exports": "./dist/*.js"}
 
 `;
 
-exports[`invalid(96): {\"exports\": \"./dist/*.js\"} 2`] = `
+exports[`invalid(92): {\"exports\": \"./dist/*.js\"} 2`] = `
 
 Message:
 > 1 | {"exports": "./dist/*.js"}
@@ -3649,14 +3574,14 @@ Message:
 
 `;
 
-exports[`invalid(97): {\"exports\": {\"default\": \"./dist/*.js\"}} 1`] = `
+exports[`invalid(93): {\"exports\": {\"default\": \"./dist/*.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"default": "./dist/*.js"}}
 
 `;
 
-exports[`invalid(97): {\"exports\": {\"default\": \"./dist/*.js\"}} 2`] = `
+exports[`invalid(93): {\"exports\": {\"default\": \"./dist/*.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"default": "./dist/*.js"}}
@@ -3664,14 +3589,14 @@ Message:
 
 `;
 
-exports[`invalid(98): {\"imports\": {\"dep\": \"./src/dep.js\"}} 1`] = `
+exports[`invalid(94): {\"imports\": {\"dep\": \"./src/dep.js\"}} 1`] = `
 
 [Input]
   1 | {"imports": {"dep": "./src/dep.js"}}
 
 `;
 
-exports[`invalid(98): {\"imports\": {\"dep\": \"./src/dep.js\"}} 2`] = `
+exports[`invalid(94): {\"imports\": {\"dep\": \"./src/dep.js\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"dep": "./src/dep.js"}}
@@ -3679,17 +3604,77 @@ Message:
 
 `;
 
-exports[`invalid(99): {\"imports\": {\"#dep\": \"./a.js\", \"dep\": \"./b.js\"}} 1`] = `
+exports[`invalid(95): {\"imports\": {\"#dep\": \"./a.js\", \"dep\": \"./b.js\"}} 1`] = `
 
 [Input]
   1 | {"imports": {"#dep": "./a.js", "dep": "./b.js"}}
 
 `;
 
-exports[`invalid(99): {\"imports\": {\"#dep\": \"./a.js\", \"dep\": \"./b.js\"}} 2`] = `
+exports[`invalid(95): {\"imports\": {\"#dep\": \"./a.js\", \"dep\": \"./b.js\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": "./a.js", "dep": "./b.js"}}
     |                                ^^^^^ The \`imports\` key \`dep\` must start with \`#\`.
+
+`;
+
+exports[`invalid(96): {\"imports\": [\"#dep\"]} 1`] = `
+
+[Input]
+  1 | {"imports": ["#dep"]}
+
+`;
+
+exports[`invalid(96): {\"imports\": [\"#dep\"]} 2`] = `
+
+Message:
+> 1 | {"imports": ["#dep"]}
+    |             ^^^^^^^^ The \`imports\` field must be an object.
+
+`;
+
+exports[`invalid(97): {\"imports\": {\"#dep\": 123}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep": 123}}
+
+`;
+
+exports[`invalid(97): {\"imports\": {\"#dep\": 123}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep": 123}}
+    |                      ^^^ An \`imports\` target must be a string, \`null\`, an object, or an array.
+
+`;
+
+exports[`invalid(98): {\"imports\": {\"#dep\": \"../dep.js\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep": "../dep.js"}}
+
+`;
+
+exports[`invalid(98): {\"imports\": {\"#dep\": \"../dep.js\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep": "../dep.js"}}
+    |                      ^^^^^^^^^^^ The \`imports\` target \`../dep.js\` is not a valid local path or package specifier.
+
+`;
+
+exports[`invalid(99): {\"imports\": {\"#dep\": \"./dep/../index.js\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep": "./dep/../index.js"}}
+
+`;
+
+exports[`invalid(99): {\"imports\": {\"#dep\": \"./dep/../index.js\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep": "./dep/../index.js"}}
+    |                      ^^^^^^^^^^^^^^^^^^^ The \`imports\` target \`./dep/../index.js\` is not a valid local path or package specifier.
 
 `;
