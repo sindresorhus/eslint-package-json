@@ -246,7 +246,7 @@ const config = {
 		type: 'suggestion',
 		docs: {
 			description: 'Enforce a canonical order for entries in the `files` field.',
-			recommended: false,
+			recommended: true,
 		},
 		fixable: 'code',
 		schema: [],

@@ -135,7 +135,7 @@ export default [
 | [require-types-in-exports](docs/rules/require-types-in-exports.md)                           | Enforce that types are exposed through the `exports` field.                               | ✅  |    |    |
 | [restrict-fields-when-private](docs/rules/restrict-fields-when-private.md)                   | Disallow fields that have no effect when the package is private.                          |    |    | 💡 |
 | [sort-dependencies](docs/rules/sort-dependencies.md)                                         | Enforce alphabetical ordering of dependencies.                                            | ✅  | 🔧 |    |
-| [sort-files](docs/rules/sort-files.md)                                                       | Enforce a canonical order for entries in the `files` field.                               |    | 🔧 |    |
+| [sort-files](docs/rules/sort-files.md)                                                       | Enforce a canonical order for entries in the `files` field.                               | ✅  | 🔧 |    |
 | [sort-properties](docs/rules/sort-properties.md)                                             | Enforce a canonical order for top-level package.json fields.                              | ✅  | 🔧 |    |
 | [types-in-dev-dependencies](docs/rules/types-in-dev-dependencies.md)                         | Enforce `@types/*` packages to be in `devDependencies`.                                   |    |    | 💡 |
 | [valid-fields](docs/rules/valid-fields.md)                                                   | Enforce valid values for package.json fields.                                             | ✅  | 🔧 | 💡 |
