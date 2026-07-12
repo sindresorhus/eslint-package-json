@@ -67,7 +67,7 @@ function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
 	for (const member of node.members) {
 		const key = getKey(member);
 
-		if ((isTypesCondition(key) || key === 'default') && hasTypesCoverage(member.value, runtimeNode)) {
+		if ((isTypesCondition(key) || key === 'default') && hasTypesCoverage(member.value, runtimeNode, runtimeKey)) {
 			return true;
 		}
 	}
@@ -133,9 +133,9 @@ function * iterateRuntimeStringLeaves(node) {
 	}
 }
 
-function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode) {
+function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode, runtimeKey) {
 	if (runtimeNode.type !== 'Object') {
-		yield * iterateTypeRuntimePairs(fallbackNode, runtimeNode);
+		yield * iterateTypeRuntimePairs(fallbackNode, runtimeNode, runtimeKey);
 		return;
 	}
 
@@ -159,7 +159,7 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 		}
 
 		case 'Object': {
-			const fallbackMember = typeNode.members.find(member => getKey(member) === 'default');
+			const fallbackMember = typeNode.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
 
 			if (runtimeKey) {
 				const matchingMember = typeNode.members.find(member => getKey(member) === runtimeKey);
@@ -177,14 +177,14 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 					}
 
 					if (fallbackMember) {
-						yield * iterateUncoveredFallbackPairs(fallbackMember.value, matchingMember.value, runtimeNode);
+						yield * iterateUncoveredFallbackPairs(fallbackMember.value, matchingMember.value, runtimeNode, runtimeKey);
 					}
 
 					return;
 				}
 
 				if (fallbackMember) {
-					yield * iterateTypeRuntimePairs(fallbackMember.value, runtimeNode);
+					yield * iterateTypeRuntimePairs(fallbackMember.value, runtimeNode, runtimeKey);
 				}
 
 				return;

@@ -90,7 +90,22 @@ Message:
 
 `;
 
-exports[`invalid(14): {\"main\": \"../sibling/index.js\"} 1`] = `
+exports[`invalid(14): {\"main\": \".\\\\dist\\\\index.js\"} 1`] = `
+
+[Input]
+  1 | {"main": ".\\\\dist\\\\index.js"}
+
+`;
+
+exports[`invalid(14): {\"main\": \".\\\\dist\\\\index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": ".\\\\dist\\\\index.js"}
+    |          ^^^^^^^^^^^^^^^^^^^ Path \`.\\dist\\index.js\` should start with \`./\`.
+
+`;
+
+exports[`invalid(15): {\"main\": \"../sibling/index.js\"} 1`] = `
 
 [Input]
 Options:
@@ -101,7 +116,7 @@ Code:
 
 `;
 
-exports[`invalid(14): {\"main\": \"../sibling/index.js\"} 2`] = `
+exports[`invalid(15): {\"main\": \"../sibling/index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": "../sibling/index.js"}

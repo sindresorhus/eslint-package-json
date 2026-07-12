@@ -36,7 +36,7 @@ function * findTrailingSlashes(node, subpathPrefix, canFixTarget = false, isPatt
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * findTrailingSlashes(element.value, subpathPrefix, canFixTarget);
+				yield * findTrailingSlashes(element.value, subpathPrefix, canFixTarget, isPattern);
 			}
 
 			break;

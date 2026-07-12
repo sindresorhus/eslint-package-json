@@ -64,21 +64,23 @@ const create = context => {
 			return;
 		}
 
-		// Backslash normalization belongs to `no-backslash-paths`; skipping it here avoids conflicting fixes.
-		if (value.includes('\\')) {
-			return;
-		}
+		// Backslash normalization belongs to `no-backslash-paths`; leave these reports without fixes to avoid conflicting fixes.
+		const canFix = !value.includes('\\');
 
 		if (prefix === 'always') {
-			if (!value.startsWith('./') && !value.startsWith('../')) {
+			if (!value.startsWith('./')) {
 				const fixed = './' + value;
-
-				context.report({
+				const report = {
 					node: valueNode,
 					messageId: MESSAGE_ID_MISSING,
 					data: {value},
-					fix: fixer => fixer.replaceText(valueNode, JSON.stringify(fixed)),
-				});
+				};
+
+				if (canFix) {
+					report.fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
+				}
+
+				context.report(report);
 			}
 		} else if (prefix === 'never' && value.startsWith('./')) {
 			const fixed = value.slice(2);
@@ -88,12 +90,17 @@ const create = context => {
 				return;
 			}
 
-			context.report({
+			const report = {
 				node: valueNode,
 				messageId: MESSAGE_ID_EXTRA,
 				data: {value},
-				fix: fixer => fixer.replaceText(valueNode, JSON.stringify(fixed)),
-			});
+			};
+
+			if (canFix) {
+				report.fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
+			}
+
+			context.report(report);
 		}
 	};
 

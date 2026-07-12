@@ -16,7 +16,6 @@ test.snapshot({
 		'{"main": "/usr/local/bin/foo"}',
 		'{"main": "C:/foo/index.js"}',
 		String.raw`{"main": "C:\\foo\\index.js"}`,
-		String.raw`{"main": ".\\dist\\index.js"}`,
 		// URLs are skipped.
 		'{"browser": "https://cdn.example.com/foo.js"}',
 		// Globs are skipped.
@@ -65,6 +64,7 @@ test.snapshot({
 		'{"main": "../sibling/index.js"}',
 		'{"main": "./../sibling/index.js"}',
 		String.raw`{"main": "..\\sibling\\index.js"}`,
+		String.raw`{"main": ".\\dist\\index.js"}`,
 		{
 			code: '{"main": "../sibling/index.js"}',
 			options: [{prefix: 'never'}],

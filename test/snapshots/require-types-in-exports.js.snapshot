@@ -260,6 +260,21 @@ Message:
 
 `;
 
+exports[`invalid(23): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"import\": \"./fallback.d.cts\"}}, \"import\": \"./import.js\"}} 1`] = `
+
+[Input]
+  1 | {"type": "module", "exports": {"types": {"import": [], "default": {"import": "./fallback.d.cts"}}, "import": "./import.js"}}
+
+`;
+
+exports[`invalid(23): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"import\": \"./fallback.d.cts\"}}, \"import\": \"./import.js\"}} 2`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"import": [], "default": {"import": "./fallback.d.cts"}}, "import": "./import.js"}}
+    |                                                                              ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+
+`;
+
 exports[`invalid(3): {\"exports\": {\"default\": \"./index.js\", \"types\": \"./index.d.ts\"}} 1`] = `
 
 [Input]
