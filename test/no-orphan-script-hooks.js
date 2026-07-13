@@ -42,6 +42,11 @@ test.snapshot({
 		'{"scripts": {"prettier": "prettier --check .", "prettier:fix": "prettier --write ."}}',
 		'{"scripts": {"preview": "vite preview", "preview:production": "vite preview --mode production"}}',
 		'{"scripts": {"postcss": "postcss src/index.css", "postcss:build": "postcss src/index.css"}}',
+		'{"scripts": {"posthtml": "posthtml -o output.html -i input.html", "posthtml:build": "posthtml -o output.html -i input.html"}}',
+		// Namespaced `prepare` scripts are standalone commands, not `pre` hooks.
+		'{"scripts": {"prepare:safari": "npm run build"}}',
+		// Git hook script names are standalone commands, not `pre` hooks.
+		'{"scripts": {"precommit": "lint-staged", "pre-commit": "lint-staged", "prepush": "npm test", "pre-push": "npm test"}}',
 		// Standalone names can be exempted explicitly.
 		{code: '{"scripts": {"preflight": "npm run check"}}', options: [{ignore: ['^preflight$']}]},
 		{code: '{"scripts": {"prebuild": "npm run build", "pretest": "npm test"}}', options: [{ignore: [/^pre/g]}]},
@@ -58,6 +63,9 @@ test.snapshot({
 		'{"scripts": {"prestart": "npm run setup"}}',
 		'{"scripts": {"prebuild": "npm run clean", "posttest": "npm run clean"}}',
 		'{"scripts": {"prettierx": "echo no", "previewing": "echo no", "postcssx": "echo no"}}',
+		'{"scripts": {"prebuild:watch": "npm run clean"}}',
+		// Namespaced Git-like names remain hooks and need a matching target.
+		'{"scripts": {"precommit:lint": "lint-staged", "pre-commit:checks": "lint-staged", "prepush:ci": "npm test", "pre-push:checks": "npm test"}}',
 		// A standalone command with a hook-like name needs `ignore`.
 		'{"scripts": {"preflight": "npm run check"}}',
 	],

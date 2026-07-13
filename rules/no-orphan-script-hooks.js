@@ -14,11 +14,11 @@ const messages = {
 
 const hookPrefixes = ['pre', 'post'];
 
-const commonStandaloneScriptPattern = /^(?:postcss|prettier|preview)(?::|$)/u;
+const standaloneScriptPattern = /^(?:postcss|posthtml|prepare|prettier|preview)(?::|$)/u;
+const standaloneGitHookNames = new Set(['precommit', 'pre-commit', 'prepush', 'pre-push']);
 
 // The npm CLI can run these scripts without a correspondingly named package script.
 const specialScriptNames = new Set([
-	'prepare',
 	'prepublish',
 	'prepublishOnly',
 	'prepack',
@@ -88,7 +88,8 @@ const create = context => {
 
 				if (
 					specialScriptNames.has(hook)
-					|| commonStandaloneScriptPattern.test(hook)
+					|| standaloneScriptPattern.test(hook)
+					|| standaloneGitHookNames.has(hook)
 					|| isIgnoredName(hook, ignoredPatterns)
 				) {
 					continue;

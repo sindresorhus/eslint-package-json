@@ -105,14 +105,68 @@ Message:
 
 `;
 
-exports[`invalid(6): {\"scripts\": {\"preflight\": \"npm run check\"}} 1`] = `
+exports[`invalid(6): {\"scripts\": {\"prebuild:watch\": \"npm run clean\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"prebuild:watch": "npm run clean"}}
+
+`;
+
+exports[`invalid(6): {\"scripts\": {\"prebuild:watch\": \"npm run clean\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"prebuild:watch": "npm run clean"}}
+    |              ^^^^^^^^^^^^^^^^ The \`prebuild:watch\` script has no corresponding \`build:watch\` script.
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"precommit:lint\": \"lint-staged\", \"pre-commit:checks\": \"lint-staged\", \"prepush:ci\": \"npm test\", \"pre-push:checks\": \"npm test\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"precommit:lint": "lint-staged", "pre-commit:checks": "lint-staged", "prepush:ci": "npm test", "pre-push:checks": "npm test"}}
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"precommit:lint\": \"lint-staged\", \"pre-commit:checks\": \"lint-staged\", \"prepush:ci\": \"npm test\", \"pre-push:checks\": \"npm test\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"precommit:lint": "lint-staged", "pre-commit:checks": "lint-staged", "prepush:ci": "npm test", "pre-push:checks": "npm test"}}
+    |              ^^^^^^^^^^^^^^^^ The \`precommit:lint\` script has no corresponding \`commit:lint\` script.
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"precommit:lint\": \"lint-staged\", \"pre-commit:checks\": \"lint-staged\", \"prepush:ci\": \"npm test\", \"pre-push:checks\": \"npm test\"}} 3`] = `
+
+Message:
+> 1 | {"scripts": {"precommit:lint": "lint-staged", "pre-commit:checks": "lint-staged", "prepush:ci": "npm test", "pre-push:checks": "npm test"}}
+    |                                               ^^^^^^^^^^^^^^^^^^^ The \`pre-commit:checks\` script has no corresponding \`-commit:checks\` script.
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"precommit:lint\": \"lint-staged\", \"pre-commit:checks\": \"lint-staged\", \"prepush:ci\": \"npm test\", \"pre-push:checks\": \"npm test\"}} 4`] = `
+
+Message:
+> 1 | {"scripts": {"precommit:lint": "lint-staged", "pre-commit:checks": "lint-staged", "prepush:ci": "npm test", "pre-push:checks": "npm test"}}
+    |                                                                                   ^^^^^^^^^^^^ The \`prepush:ci\` script has no corresponding \`push:ci\` script.
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"precommit:lint\": \"lint-staged\", \"pre-commit:checks\": \"lint-staged\", \"prepush:ci\": \"npm test\", \"pre-push:checks\": \"npm test\"}} 5`] = `
+
+Message:
+> 1 | {"scripts": {"precommit:lint": "lint-staged", "pre-commit:checks": "lint-staged", "prepush:ci": "npm test", "pre-push:checks": "npm test"}}
+    |                                                                                                             ^^^^^^^^^^^^^^^^^ The \`pre-push:checks\` script has no corresponding \`-push:checks\` script.
+
+`;
+
+exports[`invalid(8): {\"scripts\": {\"preflight\": \"npm run check\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"preflight": "npm run check"}}
 
 `;
 
-exports[`invalid(6): {\"scripts\": {\"preflight\": \"npm run check\"}} 2`] = `
+exports[`invalid(8): {\"scripts\": {\"preflight\": \"npm run check\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"preflight": "npm run check"}}
