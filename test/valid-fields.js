@@ -120,10 +120,8 @@ test.snapshot({
 		'{"exports": {".": "./index.js", "./feature": "./feature.js"}}',
 		// Trailing-slash mappings are owned by `no-exports-trailing-slash`.
 		'{"exports": {"./feature/": "./feature/"}}',
-		// Per-condition `types` with valid declaration-file extensions.
-		'{"exports": {"types": "./index.d.ts", "default": "./index.js"}}',
+		// Nested condition maps exercise recursive target validation.
 		'{"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}',
-		// A dual `import`/`require` pair with distinct declaration files is correct.
 		'{"exports": {".": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}}',
 		// Symmetric subpath patterns.
 		'{"exports": {"./feature/*": "./dist/feature/*.js"}}',
@@ -370,6 +368,12 @@ test.snapshot({
 		'{"exports": {"default": "index.js"}}',
 		// A `../` path is flagged but not autofixed (prepending `./` would not make it valid).
 		'{"exports": {"default": "../index.js"}}',
+		'{"exports": "."}',
+		'{"exports": ".."}',
+		'{"exports": "node_modules/index.js"}',
+		'{"exports": "%2e%2e/index.js"}',
+		'{"exports": "node:fs"}',
+		'{"exports": "C:/index.js"}',
 		// Non-relative path in nested subpath.
 		`{
 	"exports": {
@@ -388,6 +392,8 @@ test.snapshot({
 		'{"exports": {"./utils/./helper.js": "./utils/helper.js"}}',
 		'{"exports": {"0": "./index.js"}}',
 		'{"exports": null}',
+		'{"exports": false}',
+		'{"exports": 1}',
 		// String exports without ./
 		'{"exports": "index.js"}',
 		// Non-relative path inside an array fallback.
@@ -587,6 +593,7 @@ test.snapshot({
 	}
 }`,
 		// `bundleDependencies`
+		'{"bundleDependencies": "foo"}',
 		'{"bundledDependencies": "foo"}',
 		'{"bundledDependencies": [1]}',
 		'{"bundledDependencies": ["foo"]}',

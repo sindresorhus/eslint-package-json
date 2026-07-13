@@ -67,7 +67,7 @@ function * checkPatternTarget(node, key) {
 	}
 
 	for (const leaf of iterateStringLeaves(node)) {
-		if (typeof leaf.value === 'string' && leaf.value !== '' && leaf.value.includes('*')) {
+		if (leaf.value.includes('*')) {
 			yield {
 				node: leaf,
 				messageId: MESSAGE_ID_PATTERN,
@@ -116,10 +116,11 @@ function * checkExportsNode(node) {
 				messageId: MESSAGE_ID_RELATIVE_PATH,
 				data: {value},
 			};
+			const fixedValue = './' + value;
 
-			// A `../` path escapes the package, so prepending `./` would not make it valid. Report it without the misleading autofix.
-			if (value !== '' && !value.startsWith('../') && !value.startsWith('/') && !value.includes('://')) {
-				problem.fix = fixer => fixer.replaceText(node, JSON.stringify('./' + value));
+			// Only offer the prefix autofix when it produces a valid package target.
+			if (value !== '' && !URL.canParse(value) && !hasInvalidPackageTargetSegment(fixedValue)) {
+				problem.fix = fixer => fixer.replaceText(node, JSON.stringify(fixedValue));
 			}
 
 			yield problem;
@@ -194,7 +195,7 @@ export function * check(root) {
 		return;
 	}
 
-	if (exportsMember.value.type === 'Null') {
+	if (!['String', 'Object', 'Array'].includes(exportsMember.value.type)) {
 		yield {
 			node: exportsMember.value,
 			messageId: MESSAGE_ID_ROOT_TYPE,
@@ -206,7 +207,5 @@ export function * check(root) {
 		yield * checkPatternTarget(exportsMember.value, '.');
 	}
 
-	for (const problem of checkExportsNode(exportsMember.value)) {
-		yield problem;
-	}
+	yield * checkExportsNode(exportsMember.value);
 }
