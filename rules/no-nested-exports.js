@@ -28,14 +28,14 @@ function isNestedPackageJson(context) {
 
 	const workingDirectory = path.resolve(context.cwd);
 	const packagePath = path.resolve(workingDirectory, physicalFilename);
+	const relativePath = path.relative(workingDirectory, packagePath);
 
-	if (path.basename(packagePath) !== 'package.json') {
-		return false;
-	}
-
-	const packageDirectory = path.dirname(packagePath);
-
-	return packageDirectory !== workingDirectory;
+	return relativePath !== ''
+		&& relativePath !== '..'
+		&& !relativePath.startsWith(`..${path.sep}`)
+		&& !path.isAbsolute(relativePath)
+		&& path.basename(packagePath) === 'package.json'
+		&& path.dirname(packagePath) !== workingDirectory;
 }
 
 /** @param {import('eslint').Rule.RuleContext} context */
