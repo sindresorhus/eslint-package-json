@@ -488,7 +488,7 @@ function getDeclarationFormat(value, packageType) {
 	return undefined;
 }
 
-function getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reportedFormats) {
+function getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reportedTypeTargets) {
 	const actual = getDeclarationFormat(typeTarget.value, packageType);
 
 	if (!actual) {
@@ -501,18 +501,11 @@ function getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reported
 		return;
 	}
 
-	let expectedFormats = reportedFormats.get(typeTarget);
-
-	if (expectedFormats?.has(expected)) {
+	if (reportedTypeTargets.has(typeTarget)) {
 		return;
 	}
 
-	if (!expectedFormats) {
-		expectedFormats = new Set();
-		reportedFormats.set(typeTarget, expectedFormats);
-	}
-
-	expectedFormats.add(expected);
+	reportedTypeTargets.add(typeTarget);
 	return {
 		node: typeTarget,
 		messageId: MESSAGE_ID_MODULE_FORMAT,
@@ -604,11 +597,11 @@ function * checkTypesObject(objectNode, packageType) {
 		yield * checkNestedTypes(member.value);
 	}
 
-	const reportedFormats = new WeakMap();
+	const reportedTypeTargets = new WeakSet();
 
 	for (const member of typesMembers) {
 		for (const [typeTarget, runtimeTarget] of iterateTypeRuntimePairs(member.value, objectNode)) {
-			const problem = getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reportedFormats);
+			const problem = getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reportedTypeTargets);
 
 			if (problem) {
 				yield problem;

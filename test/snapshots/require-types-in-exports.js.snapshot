@@ -1061,6 +1061,21 @@ Message:
 
 `;
 
+exports[`invalid(66): {\"type\": \"module\", \"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.mts\", \"default\": \"./fallback.d.mts\"}}, \"default\": {\"import\": \"./import.mjs\", \"default\": \"./fallback.cjs\"}}} 1`] = `
+
+[Input]
+  1 | {"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.mts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}
+
+`;
+
+exports[`invalid(66): {\"type\": \"module\", \"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.mts\", \"default\": \"./fallback.d.mts\"}}, \"default\": {\"import\": \"./import.mjs\", \"default\": \"./fallback.cjs\"}}} 2`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.mts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}
+    |                                                                                             ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.mts\` uses ES module format but its JavaScript target uses CommonJS format.
+
+`;
+
 exports[`invalid(7): {\"exports\": {\"types@invalid\": \"./index.d.ts\", \"default\": \"./index.js\"}} 1`] = `
 
 [Input]

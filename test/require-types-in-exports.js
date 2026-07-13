@@ -211,5 +211,7 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"default": {"import": "./import.d.cts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}',
 		// Shared default wrappers still require coverage for every nested runtime sibling.
 		'{"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}',
+		// Shared wrappers also compare their nested default targets.
+		'{"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.mts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}',
 	],
 });
