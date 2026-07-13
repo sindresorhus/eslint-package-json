@@ -48,7 +48,7 @@ Whether an array contains multiple direct string targets that should be checked 
 function isStringTargetArray(node, field) {
 	return node.elements.length >= 2
 		&& node.elements.every(element => element.value.type === 'String')
-		&& node.elements.every(element => !isInvalidPackageTarget(element.value.value, field));
+		&& node.elements.filter(element => !isInvalidPackageTarget(element.value.value, field)).length >= 2;
 }
 
 /**

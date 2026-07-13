@@ -26,6 +26,8 @@ test.snapshot({
 		'{"exports": {".": ["./a.js", "./b.js"]}}',
 		'{"imports": {"#dep": ["./a.js", "./b.js"]}}',
 		'{"imports": {"#dep": ["missing-package", "./dep.js"]}}',
+		'{"exports": ["not:valid", "./a.js", "./b.js"]}',
+		'{"imports": {"#dep": ["missing-package", "./a.js", "./b.js"]}}',
 		'{"exports": ["./a%2Finvalid.js", "./fallback.js"]}',
 		`{
 	"exports": {
