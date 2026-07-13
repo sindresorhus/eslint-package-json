@@ -9,9 +9,9 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-Node.js only uses `exports` and `imports` from the package root's `package.json`. These fields are ignored in nested manifests, so they cannot define package entry points or package imports there. Some bundlers may still read them, which can lead to different resolution behavior between tools.
+Node.js does not use `exports` and `imports` from a nested manifest to define entry points or private imports for the package rooted at the configured working directory. These fields are therefore ineffective when a nested manifest is intended to configure the parent package, while some bundlers may still read them, which can lead to different resolution behavior between tools.
 
-This rule treats the `package.json` in ESLint's configured working directory as the package root. In a monorepo, lint each package with its own working directory or disable this rule for workspace manifests.
+This rule treats the `package.json` in ESLint's configured working directory as the package root. It does not detect independent package boundaries below that directory. In a monorepo or any repository containing independent nested packages, lint each package with its own working directory or disable this rule for those manifests.
 
 The rule offers a suggestion to remove each ignored field when it is the only occurrence of that field, but does not autofix because removing the field can affect bundler-specific behavior.
 

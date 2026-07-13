@@ -89,6 +89,12 @@ test('the recommended config works end-to-end through ESLint', () => {
 		'legacy entry points should be reported via the recommended config',
 	);
 
+	const nestedPackageProblems = linter.verify('{"name": "foo", "exports": "./index.js"}', config, {filename: 'dist/package.json'});
+	assert.ok(
+		nestedPackageProblems.some(message => message.ruleId === 'package-json/no-nested-exports'),
+		'an ignored field in a nested package.json should be reported via the recommended config',
+	);
+
 	const cleanInput = JSON.stringify({
 		name: 'foo',
 		version: '1.0.0',
