@@ -20,6 +20,7 @@ export {default as 'no-invalid-direct-overrides'} from './no-invalid-direct-over
 export {default as 'no-local-dependencies'} from './no-local-dependencies.js';
 export {default as 'no-manual-maintainers'} from './no-manual-maintainers.js';
 export {default as 'no-missing-files'} from './no-missing-files.js';
+export {default as 'no-nested-exports'} from './no-nested-exports.js';
 export {default as 'no-orphan-script-hooks'} from './no-orphan-script-hooks.js';
 export {default as 'no-orphan-types'} from './no-orphan-types.js';
 export {default as 'no-overrides-in-published-package'} from './no-overrides-in-published-package.js';
