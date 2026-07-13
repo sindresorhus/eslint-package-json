@@ -17,8 +17,8 @@ const messages = {
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
 	const {
-		fields = ['name', 'version'],
-		fieldsWhenPublic = ['license', 'keywords', 'description'],
+		fields = [],
+		fieldsWhenPublic = ['name', 'version', 'description', 'license', 'keywords'],
 	} = context.options[0] ?? {};
 	const requiredFields = new Set(fields);
 
