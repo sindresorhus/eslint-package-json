@@ -45,6 +45,17 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"types": {"browser": "./browser.d.mts"}, "default": "./fallback.d.mts"}, "default": "./index.js"}}',
 		// A parent fallback covers runtime branches omitted by a nested type condition.
 		'{"type": "module", "exports": {"types": {"types": {"import": "./import.d.mts"}, "default": "./fallback.d.cts"}, "import": "./import.mjs", "require": "./require.cjs"}}',
+		`{
+	"type": "module",
+	"exports": {
+		"types": {
+			"types@>=5": {"import": "./import.d.mts"},
+			"types": {"import": "./fallback.d.mts", "require": "./fallback.d.cts"}
+		},
+		"import": "./import.mjs",
+		"require": "./require.cjs"
+	}
+}`,
 		// Nested declaration arrays also stop after the first target.
 		'{"type": "module", "exports": {"types": {"import": ["./index.d.mts", "./unreachable.js"]}, "import": "./index.mjs"}}',
 		// A non-runtime sibling does not invalidate a covered runtime branch.
@@ -53,6 +64,7 @@ test.snapshot({
 		'{"exports": {"types": "./index.d.ts", "default": [null, "./fallback.js"]}}',
 		// A type condition in a later array target does not describe the effective export.
 		'{"exports": [{"default": "./index.js"}, {"types": "./index.d.ts", "default": "./index.js"}]}',
+		'{"exports": {"types": [{"default": "./fallback.d.ts"}, {"types": null}], "default": "./index.js"}}',
 		// An empty type-target array falls through to the parent default.
 		'{"exports": {"types": {"import": [], "default": "./fallback.d.ts"}, "import": "./import.js"}}',
 		// A parent default can continue into a nested runtime condition.
@@ -90,6 +102,9 @@ test.snapshot({
 		'{"exports": {"types": "", "default": "./index.js"}}',
 		'{"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}',
 		'{"exports": {"types": {"import": "./index.d.ts", "browser": "./not-a-declaration.js"}, "import": "./index.js"}}',
+		// Nested type conditions receive the same ordering and value validation.
+		'{"exports": {"types": {"default": "./legacy.d.ts", "types@>=5": "./modern.d.ts"}, "default": "./index.js"}}',
+		'{"exports": {"types": {"types": null, "default": "./fallback.d.ts"}, "default": "./index.js"}}',
 		// A null array target terminates resolution before later declaration targets.
 		'{"exports": {"types": [null, "./index.d.ts"], "default": ["./index.js", "./fallback.js"]}}',
 		// A null nested array target does not fall through to a sibling declaration default.
@@ -107,8 +122,10 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"import": {"node": null}, "default": "./fallback.d.cts"}, "import": {"node": "./index.mjs"}}}',
 		// Declaration module format must match the runtime target.
 		'{"type": "module", "exports": {"types": "./index.d.cts", "default": "./index.mjs"}}',
-		// Identical declaration and runtime pairs produce one module-format diagnostic.
-		'{"type": "module", "exports": {"types": "./index.d.cts", "default": {"node": "./index.js", "browser": "./index.js"}}}',
+		// One declaration paired with multiple runtime targets of the same format produces one diagnostic.
+		'{"type": "module", "exports": {"types": "./index.d.cts", "default": {"node": "./node.js", "browser": "./browser.js"}}}',
+		// Distinct declaration nodes receive separate diagnostics even when their paths match.
+		'{"type": "module", "exports": {"types@>=5": "./index.d.cts", "types": "./index.d.cts", "default": "./index.mjs"}}',
 		'{"type": "commonjs", "exports": {"types": "./index.d.mts", "default": "./index.cjs"}}',
 		'{"exports": {"types": "./index.d.ts", "default": "./index.mjs"}}',
 		// Every exported branch needs its own type condition.
@@ -136,6 +153,7 @@ test.snapshot({
 		// A fallback condition can continue with a different nested runtime condition.
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}',
 		// Versioned nested type conditions must also check their declaration fallback.
+		'{"type": "module", "exports": {"types": {"types@>=5": [], "types": {"import": "./import.d.mts", "require": "./require.d.cts"}}, "import": "./import.mjs", "require": "./require.cjs"}}',
 		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"types@>=5": "./modern.d.mts", "default": "./legacy.d.cts"}}, "import": "./index.mjs"}}',
 		// An unresolved nested unversioned type condition must check its declaration fallback.

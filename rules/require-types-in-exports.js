@@ -63,6 +63,22 @@ function getTargetWithFallback(node, fallbackMember) {
 	};
 }
 
+function getNextFallbackMember(objectNode, member) {
+	const index = objectNode.members.indexOf(member);
+	return objectNode.members.slice(index + 1).find(candidate => isTypesCondition(getKey(candidate)) || getKey(candidate) === 'default');
+}
+
+function getFallbackTarget(objectNode, member) {
+	let nextMember = getNextFallbackMember(objectNode, member);
+
+	while (!getFirstTarget(member.value) && nextMember) {
+		member = nextMember;
+		nextMember = getNextFallbackMember(objectNode, member);
+	}
+
+	return getTargetWithFallback(member.value, nextMember);
+}
+
 function * iterateStringLeaves(node) {
 	switch (node.type) {
 		case 'String': {
@@ -393,13 +409,18 @@ function getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reported
 		return;
 	}
 
-	const key = `${typeTarget.value}:${runtimeTarget.value}`;
+	let expectedFormats = reportedFormats.get(typeTarget);
 
-	if (reportedFormats.has(key)) {
+	if (expectedFormats?.has(expected)) {
 		return;
 	}
 
-	reportedFormats.add(key);
+	if (!expectedFormats) {
+		expectedFormats = new Set();
+		reportedFormats.set(typeTarget, expectedFormats);
+	}
+
+	expectedFormats.add(expected);
 	return {
 		node: typeTarget,
 		messageId: MESSAGE_ID_MODULE_FORMAT,
@@ -411,7 +432,7 @@ function getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reported
 	};
 }
 
-function * checkTypesObject(objectNode, packageType) {
+function * checkTypesMembers(objectNode) {
 	const typesMembers = objectNode.members.filter(member => isTypesCondition(getKey(member)));
 
 	for (const member of typesMembers) {
@@ -444,7 +465,33 @@ function * checkTypesObject(objectNode, packageType) {
 		}
 	}
 
-	const reportedFormats = new Set();
+	return typesMembers;
+}
+
+function * checkNestedTypes(node) {
+	node = getFirstTarget(node);
+
+	if (node?.type !== 'Object') {
+		return;
+	}
+
+	if (node.members.some(member => isTypesCondition(getKey(member)))) {
+		yield * checkTypesMembers(node);
+	}
+
+	for (const member of node.members) {
+		yield * checkNestedTypes(member.value);
+	}
+}
+
+function * checkTypesObject(objectNode, packageType) {
+	const typesMembers = yield * checkTypesMembers(objectNode);
+
+	for (const member of typesMembers) {
+		yield * checkNestedTypes(member.value);
+	}
+
+	const reportedFormats = new WeakMap();
 
 	for (const member of typesMembers) {
 		for (const [typeTarget, runtimeTarget] of iterateTypeRuntimePairs(member.value, objectNode)) {
@@ -492,10 +539,9 @@ function getNarrowedTypeNodes(nodes, runtimeKey) {
 			continue;
 		}
 
-		const defaultMember = node.members.find(member => getKey(member) === 'default');
-		const fallbackTarget = getTargetWithFallback(fallbackMember.value, fallbackMember === defaultMember ? undefined : defaultMember);
-		const fallbackHasRuntimeKey = fallbackTarget.type === 'Object' && fallbackTarget.members.some(member => getKey(member) === runtimeKey);
-		narrowedNodes.push(...(fallbackHasRuntimeKey ? getNarrowedTypeNodes([fallbackTarget], runtimeKey) : [fallbackTarget]));
+		const fallbackTarget = getFallbackTarget(node, fallbackMember);
+		const shouldNarrowFallback = fallbackTarget.type === 'Object' && fallbackTarget.members.some(member => getKey(member) === runtimeKey || isTypesCondition(getKey(member)));
+		narrowedNodes.push(...(shouldNarrowFallback ? getNarrowedTypeNodes([fallbackTarget], runtimeKey) : [fallbackTarget]));
 	}
 
 	return narrowedNodes;
