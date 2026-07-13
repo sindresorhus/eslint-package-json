@@ -79,12 +79,11 @@ test.snapshot({
 		'{"name": "foo"}',
 		'{"type": "commonjs"}',
 		'{"type": "module"}',
-		// Entry-point fields accept strings.
-		'{"main": "./index.js", "module": "./index.mjs", "types": "./index.d.ts", "typings": "./index.d.ts"}',
-		'{"browser": "./browser.js"}',
-		'{"browser": "../browser.js"}',
-		'{"browser": {"fs": "./browser.js", "./server.js": "./browser.js", "./fs.js": false}}',
-		'{"browser": {"../server.js": "./browser.js", "./server/../server.js": "./browser.js", "./server.js": "../browser.js", "./other.js": "./browser/../browser.js"}}',
+		// Legacy fields are intentionally ignored, including malformed values.
+		'{"main": false, "module": [], "types": 42, "typings": null}',
+		'{"browser": 42}',
+		'{"browser": "C:/browser.js"}',
+		'{"browser": {"../server.js": [], "./server.js": "https://cdn.example.com/browser.js"}}',
 		// Empty string is handled by `no-empty-fields`.
 		'{"type": ""}',
 		// `exports`
@@ -355,17 +354,6 @@ test.snapshot({
 		'{"type": "esm"}',
 		'{"type": "module "}',
 		'{"type": "Module"}',
-		// Entry-point fields must be strings.
-		'{"main": false}',
-		'{"module": []}',
-		'{"types": 42}',
-		'{"typings": null}',
-		'{"browser": 42}',
-		'{"browser": {"./server.js": []}}',
-		'{"browser": "C:/browser.js"}',
-		String.raw`{"browser": "C:\\browser.js"}`,
-		String.raw`{"browser": "\\\\server\\share\\browser.js"}`,
-		'{"browser": {"./server.js": "https://cdn.example.com/browser.js"}}',
 		'{"type": true}',
 		'{"type": 42}',
 		// `exports`

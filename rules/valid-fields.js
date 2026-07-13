@@ -10,7 +10,6 @@ import * as bugs from './valid-fields/bugs.js';
 import * as funding from './valid-fields/funding.js';
 import * as author from './valid-fields/author.js';
 import * as type from './valid-fields/type.js';
-import * as entryPoints from './valid-fields/entry-points.js';
 import * as exports from './valid-fields/exports.js';
 import * as imports from './valid-fields/imports.js';
 import * as bin from './valid-fields/bin.js';
@@ -46,7 +45,6 @@ const fields = {
 	funding,
 	author,
 	type,
-	entryPoints,
 	exports,
 	imports,
 	bin,
