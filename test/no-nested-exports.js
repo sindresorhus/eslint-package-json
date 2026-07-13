@@ -1,3 +1,4 @@
+/* eslint-disable node-test/no-conditional-assertion -- The path matrix asserts each case inside a loop. */
 import {test as nodeTest} from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
@@ -34,7 +35,8 @@ test.snapshot({
 });
 
 nodeTest('handles package.json paths relative to the configured working directory', () => {
-	const linter = new Linter();
+	const workingDirectory = path.resolve('test');
+	const linter = new Linter({cwd: workingDirectory});
 	const config = {
 		files: ['**'],
 		language: 'json/json',
@@ -52,30 +54,23 @@ nodeTest('handles package.json paths relative to the configured working director
 	};
 
 	const testCases = [
-		{physicalFilename: 'package.json', expectedMessageCount: 0},
-		{physicalFilename: 'dist/package.json', expectedMessageCount: 1},
-		{physicalFilename: '<text>', expectedMessageCount: 0},
-		{physicalFilename: '../package.json', expectedMessageCount: 0},
-		{physicalFilename: '../other/package.json', expectedMessageCount: 0},
-		{physicalFilename: path.resolve('package.json'), expectedMessageCount: 0},
-		{physicalFilename: path.resolve('dist/package.json'), expectedMessageCount: 1},
-		{physicalFilename: path.resolve('../package.json'), expectedMessageCount: 0},
-		{physicalFilename: path.resolve('../other/package.json'), expectedMessageCount: 0},
+		{physicalFilename: 'package.json', reports: false},
+		{physicalFilename: 'dist/package.json', reports: true},
+		{physicalFilename: '<text>', reports: false},
+		{physicalFilename: '../package.json', reports: false},
+		{physicalFilename: '../other/package.json', reports: false},
+		{physicalFilename: path.resolve(workingDirectory, 'package.json'), reports: false},
+		{physicalFilename: path.resolve(workingDirectory, 'dist/package.json'), reports: true},
+		{physicalFilename: path.resolve(workingDirectory, '../package.json'), reports: false},
+		{physicalFilename: path.resolve(workingDirectory, '../other/package.json'), reports: false},
 	];
 
-	const results = [];
-
-	for (const {physicalFilename, expectedMessageCount} of testCases) {
+	for (const {physicalFilename, reports} of testCases) {
 		const messages = linter.verify('{"exports": "./index.js"}', config, {
 			filename: nestedPackageFilename,
 			physicalFilename,
 		});
 
-		results.push({physicalFilename, messageCount: messages.length});
+		assert.equal(messages.length, reports ? 1 : 0, physicalFilename);
 	}
-
-	assert.deepEqual(results, testCases.map(({physicalFilename, expectedMessageCount}) => ({
-		physicalFilename,
-		messageCount: expectedMessageCount,
-	})));
 });

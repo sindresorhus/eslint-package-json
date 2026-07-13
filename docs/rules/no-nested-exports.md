@@ -13,7 +13,7 @@ Node.js only uses `exports` and `imports` from the package root's `package.json`
 
 This rule treats the `package.json` in ESLint's configured working directory as the package root. In a monorepo, lint each package with its own working directory or disable this rule for workspace manifests.
 
-The rule offers a suggestion to remove each ignored field, but does not autofix because removing the field can affect bundler-specific behavior.
+The rule offers a suggestion to remove each ignored field when it is the only occurrence of that field, but does not autofix because removing the field can affect bundler-specific behavior.
 
 ## Examples
 
