@@ -1031,6 +1031,36 @@ Message:
 
 `;
 
+exports[`invalid(64): {\"type\": \"module\", \"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.cts\", \"default\": \"./fallback.d.cts\"}}, \"default\": {\"import\": \"./import.mjs\", \"default\": \"./fallback.cjs\"}}} 1`] = `
+
+[Input]
+  1 | {"type": "module", "exports": {"types": {"default": {"import": "./import.d.cts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}
+
+`;
+
+exports[`invalid(64): {\"type\": \"module\", \"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.cts\", \"default\": \"./fallback.d.cts\"}}, \"default\": {\"import\": \"./import.mjs\", \"default\": \"./fallback.cjs\"}}} 2`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"default": {"import": "./import.d.cts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}
+    |                                                                ^^^^^^^^^^^^^^^^ Type declaration \`./import.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+
+`;
+
+exports[`invalid(65): {\"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.ts\"}}, \"default\": {\"import\": \"./import.js\", \"require\": \"./require.js\"}}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}
+
+`;
+
+exports[`invalid(65): {\"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.ts\"}}, \"default\": {\"import\": \"./import.js\", \"require\": \"./require.js\"}}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}
+    |                                                                                                                 ^^^^^^^^^^^^^^ Exported JavaScript target \`./require.js\` has no corresponding \`types\` condition.
+
+`;
+
 exports[`invalid(7): {\"exports\": {\"types@invalid\": \"./index.d.ts\", \"default\": \"./index.js\"}} 1`] = `
 
 [Input]

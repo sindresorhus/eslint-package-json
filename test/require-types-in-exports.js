@@ -207,5 +207,9 @@ test.snapshot({
 		'{"exports": {"types": 1, "default": "./index.js"}}',
 		// A terminal type condition prevents an incompatible declaration-side default from participating.
 		'{"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}',
+		// Shared default wrappers still compare structurally matching nested targets.
+		'{"type": "module", "exports": {"types": {"default": {"import": "./import.d.cts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}',
+		// Shared default wrappers still require coverage for every nested runtime sibling.
+		'{"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}',
 	],
 });
