@@ -7,10 +7,13 @@ test.snapshot({
 		'{"name": "foo"}',
 		'{"exports": "./index.js"}',
 		'{"exports": {".": ["./index.js"]}}',
+		'{"imports": ["./a.js", "./b.js"]}',
 		'{"exports": {".": [{"development": "./development.js"}, "./index.js"]}}',
 		'{"imports": {"#dep": [{"development": "./development.js"}, "./dep.js"]}}',
 		'{"exports": {".": ["./index.js", null]}}',
+		'{"exports": {".": ["./a.js", "./b.js", null]}}',
 		'{"imports": {"#dep": ["./dep.js", {"development": "./development.js"}]}}',
+		'{"imports": {"#dep": ["./a.js", {"development": "./development.js"}, "./b.js"]}}',
 	],
 	invalid: [
 		'{"exports": {".": ["./a.js", "./b.js"]}}',

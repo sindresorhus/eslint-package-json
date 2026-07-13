@@ -3,11 +3,11 @@ import {getRootObject, findMember} from './utils/index.js';
 const MESSAGE_ID = 'no-fallback-export-arrays';
 
 const messages = {
-	[MESSAGE_ID]: 'String-target fallback arrays in `{{field}}` do not try the next target when the first file is missing in Node.js.',
+	[MESSAGE_ID]: 'String-target arrays in `{{field}}` are not fallback lists in Node.js; a missing first file or package does not make Node.js try the next target.',
 };
 
 /**
-Recursively find arrays containing multiple direct string targets.
+Recursively find arrays with at least two direct string targets and no other values.
 */
 function * findStringTargetArrays(node) {
 	switch (node.type) {
@@ -48,6 +48,11 @@ const create = context => ({
 			const member = findMember(root, field);
 
 			if (!member) {
+				continue;
+			}
+
+			// `imports` must be an object. Leave invalid top-level values to `valid-fields`.
+			if (field === 'imports' && member.value.type !== 'Object') {
 				continue;
 			}
 

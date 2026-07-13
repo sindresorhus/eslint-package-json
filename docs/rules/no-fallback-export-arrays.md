@@ -7,9 +7,9 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-The `exports` and `imports` fields support arrays, but Node.js does not use them to try another file when the first string target is missing. This can make a package fail at runtime when an array is intended as a file-existence fallback.
+The `exports` and `imports` fields support arrays, but Node.js does not use them as general fallback lists. It does not try another target just because the first file or package is missing, so an array intended as a file-existence fallback can make a package fail at runtime.
 
-This rule reports arrays with multiple direct string targets. Arrays containing condition objects or other values are left alone because they can use Node.js's supported condition fallback behavior.
+This rule reports arrays with at least two direct elements, all of which are strings. Mixed arrays containing condition objects, `null`, or other values are outside this rule's scope, so valid condition-based arrays remain untouched.
 
 ## Examples
 
