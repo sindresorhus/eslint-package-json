@@ -84,8 +84,7 @@ const config = [
 			'eslint-plugin/require-meta-schema-description': 'off',
 			// Option defaults are read defensively in each rule (`context.options[0] ?? {}`).
 			'eslint-plugin/require-meta-default-options': 'off',
-			// `valid-fields` (via its `exports`/`imports` sub-validators) emits suggestions through the shared `checkConditionOrder`
-			// helper, so the static check can't see them and wrongly flags `meta.hasSuggestions`.
+			// `valid-fields` emits suggestions from sub-validator generators, so the static check cannot detect them.
 			'eslint-plugin/require-meta-has-suggestions': 'off',
 		},
 	},

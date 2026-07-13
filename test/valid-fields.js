@@ -93,15 +93,14 @@ test.snapshot({
 		'{"exports": {}}',
 		// Simple subpath.
 		'{"exports": {".": "./index.js"}}',
-		// Correct order: types first, default last.
+		// Condition maps are structurally valid regardless of condition ordering.
 		'{"exports": {"types": "./index.d.ts", "default": "./index.js"}}',
-		// Correct order with more conditions.
 		'{"exports": {"types": "./index.d.ts", "import": "./index.mjs", "default": "./index.js"}}',
-		// Condition ordering is owned by the dedicated condition rules.
 		'{"exports": {"default": "./index.js", "import": "./index.mjs"}}',
 		'{"exports": {"import": "./index.mjs", "types": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"import": "./index.mjs", "default": "./index.js", "types": "./index.d.ts"}}',
-		// Nested subpaths with correct ordering.
+		'{"exports": {"require": "./index.cjs", "module": "./index.mjs", "default": "./index.js"}}',
+		// Nested condition map.
 		`{
 	"exports": {
 		"./feature": {
@@ -117,10 +116,10 @@ test.snapshot({
 		'{"exports": {"default": null}}',
 		// Array fallback values with relative paths are valid.
 		'{"exports": {".": ["./a.js", "./b.js"]}}',
-		// `module` before `require`.
-		'{"exports": {"module": "./index.mjs", "require": "./index.cjs", "default": "./index.js"}}',
 		// Subpath map (all keys are subpaths).
 		'{"exports": {".": "./index.js", "./feature": "./feature.js"}}',
+		// Trailing-slash mappings are owned by `no-exports-trailing-slash`.
+		'{"exports": {"./feature/": "./feature/"}}',
 		// Per-condition `types` with valid declaration-file extensions.
 		'{"exports": {"types": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}',
@@ -135,6 +134,7 @@ test.snapshot({
 		// `imports`
 		'{"name": "foo"}',
 		'{"imports": {"#dep": "./src/dep.js"}}',
+		'{"imports": {"#dep": null}}',
 		'{"imports": {"#internal/*.js": "./src/internal/*.js"}}',
 		'{"imports": {"#/internal": "./src/internal.js"}}',
 		'{"imports": {"#external": "foo/../bar"}}',
@@ -143,8 +143,11 @@ test.snapshot({
 		'{"imports": {"#percent": "foo/%25"}}',
 		'{"imports": {"#scope": "@scope/package/subpath"}}',
 		'{"imports": {"#fs": "fs", "#path": "path", "#legacy": "Foo"}}',
-		// Correctly ordered conditions inside an entry.
-		'{"imports": {"#dep": {"types": "./dep.d.ts", "import": "./dep.mjs", "default": "./dep.js"}}}',
+		// `default` and `types` ordering is owned by the dedicated condition rules.
+		'{"imports": {"#dep": {"default": "./dep.js", "import": "./dep.mjs", "types": "./dep.d.ts"}}}',
+		'{"imports": {"#dep": {"require": "./dep.cjs", "module": "./dep.mjs", "default": "./dep.js"}}}',
+		// Trailing-slash mappings are owned by `no-exports-trailing-slash`.
+		'{"imports": {"#dep/": "./dep/"}}',
 		// An array fallback of plain targets.
 		'{"imports": {"#dep": ["./a.js", "./b.js"]}}',
 		// `bin`
@@ -193,10 +196,12 @@ test.snapshot({
 		'{"name": "foo"}',
 		'{"os": ["darwin", "linux"]}',
 		'{"os": ["!win32"]}',
+		'{"os": ["darwin", "!win32"]}',
 		// `cpu`
 		'{"name": "foo"}',
 		'{"cpu": ["x64", "arm64"]}',
 		'{"cpu": ["!arm64"]}',
+		'{"cpu": ["x64", "!ia32"]}',
 		// `publishConfig`
 		'{"name": "foo"}',
 		'{"publishConfig": {"access": "public"}}',
@@ -223,6 +228,7 @@ test.snapshot({
 		'{"name": "foo"}',
 		'{"files": ["dist", "index.js"]}',
 		'{"files": ["src/**/*.js"]}',
+		'{"files": [".hg", ".svn", "bun.lock"]}',
 		// `workspaces`
 		'{"name": "foo"}',
 		'{"workspaces": ["packages/*"]}',
@@ -262,7 +268,10 @@ test.snapshot({
 		'{"dependencies": {"foo": "^1.0.0"}, "bundleDependencies": ["foo"]}',
 		'{"optionalDependencies": {"foo": "^1.0.0"}, "bundledDependencies": ["foo"]}',
 		'{"bundledDependencies": []}',
-		// A `false` value is tolerated by npm as a no-op meaning "bundle nothing".
+		// Boolean values mean bundle all or none.
+		'{"bundleDependencies": true}',
+		'{"bundledDependencies": true}',
+		'{"bundleDependencies": false}',
 		'{"bundledDependencies": false}',
 		// `overrides`
 		'{"name": "foo"}',
@@ -383,14 +392,6 @@ test.snapshot({
 		'{"exports": "index.js"}',
 		// Non-relative path inside an array fallback.
 		'{"exports": {".": ["a.js", "./b.js"]}}',
-		// `module` after `require`.
-		`{
-	"exports": {
-		"require": "./index.cjs",
-		"module": "./index.mjs",
-		"default": "./index.js"
-	}
-}`,
 		// Mixing a subpath key and a condition key.
 		'{"exports": {".": "./index.js", "import": "./index.mjs"}}',
 		// Subpath key that does not start with `./`.
@@ -399,6 +400,7 @@ test.snapshot({
 		'{"exports": {"./feature": {"default": "./dist/*.js"}}}',
 		// Subpath pattern target without a pattern key.
 		'{"exports": {"./feature": "./dist/*.js"}}',
+		'{"exports": {"./feature//": "./feature/"}}',
 		// Subpath pattern target without a pattern key inside mixed conditions.
 		'{"exports": {"./feature": {"types": "./dist/feature.d.ts", "default": "./dist/feature/*.js"}}}',
 		// Root export pattern target without a pattern key.
@@ -413,7 +415,7 @@ test.snapshot({
 		'{"imports": {"#dep": "./dep/../index.js"}}',
 		'{"imports": {"#dep": "./dist/%2e%2e/index.js"}}',
 		'{"imports": {"#": "./dep.js"}}',
-		'{"imports": {"#dep/": "./dep.js"}}',
+		'{"imports": {"#dep//": "./dep/"}}',
 		'{"imports": {"#dep/../other": "./dep.js"}}',
 		'{"imports": {"#dep": "https://example.com/dep.js"}}',
 		'{"imports": {"#dep": "."}}',
@@ -424,16 +426,6 @@ test.snapshot({
 		'{"imports": {"#percent": "foo/%zz"}}',
 		'{"imports": {"#percent": "foo/%2"}}',
 		'{"imports": {"#dep": {"0": "./dep.js"}}}',
-		// `module` after `require` inside an entry's conditions.
-		`{
-	"imports": {
-		"#dep": {
-			"require": "./dep.cjs",
-			"module": "./dep.mjs",
-			"default": "./dep.js"
-		}
-	}
-}`,
 		// `bin`
 		'{"bin": ["./cli.js"]}',
 		'{"bin": true}',
@@ -494,7 +486,6 @@ test.snapshot({
 		'{"os": ["windows"]}',
 		'{"os": ["darwin", "osx"]}',
 		'{"os": "darwin"}',
-		'{"os": ["darwin", "!win32"]}',
 		// Non-string element.
 		'{"os": [42]}',
 		// `cpu`
@@ -502,7 +493,6 @@ test.snapshot({
 		'{"cpu": ["x86_64"]}',
 		'{"cpu": ["aarch64"]}',
 		'{"cpu": "x64"}',
-		'{"cpu": ["x64", "!ia32"]}',
 		// Non-string element.
 		'{"cpu": [42]}',
 		// `publishConfig`
@@ -534,7 +524,7 @@ test.snapshot({
 		'{"files": ["node_modules"]}',
 		'{"files": ["node_modules/foo"]}',
 		'{"files": ["yarn.lock"]}',
-		'{"files": ["bun.lock"]}',
+		'{"files": ["bun.lockb"]}',
 		'{"files": ["dist", ".git"]}',
 		'{"files": [1]}',
 		'{"files": ["dist", ""]}',
@@ -603,8 +593,6 @@ test.snapshot({
 		'{"dependencies": {"foo": "^1.0.0"}, "bundledDependencies": ["foo", "bar"]}',
 		// A peer dependency is not published, so it does not satisfy the bundle requirement.
 		'{"peerDependencies": {"foo": ">=1"}, "bundledDependencies": ["foo"]}',
-		// A `true` value is warned on and deleted by npm (it must be an array).
-		'{"bundledDependencies": true}',
 		// `overrides`
 		// Wrong top-level type.
 		'{"overrides": ["foo"]}',

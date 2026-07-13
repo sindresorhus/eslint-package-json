@@ -232,7 +232,14 @@ export function hasInvalidPackageTargetSegment(value) {
 		return false;
 	}
 
-	return value.slice(2).split(/[/\\]/u).some(segment => {
+	const segments = value.slice(2).split(/[/\\]/u);
+
+	return segments.some((segment, index) => {
+		// Deprecated trailing-slash mappings are owned by `no-exports-trailing-slash`.
+		if (segment === '' && value.endsWith('/') && index === segments.length - 1) {
+			return false;
+		}
+
 		let decodedSegment;
 
 		try {
@@ -286,11 +293,10 @@ export const platformFieldMessages = field => ({
 	type: `The \`${field}\` field must be an array.`,
 	elementType: `Each \`${field}\` value must be a string.`,
 	invalid: `\`{{value}}\` is not a recognized \`${field}\` value.`,
-	mixing: `Do not mix included and excluded (\`!\`-prefixed) \`${field}\` values.`,
 });
 
 /**
-Validate an `os`/`cpu`-style field: an array of platform strings where a leading `!` excludes a value. Yields reports for unrecognized values and for mixing included and excluded entries.
+Validate an `os`/`cpu`-style field: an array of platform strings where a leading `!` excludes a value.
 */
 export function * checkPlatformArray(rootObject, field, validValues) {
 	const member = findMember(rootObject, field);
@@ -304,9 +310,6 @@ export function * checkPlatformArray(rootObject, field, validValues) {
 		return;
 	}
 
-	let hasIncluded = false;
-	let hasExcluded = false;
-
 	for (const element of member.value.elements) {
 		if (element.value.type !== 'String') {
 			yield {node: element.value, messageId: 'elementType'};
@@ -316,19 +319,9 @@ export function * checkPlatformArray(rootObject, field, validValues) {
 		const {value} = element.value;
 		const excluded = value.startsWith('!');
 
-		if (excluded) {
-			hasExcluded = true;
-		} else {
-			hasIncluded = true;
-		}
-
 		if (!validValues.has(excluded ? value.slice(1) : value)) {
 			yield {node: element.value, messageId: 'invalid', data: {value}};
 		}
-	}
-
-	if (hasIncluded && hasExcluded) {
-		yield {node: member.value, messageId: 'mixing'};
 	}
 }
 
@@ -499,104 +492,6 @@ function getIndentPrefix(sourceCode, node) {
 	const linePrefix = text.slice(lineStart, start);
 
 	return /^\s*$/.test(linePrefix) ? linePrefix : '';
-}
-
-/**
-Move an object member to just before or after an anchor member (a sibling), keeping the JSON comma-correct and indented.
-*/
-function * moveMemberFix(fixer, sourceCode, {member, anchor, position}) {
-	const memberText = sourceCode.getText(member);
-
-	yield * removeMember(fixer, sourceCode, member);
-
-	const prefix = getIndentPrefix(sourceCode, anchor);
-	// A single-line object has no per-member indent, so keep the moved member on the same line.
-	const separator = prefix === '' ? ' ' : getNewline(sourceCode) + prefix;
-
-	yield (position === 'after' ? fixer.insertTextAfter(anchor, ',' + separator + memberText) : fixer.insertTextBefore(anchor, memberText + ',' + separator));
-}
-
-/**
-Find ordering violations among the conditions of an `exports`/`imports` object: `types` should be first, `module` should precede `require`, and `default` must be last.
-*/
-function getConditionOrderProblems(objectNode, {checkDefault = true, checkTypes = true} = {}) {
-	const {members} = objectNode;
-	const problems = [];
-
-	if (members.length === 0) {
-		return problems;
-	}
-
-	const indexOf = name => members.findIndex(member => getKey(member) === name);
-
-	const defaultIndex = indexOf('default');
-
-	if (checkDefault && defaultIndex !== -1 && defaultIndex !== members.length - 1) {
-		const lastOther = members.findLast(member => getKey(member) !== 'default');
-		problems.push({
-			kind: 'defaultLast', member: members[defaultIndex], anchor: lastOther, position: 'after',
-		});
-	}
-
-	const typesIndex = indexOf('types');
-
-	if (checkTypes && typesIndex > 0) {
-		problems.push({
-			kind: 'typesFirst', member: members[typesIndex], anchor: members[0], position: 'before',
-		});
-	}
-
-	const moduleIndex = indexOf('module');
-	const requireIndex = indexOf('require');
-
-	if (moduleIndex !== -1 && requireIndex !== -1 && moduleIndex > requireIndex) {
-		problems.push({
-			kind: 'moduleBeforeRequire', member: members[moduleIndex], anchor: members[requireIndex], position: 'before',
-		});
-	}
-
-	return problems;
-}
-
-// The shared message and suggestion ids for condition ordering, defined in every rule that uses `checkConditionOrder`.
-const conditionOrderIds = {
-	defaultLast: {messageId: 'defaultLast', suggestionId: 'moveDefaultLast'},
-	typesFirst: {messageId: 'typesFirst', suggestionId: 'moveTypesFirst'},
-	moduleBeforeRequire: {messageId: 'moduleBeforeRequire', suggestionId: 'moveModuleBeforeRequire'},
-};
-
-/**
-The messages a rule must include to use `checkConditionOrder`.
-*/
-export const conditionOrderMessages = {
-	defaultLast: 'The `default` condition must be last.',
-	typesFirst: 'The `types` condition should be first.',
-	moduleBeforeRequire: 'The `module` condition should come before `require`.',
-	moveDefaultLast: 'Move `default` to the end.',
-	moveTypesFirst: 'Move `types` to the front.',
-	moveModuleBeforeRequire: 'Move `module` before `require`.',
-};
-
-/**
-Yield reports (with reordering suggestions) for condition-ordering problems in an `exports`/`imports` object.
-*/
-export function * checkConditionOrder(sourceCode, objectNode, options = {}) {
-	for (const problem of getConditionOrderProblems(objectNode, options)) {
-		const {messageId, suggestionId} = conditionOrderIds[problem.kind];
-
-		yield {
-			node: problem.member,
-			messageId,
-			suggest: [
-				{
-					messageId: suggestionId,
-					* fix(fixer) {
-						yield * moveMemberFix(fixer, sourceCode, problem);
-					},
-				},
-			],
-		};
-	}
 }
 
 /**

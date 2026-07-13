@@ -1,9 +1,7 @@
 import {
 	findMember,
 	getKey,
-	checkConditionOrder,
 	checkKeyConsistency,
-	conditionOrderMessages,
 	keyConsistencyMessages,
 	hasInvalidPackageTargetSegment,
 	isArrayIndexKey,
@@ -19,7 +17,6 @@ const MESSAGE_ID_INVALID_TARGET = 'invalidTarget';
 const MESSAGE_ID_ROOT_TYPE = 'rootType';
 
 export const messages = {
-	...conditionOrderMessages,
 	...keyConsistencyMessages,
 	[MESSAGE_ID_RELATIVE_PATH]: 'Export target `{{value}}` must be a package-relative path starting with `./`.',
 	[MESSAGE_ID_SUBPATH_KEY]: 'Subpath key `{{key}}` must be `.` or start with `./`.',
@@ -83,17 +80,17 @@ function * checkPatternTarget(node, key) {
 /**
 Recursively check all object nodes within the exports tree, yielding problems.
 */
-function * checkExportsNode(node, sourceCode) {
+function * checkExportsNode(node) {
 	switch (node.type) {
 		case 'Object': {
-			yield * checkObject(node, sourceCode);
+			yield * checkObject(node);
 
 			break;
 		}
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * checkExportsNode(element.value, sourceCode);
+				yield * checkExportsNode(element.value);
 			}
 
 			break;
@@ -144,10 +141,9 @@ function * checkExportsNode(node, sourceCode) {
 }
 
 /**
-Check a single object node for condition ordering and subpath/condition key validity, then recurse into member values.
+Check a single object node for subpath/condition key validity, then recurse into member values.
 */
-function * checkObject(objectNode, sourceCode) {
-	yield * checkConditionOrder(sourceCode, objectNode, {checkDefault: false, checkTypes: false});
+function * checkObject(objectNode) {
 	yield * checkKeyConsistency(objectNode, '.');
 
 	for (const member of objectNode.members) {
@@ -183,7 +179,7 @@ function * checkObject(objectNode, sourceCode) {
 			yield * checkPatternTarget(member.value, key);
 		}
 
-		yield * checkExportsNode(member.value, sourceCode);
+		yield * checkExportsNode(member.value);
 	}
 }
 
@@ -191,14 +187,12 @@ function isTopLevelConditionMap(node) {
 	return node.type === 'Object' && node.members.every(member => !getKey(member).startsWith('.'));
 }
 
-export function * check(root, context) {
+export function * check(root) {
 	const exportsMember = findMember(root, 'exports');
 
 	if (!exportsMember) {
 		return;
 	}
-
-	const {sourceCode} = context;
 
 	if (exportsMember.value.type === 'Null') {
 		yield {
@@ -212,7 +206,7 @@ export function * check(root, context) {
 		yield * checkPatternTarget(exportsMember.value, '.');
 	}
 
-	for (const problem of checkExportsNode(exportsMember.value, sourceCode)) {
+	for (const problem of checkExportsNode(exportsMember.value)) {
 		yield problem;
 	}
 }

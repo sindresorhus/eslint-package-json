@@ -1,8 +1,6 @@
 import {
 	findMember,
 	getKey,
-	checkConditionOrder,
-	conditionOrderMessages,
 	hasInvalidPackageTargetSegment,
 	isArrayIndexKey,
 } from '../utils/index.js';
@@ -15,7 +13,6 @@ const TARGET_VALUE_MESSAGE_ID = 'targetValue';
 const CONDITION_KEY_MESSAGE_ID = 'conditionKey';
 
 export const messages = {
-	...conditionOrderMessages,
 	[TYPE_MESSAGE_ID]: 'The `imports` field must be an object.',
 	[KEY_MESSAGE_ID]: 'The `imports` key `{{key}}` must start with `#`.',
 	[INVALID_KEY_MESSAGE_ID]: 'The `imports` key `{{key}}` is not a valid package subpath.',
@@ -52,6 +49,10 @@ function isValidUrl(value) {
 }
 
 function isInvalidImportsKey(value) {
+	if (value === '#') {
+		return true;
+	}
+
 	const path = value.startsWith('#/') ? value.slice(2) : value.slice(1);
 	return hasInvalidPackageTargetSegment('./' + path);
 }
@@ -129,33 +130,7 @@ function * checkTargetNode(node) {
 	}
 }
 
-/**
-Recursively checks the condition objects nested within an `imports` entry value, yielding problems.
-*/
-function * checkImportsNode(node, sourceCode) {
-	switch (node.type) {
-		case 'Object': {
-			yield * checkConditionOrder(sourceCode, node, {checkDefault: false, checkTypes: false});
-
-			for (const member of node.members) {
-				yield * checkImportsNode(member.value, sourceCode);
-			}
-
-			break;
-		}
-
-		case 'Array': {
-			for (const element of node.elements) {
-				yield * checkImportsNode(element.value, sourceCode);
-			}
-
-			break;
-		}
-	// No default
-	}
-}
-
-export function * check(root, context) {
+export function * check(root) {
 	const imports = findMember(root, 'imports');
 
 	if (!imports) {
@@ -169,8 +144,6 @@ export function * check(root, context) {
 		};
 		return;
 	}
-
-	const {sourceCode} = context;
 
 	for (const member of imports.value.members) {
 		const key = getKey(member);
@@ -191,10 +164,5 @@ export function * check(root, context) {
 		}
 
 		yield * checkTargetNode(member.value);
-
-		// The conditions live in the entry values, so check those.
-		for (const problem of checkImportsNode(member.value, sourceCode)) {
-			yield problem;
-		}
 	}
 }

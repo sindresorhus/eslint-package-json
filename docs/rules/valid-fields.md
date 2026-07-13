@@ -50,6 +50,7 @@ The following fields are validated:
 - `optionalDependencies`
 - `peerDependencies`
 - `peerDependenciesMeta`
+- `bundleDependencies`
 - `bundledDependencies`
 - `overrides`
 

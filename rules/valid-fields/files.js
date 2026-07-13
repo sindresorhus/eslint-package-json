@@ -16,14 +16,11 @@ export const messages = {
 const alwaysIgnored = new Set([
 	'node_modules',
 	'.git',
-	'.hg',
-	'.svn',
 	'.npmrc',
 	'package-lock.json',
 	'yarn.lock',
 	'pnpm-lock.yaml',
 	'bun.lockb',
-	'bun.lock',
 ]);
 
 export function * check(root, context) {
