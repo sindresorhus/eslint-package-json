@@ -11,7 +11,7 @@ test.snapshot({
 		'{"exports": ["not:valid", "./submodule.js"]}',
 		'{"exports": ["./a/../invalid.js", "./fallback.js"]}',
 		'{"exports": ["./node_modules/invalid.js", "./fallback.js"]}',
-		'{"exports": ["./a%2Finvalid.js", "./fallback.js"]}',
+		'{"exports": ["./%2e%2e/invalid.js", "./fallback.js"]}',
 		'{"imports": {"#dep": ["../invalid.js", "./dep.js"]}}',
 		'{"imports": {"#dep": ["/invalid.js", "./dep.js"]}}',
 		'{"imports": {"#dep": ["node:fs", "./dep.js"]}}',
@@ -26,6 +26,7 @@ test.snapshot({
 		'{"exports": {".": ["./a.js", "./b.js"]}}',
 		'{"imports": {"#dep": ["./a.js", "./b.js"]}}',
 		'{"imports": {"#dep": ["missing-package", "./dep.js"]}}',
+		'{"exports": ["./a%2Finvalid.js", "./fallback.js"]}',
 		`{
 	"exports": {
 		".": {

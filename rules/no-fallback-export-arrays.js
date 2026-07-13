@@ -1,4 +1,4 @@
-import {findMember, getRootObject, invalidPackageTargetPattern} from './utils/index.js';
+import {getRootObject, findMember} from './utils/index.js';
 
 const MESSAGE_ID = 'no-fallback-export-arrays';
 
@@ -7,14 +7,25 @@ const messages = {
 };
 
 /**
+Whether a path segment is invalid in a package target.
+*/
+function isInvalidPackageTargetSegment(segment) {
+	let decodedSegment;
+
+	try {
+		decodedSegment = decodeURIComponent(segment);
+	} catch {
+		return false;
+	}
+
+	return decodedSegment === '.' || decodedSegment === '..' || decodedSegment.toLowerCase() === 'node_modules';
+}
+
+/**
 Whether a string is an invalid relative package target that Node.js skips in a fallback array.
 */
 function isInvalidRelativePackageTarget(value) {
-	const relativePath = value.slice(2);
-	const segments = relativePath.split(/[/\\]/u);
-
-	return segments.some(segment => segment === '' || segment === '.' || segment === '..' || segment.toLowerCase() === 'node_modules')
-		|| invalidPackageTargetPattern.test(relativePath);
+	return value.slice(2).split(/[/\\]/u).some(segment => isInvalidPackageTargetSegment(segment));
 }
 
 /**

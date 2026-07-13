@@ -43,7 +43,22 @@ Message:
 
 `;
 
-exports[`invalid(4): {\n\t\"exports\": {\n\t\t\".\": {\n\t\t\t\"import\": [\"./import.js\", \"./fallback.js\"]\n\t\t}\n\t}\n} 1`] = `
+exports[`invalid(4): {\"exports\": [\"./a%2Finvalid.js\", \"./fallback.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": ["./a%2Finvalid.js", "./fallback.js"]}
+
+`;
+
+exports[`invalid(4): {\"exports\": [\"./a%2Finvalid.js\", \"./fallback.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": ["./a%2Finvalid.js", "./fallback.js"]}
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ String-target arrays in \`exports\` are not fallback lists in Node.js; a missing first file or package does not make Node.js try the next target.
+
+`;
+
+exports[`invalid(5): {\n\t\"exports\": {\n\t\t\".\": {\n\t\t\t\"import\": [\"./import.js\", \"./fallback.js\"]\n\t\t}\n\t}\n} 1`] = `
 
 [Input]
   1 | {
@@ -56,7 +71,7 @@ exports[`invalid(4): {\n\t\"exports\": {\n\t\t\".\": {\n\t\t\t\"import\": [\"./i
 
 `;
 
-exports[`invalid(4): {\n\t\"exports\": {\n\t\t\".\": {\n\t\t\t\"import\": [\"./import.js\", \"./fallback.js\"]\n\t\t}\n\t}\n} 2`] = `
+exports[`invalid(5): {\n\t\"exports\": {\n\t\t\".\": {\n\t\t\t\"import\": [\"./import.js\", \"./fallback.js\"]\n\t\t}\n\t}\n} 2`] = `
 
 Message:
   1 | {
@@ -70,7 +85,7 @@ Message:
 
 `;
 
-exports[`invalid(5): {\n\t\"exports\": [\n\t\t\"./a.js\",\n\t\t\"./b.js\"\n\t]\n} 1`] = `
+exports[`invalid(6): {\n\t\"exports\": [\n\t\t\"./a.js\",\n\t\t\"./b.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -82,7 +97,7 @@ exports[`invalid(5): {\n\t\"exports\": [\n\t\t\"./a.js\",\n\t\t\"./b.js\"\n\t]\n
 
 `;
 
-exports[`invalid(5): {\n\t\"exports\": [\n\t\t\"./a.js\",\n\t\t\"./b.js\"\n\t]\n} 2`] = `
+exports[`invalid(6): {\n\t\"exports\": [\n\t\t\"./a.js\",\n\t\t\"./b.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -98,7 +113,7 @@ Message:
 
 `;
 
-exports[`invalid(6): {\n\t\"imports\": {\n\t\t\"#dep\": [\n\t\t\t[\"./a.js\", \"./b.js\"]\n\t\t]\n\t}\n} 1`] = `
+exports[`invalid(7): {\n\t\"imports\": {\n\t\t\"#dep\": [\n\t\t\t[\"./a.js\", \"./b.js\"]\n\t\t]\n\t}\n} 1`] = `
 
 [Input]
   1 | {
@@ -111,7 +126,7 @@ exports[`invalid(6): {\n\t\"imports\": {\n\t\t\"#dep\": [\n\t\t\t[\"./a.js\", \"
 
 `;
 
-exports[`invalid(6): {\n\t\"imports\": {\n\t\t\"#dep\": [\n\t\t\t[\"./a.js\", \"./b.js\"]\n\t\t]\n\t}\n} 2`] = `
+exports[`invalid(7): {\n\t\"imports\": {\n\t\t\"#dep\": [\n\t\t\t[\"./a.js\", \"./b.js\"]\n\t\t]\n\t}\n} 2`] = `
 
 Message:
   1 | {
