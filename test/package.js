@@ -91,13 +91,19 @@ test('the recommended config works end-to-end through ESLint', () => {
 		'legacy entry points should be reported via the recommended config',
 	);
 
-	const invalidTypesTargetProblems = linter.verify('{"exports": {"types": {"import": false}, "import": "./index.js"}}', config, {filename: 'package.json'});
-	const relevantInvalidTypesTargetProblems = invalidTypesTargetProblems
+	const getRelevantTypesTargetProblems = code => linter.verify(code, config, {filename: 'package.json'})
 		.filter(message => ['package-json/require-types-in-exports', 'package-json/valid-fields'].includes(message.ruleId))
 		.map(message => `${message.ruleId}/${message.messageId}`)
 		.toSorted(byName);
-	assert.deepEqual(relevantInvalidTypesTargetProblems, [
+	assert.deepEqual(getRelevantTypesTargetProblems('{"exports": {"types": {"import": [[{"node": false}]]}, "import": {"node": "./index.js"}}}'), [
 		'package-json/require-types-in-exports/missing',
+		'package-json/valid-fields/exports/targetType',
+	]);
+	assert.deepEqual(getRelevantTypesTargetProblems('{"exports": {"types": "", "default": "./index.js"}}'), [
+		'package-json/require-types-in-exports/missing',
+		'package-json/valid-fields/exports/relativePath',
+	]);
+	assert.deepEqual(getRelevantTypesTargetProblems('{"exports": {"types": ["./index.d.ts", false], "default": "./index.js"}}'), [
 		'package-json/valid-fields/exports/targetType',
 	]);
 

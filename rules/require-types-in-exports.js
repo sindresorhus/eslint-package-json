@@ -180,7 +180,7 @@ function * iterateStringLeaves(node) {
 	}
 }
 
-function hasInvalidTargetType(node) {
+function hasMalformedTarget(node) {
 	node = getFirstTarget(node);
 
 	if (!node) {
@@ -191,12 +191,24 @@ function hasInvalidTargetType(node) {
 		return true;
 	}
 
-	return node.type === 'Object' && node.members.some(member => hasInvalidTargetType(member.value));
+	if (node.type === 'String') {
+		return node.value === '';
+	}
+
+	return node.type === 'Object' && node.members.some(member => hasMalformedTarget(member.value));
+}
+
+function findRuntimeConditionMember(objectNode, key) {
+	if (key === 'default') {
+		return;
+	}
+
+	return findMember(objectNode, key);
 }
 
 function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
 	if (runtimeKey) {
-		const matchingMember = node.members.find(member => getKey(member) === runtimeKey);
+		const matchingMember = findRuntimeConditionMember(node, runtimeKey);
 
 		if (matchingMember) {
 			const hasMatchingTypes = hasTypesCoverage(matchingMember.value, runtimeNode);
@@ -281,7 +293,7 @@ function * iterateRuntimeStringLeaves(node) {
 
 function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode, runtimeKey) {
 	if (runtimeKey && fallbackNode.type === 'Object') {
-		const matchingMember = fallbackNode.members.find(member => getKey(member) === runtimeKey);
+		const matchingMember = findRuntimeConditionMember(fallbackNode, runtimeKey);
 
 		if (!matchingMember && runtimeNode.type === 'Object') {
 			yield * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode);
@@ -343,13 +355,14 @@ function * iterateTypeRuntimePairsWithoutKey(typeNode, runtimeNode) {
 	const defaultMember = typeNode.members.find(member => getKey(member) === 'default');
 	const unversionedTypesMember = typesMembers.find(member => getKey(member) === 'types');
 	const hasUnversionedTypes = Boolean(unversionedTypesMember && hasTypesCoverage(unversionedTypesMember.value, runtimeNode));
+	const canUnversionedTypesFallThrough = !unversionedTypesMember || canTypeTargetFallThrough(unversionedTypesMember.value);
 
 	for (const typesMember of typesMembers) {
 		yield * iterateTypeRuntimePairs(typesMember.value, runtimeNode);
 	}
 
 	if (typesMembers.length > 0) {
-		if (defaultMember && !hasUnversionedTypes) {
+		if (defaultMember && !hasUnversionedTypes && canUnversionedTypesFallThrough) {
 			if (unversionedTypesMember) {
 				yield * iterateUncoveredFallbackPairs(defaultMember.value, unversionedTypesMember.value, runtimeNode);
 			} else {
@@ -385,7 +398,7 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 			const fallbackMember = typeNode.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
 
 			if (runtimeKey) {
-				const matchingMember = typeNode.members.find(member => getKey(member) === runtimeKey);
+				const matchingMember = findRuntimeConditionMember(typeNode, runtimeKey);
 
 				if (matchingMember) {
 					const matchingTarget = getTargetWithFallback(matchingMember.value, fallbackMember === matchingMember ? undefined : fallbackMember);
@@ -555,7 +568,7 @@ function * checkTypesMembers(objectNode) {
 			};
 		}
 
-		if (!hasInvalidTargetType(member.value) && (typeTargets.length === 0 || typeTargets.some(target => target.value === ''))) {
+		if (!hasMalformedTarget(member.value) && typeTargets.length === 0) {
 			yield {
 				node: member.value,
 				messageId: MESSAGE_ID_TYPES_VALUE,
@@ -631,7 +644,7 @@ function getNarrowedTypeNodes(nodes, runtimeKey) {
 			continue;
 		}
 
-		const matchingMember = node.members.find(member => getKey(member) === runtimeKey);
+		const matchingMember = findRuntimeConditionMember(node, runtimeKey);
 		const fallbackMember = node.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
 
 		if (matchingMember) {

@@ -252,14 +252,6 @@ exports[`invalid(21): {\"exports\": {\"types\": \"\", \"default\": \"./index.js\
 
 Message:
 > 1 | {"exports": {"types": "", "default": "./index.js"}}
-    |                       ^^ The \`types\` condition must point to a declaration file.
-
-`;
-
-exports[`invalid(21): {\"exports\": {\"types\": \"\", \"default\": \"./index.js\"}} 3`] = `
-
-Message:
-> 1 | {"exports": {"types": "", "default": "./index.js"}}
     |                                      ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
 
 `;
@@ -272,14 +264,6 @@ exports[`invalid(22): {\"exports\": {\"types\": [\"\", \"./index.d.ts\"], \"defa
 `;
 
 exports[`invalid(22): {\"exports\": {\"types\": [\"\", \"./index.d.ts\"], \"default\": \"./index.js\"}} 2`] = `
-
-Message:
-> 1 | {"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}
-    |                       ^^^^^^^^^^^^^^^^^^^^ The \`types\` condition must point to a declaration file.
-
-`;
-
-exports[`invalid(22): {\"exports\": {\"types\": [\"\", \"./index.d.ts\"], \"default\": \"./index.js\"}} 3`] = `
 
 Message:
 > 1 | {"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}
@@ -329,6 +313,14 @@ exports[`invalid(25): {\"exports\": {\"types\": {\"types\": null, \"default\": \
 Message:
 > 1 | {"exports": {"types": {"types": null, "default": "./fallback.d.ts"}, "default": "./index.js"}}
     |                                 ^^^^ The \`types\` condition must point to a declaration file.
+
+`;
+
+exports[`invalid(25): {\"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.ts\"}, \"default\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types": {"types": null, "default": "./fallback.d.ts"}, "default": "./index.js"}}
+    |                                                                                 ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
 
 `;
 
@@ -1058,6 +1050,29 @@ exports[`invalid(65): {\"exports\": {\"types\": 1, \"default\": \"./index.js\"}}
 Message:
 > 1 | {"exports": {"types": 1, "default": "./index.js"}}
     |                                     ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(66): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 1`] = `
+
+[Input]
+  1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
+
+`;
+
+exports[`invalid(66): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 2`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
+    |                                                   ^^^^ The \`types\` condition must point to a declaration file.
+
+`;
+
+exports[`invalid(66): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 3`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
+    |                                                                                                    ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 

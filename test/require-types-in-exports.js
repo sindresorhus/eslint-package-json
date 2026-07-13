@@ -94,6 +94,8 @@ test.snapshot({
 		'{"exports": {"types": "./index.d.ts", "default": "./package.json"}}',
 		// TypeScript supports caret, tilde, and wildcard selectors.
 		'{"exports": {"types@^5 || ~4.7 || 3.x": "./index.d.ts", "default": "./index.js"}}',
+		// An active type condition takes precedence over an incompatible declaration-side default.
+		'{"type": "module", "exports": {"types": {"types": "./index.d.mts", "default": "./fallback.d.cts"}, "default": "./index.mjs"}}',
 	],
 	invalid: [
 		// A top-level declaration does not cover an exported runtime branch.
@@ -201,5 +203,7 @@ test.snapshot({
 		'{"type": "module", "exports": {"types@>=5": {"import": null, "require": "./r.d.cts"}, "types": {"import": "./i.d.mts", "require": "./r.d.cts"}, "import": "./i.mjs", "require": "./r.cjs"}}',
 		// Generic target-type validation belongs to `valid-fields`.
 		'{"exports": {"types": 1, "default": "./index.js"}}',
+		// A terminal type condition prevents an incompatible declaration-side default from participating.
+		'{"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}',
 	],
 });
