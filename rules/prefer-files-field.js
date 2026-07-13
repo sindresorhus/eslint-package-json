@@ -16,6 +16,7 @@ const messages = {
 };
 
 const automaticallyIncludedFields = new Set(['main', 'bin']);
+const maximumCoverageComparisons = 1000;
 
 function normalizePath(value) {
 	return value.replace(/^\.\//u, '');
@@ -89,27 +90,27 @@ function * iterateEntryPoints(root) {
 }
 
 function matchesSimpleGlob(pattern, value) {
-	let expression = '';
+	const wildcardStart = pattern.indexOf('*');
 
-	for (let index = 0; index < pattern.length; index++) {
-		const character = pattern[index];
-
-		if (character === '*') {
-			if (pattern[index + 1] === '*' && pattern[index + 2] === '/') {
-				expression += '(?:.*/)?';
-				index += 2;
-			} else if (pattern[index + 1] === '*') {
-				expression += '.*';
-				index++;
-			} else {
-				expression += '[^/]*';
-			}
-		} else {
-			expression += character.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
-		}
+	if (wildcardStart === -1) {
+		return pattern === value;
 	}
 
-	return new RegExp(`^${expression}$`, 'u').test(value);
+	const wildcardEnd = pattern.lastIndexOf('*');
+	const prefix = pattern.slice(0, wildcardStart);
+	const hasOptionalDirectory = wildcardEnd === wildcardStart + 1 && pattern[wildcardEnd + 1] === '/';
+	const suffix = pattern.slice(wildcardEnd + (hasOptionalDirectory ? 2 : 1));
+
+	if (prefix.length + suffix.length > value.length || !value.startsWith(prefix) || !value.endsWith(suffix)) {
+		return false;
+	}
+
+	if (wildcardStart !== wildcardEnd) {
+		// Multiple wildcards are ambiguous, so only require their literal prefix and suffix to match.
+		return true;
+	}
+
+	return !value.slice(prefix.length, value.length - suffix.length).includes('/');
 }
 
 function isCovered(target, patterns) {
@@ -184,15 +185,21 @@ const create = context => ({
 			return;
 		}
 
+		const entryPoints = [...iterateEntryPoints(root)];
+
+		if (entryPoints.length * patterns.length > maximumCoverageComparisons) {
+			return;
+		}
+
 		const automaticallyIncluded = new Set();
 
-		for (const entryPoint of iterateEntryPoints(root)) {
+		for (const entryPoint of entryPoints) {
 			if (automaticallyIncludedFields.has(entryPoint.field)) {
 				automaticallyIncluded.add(normalizePath(entryPoint.value));
 			}
 		}
 
-		for (const entryPoint of iterateEntryPoints(root)) {
+		for (const entryPoint of entryPoints) {
 			if (automaticallyIncluded.has(normalizePath(entryPoint.value)) || isCovered(entryPoint.value, patterns)) {
 				continue;
 			}

@@ -12,9 +12,7 @@ Validate the structure and values of individual `package.json` fields when they 
 
 Each field is validated only when it exists; use [`require-fields`](require-fields.md) to enforce presence.
 
-In addition to JSON shape, this includes semantic checks such as npm-compatible repository URLs and valid `exports`/`imports` target values. Condition ordering and type coverage belong to [`require-default-condition`](require-default-condition.md) and [`require-types-in-exports`](require-types-in-exports.md) so each diagnostic has one owner.
-
-The legacy fields `main`, `module`, `browser`, `types`, and `typings` are intentionally not validated.
+Semantic checks include repository URLs and `exports`/`imports` targets. Condition ordering and type coverage belong to [`require-default-condition`](require-default-condition.md) and [`require-types-in-exports`](require-types-in-exports.md). Legacy entry-point fields (`main`, `module`, `browser`, `types`, and `typings`) are intentionally ignored.
 
 The following fields are validated:
 
@@ -50,7 +48,6 @@ The following fields are validated:
 - `optionalDependencies`
 - `peerDependencies`
 - `peerDependenciesMeta`
-- `bundleDependencies`
 - `bundledDependencies`
 - `overrides`
 

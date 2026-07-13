@@ -72,3 +72,63 @@ Message:
     |             ^^^^^^^^^^^^^^^ Entry point \`./src/**/*.js\` is not covered by the \`files\` allowlist.
 
 `;
+
+exports[`invalid(6): {\"exports\": \"./dist/nested/foo.js\", \"files\": [\"dist/*.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": "./dist/nested/foo.js", "files": ["dist/*.js"]}
+
+`;
+
+exports[`invalid(6): {\"exports\": \"./dist/nested/foo.js\", \"files\": [\"dist/*.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": "./dist/nested/foo.js", "files": ["dist/*.js"]}
+    |             ^^^^^^^^^^^^^^^^^^^^^^ Entry point \`./dist/nested/foo.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(7): {\"exports\": \"./a\", \"files\": [\"a*a\"]} 1`] = `
+
+[Input]
+  1 | {"exports": "./a", "files": ["a*a"]}
+
+`;
+
+exports[`invalid(7): {\"exports\": \"./a\", \"files\": [\"a*a\"]} 2`] = `
+
+Message:
+> 1 | {"exports": "./a", "files": ["a*a"]}
+    |             ^^^^^ Entry point \`./a\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(8): {\"exports\": \"./ba\", \"files\": [\"a\"]} 1`] = `
+
+[Input]
+  1 | {"exports": "./ba", "files": ["a"]}
+
+`;
+
+exports[`invalid(8): {\"exports\": \"./ba\", \"files\": [\"a\"]} 2`] = `
+
+Message:
+> 1 | {"exports": "./ba", "files": ["a"]}
+    |             ^^^^^^ Entry point \`./ba\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(9): {\"exports\":\"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\",\"files\":[\"*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z\"]} 1`] = `
+
+[Input]
+  1 | {"exports":"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js","files":["*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z"]}
+
+`;
+
+exports[`invalid(9): {\"exports\":\"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\",\"files\":[\"*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z\"]} 2`] = `
+
+Message:
+> 1 | {"exports":"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js","files":["*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z"]}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entry point \`./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\` is not covered by the \`files\` allowlist.
+
+`;

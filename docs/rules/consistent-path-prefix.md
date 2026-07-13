@@ -8,9 +8,7 @@
 
 <!-- end auto-generated rule header -->
 
-Enforce a consistent `./` prefix on legacy local file-path fields. This rule is stylistic: the package-map validators enforce the mandatory `./` prefix for `exports` targets and local `imports` targets.
-
-Checks the `main`, `module`, `browser`, `types`, `typings`, and `bin` fields. Absolute paths, URLs, and globs are ignored. Any path containing a `..` segment is reported because it would escape the package, regardless of the selected prefix style.
+Enforce a consistent `./` prefix in the legacy `main`, `module`, `browser`, `types`, `typings`, and `bin` fields. Absolute paths, URLs, and globs are ignored; other paths with a `..` segment are reported. Mandatory prefixes in `exports` and `imports` are handled by [`valid-fields`](valid-fields.md).
 
 ## Options
 

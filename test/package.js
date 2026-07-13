@@ -69,6 +69,11 @@ test('prefer-exports is recommended', () => {
 	assert.equal(plugin.configs.recommended.rules[ruleKey], 'error');
 });
 
+test('prefer-type-module is recommended', () => {
+	const ruleKey = 'package-json/prefer-type-module';
+	assert.equal(plugin.configs.recommended.rules[ruleKey], 'error');
+});
+
 test('all config contains every rule set to error', () => {
 	const actual = Object.keys(plugin.configs.all.rules).map(key => withoutPrefix(key));
 	assert.deepEqual(actual.toSorted(byName), ruleIds.toSorted(byName));
