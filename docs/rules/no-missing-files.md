@@ -4,17 +4,15 @@
 
 <!-- end auto-generated rule header -->
 
-This rule checks that local targets in `exports` and positive patterns in `files` match something under the package root.
+This rule checks that local `exports` and `bin` targets and positive `files` patterns exist under the package root. Matching is case-sensitive, even on case-insensitive filesystems.
 
-Path matching is case-sensitive, even on case-insensitive filesystems.
+Run ESLint after building when package metadata references generated files.
 
-The rule checks the filesystem when ESLint runs. Generated output such as `dist` or `distribution` is supported when it already exists, so run ESLint after the build when the package metadata references generated files.
+For `exports`, conditional branches are checked independently and arrays are treated as fallbacks. A `*` target may match nested path segments and needs to match only one file. Other glob characters are literal, and directories are invalid targets.
 
-For `exports`, conditional branches are checked independently. Export arrays are treated as fallbacks and are valid when at least one candidate exists. Node's `*` target patterns use string replacement semantics, so `*` can match nested path segments. They only need to match at least one file because the complete set of possible subpaths cannot be determined statically. Other glob characters are treated as literal target characters. Directory targets are not considered valid export targets.
+For `files`, entries may match files or directories. Negated patterns are ignored. This is not a complete npm packlist check; use `npm pack --dry-run` to verify package contents.
 
-For `files`, positive paths and glob patterns must match a file or directory. Negated patterns are exclusions and are ignored by this rule. The check only verifies matches under the package root. It does not reproduce npm's complete packlist behavior, so use `npm pack --dry-run` to verify the final package contents.
-
-This rule focuses on existence, not path syntax. Malformed values are ignored rather than reported as missing. It intentionally does not check legacy fields such as `main`, `module`, `browser`, `types`, `typings`, `es2015`, `jsnext:main`, `bin`, `man`, or `directories`. It also does not check `imports` or custom metadata fields.
+Malformed values are ignored. The rule does not check `imports`, custom metadata, or legacy fields such as `main`, `module`, `browser`, `types`, `typings`, `es2015`, `jsnext:main`, `man`, and `directories`.
 
 ## Examples
 
@@ -46,36 +44,6 @@ This rule focuses on existence, not path syntax. Malformed values are ignored ra
 {
 	"exports": {
 		"./rules/*": "./rules/*.js"
-	}
-}
-```
-
-```json
-// ❌
-{
-	"exports": [
-		"./missing.js",
-		"./also-missing.js"
-	]
-}
-```
-
-```json
-// ✅
-{
-	"exports": [
-		"./missing.js",
-		"./index.js"
-	]
-}
-```
-
-```json
-// ✅
-{
-	"exports": {
-		"import": "./index.js",
-		"require": "./index.js"
 	}
 }
 ```
@@ -117,10 +85,25 @@ This rule focuses on existence, not path syntax. Malformed values are ignored ra
 ```
 
 ```json
+// ❌
+{
+	"name": "package-json",
+	"bin": "./missing-cli.js"
+}
+```
+
+```json
+// ✅
+{
+	"name": "package-json",
+	"bin": "./index.js"
+}
+```
+
+```json
 // ✅
 {
 	"main": "./missing.js",
-	"types": "./missing.d.ts",
-	"bin": "./missing-cli.js"
+	"types": "./missing.d.ts"
 }
 ```

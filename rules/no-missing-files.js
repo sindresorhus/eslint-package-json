@@ -8,10 +8,12 @@ import {
 } from './utils/index.js';
 
 const MESSAGE_ID_EXPORT = 'missingExportTarget';
+const MESSAGE_ID_BIN = 'missingBinTarget';
 const MESSAGE_ID_FILES = 'missingFilesPattern';
 
 const messages = {
 	[MESSAGE_ID_EXPORT]: 'Export target `{{value}}` does not exist.',
+	[MESSAGE_ID_BIN]: '`bin` target `{{value}}` does not exist.',
 	[MESSAGE_ID_FILES]: 'The `files` pattern `{{value}}` does not match any file or directory.',
 };
 
@@ -19,6 +21,7 @@ const windowsAbsolutePathPattern = /^[a-z]:[/\\]/iu;
 const atExtglobPattern = /@\(/u;
 const absolutePathPattern = /^(?:\/|[a-z]:[/\\])/iu;
 const invalidExportTargetPattern = /(?:^|\/)(?:\.{1,2}|node_modules)(?:\/|$)|%2e|%2f|%5c|(?:^|\/)%6eode_modules(?:\/|$)/iu;
+const maximumPatternExpansions = 256;
 
 const isGlobPattern = value => hasGlob(value) || atExtglobPattern.test(value);
 
@@ -116,54 +119,104 @@ const findClosingBrace = (value, openingIndex) => {
 };
 
 /**
-Expand brace alternatives that span path segments before applying the exact-case matcher.
+Split alternatives while preserving nested expressions.
 */
-const expandBracePatterns = pattern => {
-	const openingIndex = pattern.indexOf('{');
+const splitAlternatives = (value, separator, openingCharacter, closingCharacter) => {
+	const alternatives = [];
+	let depth = 0;
+	let startIndex = 0;
+
+	for (let index = 0; index < value.length; index++) {
+		if (value[index] === openingCharacter) {
+			depth++;
+		} else if (value[index] === closingCharacter) {
+			depth--;
+		} else if (value[index] === separator && depth === 0) {
+			alternatives.push(value.slice(startIndex, index));
+			startIndex = index + 1;
+		}
+	}
+
+	alternatives.push(value.slice(startIndex));
+	return alternatives;
+};
+
+/**
+Find an expansion token outside a glob character class.
+*/
+const findExpansionToken = (value, token) => {
+	let isInCharacterClass = false;
+
+	for (let index = 0; index < value.length; index++) {
+		if (value[index] === '[') {
+			isInCharacterClass = true;
+		} else if (value[index] === ']') {
+			isInCharacterClass = false;
+		} else if (!isInCharacterClass && value.startsWith(token, index)) {
+			return index;
+		}
+	}
+
+	return -1;
+};
+
+/**
+Consume one bounded pattern-expansion step.
+*/
+const usePatternExpansionStep = expansionState => {
+	expansionState.stepCount++;
+
+	if (expansionState.stepCount > maximumPatternExpansions) {
+		expansionState.isInvalid = true;
+		return false;
+	}
+
+	return true;
+};
+
+/**
+Lazily expand brace alternatives that span path segments.
+*/
+function * iterateBracePatterns(pattern, expansionState) {
+	if (expansionState.isInvalid) {
+		return;
+	}
+
+	const openingIndex = findExpansionToken(pattern, '{');
 
 	if (openingIndex === -1) {
-		return [pattern];
+		yield pattern;
+		return;
+	}
+
+	if (!usePatternExpansionStep(expansionState)) {
+		return;
 	}
 
 	const closingIndex = findClosingBrace(pattern, openingIndex);
 
 	if (closingIndex === -1) {
-		return [pattern];
+		expansionState.isInvalid = true;
+		return;
 	}
 
-	const content = pattern.slice(openingIndex + 1, closingIndex);
-	const alternatives = [];
-	let depth = 0;
-	let startIndex = 0;
-
-	for (let index = 0; index < content.length; index++) {
-		if (content[index] === '{') {
-			depth++;
-		} else if (content[index] === '}') {
-			depth--;
-		} else if (content[index] === ',' && depth === 0) {
-			alternatives.push(content.slice(startIndex, index));
-			startIndex = index + 1;
-		}
-	}
-
-	if (alternatives.length === 0) {
-		const prefix = pattern.slice(0, closingIndex + 1);
-		const suffixPatterns = expandBracePatterns(pattern.slice(closingIndex + 1));
-		return suffixPatterns.map(suffix => prefix + suffix);
-	}
-
-	alternatives.push(content.slice(startIndex));
 	const prefix = pattern.slice(0, openingIndex);
+	const content = pattern.slice(openingIndex + 1, closingIndex);
 	const suffix = pattern.slice(closingIndex + 1);
-	const expandedPatterns = [];
+	const alternatives = splitAlternatives(content, ',', '{', '}');
+
+	if (alternatives.length === 1) {
+		for (const suffixPattern of iterateBracePatterns(suffix, expansionState)) {
+			yield pattern.slice(0, closingIndex + 1) + suffixPattern;
+		}
+
+		return;
+	}
 
 	for (const alternative of alternatives) {
-		expandedPatterns.push(...expandBracePatterns(prefix + alternative + suffix));
+		yield * iterateBracePatterns(prefix + alternative + suffix, expansionState);
 	}
-
-	return expandedPatterns;
-};
+}
 
 /**
 Find the closing parenthesis for a glob extglob expression.
@@ -187,55 +240,68 @@ const findClosingParenthesis = (value, openingIndex) => {
 };
 
 /**
-Expand simple `@()` extglobs before applying the exact-case matcher.
+Lazily expand simple `@()` extglobs.
 */
-const expandAtExtglobPatterns = pattern => {
-	const openingIndex = pattern.indexOf('@(');
+function * iterateAtExtglobPatterns(pattern, expansionState) {
+	if (expansionState.isInvalid) {
+		return;
+	}
+
+	const openingIndex = findExpansionToken(pattern, '@(');
 
 	if (openingIndex === -1) {
-		return [pattern];
+		yield pattern;
+		return;
+	}
+
+	if (!usePatternExpansionStep(expansionState)) {
+		return;
 	}
 
 	const closingIndex = findClosingParenthesis(pattern, openingIndex + 1);
 
 	if (closingIndex === -1) {
-		return [pattern];
+		expansionState.isInvalid = true;
+		return;
 	}
 
+	const prefix = pattern.slice(0, openingIndex);
 	const content = pattern.slice(openingIndex + 2, closingIndex);
-	const alternatives = [];
-	let depth = 0;
-	let startIndex = 0;
+	const suffix = pattern.slice(closingIndex + 1);
 
-	for (let index = 0; index < content.length; index++) {
-		if (content[index] === '(') {
-			depth++;
-		} else if (content[index] === ')') {
-			depth--;
-		} else if (content[index] === '|' && depth === 0) {
-			alternatives.push(content.slice(startIndex, index));
-			startIndex = index + 1;
+	for (const alternative of splitAlternatives(content, '|', '(', ')')) {
+		yield * iterateAtExtglobPatterns(prefix + alternative + suffix, expansionState);
+	}
+}
+
+/**
+Expand supported glob alternatives within the work limit.
+*/
+const expandGlobPatterns = pattern => {
+	const expansionState = {stepCount: 0, isInvalid: false};
+	const patterns = [];
+
+	for (const bracePattern of iterateBracePatterns(pattern, expansionState)) {
+		for (const expandedPattern of iterateAtExtglobPatterns(bracePattern, expansionState)) {
+			if (patterns.length === maximumPatternExpansions) {
+				return undefined;
+			}
+
+			patterns.push(expandedPattern);
 		}
 	}
 
-	alternatives.push(content.slice(startIndex));
-	const prefix = pattern.slice(0, openingIndex);
-	const suffix = pattern.slice(closingIndex + 1);
-	const expandedPatterns = [];
-
-	for (const alternative of alternatives) {
-		expandedPatterns.push(...expandAtExtglobPatterns(prefix + alternative + suffix));
-	}
-
-	return expandedPatterns;
+	return expansionState.isInvalid ? undefined : patterns;
 };
 
 /**
 Check whether a glob pattern cannot expand to an absolute path.
 */
-const isSafeGlobPattern = pattern => expandBracePatterns(pattern)
-	.flatMap(pattern => expandAtExtglobPatterns(pattern))
-	.every(pattern => !absolutePathPattern.test(pattern));
+const isSafeGlobPattern = pattern => {
+	const expandedPatterns = expandGlobPatterns(pattern);
+
+	return Boolean(expandedPatterns?.length) && expandedPatterns.every(pattern => !absolutePathPattern.test(pattern));
+};
 
 /**
 Match one character-class segment of a glob pattern.
@@ -258,16 +324,14 @@ const matchCharacterClass = ({valueSegment, patternSegment, valueIndex, patternI
 Check whether a filesystem path matches a glob pattern with exact casing.
 */
 const matchesGlobExactly = (value, pattern) => {
-	const bracePatterns = expandBracePatterns(pattern);
+	const expandedPatterns = expandGlobPatterns(pattern);
 
-	if (bracePatterns.length > 1) {
-		return bracePatterns.some(bracePattern => matchesGlobExactly(value, bracePattern));
+	if (!expandedPatterns) {
+		return false;
 	}
 
-	const extglobPatterns = expandAtExtglobPatterns(pattern);
-
-	if (extglobPatterns.length > 1) {
-		return extglobPatterns.some(extglobPattern => matchesGlobExactly(value, extglobPattern));
+	if (expandedPatterns.length !== 1 || expandedPatterns[0] !== pattern) {
+		return expandedPatterns.some(expandedPattern => matchesGlobExactly(value, expandedPattern));
 	}
 
 	const valueSegments = value.replaceAll(path.sep, '/').replace(/^\.\//u, '').split('/');
@@ -419,14 +483,44 @@ const matchesExportPattern = (value, pattern) => {
 };
 
 /**
-Get the smallest directory tree that can contain an exports target match.
+Get the literal directory before the first export wildcard.
 */
-const getExportScanPattern = pattern => {
+const getExportScanDirectory = pattern => {
 	const wildcardIndex = pattern.indexOf('*');
 	const directorySeparatorIndex = pattern.lastIndexOf('/', wildcardIndex);
 
-	return directorySeparatorIndex === -1 ? '**' : `${pattern.slice(0, directorySeparatorIndex)}/**`;
+	return directorySeparatorIndex === -1 ? '' : pattern.slice(0, directorySeparatorIndex);
 };
+
+/**
+Iterate files below an exports target's literal directory without scanning dependencies.
+*/
+function * iterateExportFiles(packageDirectory, relativeDirectory) {
+	const directories = [relativeDirectory];
+
+	while (directories.length > 0) {
+		const directory = directories.pop();
+		let entries;
+
+		try {
+			entries = fs.readdirSync(path.join(packageDirectory, directory), {withFileTypes: true});
+		} catch {
+			continue;
+		}
+
+		for (const entry of entries) {
+			const relativePath = directory ? `${directory}/${entry.name}` : entry.name;
+
+			if (entry.isDirectory()) {
+				if (!invalidExportTargetPattern.test(relativePath)) {
+					directories.push(relativePath);
+				}
+			} else if (entry.isFile() || hasExactPath(packageDirectory, `./${relativePath}`, true)) {
+				yield relativePath;
+			}
+		}
+	}
+}
 
 /**
 Check whether an exports target has at least one exact-case file match.
@@ -438,25 +532,19 @@ const hasMatchingExportTarget = (packageDirectory, value) => {
 		return hasExactPath(packageDirectory, value, true);
 	}
 
-	const scanPattern = getExportScanPattern(pattern);
+	const scanDirectory = getExportScanDirectory(pattern);
 
-	if (!isSafeGlobPattern(scanPattern)) {
+	if (scanDirectory && !hasExactPath(packageDirectory, `./${scanDirectory}`, false)) {
 		return false;
 	}
 
-	try {
-		return fs.globSync(getDotFilePattern(scanPattern), {
-			cwd: packageDirectory,
-		}).some(match => {
-			const relativePath = match.replaceAll(path.sep, '/');
-
-			return !invalidExportTargetPattern.test(relativePath)
-				&& matchesExportPattern(relativePath, pattern)
-				&& hasExactPath(packageDirectory, `./${relativePath}`, true);
-		});
-	} catch {
-		return false;
+	for (const relativePath of iterateExportFiles(packageDirectory, scanDirectory)) {
+		if (!invalidExportTargetPattern.test(relativePath) && matchesExportPattern(relativePath, pattern)) {
+			return true;
+		}
 	}
+
+	return false;
 };
 
 /**
@@ -478,6 +566,50 @@ Get the package directory for a linted package.json, using the working directory
 const getPackageDirectory = context => {
 	const {filename, cwd} = context;
 	return filename.startsWith('<') ? cwd : path.dirname(path.resolve(cwd, filename));
+};
+
+/**
+Report a missing `bin` target.
+*/
+const checkBinTarget = (context, packageDirectory, node) => {
+	if (node.type !== 'String') {
+		return;
+	}
+
+	const {value} = node;
+	const relativePath = value.startsWith('./') ? value.slice(2) : value;
+
+	if (
+		!relativePath
+		|| value.includes('://')
+		|| windowsAbsolutePathPattern.test(relativePath)
+		|| !isSafePackagePath(relativePath)
+	) {
+		return;
+	}
+
+	if (!hasExactPath(packageDirectory, `./${relativePath}`, true)) {
+		context.report({
+			node,
+			messageId: MESSAGE_ID_BIN,
+			data: {value},
+		});
+	}
+};
+
+/**
+Check the string or object form of `bin`.
+*/
+const checkBin = (context, packageDirectory, root) => {
+	const binMember = findMember(root, 'bin');
+
+	if (binMember?.value.type === 'String') {
+		checkBinTarget(context, packageDirectory, binMember.value);
+	} else if (binMember?.value.type === 'Object') {
+		for (const member of binMember.value.members) {
+			checkBinTarget(context, packageDirectory, member.value);
+		}
+	}
 };
 
 /**
@@ -581,6 +713,8 @@ const create = context => ({
 		if (exportsMember) {
 			createExportChecker(context, packageDirectory)(exportsMember.value);
 		}
+
+		checkBin(context, packageDirectory, root);
 
 		const filesMember = findMember(root, 'files');
 
