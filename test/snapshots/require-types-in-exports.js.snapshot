@@ -933,6 +933,29 @@ Message:
 
 `;
 
+exports[`invalid(59): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
+
+`;
+
+exports[`invalid(59): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
+    |              ^^^^^^^^^^^^^^^^^^^^^^ Versioned type condition \`types@>=5 ||   || <4\` must use TypeScript-compatible semver syntax.
+
+`;
+
+exports[`invalid(59): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
+    |                                                                 ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
 exports[`invalid(6): {\"exports\": {\"import\": {\"default\": \"./index.js\", \"types\": \"./index.d.ts\"}}} 1`] = `
 
 [Input]

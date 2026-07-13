@@ -92,6 +92,8 @@ test.snapshot({
 		'{"exports": {"types": "./index.d.ts", "default": {"node": "./index.js", "browser": "./browser.js"}}}',
 		// Non-JavaScript export targets do not need declaration coverage.
 		'{"exports": {"types": "./index.d.ts", "default": "./package.json"}}',
+		// TypeScript supports caret, tilde, and wildcard selectors.
+		'{"exports": {"types@^5 || ~4.7 || 3.x": "./index.d.ts", "default": "./index.js"}}',
 	],
 	invalid: [
 		// A top-level declaration does not cover an exported runtime branch.
@@ -185,5 +187,7 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": {"node": "./fallback.d.cts"}}}, "import": {"node": "./node.js"}}}',
 		// Fallback conditions can continue through an empty nested target.
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": [], "default": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}',
+		// TypeScript rejects a whitespace-only alternative between disjunctions.
+		'{"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}',
 	],
 });
