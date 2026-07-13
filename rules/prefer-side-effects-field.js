@@ -12,7 +12,7 @@ const FALSE_SUGGESTION_ID = 'setFalse';
 const TRUE_SUGGESTION_ID = 'setTrue';
 
 const messages = {
-	[MESSAGE_ID]: 'Declare a `sideEffects` field so bundlers can optimize unused modules.',
+	[MESSAGE_ID]: 'Declare a `sideEffects` field to describe import-time side effects.',
 	[FALSE_SUGGESTION_ID]: 'Add `"sideEffects": false`.',
 	[TRUE_SUGGESTION_ID]: 'Add `"sideEffects": true`.',
 };

@@ -9,7 +9,7 @@ exports[`invalid(1): {\"exports\": \"./index.js\"} 2`] = `
 
 Message:
 > 1 | {"exports": "./index.js"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field so bundlers can optimize unused modules.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field to describe import-time side effects.
 
 Suggestion 1/2: Add \`"sideEffects": false\`.:
   1 | {"exports": "./index.js", "sideEffects": false}
@@ -48,7 +48,7 @@ Message:
 > 6 |   "engines": {"node": ">=18"}
     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 > 7 | }
-    | ^ Declare a \`sideEffects\` field so bundlers can optimize unused modules.
+    | ^ Declare a \`sideEffects\` field to describe import-time side effects.
 
 Suggestion 1/2: Add \`"sideEffects": false\`.:
   1 | {
@@ -83,7 +83,7 @@ exports[`invalid(3): {\"exports\": {\"./feature\": \"./feature.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./feature": "./feature.js"}}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field so bundlers can optimize unused modules.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field to describe import-time side effects.
 
 Suggestion 1/2: Add \`"sideEffects": false\`.:
   1 | {"exports": {"./feature": "./feature.js"}, "sideEffects": false}
@@ -104,7 +104,7 @@ exports[`invalid(4): {\"exports\": [\"./index.js\", \"./fallback.js\"]} 2`] = `
 
 Message:
 > 1 | {"exports": ["./index.js", "./fallback.js"]}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field so bundlers can optimize unused modules.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field to describe import-time side effects.
 
 Suggestion 1/2: Add \`"sideEffects": false\`.:
   1 | {"exports": ["./index.js", "./fallback.js"], "sideEffects": false}
@@ -125,7 +125,7 @@ exports[`invalid(5): {\"exports\": \"./index.js\", \"custom\": true} 2`] = `
 
 Message:
 > 1 | {"exports": "./index.js", "custom": true}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field so bundlers can optimize unused modules.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field to describe import-time side effects.
 
 Suggestion 1/2: Add \`"sideEffects": false\`.:
   1 | {"exports": "./index.js", "sideEffects": false, "custom": true}
@@ -155,7 +155,7 @@ Message:
 > 3 | 	"engines": {"node": ">=18"}
     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 > 4 | }
-    | ^ Declare a \`sideEffects\` field so bundlers can optimize unused modules.
+    | ^ Declare a \`sideEffects\` field to describe import-time side effects.
 
 Suggestion 1/2: Add \`"sideEffects": false\`.:
   1 | {
@@ -184,7 +184,7 @@ exports[`invalid(7): {\"private\": true, \"exports\": \"./index.js\"} 2`] = `
 
 Message:
 > 1 | {"private": true, "exports": "./index.js"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field so bundlers can optimize unused modules.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field to describe import-time side effects.
 
 Suggestion 1/2: Add \`"sideEffects": false\`.:
   1 | {"private": true, "exports": "./index.js", "sideEffects": false}
