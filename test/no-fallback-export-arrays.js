@@ -8,6 +8,7 @@ test.snapshot({
 		'{"exports": "./index.js"}',
 		'{"exports": {".": ["./index.js"]}}',
 		'{"imports": ["./a.js", "./b.js"]}',
+		'{"exports": ["not:valid", "./submodule.js"]}',
 		'{"exports": {".": [{"development": "./development.js"}, "./index.js"]}}',
 		'{"imports": {"#dep": [{"development": "./development.js"}, "./dep.js"]}}',
 		'{"exports": {".": ["./index.js", null]}}',
@@ -18,6 +19,7 @@ test.snapshot({
 	invalid: [
 		'{"exports": {".": ["./a.js", "./b.js"]}}',
 		'{"imports": {"#dep": ["./a.js", "./b.js"]}}',
+		'{"imports": {"#dep": ["missing-package", "./dep.js"]}}',
 		`{
 	"exports": {
 		".": {

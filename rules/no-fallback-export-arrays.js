@@ -7,26 +7,36 @@ const messages = {
 };
 
 /**
-Recursively find arrays with at least two direct string targets and no other values.
+Whether an array contains multiple direct string targets that should be checked by this rule.
 */
-function * findStringTargetArrays(node) {
+function isStringTargetArray(node, field) {
+	// Node.js allows non-relative export targets in arrays for forward compatibility.
+	return node.elements.length >= 2
+		&& node.elements.every(element => element.value.type === 'String')
+		&& (field !== 'exports' || node.elements.every(element => element.value.value.startsWith('./')));
+}
+
+/**
+Recursively find arrays with at least two direct string targets.
+*/
+function * findStringTargetArrays(node, field) {
 	switch (node.type) {
 		case 'Object': {
 			for (const member of node.members) {
-				yield * findStringTargetArrays(member.value);
+				yield * findStringTargetArrays(member.value, field);
 			}
 
 			break;
 		}
 
 		case 'Array': {
-			if (node.elements.length >= 2 && node.elements.every(element => element.value.type === 'String')) {
+			if (isStringTargetArray(node, field)) {
 				yield node;
 				break;
 			}
 
 			for (const element of node.elements) {
-				yield * findStringTargetArrays(element.value);
+				yield * findStringTargetArrays(element.value, field);
 			}
 
 			break;
@@ -56,7 +66,7 @@ const create = context => ({
 				continue;
 			}
 
-			for (const array of findStringTargetArrays(member.value)) {
+			for (const array of findStringTargetArrays(member.value, field)) {
 				context.report({
 					node: array,
 					messageId: MESSAGE_ID,
