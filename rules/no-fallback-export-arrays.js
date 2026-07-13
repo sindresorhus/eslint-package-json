@@ -1,4 +1,4 @@
-import {getRootObject, findMember} from './utils/index.js';
+import {findMember, getRootObject, invalidPackageTargetPattern} from './utils/index.js';
 
 const MESSAGE_ID = 'no-fallback-export-arrays';
 
@@ -7,13 +7,37 @@ const messages = {
 };
 
 /**
+Whether a string is an invalid relative package target that Node.js skips in a fallback array.
+*/
+function isInvalidRelativePackageTarget(value) {
+	const relativePath = value.slice(2);
+	const segments = relativePath.split(/[/\\]/u);
+
+	return segments.some(segment => segment === '' || segment === '.' || segment === '..' || segment.toLowerCase() === 'node_modules')
+		|| invalidPackageTargetPattern.test(relativePath);
+}
+
+/**
+Whether Node.js skips a string target as an invalid package target in a fallback array.
+*/
+function isInvalidPackageTarget(value, field) {
+	if (value.startsWith('./')) {
+		return isInvalidRelativePackageTarget(value);
+	}
+
+	return field === 'exports'
+		|| value.startsWith('../')
+		|| value.startsWith('/')
+		|| URL.canParse(value);
+}
+
+/**
 Whether an array contains multiple direct string targets that should be checked by this rule.
 */
 function isStringTargetArray(node, field) {
-	// Node.js allows non-relative export targets in arrays for forward compatibility.
 	return node.elements.length >= 2
 		&& node.elements.every(element => element.value.type === 'String')
-		&& (field !== 'exports' || node.elements.every(element => element.value.value.startsWith('./')));
+		&& node.elements.every(element => !isInvalidPackageTarget(element.value.value, field));
 }
 
 /**
