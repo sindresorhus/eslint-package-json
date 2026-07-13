@@ -180,6 +180,20 @@ function * iterateStringLeaves(node) {
 	}
 }
 
+function hasInvalidTargetType(node) {
+	node = getFirstTarget(node);
+
+	if (!node) {
+		return false;
+	}
+
+	if (['Boolean', 'Number'].includes(node.type)) {
+		return true;
+	}
+
+	return node.type === 'Object' && node.members.some(member => hasInvalidTargetType(member.value));
+}
+
 function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
 	if (runtimeKey) {
 		const matchingMember = node.members.find(member => getKey(member) === runtimeKey);
@@ -541,7 +555,7 @@ function * checkTypesMembers(objectNode) {
 			};
 		}
 
-		if (typeTargets.length === 0 || typeTargets.some(target => target.value === '')) {
+		if (!hasInvalidTargetType(member.value) && (typeTargets.length === 0 || typeTargets.some(target => target.value === ''))) {
 			yield {
 				node: member.value,
 				messageId: MESSAGE_ID_TYPES_VALUE,

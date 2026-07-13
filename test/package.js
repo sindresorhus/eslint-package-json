@@ -91,6 +91,16 @@ test('the recommended config works end-to-end through ESLint', () => {
 		'legacy entry points should be reported via the recommended config',
 	);
 
+	const invalidTypesTargetProblems = linter.verify('{"exports": {"types": {"import": false}, "import": "./index.js"}}', config, {filename: 'package.json'});
+	const relevantInvalidTypesTargetProblems = invalidTypesTargetProblems
+		.filter(message => ['package-json/require-types-in-exports', 'package-json/valid-fields'].includes(message.ruleId))
+		.map(message => `${message.ruleId}/${message.messageId}`)
+		.toSorted(byName);
+	assert.deepEqual(relevantInvalidTypesTargetProblems, [
+		'package-json/require-types-in-exports/missing',
+		'package-json/valid-fields/exports/targetType',
+	]);
+
 	const nestedPackageProblems = linter.verify('{"name": "foo", "exports": "./index.js"}', config, {filename: 'dist/package.json'});
 	assert.ok(
 		nestedPackageProblems.some(message => message.ruleId === 'package-json/no-nested-exports'),

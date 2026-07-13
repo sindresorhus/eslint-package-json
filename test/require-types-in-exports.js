@@ -199,5 +199,7 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"import": {"types": [], "default": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}',
 		// A terminal versioned branch cannot use the later unversioned type fallback.
 		'{"type": "module", "exports": {"types@>=5": {"import": null, "require": "./r.d.cts"}, "types": {"import": "./i.d.mts", "require": "./r.d.cts"}, "import": "./i.mjs", "require": "./r.cjs"}}',
+		// Generic target-type validation belongs to `valid-fields`.
+		'{"exports": {"types": 1, "default": "./index.js"}}',
 	],
 });
