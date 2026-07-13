@@ -134,6 +134,29 @@ function * iterateRuntimeStringLeaves(node) {
 }
 
 function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode, runtimeKey) {
+	if (runtimeKey && fallbackNode.type === 'Object') {
+		const matchingMember = fallbackNode.members.find(member => getKey(member) === runtimeKey);
+
+		if (matchingMember) {
+			yield * iterateUncoveredFallbackPairs(matchingMember.value, matchingNode, runtimeNode);
+
+			const hasMatchingTypes = hasTypesCoverage(matchingMember.value, runtimeNode);
+			const canFallThrough = matchingMember.value.type === 'Object' || matchingMember.value.type === 'Array';
+
+			if (hasMatchingTypes || !canFallThrough) {
+				return;
+			}
+		}
+
+		const fallbackMember = fallbackNode.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
+
+		if (fallbackMember && fallbackMember !== matchingMember) {
+			yield * iterateUncoveredFallbackPairs(fallbackMember.value, matchingNode, runtimeNode, runtimeKey);
+		}
+
+		return;
+	}
+
 	if (runtimeNode.type !== 'Object') {
 		yield * iterateTypeRuntimePairs(fallbackNode, runtimeNode, runtimeKey);
 		return;
@@ -145,6 +168,34 @@ function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode
 		if (!isTypesCondition(key) && !hasTypesCoverage(matchingNode, runtimeMember.value, key)) {
 			yield * iterateTypeRuntimePairs(fallbackNode, runtimeMember.value, key);
 		}
+	}
+}
+
+function * iterateTypeRuntimePairsWithoutKey(typeNode, runtimeNode) {
+	const typesMembers = typeNode.members.filter(member => isTypesCondition(getKey(member)));
+	const defaultMember = typeNode.members.find(member => getKey(member) === 'default');
+	const hasUnversionedTypes = typesMembers.some(member => getKey(member) === 'types');
+
+	for (const typesMember of typesMembers) {
+		yield * iterateTypeRuntimePairs(typesMember.value, runtimeNode);
+	}
+
+	if (typesMembers.length > 0) {
+		if (!hasUnversionedTypes && defaultMember) {
+			yield * iterateTypeRuntimePairs(defaultMember.value, runtimeNode);
+		}
+
+		return;
+	}
+
+	if (runtimeNode.type === 'Object') {
+		for (const runtimeMember of runtimeNode.members) {
+			if (!isTypesCondition(getKey(runtimeMember))) {
+				yield * iterateTypeRuntimePairs(typeNode, runtimeMember.value, getKey(runtimeMember));
+			}
+		}
+	} else if (defaultMember) {
+		yield * iterateTypeRuntimePairs(defaultMember.value, runtimeNode);
 	}
 }
 
@@ -190,22 +241,7 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 				return;
 			}
 
-			const typesMember = typeNode.members.find(member => isTypesCondition(getKey(member)));
-
-			if (typesMember) {
-				yield * iterateTypeRuntimePairs(typesMember.value, runtimeNode);
-				return;
-			}
-
-			if (runtimeNode.type === 'Object') {
-				for (const runtimeMember of runtimeNode.members) {
-					if (!isTypesCondition(getKey(runtimeMember))) {
-						yield * iterateTypeRuntimePairs(typeNode, runtimeMember.value, getKey(runtimeMember));
-					}
-				}
-			} else if (fallbackMember) {
-				yield * iterateTypeRuntimePairs(fallbackMember.value, runtimeNode);
-			}
+			yield * iterateTypeRuntimePairsWithoutKey(typeNode, runtimeNode);
 
 			break;
 		}

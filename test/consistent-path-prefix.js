@@ -58,6 +58,10 @@ test.snapshot({
 			code: '{"bin": {"mycli": "./bin/cli.js"}}',
 			options: [{prefix: 'never'}],
 		},
+		{
+			code: String.raw`{"main": "./dist\\index.js"}`,
+			options: [{prefix: 'never'}],
+		},
 		// Multiple fields at once.
 		'{"main": "index.js", "types": "index.d.ts"}',
 		// Paths must not escape the package.

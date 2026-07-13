@@ -16,14 +16,33 @@ Output:
 
 `;
 
-exports[`invalid(10): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 1`] = `
+exports[`invalid(10): {\"main\": \"./dist\\\\index.js\"} 1`] = `
+
+[Input]
+Options:
+- prefix: 'never'
+
+Code:
+  1 | {"main": "./dist\\\\index.js"}
+
+`;
+
+exports[`invalid(10): {\"main\": \"./dist\\\\index.js\"} 2`] = `
+
+Message:
+> 1 | {"main": "./dist\\\\index.js"}
+    |          ^^^^^^^^^^^^^^^^^^ Path \`./dist\\index.js\` should not start with \`./\`.
+
+`;
+
+exports[`invalid(11): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 1`] = `
 
 [Input]
   1 | {"main": "index.js", "types": "index.d.ts"}
 
 `;
 
-exports[`invalid(10): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 2`] = `
+exports[`invalid(11): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 2`] = `
 
 Message:
 > 1 | {"main": "index.js", "types": "index.d.ts"}
@@ -34,7 +53,7 @@ Output:
 
 `;
 
-exports[`invalid(10): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 3`] = `
+exports[`invalid(11): {\"main\": \"index.js\", \"types\": \"index.d.ts\"} 3`] = `
 
 Message:
 > 1 | {"main": "index.js", "types": "index.d.ts"}
@@ -45,14 +64,14 @@ Output:
 
 `;
 
-exports[`invalid(11): {\"main\": \"../sibling/index.js\"} 1`] = `
+exports[`invalid(12): {\"main\": \"../sibling/index.js\"} 1`] = `
 
 [Input]
   1 | {"main": "../sibling/index.js"}
 
 `;
 
-exports[`invalid(11): {\"main\": \"../sibling/index.js\"} 2`] = `
+exports[`invalid(12): {\"main\": \"../sibling/index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": "../sibling/index.js"}
@@ -60,14 +79,14 @@ Message:
 
 `;
 
-exports[`invalid(12): {\"main\": \"./../sibling/index.js\"} 1`] = `
+exports[`invalid(13): {\"main\": \"./../sibling/index.js\"} 1`] = `
 
 [Input]
   1 | {"main": "./../sibling/index.js"}
 
 `;
 
-exports[`invalid(12): {\"main\": \"./../sibling/index.js\"} 2`] = `
+exports[`invalid(13): {\"main\": \"./../sibling/index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": "./../sibling/index.js"}
@@ -75,14 +94,14 @@ Message:
 
 `;
 
-exports[`invalid(13): {\"main\": \"..\\\\sibling\\\\index.js\"} 1`] = `
+exports[`invalid(14): {\"main\": \"..\\\\sibling\\\\index.js\"} 1`] = `
 
 [Input]
   1 | {"main": "..\\\\sibling\\\\index.js"}
 
 `;
 
-exports[`invalid(13): {\"main\": \"..\\\\sibling\\\\index.js\"} 2`] = `
+exports[`invalid(14): {\"main\": \"..\\\\sibling\\\\index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": "..\\\\sibling\\\\index.js"}
@@ -90,14 +109,14 @@ Message:
 
 `;
 
-exports[`invalid(14): {\"main\": \".\\\\dist\\\\index.js\"} 1`] = `
+exports[`invalid(15): {\"main\": \".\\\\dist\\\\index.js\"} 1`] = `
 
 [Input]
   1 | {"main": ".\\\\dist\\\\index.js"}
 
 `;
 
-exports[`invalid(14): {\"main\": \".\\\\dist\\\\index.js\"} 2`] = `
+exports[`invalid(15): {\"main\": \".\\\\dist\\\\index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": ".\\\\dist\\\\index.js"}
@@ -105,7 +124,7 @@ Message:
 
 `;
 
-exports[`invalid(15): {\"main\": \"../sibling/index.js\"} 1`] = `
+exports[`invalid(16): {\"main\": \"../sibling/index.js\"} 1`] = `
 
 [Input]
 Options:
@@ -116,7 +135,7 @@ Code:
 
 `;
 
-exports[`invalid(15): {\"main\": \"../sibling/index.js\"} 2`] = `
+exports[`invalid(16): {\"main\": \"../sibling/index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": "../sibling/index.js"}
