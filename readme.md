@@ -101,6 +101,7 @@ export default [
 | [no-empty-fields](docs/rules/no-empty-fields.md)                                                       | Disallow empty fields.                                                                    | ✅  |    | 💡 |
 | [no-exact-peer-dependencies](docs/rules/no-exact-peer-dependencies.md)                                 | Disallow exact versions for peer dependencies.                                            |    |    | 💡 |
 | [no-exports-trailing-slash](docs/rules/no-exports-trailing-slash.md)                                   | Disallow deprecated trailing-slash folder mappings in `exports`/`imports`.                | ✅  | 🔧 |    |
+| [no-fallback-export-arrays](docs/rules/no-fallback-export-arrays.md)                                   | Discourage string-target fallback arrays in `exports`/`imports`.                          | ✅  |    |    |
 | [no-git-dependencies](docs/rules/no-git-dependencies.md)                                               | Disallow git URLs as dependency specifiers.                                               |    |    |    |
 | [no-http-dependencies](docs/rules/no-http-dependencies.md)                                             | Disallow HTTP URLs as dependency specifiers.                                              | ✅  |    |    |
 | [no-install-scripts](docs/rules/no-install-scripts.md)                                                 | Disallow `install` lifecycle scripts.                                                     | ✅  |    | 💡 |

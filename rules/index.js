@@ -13,6 +13,7 @@ export {default as 'no-duplicate-dependencies'} from './no-duplicate-dependencie
 export {default as 'no-empty-fields'} from './no-empty-fields.js';
 export {default as 'no-exact-peer-dependencies'} from './no-exact-peer-dependencies.js';
 export {default as 'no-exports-trailing-slash'} from './no-exports-trailing-slash.js';
+export {default as 'no-fallback-export-arrays'} from './no-fallback-export-arrays.js';
 export {default as 'no-git-dependencies'} from './no-git-dependencies.js';
 export {default as 'no-http-dependencies'} from './no-http-dependencies.js';
 export {default as 'no-install-scripts'} from './no-install-scripts.js';
