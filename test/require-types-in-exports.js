@@ -189,5 +189,15 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": [], "default": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}',
 		// TypeScript rejects a whitespace-only alternative between disjunctions.
 		'{"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}',
+		// The unversioned fallback must not make a later versioned type condition unreachable.
+		'{"exports": {"types": "./fallback.d.ts", "types@>=5": "./modern.d.ts", "default": "./index.js"}}',
+		// A malformed type condition is not also a runtime condition.
+		'{"type": "module", "exports": {"types@invalid": "./invalid.cjs", "types": "./index.d.mts", "default": "./index.mjs"}}',
+		// An active nested `types` null target also prevents its parent declaration fallback from participating.
+		'{"type": "module", "exports": {"types": {"import": {"types": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}',
+		// A local default still participates after an empty nested `types` target and can prevent a parent fallback.
+		'{"type": "module", "exports": {"types": {"import": {"types": [], "default": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}',
+		// A terminal versioned branch cannot use the later unversioned type fallback.
+		'{"type": "module", "exports": {"types@>=5": {"import": null, "require": "./r.d.cts"}, "types": {"import": "./i.d.mts", "require": "./r.d.cts"}, "import": "./i.mjs", "require": "./r.cjs"}}',
 	],
 });

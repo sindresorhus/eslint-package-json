@@ -9,7 +9,7 @@ const MESSAGE_ID_TYPES_VERSION = 'typesVersion';
 
 const messages = {
 	[MESSAGE_ID_MISSING]: 'Exported JavaScript target `{{value}}` has no corresponding `types` condition.',
-	[MESSAGE_ID_TYPES_FIRST]: 'Type conditions must come before runtime conditions in a conditions object.',
+	[MESSAGE_ID_TYPES_FIRST]: 'Versioned type conditions must come before `types`, and all type conditions must come before runtime conditions.',
 	[MESSAGE_ID_TYPES_EXTENSION]: 'The `types` condition `{{value}}` must point at a declaration file ending in `.d.ts`, `.d.mts`, or `.d.cts`.',
 	[MESSAGE_ID_MODULE_FORMAT]: 'Type declaration `{{types}}` uses {{actual}} format but its JavaScript target uses {{expected}} format.',
 	[MESSAGE_ID_TYPES_VALUE]: 'The `types` condition must point to a declaration file.',
@@ -110,6 +110,12 @@ function canTypeTargetFallThrough(node) {
 		return false;
 	}
 
+	const typesMember = effectiveNode.members.find(member => getKey(member) === 'types');
+
+	if (typesMember && !canTypeTargetFallThrough(typesMember.value)) {
+		return false;
+	}
+
 	const defaultMember = effectiveNode.members.find(member => getKey(member) === 'default');
 	return !defaultMember || canTypeTargetFallThrough(defaultMember.value);
 }
@@ -119,6 +125,7 @@ function getTargetWithFallback(node, fallbackMember) {
 		node.type !== 'Object'
 		|| !fallbackMember
 		|| node.members.some(member => getKey(member) === 'default')
+		|| !canTypeTargetFallThrough(node)
 	) {
 		return node;
 	}
@@ -198,7 +205,7 @@ function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
 		return false;
 	}
 
-	const runtimeMembers = runtimeNode.members.filter(member => !isTypesCondition(getKey(member)));
+	const runtimeMembers = runtimeNode.members.filter(member => !isTypesConditionKey(getKey(member)));
 	return runtimeMembers.length > 0 && runtimeMembers.every(member => hasTypesCoverage(node, member.value, getKey(member)));
 }
 
@@ -235,7 +242,7 @@ function * iterateRuntimeStringLeaves(node) {
 
 		case 'Object': {
 			for (const member of node.members) {
-				if (isTypesCondition(getKey(member))) {
+				if (isTypesConditionKey(getKey(member))) {
 					continue;
 				}
 
@@ -303,7 +310,7 @@ function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode
 	for (const runtimeMember of runtimeNode.members) {
 		const key = getKey(runtimeMember);
 
-		if (isTypesCondition(key) || hasTypesCoverage(matchingNode, runtimeMember.value, key)) {
+		if (isTypesConditionKey(key) || hasTypesCoverage(matchingNode, runtimeMember.value, key)) {
 			continue;
 		}
 
@@ -341,7 +348,7 @@ function * iterateTypeRuntimePairsWithoutKey(typeNode, runtimeNode) {
 
 	if (runtimeNode.type === 'Object') {
 		for (const runtimeMember of runtimeNode.members) {
-			if (!isTypesCondition(getKey(runtimeMember))) {
+			if (!isTypesConditionKey(getKey(runtimeMember))) {
 				yield * iterateTypeRuntimePairs(typeNode, runtimeMember.value, getKey(runtimeMember));
 			}
 		}
@@ -522,10 +529,12 @@ function * checkTypesMembers(objectNode) {
 
 	for (const member of typesMembers) {
 		const index = objectNode.members.indexOf(member);
+		const key = getKey(member);
+		const previousMembers = objectNode.members.slice(0, index);
 		const effectiveTypeNode = getFirstTarget(member.value);
 		const typeTargets = effectiveTypeNode ? [...iterateStringLeaves(effectiveTypeNode)] : [];
 
-		if (objectNode.members.slice(0, index).some(member => !isTypesCondition(getKey(member)))) {
+		if (previousMembers.some(member => !isTypesConditionKey(getKey(member)) || (key !== 'types' && getKey(member) === 'types'))) {
 			yield {
 				node: member.name,
 				messageId: MESSAGE_ID_TYPES_FIRST,
@@ -635,8 +644,9 @@ function getNarrowedTypeNodes(nodes, runtimeKey) {
 function hasTypeScopeCoverage(scope) {
 	const unversionedGroup = scope.find(group => group.isUnversioned);
 	const hasGroupCoverage = group => group.nodes.some(node => hasUsableTypeTarget(node));
+	const hasUnversionedCoverage = Boolean(unversionedGroup && hasGroupCoverage(unversionedGroup));
 
-	return (unversionedGroup && hasGroupCoverage(unversionedGroup)) || scope.every(group => hasGroupCoverage(group));
+	return scope.every(group => hasGroupCoverage(group) || (!group.isUnversioned && hasUnversionedCoverage && group.nodes.every(node => canTypeTargetFallThrough(node))));
 }
 
 function hasUsableTypeTarget(node) {
@@ -655,7 +665,7 @@ function * checkNode(node, packageType, inheritedScopes = []) {
 			for (const member of node.members) {
 				const key = getKey(member);
 
-				if (isTypesCondition(key)) {
+				if (isTypesConditionKey(key)) {
 					continue;
 				}
 
