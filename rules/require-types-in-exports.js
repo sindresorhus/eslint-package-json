@@ -199,11 +199,14 @@ function hasMalformedTarget(node) {
 }
 
 function findRuntimeConditionMember(objectNode, key) {
-	if (key === 'default') {
-		return;
+	const member = findMember(objectNode, key);
+
+	if (key !== 'default' || !member) {
+		return member;
 	}
 
-	return findMember(objectNode, key);
+	const previousMembers = objectNode.members.slice(0, objectNode.members.indexOf(member));
+	return previousMembers.some(member => isTypesCondition(getKey(member))) ? undefined : member;
 }
 
 function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
@@ -353,23 +356,12 @@ function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode
 function * iterateTypeRuntimePairsWithoutKey(typeNode, runtimeNode) {
 	const typesMembers = typeNode.members.filter(member => isTypesCondition(getKey(member)));
 	const defaultMember = typeNode.members.find(member => getKey(member) === 'default');
-	const unversionedTypesMember = typesMembers.find(member => getKey(member) === 'types');
-	const hasUnversionedTypes = Boolean(unversionedTypesMember && hasTypesCoverage(unversionedTypesMember.value, runtimeNode));
-	const canUnversionedTypesFallThrough = !unversionedTypesMember || canTypeTargetFallThrough(unversionedTypesMember.value);
 
 	for (const typesMember of typesMembers) {
 		yield * iterateTypeRuntimePairs(typesMember.value, runtimeNode);
 	}
 
 	if (typesMembers.length > 0) {
-		if (defaultMember && !hasUnversionedTypes && canUnversionedTypesFallThrough) {
-			if (unversionedTypesMember) {
-				yield * iterateUncoveredFallbackPairs(defaultMember.value, unversionedTypesMember.value, runtimeNode);
-			} else {
-				yield * iterateTypeRuntimePairs(defaultMember.value, runtimeNode);
-			}
-		}
-
 		return;
 	}
 

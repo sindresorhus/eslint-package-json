@@ -96,6 +96,12 @@ test.snapshot({
 		'{"exports": {"types@^5 || ~4.7 || 3.x": "./index.d.ts", "default": "./index.js"}}',
 		// An active type condition takes precedence over an incompatible declaration-side default.
 		'{"type": "module", "exports": {"types": {"types": "./index.d.mts", "default": "./fallback.d.cts"}, "default": "./index.mjs"}}',
+		// Shared default wrappers preserve their nested condition structure when no earlier type condition matches.
+		'{"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}',
+		// Module-format validation stops when a nested type condition falls through to a declaration default.
+		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
+		'{"type": "module", "exports": {"types": {"import": [], "default": {"types@>=5": "./modern.d.mts", "default": "./legacy.d.cts"}}, "import": "./index.mjs"}}',
+		'{"type": "module", "exports": {"types": {"types": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "default": "./index.js"}}',
 	],
 	invalid: [
 		// A top-level declaration does not cover an exported runtime branch.
@@ -176,12 +182,8 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": "./fallback.d.cts"}}, "import": "./import.js"}}',
 		// A fallback condition can continue with a different nested runtime condition.
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}',
-		// Versioned nested type conditions must also check their declaration fallback.
+		// Empty versioned type targets are invalid even when an unversioned fallback exists.
 		'{"type": "module", "exports": {"types": {"types@>=5": [], "types": {"import": "./import.d.mts", "require": "./require.d.cts"}}, "import": "./import.mjs", "require": "./require.cjs"}}',
-		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
-		'{"type": "module", "exports": {"types": {"import": [], "default": {"types@>=5": "./modern.d.mts", "default": "./legacy.d.cts"}}, "import": "./index.mjs"}}',
-		// An unresolved nested unversioned type condition must check its declaration fallback.
-		'{"type": "module", "exports": {"types": {"types": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "default": "./index.js"}}',
 		// Partial type coverage should only report the uncovered sibling.
 		'{"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}',
 		'{"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}',
