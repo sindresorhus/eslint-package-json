@@ -1,0 +1,123 @@
+exports[`invalid(1): {\"exports\": \"./index.js\"} 1`] = `
+
+[Input 'dist/package.json']
+  1 | {"exports": "./index.js"}
+
+`;
+
+exports[`invalid(1): {\"exports\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"exports": "./index.js"}
+    |  ^^^^^^^^^ The \`exports\` field is ignored in nested \`package.json\` files.
+
+Suggestion 1/1: Remove the \`exports\` field.:
+  1 | {}
+
+`;
+
+exports[`invalid(2): {\"imports\": {\"#internal\": \"./internal.js\"}} 1`] = `
+
+[Input 'dist/package.json']
+  1 | {"imports": {"#internal": "./internal.js"}}
+
+`;
+
+exports[`invalid(2): {\"imports\": {\"#internal\": \"./internal.js\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#internal": "./internal.js"}}
+    |  ^^^^^^^^^ The \`imports\` field is ignored in nested \`package.json\` files.
+
+Suggestion 1/1: Remove the \`imports\` field.:
+  1 | {}
+
+`;
+
+exports[`invalid(3): {\"exports\": \"./index.js\", \"imports\": null} 1`] = `
+
+[Input 'dist/package.json']
+  1 | {"exports": "./index.js", "imports": null}
+
+`;
+
+exports[`invalid(3): {\"exports\": \"./index.js\", \"imports\": null} 2`] = `
+
+Message:
+> 1 | {"exports": "./index.js", "imports": null}
+    |  ^^^^^^^^^ The \`exports\` field is ignored in nested \`package.json\` files.
+
+Suggestion 1/1: Remove the \`exports\` field.:
+  1 | {"imports": null}
+
+`;
+
+exports[`invalid(3): {\"exports\": \"./index.js\", \"imports\": null} 3`] = `
+
+Message:
+> 1 | {"exports": "./index.js", "imports": null}
+    |                           ^^^^^^^^^ The \`imports\` field is ignored in nested \`package.json\` files.
+
+Suggestion 1/1: Remove the \`imports\` field.:
+  1 | {"exports": "./index.js"}
+
+`;
+
+exports[`invalid(4): {\"exports\": \"./first.js\", \"exports\": \"./second.js\"} 1`] = `
+
+[Input 'dist/package.json']
+  1 | {"exports": "./first.js", "exports": "./second.js"}
+
+`;
+
+exports[`invalid(4): {\"exports\": \"./first.js\", \"exports\": \"./second.js\"} 2`] = `
+
+Message:
+> 1 | {"exports": "./first.js", "exports": "./second.js"}
+    |                           ^^^^^^^^^ The \`exports\` field is ignored in nested \`package.json\` files.
+
+`;
+
+exports[`invalid(5): {\"imports\": {\"#first\": \"./first.js\"}, \"imports\": {\"#second\": \"./second.js\"}} 1`] = `
+
+[Input 'dist/package.json']
+  1 | {"imports": {"#first": "./first.js"}, "imports": {"#second": "./second.js"}}
+
+`;
+
+exports[`invalid(5): {\"imports\": {\"#first\": \"./first.js\"}, \"imports\": {\"#second\": \"./second.js\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#first": "./first.js"}, "imports": {"#second": "./second.js"}}
+    |                                       ^^^^^^^^^ The \`imports\` field is ignored in nested \`package.json\` files.
+
+`;
+
+exports[`invalid(6): {\n\t\t\t\t\"name\": \"foo\",\n\t\t\t\t\"exports\": \"./index.js\",\n\t\t\t\t\"version\": \"1.0.0\"\n\t\t\t} 1`] = `
+
+[Input 'dist/package.json']
+  1 | {
+  2 | 				"name": "foo",
+  3 | 				"exports": "./index.js",
+  4 | 				"version": "1.0.0"
+  5 | 			}
+
+`;
+
+exports[`invalid(6): {\n\t\t\t\t\"name\": \"foo\",\n\t\t\t\t\"exports\": \"./index.js\",\n\t\t\t\t\"version\": \"1.0.0\"\n\t\t\t} 2`] = `
+
+Message:
+  1 | {
+  2 | 				"name": "foo",
+> 3 | 				"exports": "./index.js",
+    | 				^^^^^^^^^ The \`exports\` field is ignored in nested \`package.json\` files.
+  4 | 				"version": "1.0.0"
+  5 | 			}
+
+Suggestion 1/1: Remove the \`exports\` field.:
+  1 | {
+  2 | 				"name": "foo",
+  3 | 				"version": "1.0.0"
+  4 | 			}
+
+`;

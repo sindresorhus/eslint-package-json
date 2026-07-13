@@ -108,6 +108,7 @@ export default [
 | [no-local-dependencies](docs/rules/no-local-dependencies.md)                                           | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
 | [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                           | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
 | [no-missing-files](docs/rules/no-missing-files.md)                                                     | Disallow missing files referenced by package metadata.                                    |    |    |    |
+| [no-nested-exports](docs/rules/no-nested-exports.md)                                                   | Disallow `exports` and `imports` in nested `package.json` files.                          | ✅  |    | 💡 |
 | [no-orphan-script-hooks](docs/rules/no-orphan-script-hooks.md)                                         | Disallow `pre`/`post` script hooks without a corresponding script.                        | ✅  |    |    |
 | [no-orphan-types](docs/rules/no-orphan-types.md)                                                       | Disallow `@types/*` packages without a corresponding dependency.                          | ✅  |    | 💡 |
 | [no-overrides-in-published-package](docs/rules/no-overrides-in-published-package.md)                   | Disallow `overrides` in packages that can be published.                                   | ✅  |    | 💡 |
