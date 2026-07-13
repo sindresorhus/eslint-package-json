@@ -22,8 +22,14 @@ test.snapshot({
 	}
 }`,
 		'{"exports": {"types": {"import": {"browser": "./browser.d.ts"}, "default": "./fallback.d.ts"}, "import": "./import.js"}}',
+		// A fallback condition can use a different nested runtime condition when its format matches.
+		'{"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.mts"}}, "import": {"node": "./node.js"}}}',
 		// An unversioned nested type condition makes the default a non-type fallback.
 		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "types": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
+		// Non-empty declaration and runtime fallback arrays are covered.
+		'{"exports": {"types": ["./index.d.ts", "./fallback.d.ts"], "default": ["./index.js", "./fallback.js"]}}',
+		// A nested versioned type condition can be the only type branch.
+		'{"exports": {"types": {"import": {"types@>=5": "./import.d.ts"}}, "import": {"import": "./import.js"}}}',
 		// An empty type-target array falls through to the parent default.
 		'{"exports": {"types": {"import": [], "default": "./fallback.d.ts"}, "import": "./import.js"}}',
 		// A parent default can continue into a nested runtime condition.
@@ -81,6 +87,8 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"import": [], "default": "./fallback.d.cts"}, "import": "./import.js"}}',
 		// Nested fallback conditions must also be checked for module-format mismatches.
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": "./fallback.d.cts"}}, "import": "./import.js"}}',
+		// A fallback condition can continue with a different nested runtime condition.
+		'{"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}',
 		// Versioned nested type conditions must also check their declaration fallback.
 		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
 		// Nested fallback conditions must retain their parent runtime condition.

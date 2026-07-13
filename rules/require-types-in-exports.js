@@ -152,9 +152,12 @@ function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode
 
 		if (fallbackMember && fallbackMember !== matchingMember) {
 			yield * iterateUncoveredFallbackPairs(fallbackMember.value, matchingNode, runtimeNode, runtimeKey);
+			return;
 		}
 
-		return;
+		if (matchingMember) {
+			return;
+		}
 	}
 
 	if (runtimeNode.type !== 'Object') {
