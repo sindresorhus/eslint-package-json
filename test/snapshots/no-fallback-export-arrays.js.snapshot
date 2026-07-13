@@ -58,18 +58,18 @@ Message:
 
 `;
 
-exports[`invalid(5): {\"imports\": {\"#dep\": [\"missing-package\", \"./a.js\", \"./b.js\"]}} 1`] = `
+exports[`invalid(5): {\"imports\": {\"#dep\": [\"../invalid.js\", \"./a.js\", \"./b.js\"]}} 1`] = `
 
 [Input]
-  1 | {"imports": {"#dep": ["missing-package", "./a.js", "./b.js"]}}
+  1 | {"imports": {"#dep": ["../invalid.js", "./a.js", "./b.js"]}}
 
 `;
 
-exports[`invalid(5): {\"imports\": {\"#dep\": [\"missing-package\", \"./a.js\", \"./b.js\"]}} 2`] = `
+exports[`invalid(5): {\"imports\": {\"#dep\": [\"../invalid.js\", \"./a.js\", \"./b.js\"]}} 2`] = `
 
 Message:
-> 1 | {"imports": {"#dep": ["missing-package", "./a.js", "./b.js"]}}
-    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ String-target arrays in \`imports\` are not fallback lists in Node.js; a missing first file or package does not make Node.js try the next target.
+> 1 | {"imports": {"#dep": ["../invalid.js", "./a.js", "./b.js"]}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ String-target arrays in \`imports\` are not fallback lists in Node.js; a missing first file or package does not make Node.js try the next target.
 
 `;
 
