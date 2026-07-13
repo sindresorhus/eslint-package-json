@@ -37,7 +37,6 @@ export {default as 'no-wildcard-dependencies'} from './no-wildcard-dependencies.
 export {default as 'no-workspace-protocol-in-published-package'} from './no-workspace-protocol-in-published-package.js';
 export {default as 'peer-dependencies-as-dev-dependencies'} from './peer-dependencies-as-dev-dependencies.js';
 export {default as 'prefer-engines-range'} from './prefer-engines-range.js';
-export {default as 'prefer-explicit-type'} from './prefer-explicit-type.js';
 export {default as 'prefer-exports'} from './prefer-exports.js';
 export {default as 'prefer-files-field'} from './prefer-files-field.js';
 export {default as 'prefer-https-urls'} from './prefer-https-urls.js';

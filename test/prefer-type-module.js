@@ -6,7 +6,7 @@ test.snapshot({
 	valid: [
 		'{"type": "module"}',
 		'{"name": "foo", "type": "module"}',
-		// A missing or malformed `type` is handled by `prefer-explicit-type` or `valid-fields`.
+		// A missing `type` is allowed, while malformed values are handled by `valid-fields`.
 		'{"name": "foo"}',
 		'{"type": true}',
 		'{"type": 42}',
