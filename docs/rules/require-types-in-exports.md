@@ -1,15 +1,15 @@
 # require-types-in-exports
 
-📝 Enforce that types are exposed through the `exports` field.
+📝 Require correctly ordered and module-compatible types in `exports`.
 
 💼 This rule is enabled in the ✅ `recommended` [config](https://github.com/sindresorhus/eslint-package-json#configs).
 
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-When TypeScript resolves a package through `exports`, its `node16`, `nodenext`, and `bundler` module resolution modes ignore the top-level `types`/`typings` field. TypeScript can infer a declaration file from a JavaScript export target through extension substitution, but a `types` condition declares the package's type entry point explicitly.
+When `exports` is present, modern TypeScript resolution reads types from it instead of the top-level `types` or `typings` field. For packages that declare type metadata, this rule requires coverage for each exported JavaScript branch, validates `types` and `types@…` ordering and selectors, and checks declaration extensions against matching JavaScript module formats.
 
-This rule reports when the package ships types via a top-level `types`/`typings` field but no `types` condition appears anywhere in `exports`. It enforces explicit type entry points rather than relying on extension substitution.
+This is static manifest analysis. Targets must be structurally valid, arrays use only their first entry, and nested declaration fallbacks are best effort. File existence, publication, declaration contents, overlapping version ranges, and custom TypeScript conditions are not checked. Use [`valid-fields`](valid-fields.md) for malformed targets and package-aware tools for published contents.
 
 ## Examples
 

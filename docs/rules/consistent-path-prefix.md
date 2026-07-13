@@ -8,9 +8,7 @@
 
 <!-- end auto-generated rule header -->
 
-Enforce consistent `./` prefix on local file-path fields.
-
-Checks the `main`, `module`, `browser`, `types`, `typings`, and `bin` fields. Absolute paths, URLs, globs, and `../`-relative paths are ignored.
+Enforce a consistent `./` prefix in the legacy `main`, `module`, `browser`, `types`, `typings`, and `bin` fields. Absolute paths, URLs, and globs are ignored; other paths with a `..` segment are reported. Mandatory prefixes in `exports` and `imports` are handled by [`valid-fields`](valid-fields.md).
 
 ## Options
 

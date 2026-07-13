@@ -3,6 +3,7 @@ import {
 	findMember,
 	getIndentString,
 	getNewline,
+	lineIndentOf,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-type-module';
@@ -27,12 +28,7 @@ const create = context => {
 
 			const type = findMember(root, 'type');
 
-			// A present but non-string `type` is malformed; leave it to `valid-fields`.
-			if (type && type.value.type !== 'String') {
-				return;
-			}
-
-			if (type?.value.value === 'module') {
+			if (type && (type.value.type !== 'String' || type.value.value !== 'commonjs')) {
 				return;
 			}
 
@@ -48,15 +44,19 @@ const create = context => {
 							}
 
 							const lastMember = root.members.at(-1);
+							const isMultiline = sourceCode.getText(root).includes('\n');
 
 							if (!lastMember) {
-								return fixer.replaceText(root, '{"type": "module"}');
+								if (!isMultiline) {
+									return fixer.replaceText(root, '{"type": "module"}');
+								}
+
+								const indent = lineIndentOf(sourceCode, root) + getIndentString(sourceCode);
+								return fixer.insertTextAfterRange([root.range[0], root.range[0] + 1], `${getNewline(sourceCode)}${indent}"type": "module"`);
 							}
 
-							const indent = getIndentString(sourceCode);
-							const newline = getNewline(sourceCode);
-
-							return fixer.insertTextAfter(lastMember, `,${newline}${indent}"type": "module"`);
+							const separator = isMultiline ? getNewline(sourceCode) + lineIndentOf(sourceCode, lastMember) : ' ';
+							return fixer.insertTextAfter(lastMember, `,${separator}"type": "module"`);
 						},
 					},
 				],
@@ -71,7 +71,7 @@ const config = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			description: 'Enforce the `type` field to be `module`.',
+			description: 'Prefer the `type` field to be `module`.',
 			recommended: true,
 		},
 		hasSuggestions: true,

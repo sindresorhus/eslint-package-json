@@ -8,11 +8,15 @@ import {
 
 const MESSAGE_ID_MISSING = 'missing';
 const MESSAGE_ID_EXTRA = 'extra';
+const MESSAGE_ID_OUTSIDE_PACKAGE = 'outsidePackage';
 
 const messages = {
 	[MESSAGE_ID_MISSING]: 'Path `{{value}}` should start with `./`.',
 	[MESSAGE_ID_EXTRA]: 'Path `{{value}}` should not start with `./`.',
+	[MESSAGE_ID_OUTSIDE_PACKAGE]: 'Path `{{value}}` must not escape the package with a `..` segment.',
 };
+
+const absolutePathPattern = /^(?:[/\\]|[a-z]:)/iu;
 
 /**
 Check if a string value looks like a local relative path (not a glob, not a URL, not absolute).
@@ -22,7 +26,7 @@ const isLocalRelativePath = value => {
 		return false;
 	}
 
-	if (value.startsWith('/')) {
+	if (absolutePathPattern.test(value)) {
 		return false;
 	}
 
@@ -51,16 +55,32 @@ const create = context => {
 			return;
 		}
 
-		if (prefix === 'always') {
-			if (!value.startsWith('./') && !value.startsWith('../')) {
-				const fixed = './' + value;
+		if (value.split(/[/\\]/u).includes('..')) {
+			context.report({
+				node: valueNode,
+				messageId: MESSAGE_ID_OUTSIDE_PACKAGE,
+				data: {value},
+			});
+			return;
+		}
 
-				context.report({
+		// Backslash normalization belongs to `no-backslash-paths`; leave these reports without fixes to avoid conflicting fixes.
+		const canFix = !value.includes('\\');
+
+		if (prefix === 'always') {
+			if (!value.startsWith('./')) {
+				const fixed = './' + value;
+				const report = {
 					node: valueNode,
 					messageId: MESSAGE_ID_MISSING,
 					data: {value},
-					fix: fixer => fixer.replaceText(valueNode, JSON.stringify(fixed)),
-				});
+				};
+
+				if (canFix) {
+					report.fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
+				}
+
+				context.report(report);
 			}
 		} else if (prefix === 'never' && value.startsWith('./')) {
 			const fixed = value.slice(2);
@@ -70,12 +90,17 @@ const create = context => {
 				return;
 			}
 
-			context.report({
+			const report = {
 				node: valueNode,
 				messageId: MESSAGE_ID_EXTRA,
 				data: {value},
-				fix: fixer => fixer.replaceText(valueNode, JSON.stringify(fixed)),
-			});
+			};
+
+			if (canFix) {
+				report.fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
+			}
+
+			context.report(report);
 		}
 	};
 

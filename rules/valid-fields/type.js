@@ -11,8 +11,15 @@ const validTypes = new Set(['commonjs', 'module']);
 export function * check(root) {
 	const type = findMember(root, 'type');
 
-	// Non-string values are left to other tooling.
-	if (type?.value.type !== 'String') {
+	if (!type) {
+		return;
+	}
+
+	if (type.value.type !== 'String') {
+		yield {
+			node: type.value,
+			messageId: MESSAGE_ID,
+		};
 		return;
 	}
 

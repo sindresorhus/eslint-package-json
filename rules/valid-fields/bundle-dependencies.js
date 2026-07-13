@@ -5,7 +5,7 @@ const ELEMENT_MESSAGE_ID = 'element';
 const MISSING_MESSAGE_ID = 'missing';
 
 export const messages = {
-	[TYPE_MESSAGE_ID]: 'The `{{field}}` field must be an array.',
+	[TYPE_MESSAGE_ID]: 'The `{{field}}` field must be an array or a boolean.',
 	[ELEMENT_MESSAGE_ID]: 'Each `{{field}}` entry must be a string.',
 	[MISSING_MESSAGE_ID]: '`{{name}}` is bundled but not listed in `dependencies` or `optionalDependencies`.',
 };
@@ -29,8 +29,7 @@ export function * check(root) {
 		}
 
 		if (member.value.type !== 'Array') {
-			// A `false` value is tolerated by npm as a no-op ("bundle nothing"); `true` and other non-arrays are invalid.
-			if (member.value.type === 'Boolean' && member.value.value === false) {
+			if (member.value.type === 'Boolean') {
 				continue;
 			}
 

@@ -12,10 +12,10 @@ test.snapshot({
 		'{"browser": "./dist/browser.js"}',
 		'{"bin": "./cli.js"}',
 		'{"bin": {"mycli": "./bin/cli.js"}}',
-		// ../ paths are left alone with prefix=always.
-		'{"main": "../sibling/index.js"}',
 		// Absolute paths are skipped.
 		'{"main": "/usr/local/bin/foo"}',
+		'{"main": "C:/foo/index.js"}',
+		String.raw`{"main": "C:\\foo\\index.js"}`,
 		// URLs are skipped.
 		'{"browser": "https://cdn.example.com/foo.js"}',
 		// Globs are skipped.
@@ -58,7 +58,20 @@ test.snapshot({
 			code: '{"bin": {"mycli": "./bin/cli.js"}}',
 			options: [{prefix: 'never'}],
 		},
+		{
+			code: String.raw`{"main": "./dist\\index.js"}`,
+			options: [{prefix: 'never'}],
+		},
 		// Multiple fields at once.
 		'{"main": "index.js", "types": "index.d.ts"}',
+		// Paths must not escape the package.
+		'{"main": "../sibling/index.js"}',
+		'{"main": "./../sibling/index.js"}',
+		String.raw`{"main": "..\\sibling\\index.js"}`,
+		String.raw`{"main": ".\\dist\\index.js"}`,
+		{
+			code: '{"main": "../sibling/index.js"}',
+			options: [{prefix: 'never'}],
+		},
 	],
 });

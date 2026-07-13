@@ -1,29 +1,109 @@
 import {
 	findMember,
 	getKey,
-	checkConditionOrder,
-	conditionOrderMessages,
+	hasInvalidPackageTargetSegment,
+	isArrayIndexKey,
 } from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const KEY_MESSAGE_ID = 'key';
+const INVALID_KEY_MESSAGE_ID = 'invalidKey';
+const TARGET_TYPE_MESSAGE_ID = 'targetType';
+const TARGET_VALUE_MESSAGE_ID = 'targetValue';
+const CONDITION_KEY_MESSAGE_ID = 'conditionKey';
 
 export const messages = {
-	...conditionOrderMessages,
 	[TYPE_MESSAGE_ID]: 'The `imports` field must be an object.',
 	[KEY_MESSAGE_ID]: 'The `imports` key `{{key}}` must start with `#`.',
+	[INVALID_KEY_MESSAGE_ID]: 'The `imports` key `{{key}}` is not a valid package subpath.',
+	[TARGET_TYPE_MESSAGE_ID]: 'An `imports` target must be a string, `null`, an object, or an array.',
+	[TARGET_VALUE_MESSAGE_ID]: 'The `imports` target `{{value}}` is not a valid local path or package specifier.',
+	[CONDITION_KEY_MESSAGE_ID]: 'Condition key `{{key}}` must not be an array index.',
 };
 
-/**
-Recursively check the condition objects nested within an `imports` entry value, yielding problems.
-*/
-function * checkImportsNode(node, sourceCode) {
+const externalTargetPattern = /^(?:@[^/]+\/)?[^/]+(?:\/[^/]+)*$/u;
+
+function isValidExternalTarget(value) {
+	if (!externalTargetPattern.test(value) || value.startsWith('#') || value.startsWith('.')) {
+		return false;
+	}
+
+	try {
+		decodeURIComponent(value);
+	} catch {
+		return false;
+	}
+
+	const packageName = value.startsWith('@')
+		? value.split('/', 2).join('/')
+		: value.split('/', 1)[0];
+
+	return (!packageName.startsWith('@') || packageName.includes('/'))
+		&& !value.includes('\\')
+		&& !packageName.includes('%')
+		&& !/%(?:2f|5c)/iu.test(value);
+}
+
+function isValidUrl(value) {
+	return URL.canParse(value);
+}
+
+function isInvalidImportsKey(value) {
+	if (value === '#') {
+		return true;
+	}
+
+	const path = value.startsWith('#/') ? value.slice(2) : value.slice(1);
+	return hasInvalidPackageTargetSegment('./' + path);
+}
+
+function * checkTargetNode(node) {
 	switch (node.type) {
+		case 'String': {
+			const {value} = node;
+
+			if (value.startsWith('./')) {
+				if (hasInvalidPackageTargetSegment(value)) {
+					yield {
+						node,
+						messageId: TARGET_VALUE_MESSAGE_ID,
+						data: {value},
+					};
+				}
+
+				break;
+			}
+
+			if (
+				value === ''
+				|| value.startsWith('/')
+				|| value.startsWith('../')
+				|| isValidUrl(value)
+				|| !isValidExternalTarget(value)
+			) {
+				yield {
+					node,
+					messageId: TARGET_VALUE_MESSAGE_ID,
+					data: {value},
+				};
+			}
+
+			break;
+		}
+
 		case 'Object': {
-			yield * checkConditionOrder(sourceCode, node);
+			for (const member of node.members) {
+				if (isArrayIndexKey(getKey(member))) {
+					yield {
+						node: member.name,
+						messageId: CONDITION_KEY_MESSAGE_ID,
+						data: {key: getKey(member)},
+					};
+				}
+			}
 
 			for (const member of node.members) {
-				yield * checkImportsNode(member.value, sourceCode);
+				yield * checkTargetNode(member.value);
 			}
 
 			break;
@@ -31,16 +111,26 @@ function * checkImportsNode(node, sourceCode) {
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * checkImportsNode(element.value, sourceCode);
+				yield * checkTargetNode(element.value);
 			}
 
 			break;
 		}
-	// No default
+
+		case 'Null': {
+			break;
+		}
+
+		default: {
+			yield {
+				node,
+				messageId: TARGET_TYPE_MESSAGE_ID,
+			};
+		}
 	}
 }
 
-export function * check(root, context) {
+export function * check(root) {
 	const imports = findMember(root, 'imports');
 
 	if (!imports) {
@@ -55,8 +145,6 @@ export function * check(root, context) {
 		return;
 	}
 
-	const {sourceCode} = context;
-
 	for (const member of imports.value.members) {
 		const key = getKey(member);
 
@@ -67,11 +155,14 @@ export function * check(root, context) {
 				messageId: KEY_MESSAGE_ID,
 				data: {key},
 			};
+		} else if (isInvalidImportsKey(key)) {
+			yield {
+				node: member.name,
+				messageId: INVALID_KEY_MESSAGE_ID,
+				data: {key},
+			};
 		}
 
-		// The conditions live in the entry values, so check those.
-		for (const problem of checkImportsNode(member.value, sourceCode)) {
-			yield problem;
-		}
+		yield * checkTargetNode(member.value);
 	}
 }

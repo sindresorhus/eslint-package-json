@@ -9,7 +9,7 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-Mapping a subpath that ends in `/` to a folder in `exports`/`imports` (for example `"./foo/": "./dist/foo/"`) is deprecated. Node.js emits [`DEP0155`](https://nodejs.org/api/deprecations.html#DEP0155) for it. Use a subpath pattern with `*` instead, which explicitly captures the rest of the path and resolves the exact same set of paths. This rule flags both trailing-slash subpath keys and trailing-slash string targets, and autofixes each one to its `*` pattern equivalent.
+Trailing-slash folder mappings in `exports` and `imports`, such as `"./foo/": "./dist/foo/"`, are deprecated by Node.js as [`DEP0148`](https://nodejs.org/api/deprecations.html#DEP0148). This rule reports trailing-slash keys and targets, and safely converts direct folder mappings to `*` patterns.
 
 ## Examples
 

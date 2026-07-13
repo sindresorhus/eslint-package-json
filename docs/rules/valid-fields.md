@@ -12,6 +12,8 @@ Validate the structure and values of individual `package.json` fields when they 
 
 Each field is validated only when it exists; use [`require-fields`](require-fields.md) to enforce presence.
 
+Semantic checks include repository URLs and `exports`/`imports` targets. Condition ordering and type coverage belong to [`require-default-condition`](require-default-condition.md) and [`require-types-in-exports`](require-types-in-exports.md). Legacy entry-point fields (`main`, `module`, `browser`, `types`, and `typings`) are intentionally ignored.
+
 The following fields are validated:
 
 - `name`
@@ -73,8 +75,7 @@ The following fields are validated:
 // ❌
 {
 	"exports": {
-		"default": "./index.js",
-		"import": "./index.mjs"
+		"default": 123
 	}
 }
 ```
@@ -83,8 +84,6 @@ The following fields are validated:
 // ✅
 {
 	"exports": {
-		"types": "./index.d.ts",
-		"import": "./index.mjs",
 		"default": "./index.js"
 	}
 }

@@ -1,9 +1,11 @@
+import GitHost from 'hosted-git-info';
 import {findMember} from '../utils/index.js';
 
 const MESSAGE_ID_MISSING_URL = 'missing-url';
 const MESSAGE_ID_TYPE = 'type';
 const MESSAGE_ID_INVALID_URL = 'invalid-url';
 const MESSAGE_ID_FIELD_TYPE = 'field-type';
+const scpGitUrlPattern = /^[^\s@]+@[^\s:]+:\S+$/u;
 
 export const messages = {
 	[MESSAGE_ID_MISSING_URL]: 'The `repository` object must have a string `url`.',
@@ -16,19 +18,13 @@ export const messages = {
 Whether a `repository` value is a valid URL or a recognized npm shorthand.
 */
 function isValidRepositoryUrl(value) {
-	// Hosted shorthands (`github:user/repo`), GitHub `user/repo` shorthand, and scp-like SSH (`git@host:path`).
-	if (
-		/^(?:github|gitlab|bitbucket|gist):/.test(value)
-		|| /^[\w\-.]+\/[\w\-.]+$/.test(value)
-		|| /^[^/@]+@[^:]+:.+/.test(value)
-	) {
+	if (GitHost.fromUrl(value) || scpGitUrlPattern.test(value)) {
 		return true;
 	}
 
 	try {
-		// eslint-disable-next-line no-new
-		new URL(value.replace(/^git\+/, ''));
-		return true;
+		const url = new URL(value.replace(/^git\+/u, ''));
+		return ['http:', 'https:', 'git:', 'ssh:'].includes(url.protocol) && url.hostname !== '';
 	} catch {
 		return false;
 	}

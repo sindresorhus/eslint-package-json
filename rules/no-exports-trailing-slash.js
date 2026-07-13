@@ -1,25 +1,34 @@
 import {getRootObject, findMember, getKey} from './utils/index.js';
 
 const MESSAGE_ID = 'no-exports-trailing-slash';
+const MESSAGE_ID_PATTERN = 'pattern';
 
 const messages = {
 	[MESSAGE_ID]: 'Trailing-slash folder mapping `{{value}}` in `{{field}}` is deprecated; use a subpath pattern like `{{suggestion}}` instead.',
+	[MESSAGE_ID_PATTERN]: 'Trailing-slash mapping `{{value}}` in `{{field}}` is deprecated; use a subpath pattern without a trailing slash.',
 };
 
 /**
 Recursively walk an `exports`/`imports` value tree, yielding every trailing-slash subpath key and string value.
 */
-function * findTrailingSlashes(node, subpathPrefix) {
+function * findTrailingSlashes(node, subpathPrefix, canFixTarget = false, isPattern = false) {
 	switch (node.type) {
 		case 'Object': {
 			for (const member of node.members) {
 				const key = getKey(member);
+				const memberIsPattern = isPattern || key.includes('*');
+				const isFolderMapping = key.startsWith(subpathPrefix)
+					&& key.endsWith('/')
+					&& !key.includes('*')
+					&& member.value.type === 'String'
+					&& member.value.value.endsWith('/')
+					&& !member.value.value.includes('*');
 
 				if (key.startsWith(subpathPrefix) && key.endsWith('/')) {
-					yield member.name;
+					yield {node: member.name, canFix: isFolderMapping, isPattern: memberIsPattern};
 				}
 
-				yield * findTrailingSlashes(member.value, subpathPrefix);
+				yield * findTrailingSlashes(member.value, subpathPrefix, isFolderMapping, memberIsPattern);
 			}
 
 			break;
@@ -27,7 +36,7 @@ function * findTrailingSlashes(node, subpathPrefix) {
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * findTrailingSlashes(element.value, subpathPrefix);
+				yield * findTrailingSlashes(element.value, subpathPrefix, canFixTarget, isPattern);
 			}
 
 			break;
@@ -35,7 +44,7 @@ function * findTrailingSlashes(node, subpathPrefix) {
 
 		case 'String': {
 			if (node.value.endsWith('/')) {
-				yield node;
+				yield {node, canFix: canFixTarget, isPattern: isPattern || node.value.includes('*')};
 			}
 
 			break;
@@ -61,15 +70,21 @@ const create = context => ({
 			}
 
 			for (const target of findTrailingSlashes(member.value, subpathPrefix)) {
-				const {value} = target;
+				const {node: targetNode, canFix} = target;
+				const {value} = targetNode;
+				const isPattern = target.isPattern || value.includes('*');
 				const suggestion = value + '*';
+				const report = {
+					node: targetNode,
+					messageId: isPattern ? MESSAGE_ID_PATTERN : MESSAGE_ID,
+					data: isPattern ? {field, value} : {field, value, suggestion},
+				};
 
-				context.report({
-					node: target,
-					messageId: MESSAGE_ID,
-					data: {field, value, suggestion},
-					fix: fixer => fixer.replaceText(target, JSON.stringify(suggestion)),
-				});
+				if (canFix) {
+					report.fix = fixer => fixer.replaceText(targetNode, JSON.stringify(suggestion));
+				}
+
+				context.report(report);
 			}
 		}
 	},

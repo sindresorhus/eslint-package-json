@@ -1,33 +1,35 @@
 import {
 	findMember,
 	getKey,
-	checkConditionOrder,
 	checkKeyConsistency,
-	conditionOrderMessages,
 	keyConsistencyMessages,
+	hasInvalidPackageTargetSegment,
+	isArrayIndexKey,
 } from '../utils/index.js';
 
 const MESSAGE_ID_RELATIVE_PATH = 'relativePath';
 const MESSAGE_ID_SUBPATH_KEY = 'subpathKey';
-const MESSAGE_ID_TYPES_EXTENSION = 'typesExtension';
-const MESSAGE_ID_DUAL_TYPES = 'dualTypes';
+const MESSAGE_ID_INVALID_SUBPATH = 'invalidSubpath';
+const MESSAGE_ID_CONDITION_KEY = 'conditionKey';
 const MESSAGE_ID_PATTERN = 'patternMismatch';
+const MESSAGE_ID_TARGET_TYPE = 'targetType';
+const MESSAGE_ID_INVALID_TARGET = 'invalidTarget';
+const MESSAGE_ID_ROOT_TYPE = 'rootType';
 
 export const messages = {
-	...conditionOrderMessages,
 	...keyConsistencyMessages,
-	[MESSAGE_ID_RELATIVE_PATH]: 'Export path `{{value}}` must start with `./`.',
+	[MESSAGE_ID_RELATIVE_PATH]: 'Export target `{{value}}` must be a package-relative path starting with `./`.',
 	[MESSAGE_ID_SUBPATH_KEY]: 'Subpath key `{{key}}` must be `.` or start with `./`.',
-	[MESSAGE_ID_TYPES_EXTENSION]: 'The `types` condition `{{value}}` must point at a declaration file ending in `.d.ts`, `.d.mts`, or `.d.cts`.',
-	[MESSAGE_ID_DUAL_TYPES]: 'The `import` and `require` conditions both use `{{value}}` for types. A single `.d.ts` has the wrong module kind for one of them. Use `.d.mts`/`.d.cts`.',
+	[MESSAGE_ID_INVALID_SUBPATH]: 'Subpath key `{{key}}` contains a path segment that Node does not allow.',
+	[MESSAGE_ID_CONDITION_KEY]: 'Condition key `{{key}}` must not be an array index.',
+	[MESSAGE_ID_INVALID_TARGET]: 'Export target `{{value}}` contains a path segment that Node does not allow.',
 	[MESSAGE_ID_PATTERN]: 'The target `{{value}}` must not contain `*` unless the subpath key `{{key}}` also contains `*`.',
+	[MESSAGE_ID_TARGET_TYPE]: 'An `exports` target must be a string, `null`, an object, or an array.',
+	[MESSAGE_ID_ROOT_TYPE]: 'The top-level `exports` field must be a string, an object, or an array.',
 };
 
-// Matches the three valid TypeScript declaration-file extensions.
-const typesExtensionPattern = /\.d\.[cm]?ts$/;
-
 /**
-Recurse a value node yielding every `String` leaf (a file target).
+Recursively yields every `String` leaf (a file target) in a value node.
 */
 function * iterateStringLeaves(node) {
 	switch (node.type) {
@@ -52,7 +54,10 @@ function * iterateStringLeaves(node) {
 
 			break;
 		}
-	// No default
+
+		default: {
+			break;
+		}
 	}
 }
 
@@ -62,7 +67,7 @@ function * checkPatternTarget(node, key) {
 	}
 
 	for (const leaf of iterateStringLeaves(node)) {
-		if (leaf.value !== '' && leaf.value.includes('*')) {
+		if (leaf.value.includes('*')) {
 			yield {
 				node: leaf,
 				messageId: MESSAGE_ID_PATTERN,
@@ -73,61 +78,19 @@ function * checkPatternTarget(node, key) {
 }
 
 /**
-Get a condition's own nested `types` value node, or `undefined` if the condition is not an object with a String `types` member.
-*/
-function getOwnTypes(objectNode, conditionKey) {
-	const condition = findMember(objectNode, conditionKey);
-
-	if (condition?.value.type !== 'Object') {
-		return undefined;
-	}
-
-	const types = findMember(condition.value, 'types');
-
-	return types?.value.type === 'String' ? types.value : undefined;
-}
-
-/**
-Check for declaration files that are shared by both module kinds in a dual `import`/`require` export.
-*/
-function * checkDualTypes(objectNode) {
-	const types = findMember(objectNode, 'types');
-	const hasImport = Boolean(findMember(objectNode, 'import'));
-	const hasRequire = Boolean(findMember(objectNode, 'require'));
-	const importTypes = getOwnTypes(objectNode, 'import');
-	const requireTypes = getOwnTypes(objectNode, 'require');
-
-	if (types?.value.type === 'String' && hasImport && hasRequire && types.value.value.endsWith('.d.ts')) {
-		yield {
-			node: types.value,
-			messageId: MESSAGE_ID_DUAL_TYPES,
-			data: {value: types.value.value},
-		};
-	}
-
-	if (importTypes && requireTypes && importTypes.value === requireTypes.value && importTypes.value.endsWith('.d.ts')) {
-		yield {
-			node: requireTypes,
-			messageId: MESSAGE_ID_DUAL_TYPES,
-			data: {value: requireTypes.value},
-		};
-	}
-}
-
-/**
 Recursively check all object nodes within the exports tree, yielding problems.
 */
-function * checkExportsNode(node, sourceCode) {
+function * checkExportsNode(node) {
 	switch (node.type) {
 		case 'Object': {
-			yield * checkObject(node, sourceCode);
+			yield * checkObject(node);
 
 			break;
 		}
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * checkExportsNode(element.value, sourceCode);
+				yield * checkExportsNode(element.value);
 			}
 
 			break;
@@ -136,8 +99,15 @@ function * checkExportsNode(node, sourceCode) {
 		case 'String': {
 			const {value} = node;
 
-			// Already valid, or an absolute path that is invalid for a different reason we do not autofix (prepending `./` would corrupt it).
-			if (value === '' || value.startsWith('./') || value.startsWith('/')) {
+			if (value.startsWith('./')) {
+				if (hasInvalidPackageTargetSegment(value)) {
+					yield {
+						node,
+						messageId: MESSAGE_ID_INVALID_TARGET,
+						data: {value},
+					};
+				}
+
 				break;
 			}
 
@@ -146,30 +116,47 @@ function * checkExportsNode(node, sourceCode) {
 				messageId: MESSAGE_ID_RELATIVE_PATH,
 				data: {value},
 			};
+			const fixedValue = './' + value;
 
-			// A `../` path escapes the package, so prepending `./` would not make it valid. Report it without the misleading autofix.
-			if (!value.startsWith('../')) {
-				problem.fix = fixer => fixer.replaceText(node, JSON.stringify('./' + value));
+			// Only offer the prefix autofix when it produces a valid package target.
+			if (value !== '' && !URL.canParse(value) && !hasInvalidPackageTargetSegment(fixedValue)) {
+				problem.fix = fixer => fixer.replaceText(node, JSON.stringify(fixedValue));
 			}
 
 			yield problem;
 
 			break;
 		}
-	// No default
+
+		case 'Null': {
+			break;
+		}
+
+		default: {
+			yield {
+				node,
+				messageId: MESSAGE_ID_TARGET_TYPE,
+			};
+		}
 	}
 }
 
 /**
-Check a single object node for condition ordering and subpath/condition key validity, then recurse into member values.
+Check a single object node for subpath/condition key validity, then recurse into member values.
 */
-function * checkObject(objectNode, sourceCode) {
-	yield * checkConditionOrder(sourceCode, objectNode);
+function * checkObject(objectNode) {
 	yield * checkKeyConsistency(objectNode, '.');
-	yield * checkDualTypes(objectNode);
 
 	for (const member of objectNode.members) {
 		const key = getKey(member);
+
+		if (isArrayIndexKey(key)) {
+			yield {
+				node: member.name,
+				messageId: MESSAGE_ID_CONDITION_KEY,
+				data: {key},
+			};
+		}
 
 		// A subpath key (one that starts with `.`) must be exactly `.` or start with `./`.
 		if (key.startsWith('.') && key !== '.' && !key.startsWith('./')) {
@@ -180,21 +167,20 @@ function * checkObject(objectNode, sourceCode) {
 			};
 		}
 
+		if (key.startsWith('./') && hasInvalidPackageTargetSegment(key)) {
+			yield {
+				node: member.name,
+				messageId: MESSAGE_ID_INVALID_SUBPATH,
+				data: {key},
+			};
+		}
+
 		// A target pattern only has meaning when the subpath key is also a pattern.
 		if (key.startsWith('.')) {
 			yield * checkPatternTarget(member.value, key);
 		}
 
-		// A `types` condition must point at a declaration file.
-		if (key === 'types' && member.value.type === 'String' && member.value.value !== '' && !typesExtensionPattern.test(member.value.value)) {
-			yield {
-				node: member.value,
-				messageId: MESSAGE_ID_TYPES_EXTENSION,
-				data: {value: member.value.value},
-			};
-		}
-
-		yield * checkExportsNode(member.value, sourceCode);
+		yield * checkExportsNode(member.value);
 	}
 }
 
@@ -202,20 +188,24 @@ function isTopLevelConditionMap(node) {
 	return node.type === 'Object' && node.members.every(member => !getKey(member).startsWith('.'));
 }
 
-export function * check(root, context) {
+export function * check(root) {
 	const exportsMember = findMember(root, 'exports');
 
 	if (!exportsMember) {
 		return;
 	}
 
-	const {sourceCode} = context;
+	if (!['String', 'Object', 'Array'].includes(exportsMember.value.type)) {
+		yield {
+			node: exportsMember.value,
+			messageId: MESSAGE_ID_ROOT_TYPE,
+		};
+		return;
+	}
 
 	if (exportsMember.value.type !== 'Object' || isTopLevelConditionMap(exportsMember.value)) {
 		yield * checkPatternTarget(exportsMember.value, '.');
 	}
 
-	for (const problem of checkExportsNode(exportsMember.value, sourceCode)) {
-		yield problem;
-	}
+	yield * checkExportsNode(exportsMember.value);
 }

@@ -6,15 +6,19 @@ test.snapshot({
 	valid: [
 		'{"type": "module"}',
 		'{"name": "foo", "type": "module"}',
-		// A non-string `type` is malformed; `valid-fields` owns that, not this rule.
+		// Malformed values are handled by validation rules.
 		'{"type": true}',
 		'{"type": 42}',
+		'{"type": "esm"}',
 	],
 	invalid: [
 		'{"name": "foo"}',
-		'{"type": "commonjs"}',
-		'{"type": "esm"}',
 		// An empty root has no member to anchor the insertion on.
 		'{}',
+		'{\n}',
+		`{
+	"name": "foo"
+}`,
+		'{"type": "commonjs"}',
 	],
 });

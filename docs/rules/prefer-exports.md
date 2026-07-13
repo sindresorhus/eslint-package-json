@@ -7,11 +7,9 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-The `exports` field is the modern way to declare a package's entry points. It supports multiple entry points, conditional resolution (`import`/`require`/`types`/`browser`/…), and encapsulation.
+The `exports` field supports multiple entry points, conditional resolution, and encapsulation. This rule reports the legacy `main`, `module`, `types`, and `typings` fields, plus string-valued `browser` entry points. Browser object mappings are ignored because their replacements and `false` shims have no generic `exports` equivalent.
 
-This rule prefers an `exports`-first package interface over the `main`, `module`, `browser`, `types`, and `typings` fields. It flags them even when `exports` is already defined. Keeping the package's public entry points in `exports` makes its resolution behavior explicit and self-contained.
-
-It is report-only: removing these fields can change package resolution, type discovery, or browser bundling, so there is no autofix.
+When `exports` is present, modern TypeScript resolution reads types from it instead of the top-level `types` field. Rewriting entry points can change resolution, so this rule has no autofix.
 
 ## Examples
 
@@ -27,11 +25,7 @@ It is report-only: removing these fields can change package resolution, type dis
 // ❌
 {
 	"exports": "./index.js",
-	"main": "./index.js",
-	"types": "./index.d.ts",
-	"browser": {
-		"./server.js": "./browser.js"
-	}
+	"main": "./index.js"
 }
 ```
 

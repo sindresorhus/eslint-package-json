@@ -69,6 +69,11 @@ test('prefer-exports is recommended', () => {
 	assert.equal(plugin.configs.recommended.rules[ruleKey], 'error');
 });
 
+test('prefer-type-module is recommended', () => {
+	const ruleKey = 'package-json/prefer-type-module';
+	assert.equal(plugin.configs.recommended.rules[ruleKey], 'error');
+});
+
 test('all config contains every rule set to error', () => {
 	const actual = Object.keys(plugin.configs.all.rules).map(key => withoutPrefix(key));
 	assert.deepEqual(actual.toSorted(byName), ruleIds.toSorted(byName));
@@ -90,6 +95,22 @@ test('the recommended config works end-to-end through ESLint', () => {
 		legacyEntryPointProblems.some(message => message.ruleId === 'package-json/prefer-exports'),
 		'legacy entry points should be reported via the recommended config',
 	);
+
+	const getRelevantTypesTargetProblems = code => linter.verify(code, config, {filename: 'package.json'})
+		.filter(message => ['package-json/require-types-in-exports', 'package-json/valid-fields'].includes(message.ruleId))
+		.map(message => `${message.ruleId}/${message.messageId}`)
+		.toSorted(byName);
+	assert.deepEqual(getRelevantTypesTargetProblems('{"exports": {"types": {"import": [[{"node": false}]]}, "import": {"node": "./index.js"}}}'), [
+		'package-json/require-types-in-exports/missing',
+		'package-json/valid-fields/exports/targetType',
+	]);
+	assert.deepEqual(getRelevantTypesTargetProblems('{"exports": {"types": "", "default": "./index.js"}}'), [
+		'package-json/require-types-in-exports/missing',
+		'package-json/valid-fields/exports/relativePath',
+	]);
+	assert.deepEqual(getRelevantTypesTargetProblems('{"exports": {"types": ["./index.d.ts", false], "default": "./index.js"}}'), [
+		'package-json/valid-fields/exports/targetType',
+	]);
 
 	const nestedPackageProblems = linter.verify('{"name": "foo", "exports": "./index.js"}', config, {filename: 'dist/package.json'});
 	assert.ok(

@@ -48,7 +48,9 @@ test.snapshot({
 		'{"repository": "sindresorhus/foo"}',
 		'{"repository": "github:sindresorhus/foo"}',
 		'{"repository": "git@github.com:sindresorhus/foo.git"}',
+		'{"repository": "git@git.example.com:foo/bar.git"}',
 		'{"repository": "https://github.com/sindresorhus/foo"}',
+		'{"repository": "https://example.com"}',
 		'{"repository": {"type": "git", "url": "git+https://github.com/sindresorhus/foo.git"}}',
 		'{"repository": {"url": "git+https://github.com/sindresorhus/foo.git", "directory": "packages/foo"}}',
 		'{"name": "foo"}',
@@ -77,8 +79,11 @@ test.snapshot({
 		'{"name": "foo"}',
 		'{"type": "commonjs"}',
 		'{"type": "module"}',
-		// Non-string values are left to other tooling.
-		'{"type": true}',
+		// Legacy fields are intentionally ignored, including malformed values.
+		'{"main": false, "module": [], "types": 42, "typings": null}',
+		'{"browser": 42}',
+		'{"browser": "C:/browser.js"}',
+		'{"browser": {"/server.js": [], "./server.js": "/browser.js", "./remote.js": "https://cdn.example.com/browser.js"}}',
 		// Empty string is handled by `no-empty-fields`.
 		'{"type": ""}',
 		// `exports`
@@ -88,11 +93,14 @@ test.snapshot({
 		'{"exports": {}}',
 		// Simple subpath.
 		'{"exports": {".": "./index.js"}}',
-		// Correct order: types first, default last.
+		// Condition maps are structurally valid regardless of condition ordering.
 		'{"exports": {"types": "./index.d.ts", "default": "./index.js"}}',
-		// Correct order with more conditions.
 		'{"exports": {"types": "./index.d.ts", "import": "./index.mjs", "default": "./index.js"}}',
-		// Nested subpaths with correct ordering.
+		'{"exports": {"default": "./index.js", "import": "./index.mjs"}}',
+		'{"exports": {"import": "./index.mjs", "types": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"import": "./index.mjs", "default": "./index.js", "types": "./index.d.ts"}}',
+		'{"exports": {"require": "./index.cjs", "module": "./index.mjs", "default": "./index.js"}}',
+		// Nested condition map.
 		`{
 	"exports": {
 		"./feature": {
@@ -106,18 +114,14 @@ test.snapshot({
 		'{"name": "foo"}',
 		// Null value (valid as a blocking condition).
 		'{"exports": {"default": null}}',
-		// Absolute paths are left alone; prepending `./` would corrupt them.
-		'{"exports": "/abs/index.js"}',
 		// Array fallback values with relative paths are valid.
 		'{"exports": {".": ["./a.js", "./b.js"]}}',
-		// `module` before `require`.
-		'{"exports": {"module": "./index.mjs", "require": "./index.cjs", "default": "./index.js"}}',
 		// Subpath map (all keys are subpaths).
 		'{"exports": {".": "./index.js", "./feature": "./feature.js"}}',
-		// Per-condition `types` with valid declaration-file extensions.
-		'{"exports": {"types": "./index.d.ts", "default": "./index.js"}}',
+		// Trailing-slash mappings are owned by `no-exports-trailing-slash`.
+		'{"exports": {"./feature/": "./feature/"}}',
+		// Nested condition maps exercise recursive target validation.
 		'{"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}',
-		// A dual `import`/`require` pair with distinct declaration files is correct.
 		'{"exports": {".": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}}',
 		// Symmetric subpath patterns.
 		'{"exports": {"./feature/*": "./dist/feature/*.js"}}',
@@ -128,9 +132,20 @@ test.snapshot({
 		// `imports`
 		'{"name": "foo"}',
 		'{"imports": {"#dep": "./src/dep.js"}}',
+		'{"imports": {"#dep": null}}',
 		'{"imports": {"#internal/*.js": "./src/internal/*.js"}}',
-		// Correctly ordered conditions inside an entry.
-		'{"imports": {"#dep": {"types": "./dep.d.ts", "import": "./dep.mjs", "default": "./dep.js"}}}',
+		'{"imports": {"#/internal": "./src/internal.js"}}',
+		'{"imports": {"#external": "foo/../bar"}}',
+		'{"imports": {"#nested": "foo/node_modules/bar"}}',
+		'{"imports": {"#colon": "foo/bar:baz"}}',
+		'{"imports": {"#percent": "foo/%25"}}',
+		'{"imports": {"#scope": "@scope/package/subpath"}}',
+		'{"imports": {"#fs": "fs", "#path": "path", "#legacy": "Foo"}}',
+		// `default` and `types` ordering is owned by the dedicated condition rules.
+		'{"imports": {"#dep": {"default": "./dep.js", "import": "./dep.mjs", "types": "./dep.d.ts"}}}',
+		'{"imports": {"#dep": {"require": "./dep.cjs", "module": "./dep.mjs", "default": "./dep.js"}}}',
+		// Trailing-slash mappings are owned by `no-exports-trailing-slash`.
+		'{"imports": {"#dep/": "./dep/"}}',
 		// An array fallback of plain targets.
 		'{"imports": {"#dep": ["./a.js", "./b.js"]}}',
 		// `bin`
@@ -179,10 +194,12 @@ test.snapshot({
 		'{"name": "foo"}',
 		'{"os": ["darwin", "linux"]}',
 		'{"os": ["!win32"]}',
+		'{"os": ["darwin", "!win32"]}',
 		// `cpu`
 		'{"name": "foo"}',
 		'{"cpu": ["x64", "arm64"]}',
 		'{"cpu": ["!arm64"]}',
+		'{"cpu": ["x64", "!ia32"]}',
 		// `publishConfig`
 		'{"name": "foo"}',
 		'{"publishConfig": {"access": "public"}}',
@@ -209,6 +226,7 @@ test.snapshot({
 		'{"name": "foo"}',
 		'{"files": ["dist", "index.js"]}',
 		'{"files": ["src/**/*.js"]}',
+		'{"files": [".hg", ".svn", "bun.lock"]}',
 		// `workspaces`
 		'{"name": "foo"}',
 		'{"workspaces": ["packages/*"]}',
@@ -248,7 +266,10 @@ test.snapshot({
 		'{"dependencies": {"foo": "^1.0.0"}, "bundleDependencies": ["foo"]}',
 		'{"optionalDependencies": {"foo": "^1.0.0"}, "bundledDependencies": ["foo"]}',
 		'{"bundledDependencies": []}',
-		// A `false` value is tolerated by npm as a no-op meaning "bundle nothing".
+		// Boolean values mean bundle all or none.
+		'{"bundleDependencies": true}',
+		'{"bundledDependencies": true}',
+		'{"bundleDependencies": false}',
 		'{"bundledDependencies": false}',
 		// `overrides`
 		'{"name": "foo"}',
@@ -306,6 +327,7 @@ test.snapshot({
 		'{"repository": {"url": "git+https://github.com/sindresorhus/foo.git", "directory": false}}',
 		'{"repository": "not a url"}',
 		'{"repository": {"url": "http//bad"}}',
+		'{"repository": "mailto:owner@example.com"}',
 		// Neither a string nor an object.
 		'{"repository": 123}',
 		'{"repository": []}',
@@ -339,26 +361,19 @@ test.snapshot({
 		'{"type": "esm"}',
 		'{"type": "module "}',
 		'{"type": "Module"}',
+		'{"type": true}',
+		'{"type": 42}',
 		// `exports`
-		// `default` is not last.
-		`{
-	"exports": {
-		"default": "./index.js",
-		"import": "./index.mjs"
-	}
-}`,
-		// `types` is not first.
-		`{
-	"exports": {
-		"import": "./index.mjs",
-		"types": "./index.d.ts",
-		"default": "./index.js"
-	}
-}`,
 		// Non-relative path (missing `./`).
 		'{"exports": {"default": "index.js"}}',
 		// A `../` path is flagged but not autofixed (prepending `./` would not make it valid).
 		'{"exports": {"default": "../index.js"}}',
+		'{"exports": "."}',
+		'{"exports": ".."}',
+		'{"exports": "node_modules/index.js"}',
+		'{"exports": "%2e%2e/index.js"}',
+		'{"exports": "node:fs"}',
+		'{"exports": "C:/index.js"}',
 		// Non-relative path in nested subpath.
 		`{
 	"exports": {
@@ -366,58 +381,32 @@ test.snapshot({
 			"default": "feature/index.js"
 		}
 	}
-}`,
-		// Both default-not-last and types-not-first.
-		`{
-	"exports": {
-		"import": "./index.mjs",
-		"default": "./index.js",
-		"types": "./index.d.ts"
-	}
-}`,
-		// Default not last in nested subpath.
-		`{
-	"exports": {
-		"./feature": {
-			"default": "./feature.js",
-			"import": "./feature.mjs"
-		}
-	}
-}`,
+	}`,
+		// Invalid target values are not package targets.
+		'{"exports": "/abs/index.js"}',
+		'{"exports": {"default": 123}}',
+		'{"exports": {"default": true}}',
+		'{"exports": {"default": "./dist/../index.js"}}',
+		'{"exports": {"default": "./dist/%2e%2e/index.js"}}',
+		'{"exports": {"default": "./node_modules/foo.js"}}',
+		'{"exports": {"./utils/./helper.js": "./utils/helper.js"}}',
+		'{"exports": {"0": "./index.js"}}',
+		'{"exports": null}',
+		'{"exports": false}',
+		'{"exports": 1}',
 		// String exports without ./
 		'{"exports": "index.js"}',
 		// Non-relative path inside an array fallback.
 		'{"exports": {".": ["a.js", "./b.js"]}}',
-		// Single-line object: `default` not last (exercises the move suggestion with no indentation).
-		'{"exports": {"default": "./index.js", "import": "./index.mjs"}}',
-		// CRLF file: the move suggestion must preserve the file's newline.
-		'{\r\n\t"exports": {\r\n\t\t"default": "./index.js",\r\n\t\t"import": "./index.mjs"\r\n\t}\r\n}',
-		// `module` after `require`.
-		`{
-	"exports": {
-		"require": "./index.cjs",
-		"module": "./index.mjs",
-		"default": "./index.js"
-	}
-}`,
 		// Mixing a subpath key and a condition key.
 		'{"exports": {".": "./index.js", "import": "./index.mjs"}}',
 		// Subpath key that does not start with `./`.
 		'{"exports": {".foo": "./foo.js"}}',
-		// `types` condition without a declaration-file extension.
-		'{"exports": {"types": "./index.js", "default": "./index.js"}}',
-		'{"exports": {"import": {"types": "./index.ts", "default": "./index.mjs"}}}',
-		// A dual `import`/`require` pair sharing one ambiguous `.d.ts` file.
-		`{
-	"exports": {
-		"import": {"types": "./index.d.ts", "default": "./index.mjs"},
-		"require": {"types": "./index.d.ts", "default": "./index.cjs"}
-	}
-}`,
 		// Subpath pattern target without a pattern key inside conditions.
 		'{"exports": {"./feature": {"default": "./dist/*.js"}}}',
 		// Subpath pattern target without a pattern key.
 		'{"exports": {"./feature": "./dist/*.js"}}',
+		'{"exports": {"./feature//": "./feature/"}}',
 		// Subpath pattern target without a pattern key inside mixed conditions.
 		'{"exports": {"./feature": {"types": "./dist/feature.d.ts", "default": "./dist/feature/*.js"}}}',
 		// Root export pattern target without a pattern key.
@@ -427,37 +416,22 @@ test.snapshot({
 		'{"imports": {"dep": "./src/dep.js"}}',
 		'{"imports": {"#dep": "./a.js", "dep": "./b.js"}}',
 		'{"imports": ["#dep"]}',
-		// `default` not last inside a single-line conditions object (exercises the inline reorder fix).
-		'{"imports": {"#dep": {"default": "./dep.js", "import": "./dep.mjs"}}}',
-		// `default` not last inside an entry's conditions.
-		`{
-	"imports": {
-		"#dep": {
-			"default": "./dep.js",
-			"import": "./dep.mjs"
-		}
-	}
-}`,
-		// `module` after `require` inside an entry's conditions.
-		`{
-	"imports": {
-		"#dep": {
-			"require": "./dep.cjs",
-			"module": "./dep.mjs",
-			"default": "./dep.js"
-		}
-	}
-}`,
-		// `types` not first inside an entry's conditions.
-		`{
-	"imports": {
-		"#dep": {
-			"import": "./dep.mjs",
-			"types": "./dep.d.ts",
-			"default": "./dep.js"
-		}
-	}
-}`,
+		'{"imports": {"#dep": 123}}',
+		'{"imports": {"#dep": "../dep.js"}}',
+		'{"imports": {"#dep": "./dep/../index.js"}}',
+		'{"imports": {"#dep": "./dist/%2e%2e/index.js"}}',
+		'{"imports": {"#": "./dep.js"}}',
+		'{"imports": {"#dep//": "./dep/"}}',
+		'{"imports": {"#dep/../other": "./dep.js"}}',
+		'{"imports": {"#dep": "https://example.com/dep.js"}}',
+		'{"imports": {"#dep": "."}}',
+		'{"imports": {"#dep": "node:"}}',
+		'{"imports": {"#fs": "node:fs"}}',
+		'{"imports": {"#scope": "@scope"}}',
+		'{"imports": {"#percent": "foo/%"}}',
+		'{"imports": {"#percent": "foo/%zz"}}',
+		'{"imports": {"#percent": "foo/%2"}}',
+		'{"imports": {"#dep": {"0": "./dep.js"}}}',
 		// `bin`
 		'{"bin": ["./cli.js"]}',
 		'{"bin": true}',
@@ -518,7 +492,6 @@ test.snapshot({
 		'{"os": ["windows"]}',
 		'{"os": ["darwin", "osx"]}',
 		'{"os": "darwin"}',
-		'{"os": ["darwin", "!win32"]}',
 		// Non-string element.
 		'{"os": [42]}',
 		// `cpu`
@@ -526,7 +499,6 @@ test.snapshot({
 		'{"cpu": ["x86_64"]}',
 		'{"cpu": ["aarch64"]}',
 		'{"cpu": "x64"}',
-		'{"cpu": ["x64", "!ia32"]}',
 		// Non-string element.
 		'{"cpu": [42]}',
 		// `publishConfig`
@@ -558,7 +530,7 @@ test.snapshot({
 		'{"files": ["node_modules"]}',
 		'{"files": ["node_modules/foo"]}',
 		'{"files": ["yarn.lock"]}',
-		'{"files": ["bun.lock"]}',
+		'{"files": ["bun.lockb"]}',
 		'{"files": ["dist", ".git"]}',
 		'{"files": [1]}',
 		'{"files": ["dist", ""]}',
@@ -621,14 +593,13 @@ test.snapshot({
 	}
 }`,
 		// `bundleDependencies`
+		'{"bundleDependencies": "foo"}',
 		'{"bundledDependencies": "foo"}',
 		'{"bundledDependencies": [1]}',
 		'{"bundledDependencies": ["foo"]}',
 		'{"dependencies": {"foo": "^1.0.0"}, "bundledDependencies": ["foo", "bar"]}',
 		// A peer dependency is not published, so it does not satisfy the bundle requirement.
 		'{"peerDependencies": {"foo": ">=1"}, "bundledDependencies": ["foo"]}',
-		// A `true` value is warned on and deleted by npm (it must be an array).
-		'{"bundledDependencies": true}',
 		// `overrides`
 		// Wrong top-level type.
 		'{"overrides": ["foo"]}',
@@ -640,8 +611,6 @@ test.snapshot({
 		'{"overrides": {"foo": null}}',
 		// Invalid leaf inside a nested override.
 		'{"overrides": {"foo": {"bar": 1}}}',
-		// A dual `import`/`require` pair sharing one sibling ambiguous `.d.ts` file.
-		'{"exports": {"types": "./index.d.ts", "import": "./index.mjs", "require": "./index.cjs"}}',
 		// `publishConfig.tag` must not be a valid SemVer range.
 		'{"publishConfig": {"tag": "1.0.0"}}',
 		'{"publishConfig": {"tag": "v1.4"}}',

@@ -86,3 +86,48 @@ Message:
   7 | 		}
 
 `;
+
+exports[`invalid(4): {\"imports\": {\"#dep\": {\"#custom\": \"./dep.js\"}}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep": {"#custom": "./dep.js"}}}
+
+`;
+
+exports[`invalid(4): {\"imports\": {\"#dep\": {\"#custom\": \"./dep.js\"}}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep": {"#custom": "./dep.js"}}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^ A conditions object should include a \`default\` entry as a fallback.
+
+`;
+
+exports[`invalid(5): {\"exports\": {\"default\": \"./index.js\", \"import\": \"./index.mjs\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": "./index.js", "import": "./index.mjs"}}
+
+`;
+
+exports[`invalid(5): {\"exports\": {\"default\": \"./index.js\", \"import\": \"./index.mjs\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": "./index.js", "import": "./index.mjs"}}
+    |              ^^^^^^^^^^^^^^^^^^^^^^^ The \`default\` condition must be the last entry in a conditions object.
+
+`;
+
+exports[`invalid(6): {\"imports\": {\"#dep\": {\"default\": \"./dep.js\", \"node\": \"./node.js\"}}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}
+
+`;
+
+exports[`invalid(6): {\"imports\": {\"#dep\": {\"default\": \"./dep.js\", \"node\": \"./node.js\"}}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}
+    |                       ^^^^^^^^^^^^^^^^^^^^^ The \`default\` condition must be the last entry in a conditions object.
+
+`;

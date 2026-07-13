@@ -1,33 +1,41 @@
 import {getRootObject, findMember, getKey} from './utils/index.js';
 
 const MESSAGE_ID = 'require-default-condition';
+const MESSAGE_ID_NOT_LAST = 'defaultNotLast';
 
 const messages = {
 	[MESSAGE_ID]: 'A conditions object should include a `default` entry as a fallback.',
+	[MESSAGE_ID_NOT_LAST]: 'The `default` condition must be the last entry in a conditions object.',
 };
 
 /**
-Whether an object node holds conditions (keys like `import`/`node`) rather than subpaths. An object with any subpath key (starting with `subpathPrefix`) is treated as a subpath map, matching `require-exports-root`; key mixing is reported separately by `valid-fields`.
+Whether an object node holds conditions (keys like `import`/`node`) rather than subpaths. This distinction only applies to the top-level `exports` or `imports` object; nested objects are condition objects.
 */
 function isConditionsObject(objectNode, subpathPrefix) {
 	return objectNode.members.length > 0 && objectNode.members.every(member => !getKey(member).startsWith(subpathPrefix));
 }
 
 /**
-Recursively yield conditions objects that lack a `default` entry.
+Recursively yields condition objects that lack `default` or place it before another condition.
 */
-function * checkNode(node, subpathPrefix) {
+function * checkNode(node, subpathPrefix, isRoot = true) {
 	switch (node.type) {
 		case 'Object': {
-			if (
-				isConditionsObject(node, subpathPrefix)
-				&& node.members.every(member => getKey(member) !== 'default')
-			) {
-				yield node;
+			if (!isRoot || isConditionsObject(node, subpathPrefix)) {
+				const defaultIndex = node.members.findIndex(member => getKey(member) === 'default');
+
+				if (defaultIndex === -1) {
+					yield {node, messageId: MESSAGE_ID};
+				} else if (defaultIndex !== node.members.length - 1) {
+					yield {
+						node: node.members[defaultIndex],
+						messageId: MESSAGE_ID_NOT_LAST,
+					};
+				}
 			}
 
 			for (const member of node.members) {
-				yield * checkNode(member.value, subpathPrefix);
+				yield * checkNode(member.value, subpathPrefix, false);
 			}
 
 			break;
@@ -35,7 +43,7 @@ function * checkNode(node, subpathPrefix) {
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * checkNode(element.value, subpathPrefix);
+				yield * checkNode(element.value, subpathPrefix, false);
 			}
 
 			break;
@@ -60,10 +68,10 @@ const create = context => ({
 				continue;
 			}
 
-			for (const conditionsObject of checkNode(member.value, subpathPrefix)) {
+			for (const problem of checkNode(member.value, subpathPrefix)) {
 				context.report({
-					node: conditionsObject,
-					messageId: MESSAGE_ID,
+					node: problem.node,
+					messageId: problem.messageId,
 				});
 			}
 		}
@@ -76,7 +84,7 @@ const config = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			description: 'Require a `default` entry in `exports`/`imports` conditions objects.',
+			description: 'Require a last `default` entry in `exports`/`imports` conditions objects.',
 			recommended: true,
 		},
 		schema: [],

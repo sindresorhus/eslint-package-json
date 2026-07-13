@@ -3,11 +3,13 @@ import {findMember} from '../utils/index.js';
 const TYPE_MESSAGE_ID = 'type';
 const FOOTGUN_MESSAGE_ID = 'footgun';
 const ELEMENT_MESSAGE_ID = 'element';
+const CONVERT_SUGGESTION_ID = 'convert';
 
 export const messages = {
 	[TYPE_MESSAGE_ID]: 'The `sideEffects` field must be a boolean or an array of file globs.',
 	[FOOTGUN_MESSAGE_ID]: 'The `sideEffects` field should be the boolean `{{value}}`, not the string `"{{value}}"`. A quoted boolean is always truthy, so it does not disable tree-shaking.',
 	[ELEMENT_MESSAGE_ID]: 'Each `sideEffects` entry must be a file glob string.',
+	[CONVERT_SUGGESTION_ID]: 'Replace with the boolean `{{value}}`.',
 };
 
 export function * check(root) {
@@ -42,7 +44,13 @@ export function * check(root) {
 			node: value,
 			messageId: FOOTGUN_MESSAGE_ID,
 			data: {value: value.value},
-			fix: fixer => fixer.replaceText(value, value.value),
+			suggest: [
+				{
+					messageId: CONVERT_SUGGESTION_ID,
+					data: {value: value.value},
+					fix: fixer => fixer.replaceText(value, value.value),
+				},
+			],
 		};
 		return;
 	}
