@@ -9,11 +9,42 @@ exports[`invalid(1): {\"name\": \"foo\", \"license\": \"MIT\", \"keywords\": [\"
 
 Message:
 > 1 | {"name": "foo", "license": "MIT", "keywords": ["x"], "description": "bar"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Missing required field \`version\`.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`version\`.
 
 `;
 
-exports[`invalid(10): {\"name\": \"foo\", \"version\": \"1.0.0\"} 1`] = `
+exports[`invalid(10): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "version": "1.0.0", "private": false}
+
+`;
+
+exports[`invalid(10): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "version": "1.0.0", "private": false}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`description\`.
+
+`;
+
+exports[`invalid(10): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 3`] = `
+
+Message:
+> 1 | {"name": "foo", "version": "1.0.0", "private": false}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`license\`.
+
+`;
+
+exports[`invalid(10): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 4`] = `
+
+Message:
+> 1 | {"name": "foo", "version": "1.0.0", "private": false}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`keywords\`.
+
+`;
+
+exports[`invalid(11): {\"name\": \"foo\", \"version\": \"1.0.0\"} 1`] = `
 
 [Input]
 Options:
@@ -26,7 +57,7 @@ Code:
 
 `;
 
-exports[`invalid(10): {\"name\": \"foo\", \"version\": \"1.0.0\"} 2`] = `
+exports[`invalid(11): {\"name\": \"foo\", \"version\": \"1.0.0\"} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "version": "1.0.0"}
@@ -34,7 +65,7 @@ Message:
 
 `;
 
-exports[`invalid(10): {\"name\": \"foo\", \"version\": \"1.0.0\"} 3`] = `
+exports[`invalid(11): {\"name\": \"foo\", \"version\": \"1.0.0\"} 3`] = `
 
 Message:
 > 1 | {"name": "foo", "version": "1.0.0"}
@@ -53,7 +84,7 @@ exports[`invalid(2): {\"version\": \"1.0.0\", \"license\": \"MIT\", \"keywords\"
 
 Message:
 > 1 | {"version": "1.0.0", "license": "MIT", "keywords": ["x"], "description": "bar"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Missing required field \`name\`.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`name\`.
 
 `;
 
@@ -68,7 +99,7 @@ exports[`invalid(3): {\"description\": \"no name or version\"} 2`] = `
 
 Message:
 > 1 | {"description": "no name or version"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Missing required field \`name\`.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`name\`.
 
 `;
 
@@ -76,7 +107,7 @@ exports[`invalid(3): {\"description\": \"no name or version\"} 3`] = `
 
 Message:
 > 1 | {"description": "no name or version"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Missing required field \`version\`.
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`version\`.
 
 `;
 
@@ -118,7 +149,28 @@ Message:
 
 `;
 
-exports[`invalid(5): {\"name\": \"foo\", \"version\": \"1.0.0\", \"keywords\": [\"x\"], \"description\": \"bar\"} 1`] = `
+exports[`invalid(5): {\"private\": true} 1`] = `
+
+[Input]
+Options:
+- fields:
+    - 'name'
+  fieldsWhenPublic: []
+
+Code:
+  1 | {"private": true}
+
+`;
+
+exports[`invalid(5): {\"private\": true} 2`] = `
+
+Message:
+> 1 | {"private": true}
+    | ^^^^^^^^^^^^^^^^^ Missing required field \`name\`.
+
+`;
+
+exports[`invalid(6): {\"name\": \"foo\", \"version\": \"1.0.0\", \"keywords\": [\"x\"], \"description\": \"bar\"} 1`] = `
 
 [Input]
 Options:
@@ -132,7 +184,7 @@ Code:
 
 `;
 
-exports[`invalid(5): {\"name\": \"foo\", \"version\": \"1.0.0\", \"keywords\": [\"x\"], \"description\": \"bar\"} 2`] = `
+exports[`invalid(6): {\"name\": \"foo\", \"version\": \"1.0.0\", \"keywords\": [\"x\"], \"description\": \"bar\"} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "version": "1.0.0", "keywords": ["x"], "description": "bar"}
@@ -140,46 +192,30 @@ Message:
 
 `;
 
-exports[`invalid(6): {} 1`] = `
+exports[`invalid(7): {} 1`] = `
 
 [Input]
   1 | {}
 
 `;
 
-exports[`invalid(6): {} 2`] = `
+exports[`invalid(7): {} 2`] = `
 
 Message:
 > 1 | {}
-    | ^^ Missing required field \`name\`.
+    | ^^ A published package should declare \`name\`.
 
 `;
 
-exports[`invalid(6): {} 3`] = `
+exports[`invalid(7): {} 3`] = `
 
 Message:
 > 1 | {}
-    | ^^ Missing required field \`version\`.
+    | ^^ A published package should declare \`version\`.
 
 `;
 
-exports[`invalid(6): {} 4`] = `
-
-Message:
-> 1 | {}
-    | ^^ A published package should declare \`license\`.
-
-`;
-
-exports[`invalid(6): {} 5`] = `
-
-Message:
-> 1 | {}
-    | ^^ A published package should declare \`keywords\`.
-
-`;
-
-exports[`invalid(6): {} 6`] = `
+exports[`invalid(7): {} 4`] = `
 
 Message:
 > 1 | {}
@@ -187,30 +223,30 @@ Message:
 
 `;
 
-exports[`invalid(7): {\"name\": \"foo\", \"version\": \"1.0.0\"} 1`] = `
+exports[`invalid(7): {} 5`] = `
+
+Message:
+> 1 | {}
+    | ^^ A published package should declare \`license\`.
+
+`;
+
+exports[`invalid(7): {} 6`] = `
+
+Message:
+> 1 | {}
+    | ^^ A published package should declare \`keywords\`.
+
+`;
+
+exports[`invalid(8): {\"name\": \"foo\", \"version\": \"1.0.0\"} 1`] = `
 
 [Input]
   1 | {"name": "foo", "version": "1.0.0"}
 
 `;
 
-exports[`invalid(7): {\"name\": \"foo\", \"version\": \"1.0.0\"} 2`] = `
-
-Message:
-> 1 | {"name": "foo", "version": "1.0.0"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`license\`.
-
-`;
-
-exports[`invalid(7): {\"name\": \"foo\", \"version\": \"1.0.0\"} 3`] = `
-
-Message:
-> 1 | {"name": "foo", "version": "1.0.0"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`keywords\`.
-
-`;
-
-exports[`invalid(7): {\"name\": \"foo\", \"version\": \"1.0.0\"} 4`] = `
+exports[`invalid(8): {\"name\": \"foo\", \"version\": \"1.0.0\"} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "version": "1.0.0"}
@@ -218,48 +254,33 @@ Message:
 
 `;
 
-exports[`invalid(8): {\"name\": \"foo\", \"version\": \"1.0.0\", \"license\": \"MIT\", \"keywords\": [\"x\"]} 1`] = `
+exports[`invalid(8): {\"name\": \"foo\", \"version\": \"1.0.0\"} 3`] = `
+
+Message:
+> 1 | {"name": "foo", "version": "1.0.0"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`license\`.
+
+`;
+
+exports[`invalid(8): {\"name\": \"foo\", \"version\": \"1.0.0\"} 4`] = `
+
+Message:
+> 1 | {"name": "foo", "version": "1.0.0"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`keywords\`.
+
+`;
+
+exports[`invalid(9): {\"name\": \"foo\", \"version\": \"1.0.0\", \"license\": \"MIT\", \"keywords\": [\"x\"]} 1`] = `
 
 [Input]
   1 | {"name": "foo", "version": "1.0.0", "license": "MIT", "keywords": ["x"]}
 
 `;
 
-exports[`invalid(8): {\"name\": \"foo\", \"version\": \"1.0.0\", \"license\": \"MIT\", \"keywords\": [\"x\"]} 2`] = `
+exports[`invalid(9): {\"name\": \"foo\", \"version\": \"1.0.0\", \"license\": \"MIT\", \"keywords\": [\"x\"]} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "version": "1.0.0", "license": "MIT", "keywords": ["x"]}
     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`description\`.
-
-`;
-
-exports[`invalid(9): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 1`] = `
-
-[Input]
-  1 | {"name": "foo", "version": "1.0.0", "private": false}
-
-`;
-
-exports[`invalid(9): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 2`] = `
-
-Message:
-> 1 | {"name": "foo", "version": "1.0.0", "private": false}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`license\`.
-
-`;
-
-exports[`invalid(9): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 3`] = `
-
-Message:
-> 1 | {"name": "foo", "version": "1.0.0", "private": false}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`keywords\`.
-
-`;
-
-exports[`invalid(9): {\"name\": \"foo\", \"version\": \"1.0.0\", \"private\": false} 4`] = `
-
-Message:
-> 1 | {"name": "foo", "version": "1.0.0", "private": false}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A published package should declare \`description\`.
 
 `;

@@ -9,8 +9,8 @@
 
 Ensures that specific top-level fields are present in `package.json`, either unconditionally or only when the package can be published (not marked `"private": true`).
 
-- `fields` (default `['name', 'version']`) are required in *every* package.json, public or private — a private package still needs them for tooling, workspaces, etc.
-- `fieldsWhenPublic` (default `['license', 'keywords', 'description']`) are only required for a package that can actually be published; a private package is exempt.
+- `fields` (default `[]`) are required in *every* package.json, public or private.
+- `fieldsWhenPublic` (default `['name', 'version', 'description', 'license', 'keywords']`) are only required for a package that can actually be published; a private package is exempt.
 
 This is the complement of [`restrict-fields-when-private`](./restrict-fields-when-private.md), which flags fields that are pointless on a private package.
 
@@ -19,7 +19,7 @@ This is the complement of [`restrict-fields-when-private`](./restrict-fields-whe
 ### `fields`
 
 Type: `string[]`\
-Default: `['name', 'version']`
+Default: `[]`
 
 The field names that must always be present at the top level.
 
@@ -40,9 +40,11 @@ The field names that must always be present at the top level.
 ### `fieldsWhenPublic`
 
 Type: `string[]`\
-Default: `['license', 'keywords', 'description']`
+Default: `['name', 'version', 'description', 'license', 'keywords']`
 
 The field names a public (non-private) package must declare.
+
+Providing this option replaces the default list.
 
 ```js
 {
@@ -50,9 +52,11 @@ The field names a public (non-private) package must declare.
 		'error',
 		{
 			fieldsWhenPublic: [
+				'name',
+				'version',
+				'description',
 				'license',
 				'keywords',
-				'description',
 				'repository'
 			]
 		}
@@ -83,8 +87,6 @@ The field names a public (non-private) package must declare.
 ```json
 // ✅
 {
-	"name": "my-package",
-	"version": "1.0.0",
 	"private": true
 }
 ```

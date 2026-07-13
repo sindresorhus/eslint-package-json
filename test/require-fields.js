@@ -16,32 +16,39 @@ test.snapshot({
 		// Empty `fields` list — nothing unconditionally required.
 		{
 			code: '{"name": "foo", "license": "MIT", "keywords": ["x"], "description": "bar"}',
-			options: [{fields: []}],
+			options: [{fields: [], fieldsWhenPublic: []}],
 		},
 		// Single required field present.
 		{
 			code: '{"name": "foo", "license": "MIT", "keywords": ["x"], "description": "bar"}',
-			options: [{fields: ['name']}],
+			options: [{fields: ['name'], fieldsWhenPublic: []}],
 		},
 		// Private packages are exempt from `fieldsWhenPublic`.
 		'{"name": "foo", "version": "1.0.0", "private": true}',
+		// Private packages do not need `name` or `version`.
+		'{"private": true}',
 		// Custom `fieldsWhenPublic`.
 		{
-			code: '{"name": "foo", "version": "1.0.0", "author": "Sindre"}',
+			code: '{"author": "Sindre"}',
 			options: [{fieldsWhenPublic: ['author']}],
 		},
 	],
 	invalid: [
-		// Missing `version` (default `fields`).
+		// Missing `version` (default `fieldsWhenPublic`).
 		'{"name": "foo", "license": "MIT", "keywords": ["x"], "description": "bar"}',
-		// Missing `name` (default `fields`).
+		// Missing `name` (default `fieldsWhenPublic`).
 		'{"version": "1.0.0", "license": "MIT", "keywords": ["x"], "description": "bar"}',
-		// Missing both default `fields`.
+		// Missing default `fieldsWhenPublic` entries.
 		'{"description": "no name or version"}',
 		// Custom `fields` entry missing.
 		{
 			code: '{"name": "foo"}',
 			options: [{fields: ['name', 'license'], fieldsWhenPublic: []}],
+		},
+		// Custom `fields` are still required for private packages.
+		{
+			code: '{"private": true}',
+			options: [{fields: ['name'], fieldsWhenPublic: []}],
 		},
 		// Overlapping `fields` and `fieldsWhenPublic` entries are only reported once.
 		{
