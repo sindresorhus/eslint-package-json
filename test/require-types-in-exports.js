@@ -24,12 +24,30 @@ test.snapshot({
 		'{"exports": {"types": {"import": {"browser": "./browser.d.ts"}, "default": "./fallback.d.ts"}, "import": "./import.js"}}',
 		// A fallback condition can use a different nested runtime condition when its format matches.
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.mts"}}, "import": {"node": "./node.js"}}}',
+		// Extra runtime condition layers must not force the declaration default before matching nested conditions.
+		`{
+	"type": "module",
+	"exports": {
+		"types": {"import": [], "default": {"browser": "./browser.d.mts", "default": "./fallback.d.cts"}},
+		"import": {"node": {"browser": "./browser.mjs", "default": "./fallback.cjs"}}
+	}
+}`,
 		// An unversioned nested type condition makes the default a non-type fallback.
 		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "types": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
 		// Non-empty declaration and runtime fallback arrays are covered.
 		'{"exports": {"types": ["./index.d.ts", "./fallback.d.ts"], "default": ["./index.js", "./fallback.js"]}}',
+		// Array validation stops after the first target.
+		'{"type": "module", "exports": {"types": ["./index.d.mts", "./fallback.d.cts"], "default": ["./index.mjs", "./fallback.cjs"]}}',
 		// A nested versioned type condition can be the only type branch.
 		'{"exports": {"types": {"import": {"types@>=5": "./import.d.ts"}}, "import": {"import": "./import.js"}}}',
+		// An unresolved nested unversioned type condition can fall through to a compatible default.
+		'{"type": "module", "exports": {"types": {"types": {"browser": "./browser.d.mts"}, "default": "./fallback.d.mts"}, "default": "./index.js"}}',
+		// A non-runtime sibling does not invalidate a covered runtime branch.
+		'{"exports": {"types": {"import": [], "default": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": null}}}',
+		// A null array target makes later runtime targets unreachable.
+		'{"exports": {"types": "./index.d.ts", "default": [null, "./fallback.js"]}}',
+		// A type condition in a later array target does not describe the effective export.
+		'{"exports": [{"default": "./index.js"}, {"types": "./index.d.ts", "default": "./index.js"}]}',
 		// An empty type-target array falls through to the parent default.
 		'{"exports": {"types": {"import": [], "default": "./fallback.d.ts"}, "import": "./import.js"}}',
 		// A parent default can continue into a nested runtime condition.
@@ -60,8 +78,20 @@ test.snapshot({
 		'{"exports": {"types": "./index.ts", "default": "./index.mjs"}}',
 		'{"exports": {"types": null, "default": "./index.js"}}',
 		'{"exports": {"types": true, "default": "./index.js"}}',
+		'{"exports": {"types": false, "default": "./index.js"}}',
 		'{"exports": {"types": "", "default": "./index.js"}}',
 		'{"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}',
+		// A null array target terminates resolution before later declaration targets.
+		'{"exports": {"types": [null, "./index.d.ts"], "default": ["./index.js", "./fallback.js"]}}',
+		// A null nested array target does not fall through to a sibling declaration default.
+		'{"exports": {"types": {"import": [null, "./index.d.ts"], "default": "./fallback.d.ts"}, "import": "./index.js"}}',
+		// A null nested array target also prevents module-format checks against its sibling fallback.
+		'{"type": "module", "exports": {"types": {"import": [null, "./index.d.mts"], "default": "./fallback.d.cts"}, "import": "./index.js"}}',
+		// A nested default null target does not fall through to its parent declaration fallback.
+		'{"exports": {"types": {"import": {"default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}',
+		// An inactive nested condition does not provide coverage when its default is null.
+		'{"exports": {"types": {"import": {"browser": "./browser.d.ts", "default": null}, "default": "./fallback.d.ts"}, "import": {"node": "./index.js"}}}',
+		'{"exports": {"types": {"import": {"browser": "./browser.d.ts", "default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}',
 		// Declaration module format must match the runtime target.
 		'{"type": "module", "exports": {"types": "./index.d.cts", "default": "./index.mjs"}}',
 		'{"type": "commonjs", "exports": {"types": "./index.d.mts", "default": "./index.cjs"}}',
@@ -91,6 +121,11 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}',
 		// Versioned nested type conditions must also check their declaration fallback.
 		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
+		// An unresolved nested unversioned type condition must check its declaration fallback.
+		'{"type": "module", "exports": {"types": {"types": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "default": "./index.js"}}',
+		// Partial type coverage should only report the uncovered sibling.
+		'{"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}',
+		'{"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}',
 		// Nested fallback conditions must retain their parent runtime condition.
 		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": {"node": "./fallback.d.cts"}}}, "import": {"node": "./node.js"}}}',
 		// Fallback conditions can continue through an empty nested target.
