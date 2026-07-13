@@ -1,5 +1,4 @@
-import semver from 'semver';
-import {findMember} from '../utils/index.js';
+import {findMember, validRange} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const FIELD_TYPE_MESSAGE_ID = 'fieldType';
@@ -38,8 +37,8 @@ function * checkEntry(field, objectNode) {
 
 	const version = findMember(objectNode, 'version');
 
-	// `semver.validRange('')` is `'*'`, so an empty/whitespace version must be rejected explicitly.
-	if (version && (version.value.type !== 'String' || version.value.value.trim() === '' || semver.validRange(version.value.value) === null)) {
+	// `validRange('')` is `'*'`, so an empty/whitespace version must be rejected explicitly.
+	if (version && (version.value.type !== 'String' || version.value.value.trim() === '' || validRange(version.value.value) === null)) {
 		yield {
 			node: version.value,
 			messageId: VERSION_MESSAGE_ID,

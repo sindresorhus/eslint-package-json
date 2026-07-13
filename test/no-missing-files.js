@@ -1,8 +1,54 @@
+import fs from 'node:fs';
+import test from 'node:test';
+import {Linter} from 'eslint';
+import json from '@eslint/json';
 import {getTester} from './utils/test.js';
 
-const {test} = getTester(import.meta);
+const {test: snapshotTest, rule} = getTester(import.meta);
 
-test.snapshot({
+test('supports directory entries with unknown types', t => {
+	const originalReadDirectory = fs.readdirSync;
+
+	t.mock.method(fs, 'readdirSync', (directory, options) => {
+		const entries = originalReadDirectory(directory, options);
+
+		if (!options?.withFileTypes) {
+			return entries;
+		}
+
+		return entries.map(entry => ({
+			name: entry.name,
+			isDirectory() {
+				return false;
+			},
+			isFile() {
+				return false;
+			},
+			isSymbolicLink() {
+				return false;
+			},
+		}));
+	});
+
+	const linter = new Linter();
+	const messages = linter.verify(
+		'{"exports": {".": "./index.js", "./rules/*": "./rules/*.js", "./test/*": "./test/*"}, "bin": "index.js", "files": ["index.js"]}',
+		{
+			files: ['**'],
+			language: 'json/json',
+			plugins: {
+				json,
+				'rule-to-test': {rules: {'no-missing-files': rule}},
+			},
+			rules: {'rule-to-test/no-missing-files': 'error'},
+		},
+		{filename: 'package.json'},
+	);
+
+	t.assert.deepStrictEqual(messages, []);
+});
+
+snapshotTest.snapshot({
 	valid: [
 		'{}',
 		'{"exports": "./index.js"}',

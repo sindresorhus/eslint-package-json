@@ -1,10 +1,10 @@
-import semver from 'semver';
 import {
 	dependencyTypes,
 	getRootObject,
 	iterateDependencies,
 	optionsSchema,
 	stringArraySchema,
+	validVersion,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'dependency-version-range';
@@ -36,7 +36,7 @@ const classify = specifier => {
 		version = specifier.slice(1);
 	}
 
-	const normalized = semver.valid(version);
+	const normalized = validVersion(version);
 
 	if (normalized === null) {
 		return undefined;

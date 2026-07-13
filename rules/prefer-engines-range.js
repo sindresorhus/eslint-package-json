@@ -1,5 +1,9 @@
-import semver from 'semver';
-import {getRootObject, findMember, getKey} from './utils/index.js';
+import {
+	getRootObject,
+	findMember,
+	getKey,
+	validVersion,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-engines-range';
 const SUGGESTION_ID = 'convert';
@@ -23,7 +27,7 @@ const toOpenRange = range => {
 	}
 
 	// A bare exact version (e.g. `18.0.0`) implies only that version.
-	if (semver.valid(range) !== null) {
+	if (validVersion(range) !== null) {
 		return '>=' + range;
 	}
 

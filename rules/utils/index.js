@@ -1,3 +1,4 @@
+import semver from 'semver';
 import detectIndent from 'detect-indent';
 
 /**
@@ -125,12 +126,7 @@ export function isPrivatePackage(rootObject) {
 	return member?.value.type === 'Boolean' && member.value.value === true;
 }
 
-/**
-Iterate the effective dependency entries across the given dependency groups that are present as objects.
-
-Yields `{groupName, group, member, name}` where `group` is the group member (e.g. the `dependencies` member) and `member` is an individual `name: range` entry.
-*/
-export function * iterateDependencies(rootObject, types = dependencyTypes) {
+function * collectDependencies(rootObject, types) {
 	for (const groupName of types) {
 		const group = findMember(rootObject, groupName);
 		if (group?.value.type === 'Object') {
@@ -149,6 +145,35 @@ export function * iterateDependencies(rootObject, types = dependencyTypes) {
 	}
 }
 
+// ESLint parses a file once and shares that AST with every rule, so entries derived from a root object are computed once and cached on it. A `WeakMap` keeps them alive no longer than the AST itself.
+const dependenciesCache = new WeakMap();
+
+/**
+Iterate the effective dependency entries across the given dependency groups that are present as objects.
+
+Returns a frozen array of `{groupName, group, member, name}`, where `group` is the group member (e.g. the `dependencies` member) and `member` is an individual `name: range` entry.
+*/
+export function iterateDependencies(rootObject, types = dependencyTypes) {
+	let entriesByTypes = dependenciesCache.get(rootObject);
+
+	if (!entriesByTypes) {
+		entriesByTypes = new Map();
+		dependenciesCache.set(rootObject, entriesByTypes);
+	}
+
+	// Dependency group names never contain a comma, so joining them is an unambiguous cache key.
+	const cacheKey = types.join(',');
+	let entries = entriesByTypes.get(cacheKey);
+
+	if (!entries) {
+		// Frozen because every rule linting the file shares this array: an in-place `sort()` or `reverse()` by one rule would otherwise corrupt it for the rest.
+		entries = Object.freeze([...collectDependencies(rootObject, types)]);
+		entriesByTypes.set(cacheKey, entries);
+	}
+
+	return entries;
+}
+
 const globPattern = /[*?[{]/;
 
 /**
@@ -156,6 +181,45 @@ Check whether a path-like string contains glob characters (`*`, `?`, `[`, `{`).
 */
 export function hasGlob(value) {
 	return globPattern.test(value);
+}
+
+// `semver.validRange` and `semver.valid` parse the string on every call. Several rules ask about the same specifier, and the same specifiers recur across every package in a workspace, so the answers are memoized. The limit keeps long-lived ESLint processes from retaining every specifier forever.
+const semverCacheLimit = 1000;
+const validRangeCache = new Map();
+const validVersionCache = new Map();
+
+/**
+Get a cached SemVer result, evicting the oldest entry when the cache reaches its limit.
+*/
+function getCachedSemverValue(cache, value, parse) {
+	let normalized = cache.get(value);
+
+	if (normalized !== undefined) {
+		return normalized;
+	}
+
+	normalized = parse(value);
+
+	if (cache.size >= semverCacheLimit) {
+		cache.delete(cache.keys().next().value);
+	}
+
+	cache.set(value, normalized);
+	return normalized;
+}
+
+/**
+Like `semver.validRange`, returning the normalized range or `null`, but memoized across rules and files.
+*/
+export function validRange(range) {
+	return getCachedSemverValue(validRangeCache, range, semver.validRange);
+}
+
+/**
+Like `semver.valid`, returning the normalized version or `null`, but memoized across rules and files.
+*/
+export function validVersion(version) {
+	return getCachedSemverValue(validVersionCache, version, semver.valid);
 }
 
 /**
@@ -231,18 +295,36 @@ export function * checkPlatformArray(rootObject, field, validValues) {
 	}
 }
 
+// Both of these scan the whole document, and fixes ask for them repeatedly, so the result is cached per `SourceCode` (one object per file per lint pass).
+const indentStringCache = new WeakMap();
+const newlineCache = new WeakMap();
+
 /**
 Detect the indentation string used by the document, defaulting to a tab.
 */
 export function getIndentString(sourceCode) {
-	return detectIndent(sourceCode.text).indent || '\t';
+	let indent = indentStringCache.get(sourceCode);
+
+	if (indent === undefined) {
+		indent = detectIndent(sourceCode.text).indent || '\t';
+		indentStringCache.set(sourceCode, indent);
+	}
+
+	return indent;
 }
 
 /**
 Detect the LF or CRLF newline sequence used by the document, defaulting to `\n`.
 */
 export function getNewline(sourceCode) {
-	return sourceCode.text.includes('\r\n') ? '\r\n' : '\n';
+	let newline = newlineCache.get(sourceCode);
+
+	if (newline === undefined) {
+		newline = sourceCode.text.includes('\r\n') ? '\r\n' : '\n';
+		newlineCache.set(sourceCode, newline);
+	}
+
+	return newline;
 }
 
 /**

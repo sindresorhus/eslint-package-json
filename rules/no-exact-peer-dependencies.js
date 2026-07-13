@@ -1,5 +1,5 @@
 import semver from 'semver';
-import {getRootObject, iterateDependencies} from './utils/index.js';
+import {getRootObject, iterateDependencies, validVersion} from './utils/index.js';
 
 const MESSAGE_ID = 'no-exact-peer-dependencies';
 const CARET_SUGGESTION_ID = 'caret';
@@ -27,8 +27,8 @@ const create = context => ({
 
 			const version = member.value.value;
 
-			// `semver.valid` returns non-`null` only for a single exact version (e.g. `1.2.3`), not ranges, wildcards, or other specifiers.
-			if (semver.valid(version) === null) {
+			// `validVersion` returns non-`null` only for a single exact version (e.g. `1.2.3`), not ranges, wildcards, or other specifiers.
+			if (validVersion(version) === null) {
 				continue;
 			}
 

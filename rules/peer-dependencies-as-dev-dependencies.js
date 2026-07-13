@@ -4,6 +4,7 @@ import {
 	getKey,
 	findMember,
 	insertGroupMember,
+	validRange,
 } from './utils/index.js';
 
 const MISSING_MESSAGE_ID = 'missing';
@@ -117,8 +118,8 @@ const create = context => {
 				const devRange = devMember.value.value;
 
 				if (
-					semver.validRange(peerRange) !== null
-					&& semver.validRange(devRange) !== null
+					validRange(peerRange) !== null
+					&& validRange(devRange) !== null
 					&& !semver.intersects(devRange, peerRange)
 				) {
 					context.report({

@@ -34,6 +34,36 @@ const isSafePackagePath = value => !value.startsWith('/')
 	&& !value.split('/').includes('..');
 
 /**
+Represent the package being linted, caching directory listings.
+
+Resolving `exports`, `bin`, and `files` walks the same directories over and over, and each listing is a syscall, so every directory is read at most once per document.
+*/
+const createPackageDirectory = rootPath => {
+	const cache = new Map();
+
+	return {
+		path: rootPath,
+
+		// Lists a directory as a map of entry name to `Dirent`. A missing or unreadable directory simply has no entries, which is all callers need to know.
+		readDirectory(directory) {
+			let entries = cache.get(directory);
+
+			if (!entries) {
+				try {
+					entries = new Map(fs.readdirSync(directory, {withFileTypes: true}).map(entry => [entry.name, entry]));
+				} catch {
+					entries = new Map();
+				}
+
+				cache.set(directory, entries);
+			}
+
+			return entries;
+		},
+	};
+};
+
+/**
 Check whether a literal relative path exists with the exact casing used in the path.
 */
 const hasExactPath = (packageDirectory, value, requiresFile) => {
@@ -47,34 +77,42 @@ const hasExactPath = (packageDirectory, value, requiresFile) => {
 		return false;
 	}
 
-	let currentDirectory = packageDirectory;
+	let currentDirectory = packageDirectory.path;
+	let entry;
 
 	for (const segment of relativePath.split('/')) {
 		if (!segment || segment === '.') {
 			continue;
 		}
 
-		let entries;
+		entry = packageDirectory.readDirectory(currentDirectory).get(segment);
 
-		try {
-			entries = fs.readdirSync(currentDirectory, {withFileTypes: true});
-		} catch {
-			return false;
-		}
-
-		if (entries.every(entry => entry.name !== segment)) {
+		if (!entry) {
 			return false;
 		}
 
 		currentDirectory = path.join(currentDirectory, segment);
 	}
 
-	try {
-		const statistics = fs.statSync(currentDirectory);
-		return !requiresFile || statistics.isFile();
-	} catch {
-		return false;
+	// The path was nothing but `.` segments, so it resolves to the package directory itself.
+	if (!entry) {
+		return !requiresFile;
 	}
+
+	// A `Dirent` describes the link itself, so a symlink still needs a `stat` to learn what it points at and whether it dangles.
+	const isDirectory = entry.isDirectory();
+	const isFile = entry.isFile();
+
+	if (entry.isSymbolicLink() || (!isDirectory && !isFile)) {
+		try {
+			const statistics = fs.statSync(currentDirectory);
+			return !requiresFile || statistics.isFile();
+		} catch {
+			return false;
+		}
+	}
+
+	return !requiresFile || isFile;
 };
 
 /**
@@ -437,7 +475,7 @@ const hasMatchingGlob = (packageDirectory, pattern, requiresFile) => {
 
 	try {
 		return fs.globSync(getDotFilePattern(pattern), {
-			cwd: packageDirectory,
+			cwd: packageDirectory.path,
 		}).some(match => {
 			const relativePath = match.replaceAll(path.sep, '/');
 			return matchesGlobExactly(relativePath, pattern)
@@ -500,22 +538,26 @@ function * iterateExportFiles(packageDirectory, relativeDirectory) {
 
 	while (directories.length > 0) {
 		const directory = directories.pop();
-		let entries;
+		const entries = packageDirectory.readDirectory(path.join(packageDirectory.path, directory));
 
-		try {
-			entries = fs.readdirSync(path.join(packageDirectory, directory), {withFileTypes: true});
-		} catch {
-			continue;
-		}
-
-		for (const entry of entries) {
+		for (const entry of entries.values()) {
 			const relativePath = directory ? `${directory}/${entry.name}` : entry.name;
+			let isDirectory = entry.isDirectory();
+			let isFile = entry.isFile();
 
-			if (entry.isDirectory()) {
+			if (!isDirectory && !isFile && !entry.isSymbolicLink()) {
+				try {
+					const statistics = fs.lstatSync(path.join(packageDirectory.path, relativePath));
+					isDirectory = statistics.isDirectory();
+					isFile = statistics.isFile();
+				} catch {}
+			}
+
+			if (isDirectory) {
 				if (!invalidExportTargetPattern.test(relativePath)) {
 					directories.push(relativePath);
 				}
-			} else if (entry.isFile() || hasExactPath(packageDirectory, `./${relativePath}`, true)) {
+			} else if (isFile || hasExactPath(packageDirectory, `./${relativePath}`, true)) {
 				yield relativePath;
 			}
 		}
@@ -565,7 +607,9 @@ Get the package directory for a linted package.json, using the working directory
 */
 const getPackageDirectory = context => {
 	const {filename, cwd} = context;
-	return filename.startsWith('<') ? cwd : path.dirname(path.resolve(cwd, filename));
+	const rootPath = filename.startsWith('<') ? cwd : path.dirname(path.resolve(cwd, filename));
+
+	return createPackageDirectory(rootPath);
 };
 
 /**
