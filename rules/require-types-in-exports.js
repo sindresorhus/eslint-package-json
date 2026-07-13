@@ -25,19 +25,42 @@ function isRuntimeTarget(value) {
 	return javascriptPathPattern.test(value);
 }
 
+function getFirstTarget(node) {
+	while (node?.type === 'Array') {
+		node = node.elements[0]?.value;
+	}
+
+	return node;
+}
+
 function canTypeTargetFallThrough(node) {
-	const effectiveNode = node.type === 'Array' ? node.elements[0]?.value : node;
+	const effectiveNode = getFirstTarget(node);
 
 	if (!effectiveNode) {
 		return true;
 	}
 
 	if (effectiveNode.type !== 'Object') {
-		return effectiveNode.type === 'Array' && canTypeTargetFallThrough(effectiveNode);
+		return false;
 	}
 
 	const defaultMember = effectiveNode.members.find(member => getKey(member) === 'default');
 	return !defaultMember || canTypeTargetFallThrough(defaultMember.value);
+}
+
+function getTargetWithFallback(node, fallbackMember) {
+	if (
+		node.type !== 'Object'
+		|| !fallbackMember
+		|| node.members.some(member => getKey(member) === 'default')
+	) {
+		return node;
+	}
+
+	return {
+		...node,
+		members: [...node.members, fallbackMember],
+	};
 }
 
 function * iterateStringLeaves(node) {
@@ -56,8 +79,10 @@ function * iterateStringLeaves(node) {
 		}
 
 		case 'Array': {
-			for (const element of node.elements) {
-				yield * iterateStringLeaves(element.value);
+			const firstTarget = getFirstTarget(node);
+
+			if (firstTarget) {
+				yield * iterateStringLeaves(firstTarget);
 			}
 
 			break;
@@ -106,7 +131,8 @@ function hasTypesCoverage(node, runtimeNode, runtimeKey) {
 		}
 
 		case 'Array': {
-			return node.elements.length > 0 && hasTypesCoverage(node.elements[0].value, runtimeNode, runtimeKey);
+			const firstTarget = getFirstTarget(node);
+			return Boolean(firstTarget && hasTypesCoverage(firstTarget, runtimeNode, runtimeKey));
 		}
 
 		default: {
@@ -138,8 +164,10 @@ function * iterateRuntimeStringLeaves(node) {
 		}
 
 		case 'Array': {
-			if (node.elements.length > 0) {
-				yield * iterateRuntimeStringLeaves(node.elements[0].value);
+			const firstTarget = getFirstTarget(node);
+
+			if (firstTarget) {
+				yield * iterateRuntimeStringLeaves(firstTarget);
 			}
 
 			break;
@@ -166,6 +194,11 @@ function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode
 			if (hasMatchingTypes || !canFallThrough) {
 				return;
 			}
+		}
+
+		if (!matchingMember && fallbackNode.members.some(member => isTypesCondition(getKey(member)))) {
+			yield * iterateTypeRuntimePairsWithoutKey(fallbackNode, runtimeNode);
+			return;
 		}
 
 		const fallbackMember = fallbackNode.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
@@ -214,7 +247,11 @@ function * iterateTypeRuntimePairsWithoutKey(typeNode, runtimeNode) {
 
 	if (typesMembers.length > 0) {
 		if (defaultMember && !hasUnversionedTypes) {
-			yield * iterateTypeRuntimePairs(defaultMember.value, runtimeNode);
+			if (unversionedTypesMember) {
+				yield * iterateUncoveredFallbackPairs(defaultMember.value, unversionedTypesMember.value, runtimeNode);
+			} else {
+				yield * iterateTypeRuntimePairs(defaultMember.value, runtimeNode);
+			}
 		}
 
 		return;
@@ -248,14 +285,16 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 				const matchingMember = typeNode.members.find(member => getKey(member) === runtimeKey);
 
 				if (matchingMember) {
-					for (const pair of iterateTypeRuntimePairs(matchingMember.value, runtimeNode)) {
+					const matchingTarget = getTargetWithFallback(matchingMember.value, fallbackMember === matchingMember ? undefined : fallbackMember);
+
+					for (const pair of iterateTypeRuntimePairs(matchingTarget, runtimeNode)) {
 						yield pair;
 					}
 
-					const hasMatchingTypes = hasTypesCoverage(matchingMember.value, runtimeNode);
-					const canFallThrough = canTypeTargetFallThrough(matchingMember.value);
+					const hasMatchingTypes = hasTypesCoverage(matchingTarget, runtimeNode);
+					const canFallThrough = canTypeTargetFallThrough(matchingTarget);
 
-					if (hasMatchingTypes || !canFallThrough) {
+					if (matchingTarget !== matchingMember.value || hasMatchingTypes || !canFallThrough) {
 						return;
 					}
 
@@ -279,8 +318,10 @@ function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
 		}
 
 		case 'Array': {
-			if (typeNode.elements.length > 0) {
-				yield * iterateTypeRuntimePairs(typeNode.elements[0].value, runtimeNode, runtimeKey);
+			const firstTarget = getFirstTarget(typeNode);
+
+			if (firstTarget) {
+				yield * iterateTypeRuntimePairs(firstTarget, runtimeNode, runtimeKey);
 			}
 
 			break;
@@ -375,7 +416,7 @@ function * checkTypesObject(objectNode, packageType) {
 
 	for (const member of typesMembers) {
 		const index = objectNode.members.indexOf(member);
-		const effectiveTypeNode = member.value.type === 'Array' ? member.value.elements[0]?.value : member.value;
+		const effectiveTypeNode = getFirstTarget(member.value);
 		const typeTargets = effectiveTypeNode ? [...iterateStringLeaves(effectiveTypeNode)] : [];
 
 		if (objectNode.members.slice(0, index).some(member => !isTypesCondition(getKey(member)))) {
@@ -421,8 +462,10 @@ function getNarrowedTypeNodes(nodes, runtimeKey) {
 
 	for (const node of nodes) {
 		if (node.type === 'Array') {
-			if (node.elements.length > 0) {
-				narrowedNodes.push(...getNarrowedTypeNodes([node.elements[0].value], runtimeKey));
+			const firstTarget = getFirstTarget(node);
+
+			if (firstTarget) {
+				narrowedNodes.push(...getNarrowedTypeNodes([firstTarget], runtimeKey));
 			}
 
 			continue;
@@ -434,23 +477,25 @@ function getNarrowedTypeNodes(nodes, runtimeKey) {
 		}
 
 		const matchingMember = node.members.find(member => getKey(member) === runtimeKey);
+		const fallbackMember = node.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
 
 		if (matchingMember) {
-			narrowedNodes.push(matchingMember.value);
+			const matchingTarget = getTargetWithFallback(matchingMember.value, fallbackMember === matchingMember ? undefined : fallbackMember);
+			narrowedNodes.push(matchingTarget);
 
-			if (!canTypeTargetFallThrough(matchingMember.value)) {
+			if (matchingTarget !== matchingMember.value || !canTypeTargetFallThrough(matchingTarget)) {
 				continue;
 			}
 		}
-
-		const fallbackMember = node.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
 
 		if (!fallbackMember || fallbackMember === matchingMember) {
 			continue;
 		}
 
-		const fallbackHasRuntimeKey = fallbackMember.value.type === 'Object' && fallbackMember.value.members.some(member => getKey(member) === runtimeKey);
-		narrowedNodes.push(...(fallbackHasRuntimeKey ? getNarrowedTypeNodes([fallbackMember.value], runtimeKey) : [fallbackMember.value]));
+		const defaultMember = node.members.find(member => getKey(member) === 'default');
+		const fallbackTarget = getTargetWithFallback(fallbackMember.value, fallbackMember === defaultMember ? undefined : defaultMember);
+		const fallbackHasRuntimeKey = fallbackTarget.type === 'Object' && fallbackTarget.members.some(member => getKey(member) === runtimeKey);
+		narrowedNodes.push(...(fallbackHasRuntimeKey ? getNarrowedTypeNodes([fallbackTarget], runtimeKey) : [fallbackTarget]));
 	}
 
 	return narrowedNodes;
@@ -458,9 +503,13 @@ function getNarrowedTypeNodes(nodes, runtimeKey) {
 
 function hasTypeScopeCoverage(scope) {
 	const unversionedGroup = scope.find(group => group.isUnversioned);
-	const hasGroupCoverage = group => group.nodes.some(node => hasTypesCoverage(node, {type: 'String'}));
+	const hasGroupCoverage = group => group.nodes.some(node => hasUsableTypeTarget(node));
 
 	return (unversionedGroup && hasGroupCoverage(unversionedGroup)) || scope.every(group => hasGroupCoverage(group));
+}
+
+function hasUsableTypeTarget(node) {
+	return hasTypesCoverage(node, {type: 'String'});
 }
 
 function * checkNode(node, packageType, inheritedScopes = []) {
@@ -495,8 +544,10 @@ function * checkNode(node, packageType, inheritedScopes = []) {
 		}
 
 		case 'Array': {
-			if (node.elements.length > 0) {
-				yield * checkNode(node.elements[0].value, packageType, inheritedScopes);
+			const firstTarget = getFirstTarget(node);
+
+			if (firstTarget) {
+				yield * checkNode(firstTarget, packageType, inheritedScopes);
 			}
 
 			break;
@@ -525,7 +576,8 @@ function hasTypesCondition(node) {
 	}
 
 	if (node.type === 'Array') {
-		return node.elements.length > 0 && hasTypesCondition(node.elements[0].value);
+		const firstTarget = getFirstTarget(node);
+		return Boolean(firstTarget && hasTypesCondition(firstTarget));
 	}
 
 	return false;
