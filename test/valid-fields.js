@@ -83,7 +83,7 @@ test.snapshot({
 		'{"main": false, "module": [], "types": 42, "typings": null}',
 		'{"browser": 42}',
 		'{"browser": "C:/browser.js"}',
-		'{"browser": {"../server.js": [], "./server.js": "https://cdn.example.com/browser.js"}}',
+		'{"browser": {"/server.js": [], "./server.js": "/browser.js", "./remote.js": "https://cdn.example.com/browser.js"}}',
 		// Empty string is handled by `no-empty-fields`.
 		'{"type": ""}',
 		// `exports`
