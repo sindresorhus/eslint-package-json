@@ -11,7 +11,14 @@ test.snapshot({
 		// A top-level declaration does not describe each exported branch, so add a type condition.
 		'{"types": "./index.d.ts", "exports": {"types": "./index.d.ts", "default": "./index.js"}}',
 		// The versioned TypeScript condition is also a type condition and must be first.
+		'{"exports": {"types@": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@ ": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"types@>=5": "./index.d.mts", "default": "./index.mjs"}}',
+		'{"exports": {"types@>=4.7 <5.5": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@4.7 - 5.5": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@>=5 || <4": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@ || >=5": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@>=5.0.0-beta.1+build.2": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"types@>=5.2": "./ts5.d.ts", "types@>=4.7": "./ts4.7.d.ts", "types": "./index.d.ts", "default": "./index.js"}}',
 		`{
 	"exports": {
@@ -60,7 +67,7 @@ test.snapshot({
 		'{"type": "module", "exports": {"types": {"import": ["./index.d.mts", "./unreachable.js"]}, "import": "./index.mjs"}}',
 		// A non-runtime sibling does not invalidate a covered runtime branch.
 		'{"exports": {"types": {"import": [], "default": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": null}}}',
-		// A null array target makes later runtime targets unreachable.
+		// A null array target makes later runtime targets unreachable to this static check.
 		'{"exports": {"types": "./index.d.ts", "default": [null, "./fallback.js"]}}',
 		// A type condition in a later array target does not describe the effective export.
 		'{"exports": [{"default": "./index.js"}, {"types": "./index.d.ts", "default": "./index.js"}]}',
@@ -95,6 +102,15 @@ test.snapshot({
 		'{"exports": {"default": "./index.mjs", "types@>=5": "./index.d.mts"}}',
 		'{"exports": {"types@>=5": "./index.d.ts", "default": "./index.js", "types@>=4": "./index.d.ts"}}',
 		'{"exports": {"import": {"default": "./index.js", "types": "./index.d.ts"}}}',
+		// Versioned type conditions must use TypeScript-compatible semver syntax and do not provide coverage otherwise.
+		'{"exports": {"types@invalid": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@v5": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@>= 5": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@1.0.0-K": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@1.0.0-01": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@1.0.0-a..b": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types@1.0.0+foo..bar": "./index.d.ts", "default": "./index.js"}}',
+		'{"exports": {"types": {"types@v5": "./index.d.ts"}, "default": "./index.js"}}',
 		// Type conditions must point to declaration files.
 		'{"exports": {"types": "./index.js", "default": "./index.js"}}',
 		'{"exports": {"types": "./index.ts", "default": "./index.mjs"}}',
@@ -108,11 +124,11 @@ test.snapshot({
 		// Nested type conditions receive the same ordering and value validation.
 		'{"exports": {"types": {"default": "./legacy.d.ts", "types@>=5": "./modern.d.ts"}, "default": "./index.js"}}',
 		'{"exports": {"types": {"types": null, "default": "./fallback.d.ts"}, "default": "./index.js"}}',
-		// A null array target terminates resolution before later declaration targets.
+		// A null first array target prevents later declaration targets from participating in this static check.
 		'{"exports": {"types": [null, "./index.d.ts"], "default": ["./index.js", "./fallback.js"]}}',
-		// A null nested array target does not fall through to a sibling declaration default.
+		// The same first-target boundary applies to nested declaration arrays.
 		'{"exports": {"types": {"import": [null, "./index.d.ts"], "default": "./fallback.d.ts"}, "import": "./index.js"}}',
-		// A null nested array target also prevents module-format checks against its sibling fallback.
+		// An ignored later declaration target cannot hide a module-format mismatch in the fallback.
 		'{"type": "module", "exports": {"types": {"import": [null, "./index.d.mts"], "default": "./fallback.d.cts"}, "import": "./index.js"}}',
 		// A nested default null target does not fall through to its parent declaration fallback.
 		'{"exports": {"types": {"import": {"default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}',

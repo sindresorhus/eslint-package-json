@@ -5,6 +5,7 @@ const MESSAGE_ID_TYPES_FIRST = 'typesFirst';
 const MESSAGE_ID_TYPES_EXTENSION = 'typesExtension';
 const MESSAGE_ID_MODULE_FORMAT = 'moduleFormat';
 const MESSAGE_ID_TYPES_VALUE = 'typesValue';
+const MESSAGE_ID_TYPES_VERSION = 'typesVersion';
 
 const messages = {
 	[MESSAGE_ID_MISSING]: 'Exported JavaScript target `{{value}}` has no corresponding `types` condition.',
@@ -12,13 +13,78 @@ const messages = {
 	[MESSAGE_ID_TYPES_EXTENSION]: 'The `types` condition `{{value}}` must point at a declaration file ending in `.d.ts`, `.d.mts`, or `.d.cts`.',
 	[MESSAGE_ID_MODULE_FORMAT]: 'Type declaration `{{types}}` uses {{actual}} format but its JavaScript target uses {{expected}} format.',
 	[MESSAGE_ID_TYPES_VALUE]: 'The `types` condition must point to a declaration file.',
+	[MESSAGE_ID_TYPES_VERSION]: 'Versioned type condition `{{key}}` must use TypeScript-compatible semver syntax.',
 };
 
 const declarationPathPattern = /\.d\.(?:ts|mts|cts)$/u;
 const javascriptPathPattern = /\.(?:c|m)?js$/u;
+const typesVersionPartialPattern = /^(?:[*0Xx]|[1-9]\d*)(?:\.(?:[*0Xx]|[1-9]\d*)(?:\.(?:[*0Xx]|[1-9]\d*)(?:-(?<prerelease>[\d\-.A-Za-z]+))?(?:\+(?<build>[\d\-.A-Za-z]+))?)?)?$/u;
+const typesVersionPrereleasePattern = /^(?:0|[1-9]\d*|[-A-Za-z][\d\-A-Za-z]*)(?:\.(?:0|[1-9]\d*|[-A-Za-z][\d\-A-Za-z]*))*$/u;
+const typesVersionBuildPattern = /^[\d\-A-Za-z]+(?:\.[\d\-A-Za-z]+)*$/u;
+const typesVersionComparatorPattern = /^(?:<=|>=|[<=>^~])?([\d*+\-.A-Za-z]+)$/u;
+const typesVersionHyphenPattern = /^([\d*+\-.A-Za-z]+)\s+-\s+([\d*+\-.A-Za-z]+)$/u;
+
+function isTypesConditionKey(key) {
+	return key === 'types' || key.startsWith('types@');
+}
+
+function isValidTypesVersionPartial(value) {
+	const match = typesVersionPartialPattern.exec(value);
+
+	if (!match) {
+		return false;
+	}
+
+	const {prerelease, build} = match.groups;
+	return (!prerelease || typesVersionPrereleasePattern.test(prerelease))
+		&& (!build || typesVersionBuildPattern.test(build));
+}
+
+function isValidTypesVersionRange(range) {
+	for (const rawAlternative of range.trim().split('||')) {
+		if (rawAlternative === '') {
+			continue;
+		}
+
+		const alternative = rawAlternative.trim();
+
+		if (alternative === '') {
+			return false;
+		}
+
+		const hyphenMatch = typesVersionHyphenPattern.exec(alternative);
+
+		if (hyphenMatch) {
+			if (!isValidTypesVersionPartial(hyphenMatch[1]) || !isValidTypesVersionPartial(hyphenMatch[2])) {
+				return false;
+			}
+
+			continue;
+		}
+
+		for (const comparator of alternative.split(/\s+/u)) {
+			const match = typesVersionComparatorPattern.exec(comparator);
+
+			if (!match || !isValidTypesVersionPartial(match[1])) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
 
 function isTypesCondition(key) {
-	return key === 'types' || key.startsWith('types@');
+	if (key === 'types') {
+		return true;
+	}
+
+	if (!key.startsWith('types@')) {
+		return false;
+	}
+
+	const range = key.slice('types@'.length);
+	return isValidTypesVersionRange(range);
 }
 
 function isRuntimeTarget(value) {
@@ -433,7 +499,26 @@ function getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reported
 }
 
 function * checkTypesMembers(objectNode) {
-	const typesMembers = objectNode.members.filter(member => isTypesCondition(getKey(member)));
+	const typesMembers = [];
+
+	for (const member of objectNode.members) {
+		const key = getKey(member);
+
+		if (!isTypesConditionKey(key)) {
+			continue;
+		}
+
+		if (!isTypesCondition(key)) {
+			yield {
+				node: member.name,
+				messageId: MESSAGE_ID_TYPES_VERSION,
+				data: {key},
+			};
+			continue;
+		}
+
+		typesMembers.push(member);
+	}
 
 	for (const member of typesMembers) {
 		const index = objectNode.members.indexOf(member);
@@ -475,7 +560,7 @@ function * checkNestedTypes(node) {
 		return;
 	}
 
-	if (node.members.some(member => isTypesCondition(getKey(member)))) {
+	if (node.members.some(member => isTypesConditionKey(getKey(member)))) {
 		yield * checkTypesMembers(node);
 	}
 
@@ -563,7 +648,7 @@ function * checkNode(node, packageType, inheritedScopes = []) {
 		case 'Object': {
 			const typesMembers = node.members.filter(member => isTypesCondition(getKey(member)));
 
-			if (typesMembers.length > 0) {
+			if (node.members.some(member => isTypesConditionKey(getKey(member)))) {
 				yield * checkTypesObject(node, packageType);
 			}
 
@@ -618,7 +703,7 @@ function * checkNode(node, packageType, inheritedScopes = []) {
 
 function hasTypesCondition(node) {
 	if (node.type === 'Object') {
-		return node.members.some(member => isTypesCondition(getKey(member)) || hasTypesCondition(member.value));
+		return node.members.some(member => isTypesConditionKey(getKey(member)) || hasTypesCondition(member.value));
 	}
 
 	if (node.type === 'Array') {
