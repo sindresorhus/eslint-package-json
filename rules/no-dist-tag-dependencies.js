@@ -1,5 +1,4 @@
-import semver from 'semver';
-import {getRootObject, iterateDependencies} from './utils/index.js';
+import {getRootObject, iterateDependencies, validRange} from './utils/index.js';
 
 const MESSAGE_ID = 'no-dist-tag-dependencies';
 
@@ -16,7 +15,7 @@ const isDistTag = specifier => {
 	}
 
 	// Version ranges (including `*`, `x`, `1.2.x`) parse as a valid range; tags do not.
-	return semver.validRange(specifier) === null;
+	return validRange(specifier) === null;
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */

@@ -4,7 +4,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Linter} from 'eslint';
 import json from '@eslint/json';
+import semver from 'semver';
 import plugin from '../index.js';
+import {validRange} from '../rules/utils/index.js';
 
 const byName = (a, b) => a.localeCompare(b);
 
@@ -117,6 +119,29 @@ test('the recommended config works end-to-end through ESLint', () => {
 		otherFile.every(message => !message.ruleId?.startsWith('package-json/')),
 		'package-json rules should not run on non-package.json files',
 	);
+});
+
+test('SemVer result cache is bounded', () => {
+	const originalValidRange = semver.validRange;
+	let parseCount = 0;
+	semver.validRange = value => {
+		parseCount++;
+		return originalValidRange(value);
+	};
+
+	try {
+		const specifiers = Array.from({length: 1001}, (_, index) => `__bounded-cache-test__${index}`);
+
+		for (const specifier of specifiers) {
+			validRange(specifier);
+		}
+
+		const parseCountAfterFilling = parseCount;
+		validRange(specifiers[0]);
+		assert.equal(parseCount, parseCountAfterFilling + 1);
+	} finally {
+		semver.validRange = originalValidRange;
+	}
 });
 
 test('no rule crashes on a non-object or unusual root', () => {

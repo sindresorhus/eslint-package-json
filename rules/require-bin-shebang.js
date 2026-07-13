@@ -69,12 +69,6 @@ const create = context => ({
 		const packageDirectory = path.dirname(path.resolve(context.cwd, physicalFilename));
 		let realPackageDirectory;
 
-		try {
-			realPackageDirectory = fs.realpathSync(packageDirectory);
-		} catch {
-			return;
-		}
-
 		for (const entry of getBinEntries(binMember)) {
 			const extension = path.extname(entry.path);
 
@@ -100,8 +94,17 @@ const create = context => ({
 				continue;
 			}
 
-			if (!isWithinPackage(realPackageDirectory, realFilePath)) {
-				continue;
+			// A file whose real path is its literal path has no symlink anywhere along it, and the package directory is a prefix of that path, so the containment check above already proves the file cannot escape the package. Only a symlink makes it worth resolving the package directory as well.
+			if (realFilePath !== filePath) {
+				try {
+					realPackageDirectory ??= fs.realpathSync(packageDirectory);
+				} catch {
+					return;
+				}
+
+				if (!isWithinPackage(realPackageDirectory, realFilePath)) {
+					continue;
+				}
 			}
 
 			let content;

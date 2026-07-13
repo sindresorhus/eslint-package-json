@@ -1,10 +1,10 @@
-import semver from 'semver';
 import {
 	dependencyTypes,
 	getRootObject,
 	iterateDependencies,
 	optionsSchema,
 	stringArraySchema,
+	validRange,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-wildcard-dependencies';
@@ -36,7 +36,7 @@ const create = context => {
 				const range = member.value.value;
 
 				// A wildcard (`*`, ``, `x`, `X`) normalizes to `*`; real ranges, tags, and `workspace:`/`file:`/git/URL specifiers do not.
-				if (semver.validRange(range) !== '*') {
+				if (validRange(range) !== '*') {
 					continue;
 				}
 

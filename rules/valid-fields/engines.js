@@ -1,5 +1,4 @@
-import semver from 'semver';
-import {findMember, getKey} from '../utils/index.js';
+import {findMember, getKey, validRange} from '../utils/index.js';
 
 const MESSAGE_ID = 'valid-engines';
 const TYPE_MESSAGE_ID = 'type';
@@ -31,8 +30,8 @@ export function * check(root) {
 
 		const range = member.value.value;
 
-		// `semver.validRange('')` is `'*'`, so reject empty/whitespace explicitly.
-		if (range.trim() !== '' && semver.validRange(range) !== null) {
+		// `validRange('')` is `'*'`, so reject empty/whitespace explicitly.
+		if (range.trim() !== '' && validRange(range) !== null) {
 			continue;
 		}
 

@@ -1,5 +1,9 @@
-import semver from 'semver';
-import {findMember, removeMember, isHttpUrl} from '../utils/index.js';
+import {
+	findMember,
+	removeMember,
+	isHttpUrl,
+	validRange,
+} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const ACCESS_MESSAGE_ID = 'access';
@@ -75,7 +79,7 @@ export function * check(root, context) {
 
 	const tag = findMember(publishConfig.value, 'tag');
 
-	if (tag && (tag.value.type !== 'String' || tag.value.value === '' || semver.validRange(tag.value.value) !== null)) {
+	if (tag && (tag.value.type !== 'String' || tag.value.value === '' || validRange(tag.value.value) !== null)) {
 		yield {
 			node: tag.value,
 			messageId: TAG_MESSAGE_ID,

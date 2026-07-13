@@ -1,5 +1,4 @@
-import semver from 'semver';
-import {findMember} from '../utils/index.js';
+import {findMember, validVersion} from '../utils/index.js';
 
 const MESSAGE_ID = 'valid-version';
 
@@ -15,7 +14,7 @@ export function * check(root) {
 	}
 
 	const version = member.value.value;
-	const isValidSemver = semver.valid(version) !== null;
+	const isValidSemver = validVersion(version) !== null;
 
 	// A canonical package.json version has no `v` prefix and no surrounding whitespace, even though semver tolerates both. Build metadata (`+build`) is preserved, so we don't compare against the normalized form.
 	if (isValidSemver && version === version.trim() && !/^v/i.test(version)) {
