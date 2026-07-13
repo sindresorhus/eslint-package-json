@@ -1,0 +1,338 @@
+exports[`invalid(1): {\"exports\": \"./missing.js\"} 1`] = `
+
+[Input]
+  1 | {"exports": "./missing.js"}
+
+`;
+
+exports[`invalid(1): {\"exports\": \"./missing.js\"} 2`] = `
+
+Message:
+> 1 | {"exports": "./missing.js"}
+    |             ^^^^^^^^^^^^^^ Export target \`./missing.js\` does not exist.
+
+`;
+
+exports[`invalid(10): {\"exports\": {\"import\": \"./missing.js\", \"require\": \"./missing.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"import": "./missing.js", "require": "./missing.js"}}
+
+`;
+
+exports[`invalid(10): {\"exports\": {\"import\": \"./missing.js\", \"require\": \"./missing.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"import": "./missing.js", "require": "./missing.js"}}
+    |                        ^^^^^^^^^^^^^^ Export target \`./missing.js\` does not exist.
+
+`;
+
+exports[`invalid(11): {\"exports\": {\"import\": \"./missing-import.js\", \"default\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"import": "./missing-import.js", "default": "./index.js"}}
+
+`;
+
+exports[`invalid(11): {\"exports\": {\"import\": \"./missing-import.js\", \"default\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"import": "./missing-import.js", "default": "./index.js"}}
+    |                        ^^^^^^^^^^^^^^^^^^^^^ Export target \`./missing-import.js\` does not exist.
+
+`;
+
+exports[`invalid(12): {\"exports\": {\"./feature\": \"./Index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./feature": "./Index.js"}}
+
+`;
+
+exports[`invalid(12): {\"exports\": {\"./feature\": \"./Index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./feature": "./Index.js"}}
+    |                           ^^^^^^^^^^^^ Export target \`./Index.js\` does not exist.
+
+`;
+
+exports[`invalid(13): {\"exports\": {\"./rules/*\": \"./rules\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./rules/*": "./rules"}}
+
+`;
+
+exports[`invalid(13): {\"exports\": {\"./rules/*\": \"./rules\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./rules/*": "./rules"}}
+    |                           ^^^^^^^^^ Export target \`./rules\` does not exist.
+
+`;
+
+exports[`invalid(14): {\"files\": [\"missing\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["missing"]}
+
+`;
+
+exports[`invalid(14): {\"files\": [\"missing\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["missing"]}
+    |            ^^^^^^^^^ The \`files\` pattern \`missing\` does not match any file or directory.
+
+`;
+
+exports[`invalid(15): {\"files\": [\"missing/*.js\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["missing/*.js"]}
+
+`;
+
+exports[`invalid(15): {\"files\": [\"missing/*.js\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["missing/*.js"]}
+    |            ^^^^^^^^^^^^^^ The \`files\` pattern \`missing/*.js\` does not match any file or directory.
+
+`;
+
+exports[`invalid(16): {\"files\": [\"rules/*.JS\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["rules/*.JS"]}
+
+`;
+
+exports[`invalid(16): {\"files\": [\"rules/*.JS\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["rules/*.JS"]}
+    |            ^^^^^^^^^^^^ The \`files\` pattern \`rules/*.JS\` does not match any file or directory.
+
+`;
+
+exports[`invalid(17): {\"files\": [\"index.js\", \"missing\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["index.js", "missing"]}
+
+`;
+
+exports[`invalid(17): {\"files\": [\"index.js\", \"missing\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["index.js", "missing"]}
+    |                        ^^^^^^^^^ The \`files\` pattern \`missing\` does not match any file or directory.
+
+`;
+
+exports[`invalid(18): {\"files\": [\"missing{,/also-missing}\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["missing{,/also-missing}"]}
+
+`;
+
+exports[`invalid(18): {\"files\": [\"missing{,/also-missing}\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["missing{,/also-missing}"]}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^ The \`files\` pattern \`missing{,/also-missing}\` does not match any file or directory.
+
+`;
+
+exports[`invalid(19): {\"name\": \"package-json\", \"bin\": \"missing-cli.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "package-json", "bin": "missing-cli.js"}
+
+`;
+
+exports[`invalid(19): {\"name\": \"package-json\", \"bin\": \"missing-cli.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "package-json", "bin": "missing-cli.js"}
+    |                                 ^^^^^^^^^^^^^^^^ \`bin\` target \`missing-cli.js\` does not exist.
+
+`;
+
+exports[`invalid(2): {\"exports\": {\".\": \"./missing.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {".": "./missing.js"}}
+
+`;
+
+exports[`invalid(2): {\"exports\": {\".\": \"./missing.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {".": "./missing.js"}}
+    |                   ^^^^^^^^^^^^^^ Export target \`./missing.js\` does not exist.
+
+`;
+
+exports[`invalid(20): {\"bin\": {\"first\": \"./missing-first.js\", \"second\": \"missing-second.js\"}} 1`] = `
+
+[Input]
+  1 | {"bin": {"first": "./missing-first.js", "second": "missing-second.js"}}
+
+`;
+
+exports[`invalid(20): {\"bin\": {\"first\": \"./missing-first.js\", \"second\": \"missing-second.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"first": "./missing-first.js", "second": "missing-second.js"}}
+    |                   ^^^^^^^^^^^^^^^^^^^^ \`bin\` target \`./missing-first.js\` does not exist.
+
+`;
+
+exports[`invalid(20): {\"bin\": {\"first\": \"./missing-first.js\", \"second\": \"missing-second.js\"}} 3`] = `
+
+Message:
+> 1 | {"bin": {"first": "./missing-first.js", "second": "missing-second.js"}}
+    |                                                   ^^^^^^^^^^^^^^^^^^^ \`bin\` target \`missing-second.js\` does not exist.
+
+`;
+
+exports[`invalid(21): {\"bin\": \"rules\"} 1`] = `
+
+[Input]
+  1 | {"bin": "rules"}
+
+`;
+
+exports[`invalid(21): {\"bin\": \"rules\"} 2`] = `
+
+Message:
+> 1 | {"bin": "rules"}
+    |         ^^^^^^^ \`bin\` target \`rules\` does not exist.
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"./rules/*\": \"./missing/*.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./rules/*": "./missing/*.js"}}
+
+`;
+
+exports[`invalid(3): {\"exports\": {\"./rules/*\": \"./missing/*.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./rules/*": "./missing/*.js"}}
+    |                           ^^^^^^^^^^^^^^^^ Export target \`./missing/*.js\` does not exist.
+
+`;
+
+exports[`invalid(4): {\"exports\": {\"./rules/*\": \"./rules/*.JS\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./rules/*": "./rules/*.JS"}}
+
+`;
+
+exports[`invalid(4): {\"exports\": {\"./rules/*\": \"./rules/*.JS\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./rules/*": "./rules/*.JS"}}
+    |                           ^^^^^^^^^^^^^^ Export target \`./rules/*.JS\` does not exist.
+
+`;
+
+exports[`invalid(5): {\"exports\": {\"./rules/*\": \"./rules/{no-missing-files,no-redundant-files}.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./rules/*": "./rules/{no-missing-files,no-redundant-files}.js"}}
+
+`;
+
+exports[`invalid(5): {\"exports\": {\"./rules/*\": \"./rules/{no-missing-files,no-redundant-files}.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./rules/*": "./rules/{no-missing-files,no-redundant-files}.js"}}
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Export target \`./rules/{no-missing-files,no-redundant-files}.js\` does not exist.
+
+`;
+
+exports[`invalid(6): {\"exports\": {\"./*\": \"./{missing,/tmp}/*.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./*": "./{missing,/tmp}/*.js"}}
+
+`;
+
+exports[`invalid(6): {\"exports\": {\"./*\": \"./{missing,/tmp}/*.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./*": "./{missing,/tmp}/*.js"}}
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^ Export target \`./{missing,/tmp}/*.js\` does not exist.
+
+`;
+
+exports[`invalid(7): {\"exports\": {\"./*\": \"./*/package.json\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./*": "./*/package.json"}}
+
+`;
+
+exports[`invalid(7): {\"exports\": {\"./*\": \"./*/package.json\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./*": "./*/package.json"}}
+    |                     ^^^^^^^^^^^^^^^^^^ Export target \`./*/package.json\` does not exist.
+
+`;
+
+exports[`invalid(8): {\"exports\": [\"./missing.js\", \"./also-missing.js\"]} 1`] = `
+
+[Input]
+  1 | {"exports": ["./missing.js", "./also-missing.js"]}
+
+`;
+
+exports[`invalid(8): {\"exports\": [\"./missing.js\", \"./also-missing.js\"]} 2`] = `
+
+Message:
+> 1 | {"exports": ["./missing.js", "./also-missing.js"]}
+    |              ^^^^^^^^^^^^^^ Export target \`./missing.js\` does not exist.
+
+`;
+
+exports[`invalid(8): {\"exports\": [\"./missing.js\", \"./also-missing.js\"]} 3`] = `
+
+Message:
+> 1 | {"exports": ["./missing.js", "./also-missing.js"]}
+    |                              ^^^^^^^^^^^^^^^^^^^ Export target \`./also-missing.js\` does not exist.
+
+`;
+
+exports[`invalid(9): {\"exports\": [{\"import\": \"./missing-import.js\"}, {\"default\": \"./also-missing.js\"}]} 1`] = `
+
+[Input]
+  1 | {"exports": [{"import": "./missing-import.js"}, {"default": "./also-missing.js"}]}
+
+`;
+
+exports[`invalid(9): {\"exports\": [{\"import\": \"./missing-import.js\"}, {\"default\": \"./also-missing.js\"}]} 2`] = `
+
+Message:
+> 1 | {"exports": [{"import": "./missing-import.js"}, {"default": "./also-missing.js"}]}
+    |                         ^^^^^^^^^^^^^^^^^^^^^ Export target \`./missing-import.js\` does not exist.
+
+`;
+
+exports[`invalid(9): {\"exports\": [{\"import\": \"./missing-import.js\"}, {\"default\": \"./also-missing.js\"}]} 3`] = `
+
+Message:
+> 1 | {"exports": [{"import": "./missing-import.js"}, {"default": "./also-missing.js"}]}
+    |                                                             ^^^^^^^^^^^^^^^^^^^ Export target \`./also-missing.js\` does not exist.
+
+`;
