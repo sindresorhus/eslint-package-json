@@ -72,6 +72,8 @@ test.snapshot({
 		// Each nested runtime branch has a matching declaration format.
 		'{"type": "module", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}',
 		'{"type": "commonjs", "exports": {"types": "./index.d.ts", "default": "./index.js"}}',
+		// Unknown package types use the non-module default for `.js` and `.d.ts` files.
+		'{"type": "unknown", "exports": {"types": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"types": {"import": "./import.d.ts", "require": "./require.d.ts"}, "import": "./import.js", "require": "./require.js"}}',
 		'{"type": "module", "exports": {"types": {"import": "./import.d.mts", "require": "./require.d.cts"}, "import": "./import.mjs", "require": "./require.cjs"}}',
 		'{"exports": {"types": {"import": "./import.d.mts", "default": "./fallback.d.ts"}, "import": "./import.mjs", "require": "./require.cjs"}}',
@@ -96,6 +98,7 @@ test.snapshot({
 		// Type conditions must point to declaration files.
 		'{"exports": {"types": "./index.js", "default": "./index.js"}}',
 		'{"exports": {"types": "./index.ts", "default": "./index.mjs"}}',
+		'{"exports": {"types": "./index.D.TS", "default": "./index.js"}}',
 		'{"exports": {"types": null, "default": "./index.js"}}',
 		'{"exports": {"types": true, "default": "./index.js"}}',
 		'{"exports": {"types": false, "default": "./index.js"}}',
@@ -129,6 +132,7 @@ test.snapshot({
 		'{"type": "commonjs", "exports": {"types": "./index.d.mts", "default": "./index.cjs"}}',
 		'{"exports": {"types": "./index.d.ts", "default": "./index.mjs"}}',
 		// Every exported branch needs its own type condition.
+		'{"exports": {".": {"types": "./index.d.ts", "default": "./index.js"}, "./feature": "./feature.js"}}',
 		'{"types": "./index.d.ts", "exports": [{"default": "./index.js"}, {"types": "./index.d.ts"}]}',
 		'{"types": "./index.d.ts", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": "./index.cjs"}}',
 		'{"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"default": "./index.cjs"}}}',
