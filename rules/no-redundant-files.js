@@ -48,7 +48,8 @@ function normalizeFilePath(value) {
 Check whether an entry-point value can refer to a path inside the package.
 */
 function isPackageLocalPath(value) {
-	return !value.startsWith('/')
+	const normalizedPath = value.replaceAll('\\', '/');
+	return !normalizedPath.startsWith('/')
 		&& !URL.canParse(value)
 		&& !value.split(/[/\\]/u).includes('..');
 }

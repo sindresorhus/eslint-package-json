@@ -41,7 +41,7 @@ test.snapshot({
 		'{"files": ["!", "!"]}',
 		// Empty inclusion patterns cover negations like root patterns.
 		'{"files": ["", "!tests"]}',
-		// Root-like patterns are left alone because their overlap is filesystem-dependent.
+		// Root-like patterns are treated conservatively.
 		'{"files": ["/", "!tests"]}',
 		// Entry points are included automatically, but unrelated files are not redundant.
 		'{"main": "./index.js", "bin": {"cli": "./cli.js"}, "files": ["dist"]}',
@@ -59,6 +59,8 @@ test.snapshot({
 		'{"main": 123, "bin": ["cli.js"], "browser": {"./browser.js": "./browser.js"}, "files": ["src"]}',
 		// Non-local entry-point values are ignored.
 		'{"main": "../outside.js", "bin": "/absolute.js", "browser": "https://example.com/browser.js", "files": ["../outside.js", "/absolute.js", "https://example.com/browser.js"]}',
+		// Windows absolute entry-point values are also ignored.
+		String.raw`{"bin": "\\absolute.js", "files": ["\\absolute.js"]}`,
 		// Duplicate bin keys use the final value.
 		`{
 	"bin": {
