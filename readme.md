@@ -25,10 +25,10 @@ import packageJson from 'eslint-package-json';
 export default defineConfig({
 	files: ['**/package.json'],
 	plugins: {
-		packageJson
+		'package-json': packageJson
 	},
 	extends: [
-		'packageJson/recommended'
+		'package-json/recommended'
 	]
 });
 ```
@@ -42,10 +42,10 @@ import packageJson from 'eslint-package-json';
 export default defineConfig({
 	files: ['**/package.json'],
 	plugins: {
-		packageJson
+		'package-json': packageJson
 	},
 	extends: [
-		'packageJson/recommended'
+		'package-json/recommended'
 	],
 	rules: {
 		'package-json/dependency-version-range': [
@@ -70,10 +70,10 @@ export default defineConfig({
 	language: 'json/json',
 	plugins: {
 		json,
-		packageJson
+		'package-json': packageJson
 	},
 	rules: {
-		'packageJson/valid-fields': 'error'
+		'package-json/valid-fields': 'error'
 	}
 });
 ```
@@ -183,10 +183,10 @@ import packageJson from 'eslint-package-json';
 export default defineConfig({
 	files: ['**/package.json'],
 	plugins: {
-		packageJson
+		'package-json': packageJson
 	},
 	extends: [
-		'packageJson/recommended'
+		'package-json/recommended'
 	],
 	rules: {
 		'package-json/no-orphan-types': 'off',
