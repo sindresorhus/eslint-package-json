@@ -243,65 +243,71 @@ Output:
 
 `;
 
-exports[`invalid(17): {\n\t\"bin\": \"./cli.js\",\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 1`] = `
+exports[`invalid(17): {\n\t\"name\": \"package\",\n\t\"bin\": \"./cli.js\",\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
-  2 | 	"bin": "./cli.js",
-  3 | 	"files": [
-  4 | 		"cli.js"
-  5 | 	]
-  6 | }
+  2 | 	"name": "package",
+  3 | 	"bin": "./cli.js",
+  4 | 	"files": [
+  5 | 		"cli.js"
+  6 | 	]
+  7 | }
 
 `;
 
-exports[`invalid(17): {\n\t\"bin\": \"./cli.js\",\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 2`] = `
+exports[`invalid(17): {\n\t\"name\": \"package\",\n\t\"bin\": \"./cli.js\",\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
-  2 | 	"bin": "./cli.js",
-  3 | 	"files": [
-> 4 | 		"cli.js"
+  2 | 	"name": "package",
+  3 | 	"bin": "./cli.js",
+  4 | 	"files": [
+> 5 | 		"cli.js"
     | 		^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
-  5 | 	]
-  6 | }
+  6 | 	]
+  7 | }
 
 Output:
   1 | {
-  2 | 	"bin": "./cli.js",
-  3 | 	"files": []
-  4 | }
+  2 | 	"name": "package",
+  3 | 	"bin": "./cli.js",
+  4 | 	"files": []
+  5 | }
 
 `;
 
-exports[`invalid(18): {\n\t\"bin\": \"cli\",\n\t\"files\": [\n\t\t\"cli\"\n\t]\n} 1`] = `
+exports[`invalid(18): {\n\t\"name\": \"package\",\n\t\"bin\": \"cli\",\n\t\"files\": [\n\t\t\"cli\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
-  2 | 	"bin": "cli",
-  3 | 	"files": [
-  4 | 		"cli"
-  5 | 	]
-  6 | }
+  2 | 	"name": "package",
+  3 | 	"bin": "cli",
+  4 | 	"files": [
+  5 | 		"cli"
+  6 | 	]
+  7 | }
 
 `;
 
-exports[`invalid(18): {\n\t\"bin\": \"cli\",\n\t\"files\": [\n\t\t\"cli\"\n\t]\n} 2`] = `
+exports[`invalid(18): {\n\t\"name\": \"package\",\n\t\"bin\": \"cli\",\n\t\"files\": [\n\t\t\"cli\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
-  2 | 	"bin": "cli",
-  3 | 	"files": [
-> 4 | 		"cli"
+  2 | 	"name": "package",
+  3 | 	"bin": "cli",
+  4 | 	"files": [
+> 5 | 		"cli"
     | 		^^^^^ \`cli\` is always included by npm and is redundant in \`files\`.
-  5 | 	]
-  6 | }
+  6 | 	]
+  7 | }
 
 Output:
   1 | {
-  2 | 	"bin": "cli",
-  3 | 	"files": []
-  4 | }
+  2 | 	"name": "package",
+  3 | 	"bin": "cli",
+  4 | 	"files": []
+  5 | }
 
 `;
 
@@ -378,38 +384,41 @@ Output:
 
 `;
 
-exports[`invalid(20): {\n\t\"bin\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 1`] = `
+exports[`invalid(20): {\n\t\"name\": \"package\",\n\t\"bin\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
-  2 | 	"bin": "./index.js",
-  3 | 	"files": [
-  4 | 		"**",
-  5 | 		"!index.js"
-  6 | 	]
-  7 | }
+  2 | 	"name": "package",
+  3 | 	"bin": "./index.js",
+  4 | 	"files": [
+  5 | 		"**",
+  6 | 		"!index.js"
+  7 | 	]
+  8 | }
 
 `;
 
-exports[`invalid(20): {\n\t\"bin\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 2`] = `
+exports[`invalid(20): {\n\t\"name\": \"package\",\n\t\"bin\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
-  2 | 	"bin": "./index.js",
-  3 | 	"files": [
-  4 | 		"**",
-> 5 | 		"!index.js"
+  2 | 	"name": "package",
+  3 | 	"bin": "./index.js",
+  4 | 	"files": [
+  5 | 		"**",
+> 6 | 		"!index.js"
     | 		^^^^^^^^^^^ \`index.js\` is always included by npm and is redundant in \`files\`.
-  6 | 	]
-  7 | }
+  7 | 	]
+  8 | }
 
 Output:
   1 | {
-  2 | 	"bin": "./index.js",
-  3 | 	"files": [
-  4 | 		"**"
-  5 | 	]
-  6 | }
+  2 | 	"name": "package",
+  3 | 	"bin": "./index.js",
+  4 | 	"files": [
+  5 | 		"**"
+  6 | 	]
+  7 | }
 
 `;
 
@@ -469,34 +478,37 @@ Output:
 
 `;
 
-exports[`invalid(23): {\n\t\"bin\": \"index.js\",\n\t\"files\": [\n\t\t\"././index.js\"\n\t]\n} 1`] = `
+exports[`invalid(23): {\n\t\"name\": \"package\",\n\t\"bin\": \"index.js\",\n\t\"files\": [\n\t\t\"././index.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
-  2 | 	"bin": "index.js",
-  3 | 	"files": [
-  4 | 		"././index.js"
-  5 | 	]
-  6 | }
+  2 | 	"name": "package",
+  3 | 	"bin": "index.js",
+  4 | 	"files": [
+  5 | 		"././index.js"
+  6 | 	]
+  7 | }
 
 `;
 
-exports[`invalid(23): {\n\t\"bin\": \"index.js\",\n\t\"files\": [\n\t\t\"././index.js\"\n\t]\n} 2`] = `
+exports[`invalid(23): {\n\t\"name\": \"package\",\n\t\"bin\": \"index.js\",\n\t\"files\": [\n\t\t\"././index.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
-  2 | 	"bin": "index.js",
-  3 | 	"files": [
-> 4 | 		"././index.js"
+  2 | 	"name": "package",
+  3 | 	"bin": "index.js",
+  4 | 	"files": [
+> 5 | 		"././index.js"
     | 		^^^^^^^^^^^^^^ \`././index.js\` is always included by npm and is redundant in \`files\`.
-  5 | 	]
-  6 | }
+  6 | 	]
+  7 | }
 
 Output:
   1 | {
-  2 | 	"bin": "index.js",
-  3 | 	"files": []
-  4 | }
+  2 | 	"name": "package",
+  3 | 	"bin": "index.js",
+  4 | 	"files": []
+  5 | }
 
 `;
 
@@ -857,6 +869,86 @@ Output:
   3 | 		""
   4 | 	]
   5 | }
+
+`;
+
+exports[`invalid(33): {\n\t\"bin\": {\n\t\t\"cli\": \"first.js\",\n\t\t\"commands/cli\": \"second.js\"\n\t},\n\t\"files\": [\n\t\t\"second.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "first.js",
+  4 | 		"commands/cli": "second.js"
+  5 | 	},
+  6 | 	"files": [
+  7 | 		"second.js"
+  8 | 	]
+  9 | }
+
+`;
+
+exports[`invalid(33): {\n\t\"bin\": {\n\t\t\"cli\": \"first.js\",\n\t\t\"commands/cli\": \"second.js\"\n\t},\n\t\"files\": [\n\t\t\"second.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "first.js",
+  4 | 		"commands/cli": "second.js"
+  5 | 	},
+  6 | 	"files": [
+> 7 | 		"second.js"
+    | 		^^^^^^^^^^^ \`second.js\` is always included by npm and is redundant in \`files\`.
+  8 | 	]
+  9 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "first.js",
+  4 | 		"commands/cli": "second.js"
+  5 | 	},
+  6 | 	"files": []
+  7 | }
+
+`;
+
+exports[`invalid(34): {\n\t\"bin\": {\n\t\t\"commands/1\": \"first.js\",\n\t\t\"1\": \"second.js\"\n\t},\n\t\"files\": [\n\t\t\"first.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": {
+  3 | 		"commands/1": "first.js",
+  4 | 		"1": "second.js"
+  5 | 	},
+  6 | 	"files": [
+  7 | 		"first.js"
+  8 | 	]
+  9 | }
+
+`;
+
+exports[`invalid(34): {\n\t\"bin\": {\n\t\t\"commands/1\": \"first.js\",\n\t\t\"1\": \"second.js\"\n\t},\n\t\"files\": [\n\t\t\"first.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"commands/1": "first.js",
+  4 | 		"1": "second.js"
+  5 | 	},
+  6 | 	"files": [
+> 7 | 		"first.js"
+    | 		^^^^^^^^^^ \`first.js\` is always included by npm and is redundant in \`files\`.
+  8 | 	]
+  9 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"commands/1": "first.js",
+  4 | 		"1": "second.js"
+  5 | 	},
+  6 | 	"files": []
+  7 | }
 
 `;
 

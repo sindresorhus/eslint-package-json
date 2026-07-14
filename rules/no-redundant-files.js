@@ -90,24 +90,41 @@ function addBinPath(paths, value) {
 }
 
 /**
+Normalize a bin command name like npm.
+*/
+function normalizeBinName(value) {
+	const basename = path.posix.basename(value.replaceAll(/[:\\]/gu, '/'));
+	return path.posix.join('/', basename).slice(1);
+}
+
+/**
 Get bin paths that npm always includes.
 */
 function getAlwaysIncludedPaths(root) {
 	const paths = new Set();
 	const bin = findMember(root, 'bin');
-	if (bin?.value.type === 'String') {
+	const nameMember = findMember(root, 'name');
+	if (bin?.value.type === 'String' && nameMember?.value.type === 'String' && normalizeBinName(nameMember.value.value)) {
 		addBinPath(paths, bin.value.value);
 	} else if (bin?.value.type === 'Object') {
-		const effectiveEntries = new Map();
+		const effectiveEntries = Object.fromEntries(bin.value.members.map(member => [getKey(member), member.value.type === 'String' ? member.value.value : undefined]));
 
-		for (const member of bin.value.members) {
-			effectiveEntries.set(getKey(member), member.value.type === 'String' ? member.value.value : undefined);
+		const normalizedEntries = new Map();
+		for (const [binName, value] of Object.entries(effectiveEntries)) {
+			if (value === undefined) {
+				continue;
+			}
+
+			const normalizedName = normalizeBinName(binName);
+			if (!normalizedName) {
+				continue;
+			}
+
+			normalizedEntries.set(normalizedName, value);
 		}
 
-		for (const value of effectiveEntries.values()) {
-			if (value !== undefined) {
-				addBinPath(paths, value);
-			}
+		for (const value of normalizedEntries.values()) {
+			addBinPath(paths, value);
 		}
 	}
 

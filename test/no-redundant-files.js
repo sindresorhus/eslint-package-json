@@ -44,12 +44,17 @@ test.snapshot({
 		'{"files": [".", "./", "/", ""]}',
 		// Bin files are included automatically, but unrelated files are not redundant.
 		'{"main": "./index.js", "bin": {"cli": "./cli.js"}, "files": ["dist"]}',
+		// String bin values require a package name.
+		'{"bin": "./cli.js", "files": ["cli.js", "!cli.js"]}',
+		'{"name": "/", "bin": "./cli.js", "files": ["cli.js"]}',
+		// Normalized bin command collisions use the final target.
+		'{"bin": {"commands/cli": "first.js", "cli": "second.js"}, "files": ["first.js"]}',
+		// Integer bin command names are enumerated first by npm.
+		'{"bin": {"commands/1": "first.js", "1": "second.js"}, "files": ["second.js"]}',
 		// Filesystem-dependent main and browser paths are left alone.
 		'{"main": "./index.js", "browser": "./browser.js", "files": ["index.js", "browser.js"]}',
 		'{"main": "dist", "browser": "browser", "files": ["dist", "browser"]}',
 		'{"main": "index.js", "browser": "browser.js", "files": ["index.js", "browser.js"]}',
-		// Entry-point paths with different casing are treated conservatively.
-		'{"main": "./Index.js", "files": ["index.js"]}',
 		// Names with invalid always-included suffixes are not redundant.
 		String.raw`{"files": ["README.md/foo", "README.md\\foo", "README.", "README.md~", "README.md$", "README.md/"]}`,
 		// No files field.
@@ -60,10 +65,10 @@ test.snapshot({
 		'{"files": []}',
 		// Non-string elements are ignored.
 		'{"files": ["src", 123, true]}',
-		// Malformed entry-point fields are ignored.
-		'{"main": 123, "bin": ["cli.js"], "browser": {"./browser.js": "./browser.js"}, "files": ["src"]}',
-		// Non-local entry-point values are ignored.
-		'{"main": "../outside.js", "bin": "/absolute.js", "browser": "https://example.com/browser.js", "files": ["../outside.js", "/absolute.js", "https://example.com/browser.js"]}',
+		// Bin arrays are ignored conservatively.
+		'{"bin": ["cli.js"], "files": ["cli.js"]}',
+		// Non-local bin values are ignored.
+		'{"bin": {"outside": "../outside.js", "absolute": "/absolute.js", "remote": "https://example.com/remote.js"}, "files": ["../outside.js", "/absolute.js", "https://example.com/remote.js"]}',
 		// Windows absolute entry-point values are also ignored.
 		String.raw`{"bin": "\\absolute.js", "files": ["\\absolute.js"]}`,
 		// Duplicate bin keys use the final value.
@@ -196,6 +201,7 @@ test.snapshot({
 }`,
 		// String bin values are always included.
 		`{
+	"name": "package",
 	"bin": "./cli.js",
 	"files": [
 		"cli.js"
@@ -203,6 +209,7 @@ test.snapshot({
 }`,
 		// Extensionless bin files are also included.
 		`{
+	"name": "package",
 	"bin": "cli",
 	"files": [
 		"cli"
@@ -220,6 +227,7 @@ test.snapshot({
 }`,
 		// String bin files cannot be excluded.
 		`{
+	"name": "package",
 	"bin": "./index.js",
 	"files": [
 		"**",
@@ -240,6 +248,7 @@ test.snapshot({
 }`,
 		// Redundant dot segments are normalized in files patterns.
 		`{
+	"name": "package",
 	"bin": "index.js",
 	"files": [
 		"././index.js"
@@ -309,6 +318,26 @@ test.snapshot({
 	"files": [
 		"",
 		"!tests"
+	]
+}`,
+		// Normalized bin command collisions use the final target.
+		`{
+	"bin": {
+		"cli": "first.js",
+		"commands/cli": "second.js"
+	},
+	"files": [
+		"second.js"
+	]
+}`,
+		// Integer bin command names are enumerated first by npm.
+		`{
+	"bin": {
+		"commands/1": "first.js",
+		"1": "second.js"
+	},
+	"files": [
+		"first.js"
 	]
 }`,
 	],
