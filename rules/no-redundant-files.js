@@ -102,28 +102,28 @@ Get bin paths that npm always includes.
 */
 function getAlwaysIncludedPaths(root) {
 	const paths = new Set();
-	const bin = findMember(root, 'bin');
+	const binMember = findMember(root, 'bin');
 	const nameMember = findMember(root, 'name');
-	if (bin?.value.type === 'String' && nameMember?.value.type === 'String' && normalizeBinName(nameMember.value.value)) {
-		addBinPath(paths, bin.value.value);
-	} else if (bin?.value.type === 'Object') {
-		const effectiveEntries = Object.fromEntries(bin.value.members.map(member => [getKey(member), member.value.type === 'String' ? member.value.value : undefined]));
+	if (binMember?.value.type === 'String' && nameMember?.value.type === 'String') {
+		const normalizedName = normalizeBinName(nameMember.value.value);
+		if (normalizedName && normalizedName !== '__proto__') {
+			addBinPath(paths, binMember.value.value);
+		}
+	} else if (binMember?.value.type === 'Object') {
+		const effectiveEntries = new Map(binMember.value.members.map(member => [getKey(member), member.value.type === 'String' ? member.value.value : undefined]));
 
-		const normalizedEntries = new Map();
-		for (const [binName, value] of Object.entries(effectiveEntries)) {
+		for (const name of effectiveEntries.keys()) {
+			const normalizedName = normalizeBinName(name);
+			if (!normalizedName || normalizedName !== name) {
+				return paths;
+			}
+		}
+
+		for (const value of effectiveEntries.values()) {
 			if (value === undefined) {
 				continue;
 			}
 
-			const normalizedName = normalizeBinName(binName);
-			if (!normalizedName) {
-				continue;
-			}
-
-			normalizedEntries.set(normalizedName, value);
-		}
-
-		for (const value of normalizedEntries.values()) {
 			addBinPath(paths, value);
 		}
 	}
@@ -227,9 +227,10 @@ const create = context => ({
 
 			const {value} = valueNode;
 
-			const isNegated = value.startsWith('!');
-			const pattern = isNegated ? value.replace(/^!+/u, '') : value;
-			if (!pattern && isNegated) {
+			const leadingBangs = value.match(/^!+/u)?.[0] ?? '';
+			const isNegated = leadingBangs.length % 2 === 1;
+			const pattern = value.slice(leadingBangs.length);
+			if (leadingBangs && !pattern) {
 				continue;
 			}
 

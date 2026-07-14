@@ -28,15 +28,16 @@ test.snapshot({
 		'{"files": ["dist/sub", "!dist//"]}',
 		'{"files": ["dist/sub", "!/dist"]}',
 		'{"files": ["dist/../tests", "!tests"]}',
-		// Any number of leading bangs is a negation.
-		'{"files": ["tests", "!!tests", "tests"]}',
+		// An even number of leading bangs is an inclusion.
+		'{"files": ["!!tests"]}',
+		'{"files": ["!!tests", "!tests"]}',
 		// Repeated patterns can be useful after an opposite pattern changes their effect.
 		'{"files": ["dist", "!dist", "dist"]}',
 		'{"files": ["dist", "!dist", "dist", "!dist"]}',
 		// Always-included globs are still ambiguous because they can match other files.
 		'{"files": ["dist", "!+(tests)"]}',
 		'{"files": ["**", "!README.*"]}',
-		// Empty negated patterns are ignored by npm.
+		// Empty bang patterns are ignored by npm.
 		'{"files": ["!", "!"]}',
 		'{"files": ["!!", "!!"]}',
 		'{"files": ["!.", "!./", "!/"]}',
@@ -44,13 +45,16 @@ test.snapshot({
 		'{"files": [".", "./", "/", ""]}',
 		// Bin files are included automatically, but unrelated files are not redundant.
 		'{"main": "./index.js", "bin": {"cli": "./cli.js"}, "files": ["dist"]}',
-		// String bin values require a package name.
+		// String bin values require a usable package name.
 		'{"bin": "./cli.js", "files": ["cli.js", "!cli.js"]}',
 		'{"name": "/", "bin": "./cli.js", "files": ["cli.js"]}',
-		// Normalized bin command collisions use the final target.
-		'{"bin": {"commands/cli": "first.js", "cli": "second.js"}, "files": ["first.js"]}',
-		// Integer bin command names are enumerated first by npm.
-		'{"bin": {"commands/1": "first.js", "1": "second.js"}, "files": ["second.js"]}',
+		// Bin command names requiring normalization are ignored conservatively.
+		'{"bin": {"commands/cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
+		'{"bin": {"cli": "first.js", "commands/cli": "second.js"}, "files": ["second.js"]}',
+		'{"bin": {"commands:cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
+		'{"bin": {"commands/__proto__": "cli.js"}, "files": ["cli.js"]}',
+		'{"bin": {"": "cli.js"}, "files": ["cli.js"]}',
+		'{"name": "@scope/__proto__", "bin": "cli.js", "files": ["cli.js"]}',
 		// Filesystem-dependent main and browser paths are left alone.
 		'{"main": "./index.js", "browser": "./browser.js", "files": ["index.js", "browser.js"]}',
 		'{"main": "dist", "browser": "browser", "files": ["dist", "browser"]}',
@@ -124,7 +128,7 @@ test.snapshot({
 		"!!!tests"
 	]
 }`,
-		// Any number of leading bangs still produces a negation.
+		// An even number of leading bangs produces an inclusion.
 		`{
 	"files": [
 		"!!README.md"
@@ -136,12 +140,6 @@ test.snapshot({
 		"dist",
 		"!dist",
 		"!dist"
-	]
-}`,
-		// A leading bang sequence is a negation, not an inclusion.
-		`{
-	"files": [
-		"!!tests"
 	]
 }`,
 		// Package.json is always included.
@@ -318,26 +316,6 @@ test.snapshot({
 	"files": [
 		"",
 		"!tests"
-	]
-}`,
-		// Normalized bin command collisions use the final target.
-		`{
-	"bin": {
-		"cli": "first.js",
-		"commands/cli": "second.js"
-	},
-	"files": [
-		"second.js"
-	]
-}`,
-		// Integer bin command names are enumerated first by npm.
-		`{
-	"bin": {
-		"commands/1": "first.js",
-		"1": "second.js"
-	},
-	"files": [
-		"first.js"
 	]
 }`,
 	],
