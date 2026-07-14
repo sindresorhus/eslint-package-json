@@ -13,6 +13,8 @@ test.snapshot({
 		'{"files": ["rules/valid-fields", "!rules"]}',
 		// Literal overlap is compared case-insensitively.
 		'{"files": ["dist", "!DIST"]}',
+		// Non-ASCII literal overlap is ignored conservatively.
+		'{"files": ["Ä", "!ä"]}',
 		// One covering positive pattern is enough even if another is disjoint.
 		'{"files": ["src", "tests", "!tests"]}',
 		// Universal patterns cover negations.
@@ -61,6 +63,9 @@ test.snapshot({
 		'{"main": "index.js", "browser": "browser.js", "files": ["index.js", "browser.js"]}',
 		// Names with invalid always-included suffixes are not redundant.
 		String.raw`{"files": ["README.md/foo", "README.md\\foo", "README.", "README.md~", "README.md$", "README.md/"]}`,
+		// Unicode case folding is ignored conservatively.
+		'{"files": ["PACKAGE.JSON"]}',
+		'{"bin": {"cli": "İ.js"}, "files": ["i̇.js"]}',
 		// No files field.
 		'{"name": "foo"}',
 		// Files field with non-array value.

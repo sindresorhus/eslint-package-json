@@ -19,21 +19,27 @@ const messages = {
 
 // Patterns for files npm always includes.
 const ALWAYS_INCLUDED_PATTERNS = [
-	/^package\.json$/iu,
-	/^readme(?:\.[^/]*[^$/~])?$/iu,
-	/^copying(?:\.[^/]*[^$/~])?$/iu,
-	/^licen[cs]e(?:\.[^/]*[^$/~])?$/iu,
+	/^package\.json$/u,
+	/^readme(?:\.[^/]*[^$/~])?$/u,
+	/^copying(?:\.[^/]*[^$/~])?$/u,
+	/^licen[cs]e(?:\.[^/]*[^$/~])?$/u,
 ];
 const EXTGLOB_PATTERN = /[!*+?@]\(/u;
 const PARENT_PATH_PATTERN = /(?:^|[/\\])\.\.(?:[/\\]|$)/u;
+const NON_ASCII_PATTERN = /\P{ASCII}/u;
+
+/**
+Lowercase ASCII characters like npm's case-insensitive path matching.
+*/
+function lowercaseAscii(value) {
+	return value.replaceAll(/[A-Z]/gu, character => character.toLowerCase());
+}
 
 /**
 Normalize a literal files path for case-insensitive ancestor comparisons.
 */
 function normalizePath(value) {
-	return normalizeFilePath(value)
-		.replace(/\/+$/u, '')
-		.toLowerCase();
+	return lowercaseAscii(normalizeFilePath(value).replace(/\/+$/u, ''));
 }
 
 /**
@@ -46,10 +52,10 @@ function normalizeFilePath(value) {
 }
 
 /**
-Check whether a files pattern uses syntax that this rule cannot safely compare.
+Check whether a files pattern cannot be safely compared statically.
 */
 function isAmbiguousPattern(value) {
-	return hasGlob(value) || EXTGLOB_PATTERN.test(value) || PARENT_PATH_PATTERN.test(value);
+	return NON_ASCII_PATTERN.test(value) || hasGlob(value) || EXTGLOB_PATTERN.test(value) || PARENT_PATH_PATTERN.test(value);
 }
 
 /**
@@ -60,8 +66,8 @@ function isAlwaysIncluded(value, alwaysIncludedPaths) {
 		return false;
 	}
 
-	const normalizedPath = normalizeFilePath(value);
-	return alwaysIncludedPaths.has(normalizedPath.toLowerCase())
+	const normalizedPath = lowercaseAscii(normalizeFilePath(value));
+	return alwaysIncludedPaths.has(normalizedPath)
 		|| ALWAYS_INCLUDED_PATTERNS.some(pattern => pattern.test(normalizedPath));
 }
 
@@ -80,7 +86,7 @@ Add a bin path using npm's package normalization.
 function addBinPath(paths, value) {
 	const normalizedPath = normalizeBinPath(value);
 	if (normalizedPath && !normalizedPath.endsWith('/')) {
-		paths.add(normalizedPath.toLowerCase());
+		paths.add(lowercaseAscii(normalizedPath));
 	}
 }
 
