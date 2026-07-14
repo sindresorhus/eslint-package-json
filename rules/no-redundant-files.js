@@ -62,7 +62,7 @@ function isAmbiguousPattern(value) {
 }
 
 /**
-Check if a file path matches any always-included pattern.
+Check whether a files pattern is known to match an always-included file.
 */
 function isAlwaysIncluded(value, alwaysIncludedPaths) {
 	if (isAmbiguousPattern(value)) {
@@ -168,7 +168,7 @@ function getNegationMessageId(negatedPattern, positivePatterns, alwaysIncludedPa
 }
 
 /**
-Check whether an exact pattern is redundant because no intervening opposite pattern can affect it.
+Check whether an exact files entry is redundant because no intervening opposite pattern can affect it.
 */
 function isDuplicatePattern(pattern, isNegated, previousIndex, patternHistory) {
 	for (const previousPattern of patternHistory.slice(previousIndex + 1)) {
