@@ -8,7 +8,7 @@
 
 <!-- end auto-generated rule header -->
 
-npm always includes `package.json`, readme, license, copying, and package entry-point files. This rule reports redundant always-included entries, duplicates, and ineffective negations.
+npm always includes `package.json`, readme, license, copying, and `bin` files. This rule reports redundant always-included entries, duplicates, and ineffective negations.
 
 `files` patterns are applied in order. A negation is reported when no earlier literal or universal pattern can cover it. Ambiguous glob overlap is ignored, and the rule does not inspect the filesystem.
 
@@ -18,12 +18,6 @@ Always-included names (case-insensitive):
 - `README`, `README.*` (e.g., `README.md`)
 - `COPYING`, `COPYING.*`
 - `LICENSE`, `LICENSE.*`, `LICENCE`, `LICENCE.*`
-
-The package-local files referenced by these entry-point fields are also always included:
-
-- The file referenced by a string-valued `browser`
-- The file referenced by `main`
-- The file(s) referenced by `bin`
 
 ## Examples
 

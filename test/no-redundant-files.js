@@ -18,8 +18,6 @@ test.snapshot({
 		// Universal patterns cover negations.
 		'{"files": ["*", "!tests"]}',
 		'{"files": ["**", "!tests"]}',
-		'{"files": [".", "!tests"]}',
-		'{"files": ["./", "!tests"]}',
 		// Ambiguous overlap is ignored.
 		'{"files": ["src/*.js", "!tests"]}',
 		'{"files": ["src/*.js", "!src/test.js"]}',
@@ -41,12 +39,15 @@ test.snapshot({
 		// Empty negated patterns are ignored by npm.
 		'{"files": ["!", "!"]}',
 		'{"files": ["!!", "!!"]}',
-		// Empty inclusion patterns cover negations like root patterns.
-		'{"files": ["", "!tests"]}',
-		// Root-like patterns are treated conservatively.
-		'{"files": ["/", "!tests"]}',
-		// Entry points are included automatically, but unrelated files are not redundant.
+		'{"files": ["!.", "!./", "!/"]}',
+		// Root-like patterns are ignored by npm.
+		'{"files": [".", "./", "/", ""]}',
+		// Bin files are included automatically, but unrelated files are not redundant.
 		'{"main": "./index.js", "bin": {"cli": "./cli.js"}, "files": ["dist"]}',
+		// Filesystem-dependent main and browser paths are left alone.
+		'{"main": "./index.js", "browser": "./browser.js", "files": ["index.js", "browser.js"]}',
+		'{"main": "dist", "browser": "browser", "files": ["dist", "browser"]}',
+		'{"main": "index.js", "browser": "browser.js", "files": ["index.js", "browser.js"]}',
 		// Entry-point paths with different casing are treated conservatively.
 		'{"main": "./Index.js", "files": ["index.js"]}',
 		// Names with invalid always-included suffixes are not redundant.
@@ -184,33 +185,27 @@ test.snapshot({
 		"COPYING.md"
 	]
 }`,
-		// Entry points are always included.
+		// Bin files are always included.
 		`{
-	"main": "./index.js",
 	"bin": {
 		"cli": "./cli.js"
 	},
 	"files": [
-		"index.js",
 		"cli.js"
 	]
 }`,
-		// String entry points are always included.
+		// String bin values are always included.
 		`{
-	"main": "./index.js",
 	"bin": "./cli.js",
-	"browser": "./browser.js",
 	"files": [
-		"index.js",
-		"cli.js",
-		"browser.js"
+		"cli.js"
 	]
 }`,
-		// Entry-point matching uses the exact path.
+		// Extensionless bin files are also included.
 		`{
-	"main": "./Index.js",
+	"bin": "cli",
 	"files": [
-		"Index.js"
+		"cli"
 	]
 }`,
 		// Bin entry points cannot be excluded.
@@ -223,9 +218,9 @@ test.snapshot({
 		"!cli.js"
 	]
 }`,
-		// Negations cannot exclude entry points.
+		// String bin files cannot be excluded.
 		`{
-	"main": "./index.js",
+	"bin": "./index.js",
 	"files": [
 		"**",
 		"!index.js"
@@ -243,11 +238,11 @@ test.snapshot({
 		"././README.md"
 	]
 }`,
-		// Redundant dot segments are normalized for entry points.
+		// Redundant dot segments are normalized in files patterns.
 		`{
-	"main": "././index.js",
+	"bin": "index.js",
 	"files": [
-		"index.js"
+		"././index.js"
 	]
 }`,
 		// Duplicate entry.
@@ -288,6 +283,31 @@ test.snapshot({
 		"tests",
 		"!tests",
 		"dist",
+		"!tests"
+	]
+}`,
+		// Root-like patterns cannot make negations effective.
+		`{
+	"files": [
+		".",
+		"!tests"
+	]
+}`,
+		`{
+	"files": [
+		"./",
+		"!tests"
+	]
+}`,
+		`{
+	"files": [
+		"/",
+		"!tests"
+	]
+}`,
+		`{
+	"files": [
+		"",
 		"!tests"
 	]
 }`,

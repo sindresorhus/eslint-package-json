@@ -206,204 +206,100 @@ Output:
 
 `;
 
-exports[`invalid(16): {\n\t\"main\": \"./index.js\",\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"cli.js\"\n\t]\n} 1`] = `
-
-[Input]
-   1 | {
-   2 | 	"main": "./index.js",
-   3 | 	"bin": {
-   4 | 		"cli": "./cli.js"
-   5 | 	},
-   6 | 	"files": [
-   7 | 		"index.js",
-   8 | 		"cli.js"
-   9 | 	]
-  10 | }
-
-`;
-
-exports[`invalid(16): {\n\t\"main\": \"./index.js\",\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"cli.js\"\n\t]\n} 2`] = `
-
-Message:
-   1 | {
-   2 | 	"main": "./index.js",
-   3 | 	"bin": {
-   4 | 		"cli": "./cli.js"
-   5 | 	},
-   6 | 	"files": [
->  7 | 		"index.js",
-     | 		^^^^^^^^^^ \`index.js\` is always included by npm and is redundant in \`files\`.
-   8 | 		"cli.js"
-   9 | 	]
-  10 | }
-
-Output:
-  1 | {
-  2 | 	"main": "./index.js",
-  3 | 	"bin": {
-  4 | 		"cli": "./cli.js"
-  5 | 	},
-  6 | 	"files": [
-  7 | 		"cli.js"
-  8 | 	]
-  9 | }
-
-`;
-
-exports[`invalid(16): {\n\t\"main\": \"./index.js\",\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"cli.js\"\n\t]\n} 3`] = `
-
-Message:
-   1 | {
-   2 | 	"main": "./index.js",
-   3 | 	"bin": {
-   4 | 		"cli": "./cli.js"
-   5 | 	},
-   6 | 	"files": [
-   7 | 		"index.js",
->  8 | 		"cli.js"
-     | 		^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
-   9 | 	]
-  10 | }
-
-Output:
-  1 | {
-  2 | 	"main": "./index.js",
-  3 | 	"bin": {
-  4 | 		"cli": "./cli.js"
-  5 | 	},
-  6 | 	"files": [
-  7 | 		"index.js"
-  8 | 	]
-  9 | }
-
-`;
-
-exports[`invalid(17): {\n\t\"main\": \"./index.js\",\n\t\"bin\": \"./cli.js\",\n\t\"browser\": \"./browser.js\",\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"cli.js\",\n\t\t\"browser.js\"\n\t]\n} 1`] = `
-
-[Input]
-   1 | {
-   2 | 	"main": "./index.js",
-   3 | 	"bin": "./cli.js",
-   4 | 	"browser": "./browser.js",
-   5 | 	"files": [
-   6 | 		"index.js",
-   7 | 		"cli.js",
-   8 | 		"browser.js"
-   9 | 	]
-  10 | }
-
-`;
-
-exports[`invalid(17): {\n\t\"main\": \"./index.js\",\n\t\"bin\": \"./cli.js\",\n\t\"browser\": \"./browser.js\",\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"cli.js\",\n\t\t\"browser.js\"\n\t]\n} 2`] = `
-
-Message:
-   1 | {
-   2 | 	"main": "./index.js",
-   3 | 	"bin": "./cli.js",
-   4 | 	"browser": "./browser.js",
-   5 | 	"files": [
->  6 | 		"index.js",
-     | 		^^^^^^^^^^ \`index.js\` is always included by npm and is redundant in \`files\`.
-   7 | 		"cli.js",
-   8 | 		"browser.js"
-   9 | 	]
-  10 | }
-
-Output:
-  1 | {
-  2 | 	"main": "./index.js",
-  3 | 	"bin": "./cli.js",
-  4 | 	"browser": "./browser.js",
-  5 | 	"files": [
-  6 | 		"cli.js",
-  7 | 		"browser.js"
-  8 | 	]
-  9 | }
-
-`;
-
-exports[`invalid(17): {\n\t\"main\": \"./index.js\",\n\t\"bin\": \"./cli.js\",\n\t\"browser\": \"./browser.js\",\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"cli.js\",\n\t\t\"browser.js\"\n\t]\n} 3`] = `
-
-Message:
-   1 | {
-   2 | 	"main": "./index.js",
-   3 | 	"bin": "./cli.js",
-   4 | 	"browser": "./browser.js",
-   5 | 	"files": [
-   6 | 		"index.js",
->  7 | 		"cli.js",
-     | 		^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
-   8 | 		"browser.js"
-   9 | 	]
-  10 | }
-
-Output:
-  1 | {
-  2 | 	"main": "./index.js",
-  3 | 	"bin": "./cli.js",
-  4 | 	"browser": "./browser.js",
-  5 | 	"files": [
-  6 | 		"index.js",
-  7 | 		"browser.js"
-  8 | 	]
-  9 | }
-
-`;
-
-exports[`invalid(17): {\n\t\"main\": \"./index.js\",\n\t\"bin\": \"./cli.js\",\n\t\"browser\": \"./browser.js\",\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"cli.js\",\n\t\t\"browser.js\"\n\t]\n} 4`] = `
-
-Message:
-   1 | {
-   2 | 	"main": "./index.js",
-   3 | 	"bin": "./cli.js",
-   4 | 	"browser": "./browser.js",
-   5 | 	"files": [
-   6 | 		"index.js",
-   7 | 		"cli.js",
->  8 | 		"browser.js"
-     | 		^^^^^^^^^^^^ \`browser.js\` is always included by npm and is redundant in \`files\`.
-   9 | 	]
-  10 | }
-
-Output:
-  1 | {
-  2 | 	"main": "./index.js",
-  3 | 	"bin": "./cli.js",
-  4 | 	"browser": "./browser.js",
-  5 | 	"files": [
-  6 | 		"index.js",
-  7 | 		"cli.js"
-  8 | 	]
-  9 | }
-
-`;
-
-exports[`invalid(18): {\n\t\"main\": \"./Index.js\",\n\t\"files\": [\n\t\t\"Index.js\"\n\t]\n} 1`] = `
+exports[`invalid(16): {\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
-  2 | 	"main": "./Index.js",
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"cli.js"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(16): {\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": [
+> 6 | 		"cli.js"
+    | 		^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": []
+  6 | }
+
+`;
+
+exports[`invalid(17): {\n\t\"bin\": \"./cli.js\",\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": "./cli.js",
   3 | 	"files": [
-  4 | 		"Index.js"
+  4 | 		"cli.js"
   5 | 	]
   6 | }
 
 `;
 
-exports[`invalid(18): {\n\t\"main\": \"./Index.js\",\n\t\"files\": [\n\t\t\"Index.js\"\n\t]\n} 2`] = `
+exports[`invalid(17): {\n\t\"bin\": \"./cli.js\",\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
-  2 | 	"main": "./Index.js",
+  2 | 	"bin": "./cli.js",
   3 | 	"files": [
-> 4 | 		"Index.js"
-    | 		^^^^^^^^^^ \`Index.js\` is always included by npm and is redundant in \`files\`.
+> 4 | 		"cli.js"
+    | 		^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
   5 | 	]
   6 | }
 
 Output:
   1 | {
-  2 | 	"main": "./Index.js",
+  2 | 	"bin": "./cli.js",
+  3 | 	"files": []
+  4 | }
+
+`;
+
+exports[`invalid(18): {\n\t\"bin\": \"cli\",\n\t\"files\": [\n\t\t\"cli\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": "cli",
+  3 | 	"files": [
+  4 | 		"cli"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(18): {\n\t\"bin\": \"cli\",\n\t\"files\": [\n\t\t\"cli\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": "cli",
+  3 | 	"files": [
+> 4 | 		"cli"
+    | 		^^^^^ \`cli\` is always included by npm and is redundant in \`files\`.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"bin": "cli",
   3 | 	"files": []
   4 | }
 
@@ -482,11 +378,11 @@ Output:
 
 `;
 
-exports[`invalid(20): {\n\t\"main\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 1`] = `
+exports[`invalid(20): {\n\t\"bin\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
-  2 | 	"main": "./index.js",
+  2 | 	"bin": "./index.js",
   3 | 	"files": [
   4 | 		"**",
   5 | 		"!index.js"
@@ -495,11 +391,11 @@ exports[`invalid(20): {\n\t\"main\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\"
 
 `;
 
-exports[`invalid(20): {\n\t\"main\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 2`] = `
+exports[`invalid(20): {\n\t\"bin\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
-  2 | 	"main": "./index.js",
+  2 | 	"bin": "./index.js",
   3 | 	"files": [
   4 | 		"**",
 > 5 | 		"!index.js"
@@ -509,7 +405,7 @@ Message:
 
 Output:
   1 | {
-  2 | 	"main": "./index.js",
+  2 | 	"bin": "./index.js",
   3 | 	"files": [
   4 | 		"**"
   5 | 	]
@@ -573,32 +469,32 @@ Output:
 
 `;
 
-exports[`invalid(23): {\n\t\"main\": \"././index.js\",\n\t\"files\": [\n\t\t\"index.js\"\n\t]\n} 1`] = `
+exports[`invalid(23): {\n\t\"bin\": \"index.js\",\n\t\"files\": [\n\t\t\"././index.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
-  2 | 	"main": "././index.js",
+  2 | 	"bin": "index.js",
   3 | 	"files": [
-  4 | 		"index.js"
+  4 | 		"././index.js"
   5 | 	]
   6 | }
 
 `;
 
-exports[`invalid(23): {\n\t\"main\": \"././index.js\",\n\t\"files\": [\n\t\t\"index.js\"\n\t]\n} 2`] = `
+exports[`invalid(23): {\n\t\"bin\": \"index.js\",\n\t\"files\": [\n\t\t\"././index.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
-  2 | 	"main": "././index.js",
+  2 | 	"bin": "index.js",
   3 | 	"files": [
-> 4 | 		"index.js"
-    | 		^^^^^^^^^^ \`index.js\` is always included by npm and is redundant in \`files\`.
+> 4 | 		"././index.js"
+    | 		^^^^^^^^^^^^^^ \`././index.js\` is always included by npm and is redundant in \`files\`.
   5 | 	]
   6 | }
 
 Output:
   1 | {
-  2 | 	"main": "././index.js",
+  2 | 	"bin": "index.js",
   3 | 	"files": []
   4 | }
 
@@ -804,6 +700,38 @@ Output:
 
 `;
 
+exports[`invalid(29): {\n\t\"files\": [\n\t\t\".\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		".",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(29): {\n\t\"files\": [\n\t\t\".\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		".",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"."
+  4 | 	]
+  5 | }
+
+`;
+
 exports[`invalid(3): {\n\t\"files\": [\n\t\t\"!tests\",\n\t\t\"tests\"\n\t]\n} 1`] = `
 
 [Input]
@@ -831,6 +759,102 @@ Output:
   1 | {
   2 | 	"files": [
   3 | 		"tests"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(30): {\n\t\"files\": [\n\t\t\"./\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"./",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(30): {\n\t\"files\": [\n\t\t\"./\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"./",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"./"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(31): {\n\t\"files\": [\n\t\t\"/\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"/",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(31): {\n\t\"files\": [\n\t\t\"/\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"/",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"/"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(32): {\n\t\"files\": [\n\t\t\"\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(32): {\n\t\"files\": [\n\t\t\"\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		""
   4 | 	]
   5 | }
 

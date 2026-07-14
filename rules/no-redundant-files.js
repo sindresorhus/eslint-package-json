@@ -76,9 +76,9 @@ function isAlwaysIncluded(value, alwaysIncludedPaths) {
 }
 
 /**
-Add a non-empty normalized path to a set of always-included paths.
+Add a bin path using npm's package normalization.
 */
-function addAlwaysIncludedPath(paths, value) {
+function addBinPath(paths, value) {
 	if (!isPackageLocalPath(value)) {
 		return;
 	}
@@ -90,19 +90,13 @@ function addAlwaysIncludedPath(paths, value) {
 }
 
 /**
-Get paths that npm always includes because they are package entry points.
+Get bin paths that npm always includes.
 */
 function getAlwaysIncludedPaths(root) {
 	const paths = new Set();
-	const main = findMember(root, 'main');
-
-	if (main?.value.type === 'String') {
-		addAlwaysIncludedPath(paths, main.value.value);
-	}
-
 	const bin = findMember(root, 'bin');
 	if (bin?.value.type === 'String') {
-		addAlwaysIncludedPath(paths, bin.value.value);
+		addBinPath(paths, bin.value.value);
 	} else if (bin?.value.type === 'Object') {
 		const effectiveEntries = new Map();
 
@@ -112,14 +106,9 @@ function getAlwaysIncludedPaths(root) {
 
 		for (const value of effectiveEntries.values()) {
 			if (value !== undefined) {
-				addAlwaysIncludedPath(paths, value);
+				addBinPath(paths, value);
 			}
 		}
-	}
-
-	const browser = findMember(root, 'browser');
-	if (browser?.value.type === 'String') {
-		addAlwaysIncludedPath(paths, browser.value.value);
 	}
 
 	return paths;
@@ -135,8 +124,12 @@ function isKnownToBeDisjoint(positivePattern, negatedPattern) {
 
 	const normalizedPositivePattern = normalizePath(positivePattern);
 	const normalizedNegatedPattern = normalizePath(negatedPattern);
-	if (!normalizedPositivePattern || !normalizedNegatedPattern) {
+	if (!normalizedNegatedPattern) {
 		return false;
+	}
+
+	if (!normalizedPositivePattern) {
+		return true;
 	}
 
 	return normalizedPositivePattern !== normalizedNegatedPattern
