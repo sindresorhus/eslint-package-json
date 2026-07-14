@@ -10,9 +10,9 @@
 
 npm always includes certain files regardless of the [`files`](https://docs.npmjs.com/cli/configuring-npm/package-json#files) field: `package.json`, `README` (all variants), `COPYING` (all variants), `LICENSE`/`LICENCE` (all variants), and the files referenced by `browser`, `main`, and `bin`. Listing them explicitly is redundant and adds noise.
 
-This rule also catches exact duplicate entries in the `files` array.
+This rule also catches exact duplicate entries in the `files` array when no intervening opposite pattern can make the repeated entry useful.
 
-npm applies `files` patterns in order, so a negated pattern is only useful when an earlier pattern includes something it can exclude. This rule catches negations with no earlier matching literal or universal (`*`, `**`, `.` or `./`) pattern. Negations cannot exclude npm's always-included files. npm treats one or more leading `!` characters as a negation prefix, while an empty negated pattern is ignored. Overlap involving richer glob syntax is ambiguous and is left alone. The rule does not inspect the filesystem.
+npm applies `files` patterns in order, so a negated pattern is only useful when an earlier pattern includes something it can exclude. This rule catches negations with no earlier matching literal or universal (`*`, `**`, `.` or `./`) pattern. Literal negations that target npm's always-included files are also reported. npm treats an odd number of leading `!` characters as a negation prefix and an even number as an inclusion prefix. An empty negation is ignored, while an empty inclusion covers the package like a root pattern. Literal overlap follows npm's case-insensitive matching. Overlap involving richer glob syntax is ambiguous and is left alone. The rule does not inspect the filesystem.
 
 Always-included names (case-insensitive):
 
@@ -21,7 +21,7 @@ Always-included names (case-insensitive):
 - `COPYING`, `COPYING.*`
 - `LICENSE`, `LICENSE.*`, `LICENCE`, `LICENCE.*`
 
-The files referenced by these entry-point fields are also always included:
+The package-local files referenced by these entry-point fields are also always included:
 
 - The file referenced by a string-valued `browser`
 - The file referenced by `main`

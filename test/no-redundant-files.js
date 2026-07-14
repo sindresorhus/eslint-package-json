@@ -11,6 +11,8 @@ test.snapshot({
 		// A negation after a covering directory is effective.
 		'{"files": ["dist", "!dist/tests"]}',
 		'{"files": ["rules/valid-fields", "!rules"]}',
+		// Case-insensitive matching applies to files patterns.
+		'{"files": ["dist", "!DIST"]}',
 		// One covering positive pattern is enough even if another is disjoint.
 		'{"files": ["src", "tests", "!tests"]}',
 		// Universal patterns cover negations.
@@ -24,16 +26,24 @@ test.snapshot({
 		'{"files": ["dist", "!tests/**"]}',
 		'{"files": ["dist/sub", "!dist//"]}',
 		'{"files": ["dist/sub", "!/dist"]}',
-		// Multiple leading bangs are equivalent to one negation.
-		'{"files": ["**", "!!tests"]}',
+		// An even number of leading bangs is an inclusion.
+		'{"files": ["!!tests", "!tests"]}',
+		// Repeated patterns can be useful after an opposite pattern changes their effect.
+		'{"files": ["dist", "!dist", "dist"]}',
+		'{"files": ["dist", "!dist", "dist", "!dist"]}',
 		// Always-included globs are still ambiguous because they can match other files.
+		'{"files": ["dist", "!+(tests)"]}',
 		'{"files": ["**", "!README.*"]}',
 		// Empty negated patterns are ignored by npm.
-		'{"files": ["!", "!!"]}',
+		'{"files": ["!", "!"]}',
+		// Empty inclusion patterns cover negations like root patterns.
+		'{"files": ["", "!tests"]}',
+		// Root-like patterns are left alone because their overlap is filesystem-dependent.
+		'{"files": ["/", "!tests"]}',
 		// Entry points are included automatically, but unrelated files are not redundant.
 		'{"main": "./index.js", "bin": {"cli": "./cli.js"}, "files": ["dist"]}',
 		// Names with invalid always-included suffixes are not redundant.
-		'{"files": ["README.md/foo", "README.", "README.md~", "README.md$"]}',
+		'{"files": ["README.md/foo", "README.", "README.md~", "README.md$", "README.md/"]}',
 		// No files field.
 		'{"name": "foo"}',
 		// Files field with non-array value.
@@ -42,6 +52,20 @@ test.snapshot({
 		'{"files": []}',
 		// Non-string elements are ignored.
 		'{"files": ["src", 123, true]}',
+		// Malformed entry-point fields are ignored.
+		'{"main": 123, "bin": ["cli.js"], "browser": {"./browser.js": "./browser.js"}, "files": ["src"]}',
+		// Non-local entry-point values are ignored.
+		'{"main": "../outside.js", "bin": "/absolute.js", "browser": "https://example.com/browser.js", "files": ["../outside.js", "/absolute.js", "https://example.com/browser.js"]}',
+		// Duplicate bin keys use the final value.
+		`{
+	"bin": {
+		"cli": "./old.js",
+		"cli": "./new.js"
+	},
+	"files": [
+		"old.js"
+	]
+}`,
 		// Reasonable set.
 		`{
 	"files": [
@@ -82,7 +106,28 @@ test.snapshot({
 		// Multiple leading bangs still produce an ineffective negation.
 		`{
 	"files": [
-		"!!tests"
+		"!!!tests"
+	]
+}`,
+		// An even number of leading bangs is a positive pattern.
+		`{
+	"files": [
+		"!!README.md"
+	]
+}`,
+		// A repeated negation with no intervening inclusion is redundant.
+		`{
+	"files": [
+		"dist",
+		"!dist",
+		"!dist"
+	]
+}`,
+		// An empty inclusion is still a duplicate when repeated.
+		`{
+	"files": [
+		"!!",
+		"!!"
 	]
 }`,
 		// Package.json is always included.
@@ -151,6 +196,23 @@ test.snapshot({
 		"index.js",
 		"cli.js",
 		"browser.js"
+	]
+}`,
+		// Entry-point matching is case-insensitive.
+		`{
+	"main": "./Index.js",
+	"files": [
+		"index.js"
+	]
+}`,
+		// Bin entry points cannot be excluded.
+		`{
+	"bin": {
+		"cli": "./cli.js"
+	},
+	"files": [
+		"**",
+		"!cli.js"
 	]
 }`,
 		// Negations cannot exclude entry points.

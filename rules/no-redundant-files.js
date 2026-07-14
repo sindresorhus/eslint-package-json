@@ -1,6 +1,7 @@
 import {
 	getRootObject,
 	findMember,
+	getKey,
 	removeElement,
 	hasGlob,
 } from './utils/index.js';
@@ -25,17 +26,33 @@ const ALWAYS_INCLUDED_PATTERNS = [
 const EXTGLOB_PATTERN = /[!*+?@]\(/u;
 
 /**
-Normalize a literal files path for ancestor comparisons.
+Normalize a literal files path for case-insensitive ancestor comparisons.
 */
 function normalizePath(value) {
-	return value.replace(/^\.?\//u, '').replace(/\/+$/u, '');
+	return value.replace(/^\.?\//u, '').replace(/\/+$/u, '').toLowerCase();
+}
+
+/**
+Normalize a literal file path without treating a trailing slash as equivalent to a file.
+*/
+function normalizeFilePath(value) {
+	return value.replace(/^\.?\//u, '').toLowerCase();
+}
+
+/**
+Check whether an entry-point value can refer to a path inside the package.
+*/
+function isPackageLocalPath(value) {
+	return !value.startsWith('/')
+		&& !URL.canParse(value)
+		&& !value.split(/[/\\]/u).includes('..');
 }
 
 /**
 Check if a file path matches any always-included pattern.
 */
 function isAlwaysIncluded(value, alwaysIncludedPaths) {
-	const normalizedPath = normalizePath(value);
+	const normalizedPath = normalizeFilePath(value);
 	return alwaysIncludedPaths.has(normalizedPath)
 		|| ALWAYS_INCLUDED_PATTERNS.some(pattern => pattern.test(normalizedPath));
 }
@@ -44,8 +61,12 @@ function isAlwaysIncluded(value, alwaysIncludedPaths) {
 Add a non-empty normalized path to a set of always-included paths.
 */
 function addAlwaysIncludedPath(paths, value) {
-	const path = normalizePath(value);
-	if (path) {
+	if (!isPackageLocalPath(value)) {
+		return;
+	}
+
+	const path = normalizeFilePath(value);
+	if (path && !path.endsWith('/')) {
 		paths.add(path);
 	}
 }
@@ -65,12 +86,16 @@ function getAlwaysIncludedPaths(root) {
 	if (bin?.value.type === 'String') {
 		addAlwaysIncludedPath(paths, bin.value.value);
 	} else if (bin?.value.type === 'Object') {
-		for (const member of bin.value.members) {
-			if (member.value.type !== 'String') {
-				continue;
-			}
+		const effectiveEntries = new Map();
 
-			addAlwaysIncludedPath(paths, member.value.value);
+		for (const member of bin.value.members) {
+			effectiveEntries.set(getKey(member), member.value.type === 'String' ? member.value.value : undefined);
+		}
+
+		for (const value of effectiveEntries.values()) {
+			if (value !== undefined) {
+				addAlwaysIncludedPath(paths, value);
+			}
 		}
 	}
 
@@ -93,7 +118,7 @@ function isAmbiguousPattern(value) {
 Check whether a positive files pattern is known to be disjoint from a negated pattern.
 */
 function isKnownToBeDisjoint(positivePattern, negatedPattern) {
-	if (['*', '**', '.', './'].includes(positivePattern)) {
+	if (['', '*', '**', '.', './'].includes(positivePattern)) {
 		return false;
 	}
 
@@ -103,6 +128,9 @@ function isKnownToBeDisjoint(positivePattern, negatedPattern) {
 
 	const normalizedPositivePattern = normalizePath(positivePattern);
 	const normalizedNegatedPattern = normalizePath(negatedPattern);
+	if (!normalizedPositivePattern || !normalizedNegatedPattern) {
+		return false;
+	}
 
 	return normalizedPositivePattern !== normalizedNegatedPattern
 		&& !normalizedNegatedPattern.startsWith(`${normalizedPositivePattern}/`)
@@ -113,6 +141,10 @@ function isKnownToBeDisjoint(positivePattern, negatedPattern) {
 Check whether a negation is provably ineffective based on earlier positive patterns.
 */
 function isIneffectiveNegation(negatedPattern, positivePatterns) {
+	if (!normalizePath(negatedPattern)) {
+		return false;
+	}
+
 	return positivePatterns.every(positivePattern => isKnownToBeDisjoint(positivePattern, negatedPattern));
 }
 
@@ -145,9 +177,12 @@ const create = context => ({
 		}
 
 		const {sourceCode} = context;
-		const seen = new Set();
+		const seen = new Map();
 		const positivePatterns = [];
 		const alwaysIncludedPaths = getAlwaysIncludedPaths(root);
+		let patternIndex = 0;
+		let lastPositiveIndex = -1;
+		let lastNegativeIndex = -1;
 
 		for (const element of filesMember.value.elements) {
 			const valueNode = element.value;
@@ -158,8 +193,19 @@ const create = context => ({
 
 			const {value} = valueNode;
 
-			// Check for exact duplicates (always, even for glob patterns).
-			if (seen.has(value)) {
+			const leadingBangCount = value.match(/^!+/u)?.[0].length ?? 0;
+			const pattern = value.slice(leadingBangCount);
+			const isNegated = leadingBangCount % 2 === 1;
+			if (!pattern && isNegated) {
+				continue;
+			}
+
+			const lastOppositeIndex = isNegated ? lastPositiveIndex : lastNegativeIndex;
+			const previousIndex = seen.get(value);
+			const isDuplicate = previousIndex !== undefined && previousIndex > lastOppositeIndex;
+
+			// An exact duplicate may be useful when an intervening opposite pattern changed its effect.
+			if (isDuplicate) {
 				context.report({
 					node: valueNode,
 					messageId: MESSAGE_ID_DUPLICATE,
@@ -168,24 +214,28 @@ const create = context => ({
 						yield * removeElement(fixer, sourceCode, element);
 					},
 				});
+			}
+
+			seen.set(value, patternIndex);
+			if (isNegated) {
+				lastNegativeIndex = patternIndex;
+			} else {
+				lastPositiveIndex = patternIndex;
+			}
+
+			patternIndex++;
+			if (isDuplicate) {
 				continue;
 			}
 
-			seen.add(value);
-
-			if (value.startsWith('!')) {
-				const negatedPattern = value.replace(/^!+/u, '');
-				if (!negatedPattern) {
-					continue;
-				}
-
-				const messageId = getNegationMessageId(negatedPattern, positivePatterns, alwaysIncludedPaths);
+			if (isNegated) {
+				const messageId = getNegationMessageId(pattern, positivePatterns, alwaysIncludedPaths);
 
 				if (messageId) {
 					context.report({
 						node: valueNode,
 						messageId,
-						data: {value: negatedPattern},
+						data: {value: pattern},
 						* fix(fixer) {
 							yield * removeElement(fixer, sourceCode, element);
 						},
@@ -195,14 +245,14 @@ const create = context => ({
 				continue;
 			}
 
-			positivePatterns.push(value);
+			positivePatterns.push(pattern);
 
 			// Skip glob patterns for always-included check.
-			if (hasGlob(value)) {
+			if (isAmbiguousPattern(pattern)) {
 				continue;
 			}
 
-			if (isAlwaysIncluded(value, alwaysIncludedPaths)) {
+			if (isAlwaysIncluded(pattern, alwaysIncludedPaths)) {
 				context.report({
 					node: valueNode,
 					messageId: MESSAGE_ID_DEFAULT,
