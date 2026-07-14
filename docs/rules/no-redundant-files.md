@@ -8,11 +8,9 @@
 
 <!-- end auto-generated rule header -->
 
-npm always includes certain files regardless of the [`files`](https://docs.npmjs.com/cli/configuring-npm/package-json#files) field: `package.json`, `README` (all variants), `COPYING` (all variants), `LICENSE`/`LICENCE` (all variants), and the files referenced by `browser`, `main`, and `bin`. Listing them explicitly is redundant and adds noise.
+npm always includes `package.json`, readme, license, copying, and package entry-point files. This rule reports redundant always-included entries, duplicates, and ineffective negations.
 
-This rule also catches exact duplicate entries in the `files` array when no intervening opposite pattern can make the repeated entry useful.
-
-npm applies `files` patterns in order, so a negated pattern is only useful when an earlier pattern includes something it can exclude. This rule catches negations with no earlier matching literal or universal pattern. Universal patterns include `*`, `**`, `.`, `./`, `/`, and an empty pattern. Literal negations that target npm's always-included files are also reported. npm treats an odd number of leading `!` characters as a negation prefix and an even number as an inclusion prefix. An empty negation is ignored, while an empty inclusion covers the package like a root pattern. Literal overlap is compared case-insensitively, with redundant dot segments and path separators normalized. Overlap involving richer glob syntax or parent-directory segments is ambiguous and is left alone. The rule does not inspect the filesystem.
+`files` patterns are applied in order. A negation is reported when no earlier literal or universal pattern can cover it. Ambiguous glob overlap is ignored, and the rule does not inspect the filesystem.
 
 Always-included names (case-insensitive):
 
@@ -34,8 +32,36 @@ The package-local files referenced by these entry-point fields are also always i
 {
 	"files": [
 		"src",
-		"package.json",
-		"README.md"
+		"package.json"
+	]
+}
+```
+
+```json
+// ✅
+{
+	"files": [
+		"src",
+		"dist"
+	]
+}
+```
+
+```json
+// ❌
+{
+	"files": [
+		"!tests"
+	]
+}
+```
+
+```json
+// ✅
+{
+	"files": [
+		"**",
+		"!tests"
 	]
 }
 ```
@@ -57,55 +83,6 @@ The package-local files referenced by these entry-point fields are also always i
 	"files": [
 		"src",
 		"dist"
-	]
-}
-```
-
-```json
-// ✅
-{
-	"files": [
-		".",
-		"!tests"
-	]
-}
-```
-
-```json
-// ❌
-{
-	"files": [
-		"!tests"
-	]
-}
-```
-
-```json
-// ❌
-{
-	"files": [
-		"dist",
-		"!tests"
-	]
-}
-```
-
-```json
-// ✅
-{
-	"files": [
-		"dist",
-		"!dist/tests"
-	]
-}
-```
-
-```json
-// ✅
-{
-	"files": [
-		"**",
-		"!tests"
 	]
 }
 ```
