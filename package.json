@@ -1,6 +1,6 @@
 {
 	"name": "eslint-package-json",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Powerful ESLint rules for package.json",
 	"license": "MIT",
 	"repository": "sindresorhus/eslint-package-json",
