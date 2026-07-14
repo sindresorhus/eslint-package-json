@@ -1,3 +1,4 @@
+import path from 'node:path';
 import {
 	getRootObject,
 	findMember,
@@ -24,19 +25,23 @@ const ALWAYS_INCLUDED_PATTERNS = [
 	/^licen[cs]e(?:\.[^/]*[^$/~])?$/iu,
 ];
 const EXTGLOB_PATTERN = /[!*+?@]\(/u;
+const PARENT_PATH_PATTERN = /(?:^|[/\\])\.\.(?:[/\\]|$)/u;
 
 /**
 Normalize a literal files path for case-insensitive ancestor comparisons.
 */
 function normalizePath(value) {
-	return value.replace(/^\.?\//u, '').replace(/\/+$/u, '').toLowerCase();
+	return normalizeFilePath(value).replace(/\/+$/u, '');
 }
 
 /**
 Normalize a literal file path without treating a trailing slash as equivalent to a file.
 */
 function normalizeFilePath(value) {
-	return value.replace(/^\.?\//u, '').toLowerCase();
+	const normalizedPath = path.posix.normalize(value.replaceAll('\\', '/'));
+	return (normalizedPath === '.' ? '' : normalizedPath)
+		.replace(/^(?:\.\/|\/)+/u, '')
+		.toLowerCase();
 }
 
 /**
@@ -65,9 +70,9 @@ function addAlwaysIncludedPath(paths, value) {
 		return;
 	}
 
-	const path = normalizeFilePath(value);
-	if (path && !path.endsWith('/')) {
-		paths.add(path);
+	const normalizedPath = normalizeFilePath(value);
+	if (normalizedPath && !normalizedPath.endsWith('/')) {
+		paths.add(normalizedPath);
 	}
 }
 
@@ -108,20 +113,16 @@ function getAlwaysIncludedPaths(root) {
 }
 
 /**
-Check whether a files pattern uses glob syntax that this rule cannot safely compare.
+Check whether a files pattern uses syntax that this rule cannot safely compare.
 */
 function isAmbiguousPattern(value) {
-	return hasGlob(value) || EXTGLOB_PATTERN.test(value);
+	return hasGlob(value) || EXTGLOB_PATTERN.test(value) || PARENT_PATH_PATTERN.test(value);
 }
 
 /**
 Check whether a positive files pattern is known to be disjoint from a negated pattern.
 */
 function isKnownToBeDisjoint(positivePattern, negatedPattern) {
-	if (['', '*', '**', '.', './'].includes(positivePattern)) {
-		return false;
-	}
-
 	if (isAmbiguousPattern(positivePattern) || isAmbiguousPattern(negatedPattern)) {
 		return false;
 	}
@@ -247,7 +248,7 @@ const create = context => ({
 
 			positivePatterns.push(pattern);
 
-			// Skip glob patterns for always-included check.
+			// Skip ambiguous patterns for always-included check.
 			if (isAmbiguousPattern(pattern)) {
 				continue;
 			}

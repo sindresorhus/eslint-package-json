@@ -545,7 +545,66 @@ Output:
 
 `;
 
-exports[`invalid(22): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"\n\t]\n} 1`] = `
+exports[`invalid(22): {\n\t\"files\": [\n\t\t\"././README.md\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"././README.md"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(22): {\n\t\"files\": [\n\t\t\"././README.md\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+> 3 | 		"././README.md"
+    | 		^^^^^^^^^^^^^^^ \`././README.md\` is always included by npm and is redundant in \`files\`.
+  4 | 	]
+  5 | }
+
+Output:
+  1 | {
+  2 | 	"files": []
+  3 | }
+
+`;
+
+exports[`invalid(23): {\n\t\"main\": \"././index.js\",\n\t\"files\": [\n\t\t\"index.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"main": "././index.js",
+  3 | 	"files": [
+  4 | 		"index.js"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(23): {\n\t\"main\": \"././index.js\",\n\t\"files\": [\n\t\t\"index.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"main": "././index.js",
+  3 | 	"files": [
+> 4 | 		"index.js"
+    | 		^^^^^^^^^^ \`index.js\` is always included by npm and is redundant in \`files\`.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"main": "././index.js",
+  3 | 	"files": []
+  4 | }
+
+`;
+
+exports[`invalid(24): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -558,7 +617,7 @@ exports[`invalid(22): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\
 
 `;
 
-exports[`invalid(22): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"\n\t]\n} 2`] = `
+exports[`invalid(24): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -580,7 +639,7 @@ Output:
 
 `;
 
-exports[`invalid(23): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]\n} 1`] = `
+exports[`invalid(25): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -592,7 +651,7 @@ exports[`invalid(23): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t
 
 `;
 
-exports[`invalid(23): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]\n} 2`] = `
+exports[`invalid(25): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -612,7 +671,7 @@ Output:
 
 `;
 
-exports[`invalid(24): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 1`] = `
+exports[`invalid(26): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -625,7 +684,7 @@ exports[`invalid(24): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\
 
 `;
 
-exports[`invalid(24): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 2`] = `
+exports[`invalid(26): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -647,7 +706,7 @@ Output:
 
 `;
 
-exports[`invalid(24): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 3`] = `
+exports[`invalid(26): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 3`] = `
 
 Message:
   1 | {

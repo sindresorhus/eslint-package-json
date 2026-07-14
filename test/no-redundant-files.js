@@ -11,7 +11,7 @@ test.snapshot({
 		// A negation after a covering directory is effective.
 		'{"files": ["dist", "!dist/tests"]}',
 		'{"files": ["rules/valid-fields", "!rules"]}',
-		// Case-insensitive matching applies to files patterns.
+		// Literal overlap is compared case-insensitively.
 		'{"files": ["dist", "!DIST"]}',
 		// One covering positive pattern is enough even if another is disjoint.
 		'{"files": ["src", "tests", "!tests"]}',
@@ -20,12 +20,15 @@ test.snapshot({
 		'{"files": ["**", "!tests"]}',
 		'{"files": [".", "!tests"]}',
 		'{"files": ["./", "!tests"]}',
-		// Ambiguous glob overlap is ignored.
+		// Ambiguous overlap is ignored.
 		'{"files": ["src/*.js", "!tests"]}',
 		'{"files": ["src/*.js", "!src/test.js"]}',
+		'{"files": ["dist/./tests", "!dist/tests"]}',
+		String.raw`{"files": ["dist\\tests", "!dist/tests"]}`,
 		'{"files": ["dist", "!tests/**"]}',
 		'{"files": ["dist/sub", "!dist//"]}',
 		'{"files": ["dist/sub", "!/dist"]}',
+		'{"files": ["dist/../tests", "!tests"]}',
 		// An even number of leading bangs is an inclusion.
 		'{"files": ["!!tests", "!tests"]}',
 		// Repeated patterns can be useful after an opposite pattern changes their effect.
@@ -43,7 +46,7 @@ test.snapshot({
 		// Entry points are included automatically, but unrelated files are not redundant.
 		'{"main": "./index.js", "bin": {"cli": "./cli.js"}, "files": ["dist"]}',
 		// Names with invalid always-included suffixes are not redundant.
-		'{"files": ["README.md/foo", "README.", "README.md~", "README.md$", "README.md/"]}',
+		String.raw`{"files": ["README.md/foo", "README.md\\foo", "README.", "README.md~", "README.md$", "README.md/"]}`,
 		// No files field.
 		'{"name": "foo"}',
 		// Files field with non-array value.
@@ -227,6 +230,19 @@ test.snapshot({
 		`{
 	"files": [
 		"./README.md"
+	]
+}`,
+		// Redundant dot segments are normalized for always-included files.
+		`{
+	"files": [
+		"././README.md"
+	]
+}`,
+		// Redundant dot segments are normalized for entry points.
+		`{
+	"main": "././index.js",
+	"files": [
+		"index.js"
 	]
 }`,
 		// Duplicate entry.
