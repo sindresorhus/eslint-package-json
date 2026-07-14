@@ -378,26 +378,26 @@ Output:
 
 `;
 
-exports[`invalid(18): {\n\t\"main\": \"./Index.js\",\n\t\"files\": [\n\t\t\"index.js\"\n\t]\n} 1`] = `
+exports[`invalid(18): {\n\t\"main\": \"./Index.js\",\n\t\"files\": [\n\t\t\"Index.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
   2 | 	"main": "./Index.js",
   3 | 	"files": [
-  4 | 		"index.js"
+  4 | 		"Index.js"
   5 | 	]
   6 | }
 
 `;
 
-exports[`invalid(18): {\n\t\"main\": \"./Index.js\",\n\t\"files\": [\n\t\t\"index.js\"\n\t]\n} 2`] = `
+exports[`invalid(18): {\n\t\"main\": \"./Index.js\",\n\t\"files\": [\n\t\t\"Index.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
   2 | 	"main": "./Index.js",
   3 | 	"files": [
-> 4 | 		"index.js"
-    | 		^^^^^^^^^^ \`index.js\` is always included by npm and is redundant in \`files\`.
+> 4 | 		"Index.js"
+    | 		^^^^^^^^^^ \`Index.js\` is always included by npm and is redundant in \`files\`.
   5 | 	]
   6 | }
 
@@ -913,7 +913,7 @@ Message:
   1 | {
   2 | 	"files": [
 > 3 | 		"!!README.md"
-    | 		^^^^^^^^^^^^^ \`!!README.md\` is always included by npm and is redundant in \`files\`.
+    | 		^^^^^^^^^^^^^ \`README.md\` is always included by npm and is redundant in \`files\`.
   4 | 	]
   5 | }
 
@@ -959,35 +959,31 @@ Output:
 
 `;
 
-exports[`invalid(8): {\n\t\"files\": [\n\t\t\"!!\",\n\t\t\"!!\"\n\t]\n} 1`] = `
+exports[`invalid(8): {\n\t\"files\": [\n\t\t\"!!tests\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
   2 | 	"files": [
-  3 | 		"!!",
-  4 | 		"!!"
-  5 | 	]
-  6 | }
+  3 | 		"!!tests"
+  4 | 	]
+  5 | }
 
 `;
 
-exports[`invalid(8): {\n\t\"files\": [\n\t\t\"!!\",\n\t\t\"!!\"\n\t]\n} 2`] = `
+exports[`invalid(8): {\n\t\"files\": [\n\t\t\"!!tests\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
   2 | 	"files": [
-  3 | 		"!!",
-> 4 | 		"!!"
-    | 		^^^^ \`!!\` is a duplicate entry in \`files\`.
-  5 | 	]
-  6 | }
+> 3 | 		"!!tests"
+    | 		^^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  4 | 	]
+  5 | }
 
 Output:
   1 | {
-  2 | 	"files": [
-  3 | 		"!!"
-  4 | 	]
-  5 | }
+  2 | 	"files": []
+  3 | }
 
 `;
 

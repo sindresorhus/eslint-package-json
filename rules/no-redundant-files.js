@@ -31,7 +31,9 @@ const PARENT_PATH_PATTERN = /(?:^|[/\\])\.\.(?:[/\\]|$)/u;
 Normalize a literal files path for case-insensitive ancestor comparisons.
 */
 function normalizePath(value) {
-	return normalizeFilePath(value).replace(/\/+$/u, '');
+	return normalizeFilePath(value)
+		.replace(/\/+$/u, '')
+		.toLowerCase();
 }
 
 /**
@@ -40,8 +42,7 @@ Normalize a literal file path without treating a trailing slash as equivalent to
 function normalizeFilePath(value) {
 	const normalizedPath = path.posix.normalize(value.replaceAll('\\', '/'));
 	return (normalizedPath === '.' ? '' : normalizedPath)
-		.replace(/^(?:\.\/|\/)+/u, '')
-		.toLowerCase();
+		.replace(/^(?:\.\/|\/)+/u, '');
 }
 
 /**
@@ -216,9 +217,8 @@ const create = context => ({
 
 			const {value} = valueNode;
 
-			const leadingBangCount = value.match(/^!+/u)?.[0].length ?? 0;
-			const pattern = value.slice(leadingBangCount);
-			const isNegated = leadingBangCount % 2 === 1;
+			const isNegated = value.startsWith('!');
+			const pattern = isNegated ? value.replace(/^!+/u, '') : value;
 			if (!pattern && isNegated) {
 				continue;
 			}

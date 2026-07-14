@@ -30,8 +30,8 @@ test.snapshot({
 		'{"files": ["dist/sub", "!dist//"]}',
 		'{"files": ["dist/sub", "!/dist"]}',
 		'{"files": ["dist/../tests", "!tests"]}',
-		// An even number of leading bangs is an inclusion.
-		'{"files": ["!!tests", "!tests"]}',
+		// Any number of leading bangs is a negation.
+		'{"files": ["tests", "!!tests", "tests"]}',
 		// Repeated patterns can be useful after an opposite pattern changes their effect.
 		'{"files": ["dist", "!dist", "dist"]}',
 		'{"files": ["dist", "!dist", "dist", "!dist"]}',
@@ -40,12 +40,15 @@ test.snapshot({
 		'{"files": ["**", "!README.*"]}',
 		// Empty negated patterns are ignored by npm.
 		'{"files": ["!", "!"]}',
+		'{"files": ["!!", "!!"]}',
 		// Empty inclusion patterns cover negations like root patterns.
 		'{"files": ["", "!tests"]}',
 		// Root-like patterns are treated conservatively.
 		'{"files": ["/", "!tests"]}',
 		// Entry points are included automatically, but unrelated files are not redundant.
 		'{"main": "./index.js", "bin": {"cli": "./cli.js"}, "files": ["dist"]}',
+		// Entry-point paths with different casing are treated conservatively.
+		'{"main": "./Index.js", "files": ["index.js"]}',
 		// Names with invalid always-included suffixes are not redundant.
 		String.raw`{"files": ["README.md/foo", "README.md\\foo", "README.", "README.md~", "README.md$", "README.md/"]}`,
 		// No files field.
@@ -115,7 +118,7 @@ test.snapshot({
 		"!!!tests"
 	]
 }`,
-		// An even number of leading bangs is a positive pattern.
+		// Any number of leading bangs still produces a negation.
 		`{
 	"files": [
 		"!!README.md"
@@ -129,11 +132,10 @@ test.snapshot({
 		"!dist"
 	]
 }`,
-		// An empty inclusion is still a duplicate when repeated.
+		// A leading bang sequence is a negation, not an inclusion.
 		`{
 	"files": [
-		"!!",
-		"!!"
+		"!!tests"
 	]
 }`,
 		// Package.json is always included.
@@ -204,11 +206,11 @@ test.snapshot({
 		"browser.js"
 	]
 }`,
-		// Entry-point matching is case-insensitive.
+		// Entry-point matching uses the exact path.
 		`{
 	"main": "./Index.js",
 	"files": [
-		"index.js"
+		"Index.js"
 	]
 }`,
 		// Bin entry points cannot be excluded.
