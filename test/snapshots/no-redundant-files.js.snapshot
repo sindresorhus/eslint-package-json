@@ -1,36 +1,32 @@
-exports[`invalid(1): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"package.json\"\n\t]\n} 1`] = `
+exports[`invalid(1): {\n\t\"files\": [\n\t\t\"!tests\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
   2 | 	"files": [
-  3 | 		"src",
-  4 | 		"package.json"
-  5 | 	]
-  6 | }
-
-`;
-
-exports[`invalid(1): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"package.json\"\n\t]\n} 2`] = `
-
-Message:
-  1 | {
-  2 | 	"files": [
-  3 | 		"src",
-> 4 | 		"package.json"
-    | 		^^^^^^^^^^^^^^ \`package.json\` is always included by npm and is redundant in \`files\`.
-  5 | 	]
-  6 | }
-
-Output:
-  1 | {
-  2 | 	"files": [
-  3 | 		"src"
+  3 | 		"!tests"
   4 | 	]
   5 | }
 
 `;
 
-exports[`invalid(2): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\"\n\t]\n} 1`] = `
+exports[`invalid(1): {\n\t\"files\": [\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+> 3 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  4 | 	]
+  5 | }
+
+Output:
+  1 | {
+  2 | 	"files": []
+  3 | }
+
+`;
+
+exports[`invalid(10): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -42,7 +38,7 @@ exports[`invalid(2): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\"\n\t]\n} 
 
 `;
 
-exports[`invalid(2): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\"\n\t]\n} 2`] = `
+exports[`invalid(10): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -62,7 +58,7 @@ Output:
 
 `;
 
-exports[`invalid(3): {\n\t\"files\": [\n\t\t\"README\"\n\t]\n} 1`] = `
+exports[`invalid(11): {\n\t\"files\": [\n\t\t\"README\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -73,7 +69,7 @@ exports[`invalid(3): {\n\t\"files\": [\n\t\t\"README\"\n\t]\n} 1`] = `
 
 `;
 
-exports[`invalid(3): {\n\t\"files\": [\n\t\t\"README\"\n\t]\n} 2`] = `
+exports[`invalid(11): {\n\t\"files\": [\n\t\t\"README\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -90,7 +86,7 @@ Output:
 
 `;
 
-exports[`invalid(4): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENSE\"\n\t]\n} 1`] = `
+exports[`invalid(12): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENSE\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -102,7 +98,7 @@ exports[`invalid(4): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENSE\"\n\t]\n} 1`
 
 `;
 
-exports[`invalid(4): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENSE\"\n\t]\n} 2`] = `
+exports[`invalid(12): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENSE\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -122,7 +118,7 @@ Output:
 
 `;
 
-exports[`invalid(5): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENCE.md\"\n\t]\n} 1`] = `
+exports[`invalid(13): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENCE.md\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -134,7 +130,7 @@ exports[`invalid(5): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENCE.md\"\n\t]\n}
 
 `;
 
-exports[`invalid(5): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENCE.md\"\n\t]\n} 2`] = `
+exports[`invalid(13): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"LICENCE.md\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -154,7 +150,251 @@ Output:
 
 `;
 
-exports[`invalid(6): {\n\t\"files\": [\n\t\t\"./README.md\"\n\t]\n} 1`] = `
+exports[`invalid(14): {\n\t\"files\": [\n\t\t\"COPYING.md\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"COPYING.md"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(14): {\n\t\"files\": [\n\t\t\"COPYING.md\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+> 3 | 		"COPYING.md"
+    | 		^^^^^^^^^^^^ \`COPYING.md\` is always included by npm and is redundant in \`files\`.
+  4 | 	]
+  5 | }
+
+Output:
+  1 | {
+  2 | 	"files": []
+  3 | }
+
+`;
+
+exports[`invalid(15): {\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"cli.js"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(15): {\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": [
+> 6 | 		"cli.js"
+    | 		^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": []
+  6 | }
+
+`;
+
+exports[`invalid(16): {\n\t\"name\": \"package\",\n\t\"bin\": \"./cli.js\",\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "./cli.js",
+  4 | 	"files": [
+  5 | 		"cli.js"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(16): {\n\t\"name\": \"package\",\n\t\"bin\": \"./cli.js\",\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "./cli.js",
+  4 | 	"files": [
+> 5 | 		"cli.js"
+    | 		^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
+  6 | 	]
+  7 | }
+
+Output:
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "./cli.js",
+  4 | 	"files": []
+  5 | }
+
+`;
+
+exports[`invalid(17): {\n\t\"name\": \"package\",\n\t\"bin\": \"cli\",\n\t\"files\": [\n\t\t\"cli\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "cli",
+  4 | 	"files": [
+  5 | 		"cli"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(17): {\n\t\"name\": \"package\",\n\t\"bin\": \"cli\",\n\t\"files\": [\n\t\t\"cli\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "cli",
+  4 | 	"files": [
+> 5 | 		"cli"
+    | 		^^^^^ \`cli\` is always included by npm and is redundant in \`files\`.
+  6 | 	]
+  7 | }
+
+Output:
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "cli",
+  4 | 	"files": []
+  5 | }
+
+`;
+
+exports[`invalid(18): {\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!cli.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"**",
+  7 | 		"!cli.js"
+  8 | 	]
+  9 | }
+
+`;
+
+exports[`invalid(18): {\n\t\"bin\": {\n\t\t\"cli\": \"./cli.js\"\n\t},\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!cli.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"**",
+> 7 | 		"!cli.js"
+    | 		^^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
+  8 | 	]
+  9 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "./cli.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"**"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(19): {\n\t\"name\": \"package\",\n\t\"bin\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "./index.js",
+  4 | 	"files": [
+  5 | 		"**",
+  6 | 		"!index.js"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(19): {\n\t\"name\": \"package\",\n\t\"bin\": \"./index.js\",\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!index.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "./index.js",
+  4 | 	"files": [
+  5 | 		"**",
+> 6 | 		"!index.js"
+    | 		^^^^^^^^^^^ \`index.js\` is always included by npm and is redundant in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "./index.js",
+  4 | 	"files": [
+  5 | 		"**"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(2): {\n\t\"files\": [\n\t\t\"dist\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(2): {\n\t\"files\": [\n\t\t\"dist\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(20): {\n\t\"files\": [\n\t\t\"./README.md\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -165,7 +405,7 @@ exports[`invalid(6): {\n\t\"files\": [\n\t\t\"./README.md\"\n\t]\n} 1`] = `
 
 `;
 
-exports[`invalid(6): {\n\t\"files\": [\n\t\t\"./README.md\"\n\t]\n} 2`] = `
+exports[`invalid(20): {\n\t\"files\": [\n\t\t\"./README.md\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -182,7 +422,69 @@ Output:
 
 `;
 
-exports[`invalid(7): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"\n\t]\n} 1`] = `
+exports[`invalid(21): {\n\t\"files\": [\n\t\t\"././README.md\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"././README.md"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(21): {\n\t\"files\": [\n\t\t\"././README.md\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+> 3 | 		"././README.md"
+    | 		^^^^^^^^^^^^^^^ \`././README.md\` is always included by npm and is redundant in \`files\`.
+  4 | 	]
+  5 | }
+
+Output:
+  1 | {
+  2 | 	"files": []
+  3 | }
+
+`;
+
+exports[`invalid(22): {\n\t\"name\": \"package\",\n\t\"bin\": \"index.js\",\n\t\"files\": [\n\t\t\"././index.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "index.js",
+  4 | 	"files": [
+  5 | 		"././index.js"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(22): {\n\t\"name\": \"package\",\n\t\"bin\": \"index.js\",\n\t\"files\": [\n\t\t\"././index.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "index.js",
+  4 | 	"files": [
+> 5 | 		"././index.js"
+    | 		^^^^^^^^^^^^^^ \`././index.js\` is always included by npm and is redundant in \`files\`.
+  6 | 	]
+  7 | }
+
+Output:
+  1 | {
+  2 | 	"name": "package",
+  3 | 	"bin": "index.js",
+  4 | 	"files": []
+  5 | }
+
+`;
+
+exports[`invalid(23): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -195,7 +497,7 @@ exports[`invalid(7): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"
 
 `;
 
-exports[`invalid(7): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"\n\t]\n} 2`] = `
+exports[`invalid(23): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"dist\",\n\t\t\"src\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -217,7 +519,7 @@ Output:
 
 `;
 
-exports[`invalid(8): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]\n} 1`] = `
+exports[`invalid(24): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -229,7 +531,7 @@ exports[`invalid(8): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]
 
 `;
 
-exports[`invalid(8): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]\n} 2`] = `
+exports[`invalid(24): {\n\t\"files\": [\n\t\t\"src/*.js\",\n\t\t\"src/*.js\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -249,7 +551,7 @@ Output:
 
 `;
 
-exports[`invalid(9): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 1`] = `
+exports[`invalid(25): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -262,7 +564,7 @@ exports[`invalid(9): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"
 
 `;
 
-exports[`invalid(9): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 2`] = `
+exports[`invalid(25): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -284,7 +586,7 @@ Output:
 
 `;
 
-exports[`invalid(9): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 3`] = `
+exports[`invalid(25): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"README.md\",\n\t\t\"LICENSE\"\n\t]\n} 3`] = `
 
 Message:
   1 | {
@@ -303,5 +605,572 @@ Output:
   4 | 		"README.md"
   5 | 	]
   6 | }
+
+`;
+
+exports[`invalid(26): {\n\t\"files\": [\n\t\t\"dist\",\n\t\t\"tests\",\n\t\t\"!tests\",\n\t\t\"dist\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"tests",
+  5 | 		"!tests",
+  6 | 		"dist"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(26): {\n\t\"files\": [\n\t\t\"dist\",\n\t\t\"tests\",\n\t\t\"!tests\",\n\t\t\"dist\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"tests",
+  5 | 		"!tests",
+> 6 | 		"dist"
+    | 		^^^^^^ \`dist\` is a duplicate entry in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"tests",
+  5 | 		"!tests"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(27): {\n\t\"files\": [\n\t\t\"tests\",\n\t\t\"!tests\",\n\t\t\"dist\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"tests",
+  4 | 		"!tests",
+  5 | 		"dist",
+  6 | 		"!tests"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(27): {\n\t\"files\": [\n\t\t\"tests\",\n\t\t\"!tests\",\n\t\t\"dist\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"tests",
+  4 | 		"!tests",
+  5 | 		"dist",
+> 6 | 		"!tests"
+    | 		^^^^^^^^ \`!tests\` is a duplicate entry in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"tests",
+  4 | 		"!tests",
+  5 | 		"dist"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(28): {\n\t\"files\": [\n\t\t\".\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		".",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(28): {\n\t\"files\": [\n\t\t\".\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		".",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"."
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(29): {\n\t\"files\": [\n\t\t\"./\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"./",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(29): {\n\t\"files\": [\n\t\t\"./\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"./",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"./"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(3): {\n\t\"files\": [\n\t\t\"!tests\",\n\t\t\"tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"!tests",
+  4 | 		"tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(3): {\n\t\"files\": [\n\t\t\"!tests\",\n\t\t\"tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+> 3 | 		"!tests",
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  4 | 		"tests"
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"tests"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(30): {\n\t\"files\": [\n\t\t\"/\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"/",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(30): {\n\t\"files\": [\n\t\t\"/\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"/",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"/"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(31): {\n\t\"files\": [\n\t\t\"\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"",
+  4 | 		"!tests"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(31): {\n\t\"files\": [\n\t\t\"\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"",
+> 4 | 		"!tests"
+    | 		^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		""
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(32): {\n\t\"bin\": {\n\t\t\"cli\": \"scripts/cli:legacy.js\"\n\t},\n\t\"files\": [\n\t\t\"scripts/cli/legacy.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "scripts/cli:legacy.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"scripts/cli/legacy.js"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(32): {\n\t\"bin\": {\n\t\t\"cli\": \"scripts/cli:legacy.js\"\n\t},\n\t\"files\": [\n\t\t\"scripts/cli/legacy.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "scripts/cli:legacy.js"
+  4 | 	},
+  5 | 	"files": [
+> 6 | 		"scripts/cli/legacy.js"
+    | 		^^^^^^^^^^^^^^^^^^^^^^^ \`scripts/cli/legacy.js\` is always included by npm and is redundant in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "scripts/cli:legacy.js"
+  4 | 	},
+  5 | 	"files": []
+  6 | }
+
+`;
+
+exports[`invalid(33): {\n\t\"bin\": {\n\t\t\"cli\": \"CLI.js\"\n\t},\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "CLI.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"cli.js"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(33): {\n\t\"bin\": {\n\t\t\"cli\": \"CLI.js\"\n\t},\n\t\"files\": [\n\t\t\"cli.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "CLI.js"
+  4 | 	},
+  5 | 	"files": [
+> 6 | 		"cli.js"
+    | 		^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "CLI.js"
+  4 | 	},
+  5 | 	"files": []
+  6 | }
+
+`;
+
+exports[`invalid(34): {\n\t\"bin\": {\n\t\t\"cli\": \"cli:legacy.js\"\n\t},\n\t\"files\": [\n\t\t\"cli/legacy.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "cli:legacy.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"cli/legacy.js"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(34): {\n\t\"bin\": {\n\t\t\"cli\": \"cli:legacy.js\"\n\t},\n\t\"files\": [\n\t\t\"cli/legacy.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "cli:legacy.js"
+  4 | 	},
+  5 | 	"files": [
+> 6 | 		"cli/legacy.js"
+    | 		^^^^^^^^^^^^^^^ \`cli/legacy.js\` is always included by npm and is redundant in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "cli:legacy.js"
+  4 | 	},
+  5 | 	"files": []
+  6 | }
+
+`;
+
+exports[`invalid(35): {\n\t\"bin\": {\n\t\t\"cli\": \"\\\\absolute.js\"\n\t},\n\t\"files\": [\n\t\t\"absolute.js\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "\\\\absolute.js"
+  4 | 	},
+  5 | 	"files": [
+  6 | 		"absolute.js"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(35): {\n\t\"bin\": {\n\t\t\"cli\": \"\\\\absolute.js\"\n\t},\n\t\"files\": [\n\t\t\"absolute.js\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "\\\\absolute.js"
+  4 | 	},
+  5 | 	"files": [
+> 6 | 		"absolute.js"
+    | 		^^^^^^^^^^^^^ \`absolute.js\` is always included by npm and is redundant in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"bin": {
+  3 | 		"cli": "\\\\absolute.js"
+  4 | 	},
+  5 | 	"files": []
+  6 | }
+
+`;
+
+exports[`invalid(4): {\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!package.json\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"**",
+  4 | 		"!package.json"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(4): {\n\t\"files\": [\n\t\t\"**\",\n\t\t\"!package.json\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"**",
+> 4 | 		"!package.json"
+    | 		^^^^^^^^^^^^^^^ \`package.json\` is always included by npm and is redundant in \`files\`.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"**"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(5): {\n\t\"files\": [\n\t\t\"!!!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"!!!tests"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(5): {\n\t\"files\": [\n\t\t\"!!!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+> 3 | 		"!!!tests"
+    | 		^^^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+  4 | 	]
+  5 | }
+
+Output:
+  1 | {
+  2 | 	"files": []
+  3 | }
+
+`;
+
+exports[`invalid(6): {\n\t\"files\": [\n\t\t\"!!README.md\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"!!README.md"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(6): {\n\t\"files\": [\n\t\t\"!!README.md\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+> 3 | 		"!!README.md"
+    | 		^^^^^^^^^^^^^ \`!!README.md\` is always included by npm and is redundant in \`files\`.
+  4 | 	]
+  5 | }
+
+Output:
+  1 | {
+  2 | 	"files": []
+  3 | }
+
+`;
+
+exports[`invalid(7): {\n\t\"files\": [\n\t\t\"dist\",\n\t\t\"!dist\",\n\t\t\"!dist\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"!dist",
+  5 | 		"!dist"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(7): {\n\t\"files\": [\n\t\t\"dist\",\n\t\t\"!dist\",\n\t\t\"!dist\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"!dist",
+> 5 | 		"!dist"
+    | 		^^^^^^^ \`!dist\` is a duplicate entry in \`files\`.
+  6 | 	]
+  7 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"!dist"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(8): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"package.json\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"src",
+  4 | 		"package.json"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(8): {\n\t\"files\": [\n\t\t\"src\",\n\t\t\"package.json\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"src",
+> 4 | 		"package.json"
+    | 		^^^^^^^^^^^^^^ \`package.json\` is always included by npm and is redundant in \`files\`.
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"src"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(9): {\n\t\"files\": [\n\t\t\"Package.json\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"Package.json"
+  4 | 	]
+  5 | }
+
+`;
+
+exports[`invalid(9): {\n\t\"files\": [\n\t\t\"Package.json\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+> 3 | 		"Package.json"
+    | 		^^^^^^^^^^^^^^ \`Package.json\` is always included by npm and is redundant in \`files\`.
+  4 | 	]
+  5 | }
+
+Output:
+  1 | {
+  2 | 	"files": []
+  3 | }
 
 `;

@@ -8,14 +8,15 @@
 
 <!-- end auto-generated rule header -->
 
-npm always includes certain files regardless of the [`files`](https://docs.npmjs.com/cli/configuring-npm/package-json#files) field: `package.json`, `README` (all variants), and `LICENSE`/`LICENCE` (all variants). Listing them explicitly is redundant and adds noise.
+npm always includes `package.json`, readme, license, copying, and `bin` files. This rule reports redundant always-included entries, duplicates, and ineffective negations.
 
-This rule also catches exact duplicate entries in the `files` array.
+`files` patterns are applied in order. A negation is reported when no earlier literal or universal pattern can cover it. Ambiguous glob overlap is ignored, and the rule does not inspect the filesystem.
 
-Always-included files (case-insensitive):
+Always-included names (case-insensitive):
 
 - `package.json`
 - `README`, `README.*` (e.g., `README.md`)
+- `COPYING`, `COPYING.*`
 - `LICENSE`, `LICENSE.*`, `LICENCE`, `LICENCE.*`
 
 ## Examples
@@ -25,8 +26,36 @@ Always-included files (case-insensitive):
 {
 	"files": [
 		"src",
-		"package.json",
-		"README.md"
+		"package.json"
+	]
+}
+```
+
+```json
+// ✅
+{
+	"files": [
+		"src",
+		"dist"
+	]
+}
+```
+
+```json
+// ❌
+{
+	"files": [
+		"!tests"
+	]
+}
+```
+
+```json
+// ✅
+{
+	"files": [
+		"**",
+		"!tests"
 	]
 }
 ```
