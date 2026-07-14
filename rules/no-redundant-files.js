@@ -46,16 +46,6 @@ function normalizeFilePath(value) {
 }
 
 /**
-Check whether an entry-point value can refer to a path inside the package.
-*/
-function isPackageLocalPath(value) {
-	const normalizedPath = value.replaceAll('\\', '/');
-	return !normalizedPath.startsWith('/')
-		&& !URL.canParse(value)
-		&& !value.split(/[/\\]/u).includes('..');
-}
-
-/**
 Check whether a files pattern uses syntax that this rule cannot safely compare.
 */
 function isAmbiguousPattern(value) {
@@ -71,21 +61,26 @@ function isAlwaysIncluded(value, alwaysIncludedPaths) {
 	}
 
 	const normalizedPath = normalizeFilePath(value);
-	return alwaysIncludedPaths.has(normalizedPath)
+	return alwaysIncludedPaths.has(normalizedPath.toLowerCase())
 		|| ALWAYS_INCLUDED_PATTERNS.some(pattern => pattern.test(normalizedPath));
+}
+
+/**
+Normalize a bin path like npm.
+*/
+function normalizeBinPath(value) {
+	const unixPath = value.replaceAll(/[:\\]/gu, '/');
+	const normalizedPath = path.posix.join('.', path.posix.join('/', unixPath));
+	return normalizedPath.startsWith('./') ? '' : normalizedPath;
 }
 
 /**
 Add a bin path using npm's package normalization.
 */
 function addBinPath(paths, value) {
-	if (!isPackageLocalPath(value)) {
-		return;
-	}
-
-	const normalizedPath = normalizeFilePath(value);
+	const normalizedPath = normalizeBinPath(value);
 	if (normalizedPath && !normalizedPath.endsWith('/')) {
-		paths.add(normalizedPath);
+		paths.add(normalizedPath.toLowerCase());
 	}
 }
 
@@ -93,8 +88,7 @@ function addBinPath(paths, value) {
 Normalize a bin command name like npm.
 */
 function normalizeBinName(value) {
-	const basename = path.posix.basename(value.replaceAll(/[:\\]/gu, '/'));
-	return path.posix.join('/', basename).slice(1);
+	return path.posix.basename(normalizeBinPath(value));
 }
 
 /**

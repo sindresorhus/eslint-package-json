@@ -71,10 +71,10 @@ test.snapshot({
 		'{"files": ["src", 123, true]}',
 		// Bin arrays are ignored conservatively.
 		'{"bin": ["cli.js"], "files": ["cli.js"]}',
-		// Non-local bin values are ignored.
-		'{"bin": {"outside": "../outside.js", "absolute": "/absolute.js", "remote": "https://example.com/remote.js"}, "files": ["../outside.js", "/absolute.js", "https://example.com/remote.js"]}',
-		// Windows absolute entry-point values are also ignored.
-		String.raw`{"bin": "\\absolute.js", "files": ["\\absolute.js"]}`,
+		// Bin values and files entries that normalize differently are not redundant.
+		'{"bin": {"outside": "../outside.js", "remote": "https://example.com/remote.js"}, "files": ["../outside.js", "https://example.com/remote.js"]}',
+		// Colons in bin paths are normalized to path separators by npm.
+		'{"bin": {"cli": "scripts/cli:legacy.js"}, "files": ["scripts/cli:legacy.js"]}',
 		// Duplicate bin keys use the final value.
 		`{
 	"bin": {
@@ -316,6 +316,42 @@ test.snapshot({
 	"files": [
 		"",
 		"!tests"
+	]
+}`,
+		// Colons in bin paths are normalized to path separators by npm.
+		`{
+	"bin": {
+		"cli": "scripts/cli:legacy.js"
+	},
+	"files": [
+		"scripts/cli/legacy.js"
+	]
+}`,
+		// Bin path matching is case-insensitive like npm's packlist.
+		`{
+	"bin": {
+		"cli": "CLI.js"
+	},
+	"files": [
+		"cli.js"
+	]
+}`,
+		// A colon-leading segment is normalized too.
+		`{
+	"bin": {
+		"cli": "cli:legacy.js"
+	},
+	"files": [
+		"cli/legacy.js"
+	]
+}`,
+		// Leading backslashes in bin paths are normalized away.
+		String.raw`{
+	"bin": {
+		"cli": "\\absolute.js"
+	},
+	"files": [
+		"absolute.js"
 	]
 }`,
 	],
