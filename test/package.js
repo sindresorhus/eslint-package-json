@@ -166,17 +166,34 @@ test('SemVer result cache is bounded', () => {
 	}
 });
 
-test('the recommended config works with `extends` without registering the plugin', () => {
+test('the recommended config works with string `extends` without manually naming the plugin', () => {
 	const linter = new Linter();
 	const config = defineConfig({
 		files: ['**/package.json'],
-		extends: [plugin.configs.recommended],
+		plugins: {packageJson: plugin},
+		extends: ['packageJson/recommended'],
 	});
 
 	const problems = linter.verify('{"name": "Foo"}', config, {filename: 'package.json'});
 	assert.ok(
 		problems.some(message => message.ruleId === 'package-json/valid-fields'),
 		'an invalid name should be reported via the recommended config',
+	);
+});
+
+test('the plugin works with a shorthand alias', () => {
+	const linter = new Linter();
+	const config = defineConfig({
+		files: ['**/package.json'],
+		language: 'json/json',
+		plugins: {json, packageJson: plugin},
+		rules: {'packageJson/valid-fields': 'error'},
+	});
+
+	const problems = linter.verify('{"name": "Foo"}', config, {filename: 'package.json'});
+	assert.ok(
+		problems.some(message => message.ruleId === 'packageJson/valid-fields'),
+		'an invalid name should be reported through the shorthand alias',
 	);
 });
 
