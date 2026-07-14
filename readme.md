@@ -19,57 +19,63 @@ npm install --save-dev eslint eslint-package-json
 Add the recommended config to your `eslint.config.js`:
 
 ```js
+import {defineConfig} from 'eslint/config';
 import packageJson from 'eslint-package-json';
 
-export default [
-	packageJson.configs.recommended,
-];
+export default defineConfig({
+	files: ['**/package.json'],
+	plugins: {
+		packageJson
+	},
+	extends: [
+		'packageJson/recommended'
+	]
+});
 ```
 
-This lints every `package.json` in your project. To tweak individual rules, add a config block after the preset:
+This lints every `package.json` in your project. To tweak individual rules, add them to the same config object:
 
 ```js
+import {defineConfig} from 'eslint/config';
 import packageJson from 'eslint-package-json';
 
-export default [
-	packageJson.configs.recommended,
-	{
-		files: [
-			'**/package.json'
-		],
-		rules: {
-			'package-json/dependency-version-range': [
-				'error',
-				{
-					range: 'caret'
-				}
-			]
-		}
+export default defineConfig({
+	files: ['**/package.json'],
+	plugins: {
+		packageJson
+	},
+	extends: [
+		'packageJson/recommended'
+	],
+	rules: {
+		'package-json/dependency-version-range': [
+			'error',
+			{
+				range: 'caret'
+			}
+		]
 	}
-];
+});
 ```
 
 If you prefer to wire it up manually instead of using a preset:
 
 ```js
 import json from '@eslint/json';
+import {defineConfig} from 'eslint/config';
 import packageJson from 'eslint-package-json';
 
-export default [
-	{
-		files: [
-			'**/package.json'
-		],
-		language: 'json/json',
-		plugins: {
-			json,
-			'package-json': packageJson
-		},
-		rules: {
-			'package-json/valid-fields': 'error'
-		}
+export default defineConfig({
+	files: ['**/package.json'],
+	language: 'json/json',
+	plugins: {
+		json,
+		packageJson
+	},
+	rules: {
+		'packageJson/valid-fields': 'error'
 	}
-];
+});
 ```
 
 ## Configs
@@ -171,19 +177,21 @@ It's a separate CLI with its own config format and no autofix. This plugin lives
 Disable the rule in `eslint.config.js` instead:
 
 ```js
+import {defineConfig} from 'eslint/config';
 import packageJson from 'eslint-package-json';
 
-export default [
-	packageJson.configs.recommended,
-	{
-		files: [
-			'**/package.json',
-		],
-		rules: {
-			'package-json/no-orphan-types': 'off',
-		},
+export default defineConfig({
+	files: ['**/package.json'],
+	plugins: {
+		packageJson
 	},
-];
+	extends: [
+		'packageJson/recommended'
+	],
+	rules: {
+		'package-json/no-orphan-types': 'off',
+	},
+});
 ```
 
 Use a more specific `files` pattern when the rule should be disabled for only one package.

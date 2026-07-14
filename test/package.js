@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Linter} from 'eslint';
+import {defineConfig} from 'eslint/config';
 import json from '@eslint/json';
 import semver from 'semver';
 import plugin from '../index.js';
@@ -163,6 +164,37 @@ test('SemVer result cache is bounded', () => {
 	} finally {
 		semver.validRange = originalValidRange;
 	}
+});
+
+test('the recommended config works with string `extends` without manually naming the plugin', () => {
+	const linter = new Linter();
+	const config = defineConfig({
+		files: ['**/package.json'],
+		plugins: {packageJson: plugin},
+		extends: ['packageJson/recommended'],
+	});
+
+	const problems = linter.verify('{"name": "Foo"}', config, {filename: 'package.json'});
+	assert.ok(
+		problems.some(message => message.ruleId === 'package-json/valid-fields'),
+		'an invalid name should be reported via the recommended config',
+	);
+});
+
+test('the plugin works with a shorthand alias', () => {
+	const linter = new Linter();
+	const config = defineConfig({
+		files: ['**/package.json'],
+		language: 'json/json',
+		plugins: {json, packageJson: plugin},
+		rules: {'packageJson/valid-fields': 'error'},
+	});
+
+	const problems = linter.verify('{"name": "Foo"}', config, {filename: 'package.json'});
+	assert.ok(
+		problems.some(message => message.ruleId === 'packageJson/valid-fields'),
+		'an invalid name should be reported through the shorthand alias',
+	);
 });
 
 test('no rule crashes on a non-object or unusual root', () => {
