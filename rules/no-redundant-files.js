@@ -55,9 +55,20 @@ function isPackageLocalPath(value) {
 }
 
 /**
+Check whether a files pattern uses syntax that this rule cannot safely compare.
+*/
+function isAmbiguousPattern(value) {
+	return hasGlob(value) || EXTGLOB_PATTERN.test(value) || PARENT_PATH_PATTERN.test(value);
+}
+
+/**
 Check if a file path matches any always-included pattern.
 */
 function isAlwaysIncluded(value, alwaysIncludedPaths) {
+	if (isAmbiguousPattern(value)) {
+		return false;
+	}
+
 	const normalizedPath = normalizeFilePath(value);
 	return alwaysIncludedPaths.has(normalizedPath)
 		|| ALWAYS_INCLUDED_PATTERNS.some(pattern => pattern.test(normalizedPath));
@@ -114,13 +125,6 @@ function getAlwaysIncludedPaths(root) {
 }
 
 /**
-Check whether a files pattern uses syntax that this rule cannot safely compare.
-*/
-function isAmbiguousPattern(value) {
-	return hasGlob(value) || EXTGLOB_PATTERN.test(value) || PARENT_PATH_PATTERN.test(value);
-}
-
-/**
 Check whether a positive files pattern is known to be disjoint from a negated pattern.
 */
 function isKnownToBeDisjoint(positivePattern, negatedPattern) {
@@ -154,13 +158,32 @@ function isIneffectiveNegation(negatedPattern, positivePatterns) {
 Get the report message for a negated files pattern, if it is redundant.
 */
 function getNegationMessageId(negatedPattern, positivePatterns, alwaysIncludedPaths) {
-	if (!isAmbiguousPattern(negatedPattern) && isAlwaysIncluded(negatedPattern, alwaysIncludedPaths)) {
+	if (isAlwaysIncluded(negatedPattern, alwaysIncludedPaths)) {
 		return MESSAGE_ID_DEFAULT;
 	}
 
 	if (isIneffectiveNegation(negatedPattern, positivePatterns)) {
 		return MESSAGE_ID_INEFFECTIVE_NEGATION;
 	}
+}
+
+/**
+Check whether an exact pattern is redundant because no intervening opposite pattern can affect it.
+*/
+function isDuplicatePattern(pattern, isNegated, previousIndex, patternHistory) {
+	for (const previousPattern of patternHistory.slice(previousIndex + 1)) {
+		if (previousPattern.isNegated === isNegated) {
+			continue;
+		}
+
+		const positivePattern = isNegated ? previousPattern.pattern : pattern;
+		const negatedPattern = isNegated ? pattern : previousPattern.pattern;
+		if (!isKnownToBeDisjoint(positivePattern, negatedPattern)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -181,10 +204,8 @@ const create = context => ({
 		const {sourceCode} = context;
 		const seen = new Map();
 		const positivePatterns = [];
+		const patternHistory = [];
 		const alwaysIncludedPaths = getAlwaysIncludedPaths(root);
-		let patternIndex = 0;
-		let lastPositiveIndex = -1;
-		let lastNegativeIndex = -1;
 
 		for (const element of filesMember.value.elements) {
 			const valueNode = element.value;
@@ -202,11 +223,10 @@ const create = context => ({
 				continue;
 			}
 
-			const lastOppositeIndex = isNegated ? lastPositiveIndex : lastNegativeIndex;
 			const previousIndex = seen.get(value);
-			const isDuplicate = previousIndex !== undefined && previousIndex > lastOppositeIndex;
+			const isDuplicate = previousIndex !== undefined
+				&& isDuplicatePattern(pattern, isNegated, previousIndex, patternHistory);
 
-			// An exact duplicate may be useful when an intervening opposite pattern changed its effect.
 			if (isDuplicate) {
 				context.report({
 					node: valueNode,
@@ -218,14 +238,8 @@ const create = context => ({
 				});
 			}
 
-			seen.set(value, patternIndex);
-			if (isNegated) {
-				lastNegativeIndex = patternIndex;
-			} else {
-				lastPositiveIndex = patternIndex;
-			}
-
-			patternIndex++;
+			seen.set(value, patternHistory.length);
+			patternHistory.push({pattern, isNegated});
 			if (isDuplicate) {
 				continue;
 			}
@@ -248,11 +262,6 @@ const create = context => ({
 			}
 
 			positivePatterns.push(pattern);
-
-			// Skip ambiguous patterns for always-included check.
-			if (isAmbiguousPattern(pattern)) {
-				continue;
-			}
 
 			if (isAlwaysIncluded(pattern, alwaysIncludedPaths)) {
 				context.report({

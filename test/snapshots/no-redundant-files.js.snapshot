@@ -728,6 +728,82 @@ Output:
 
 `;
 
+exports[`invalid(27): {\n\t\"files\": [\n\t\t\"dist\",\n\t\t\"tests\",\n\t\t\"!tests\",\n\t\t\"dist\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"tests",
+  5 | 		"!tests",
+  6 | 		"dist"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(27): {\n\t\"files\": [\n\t\t\"dist\",\n\t\t\"tests\",\n\t\t\"!tests\",\n\t\t\"dist\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"tests",
+  5 | 		"!tests",
+> 6 | 		"dist"
+    | 		^^^^^^ \`dist\` is a duplicate entry in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"dist",
+  4 | 		"tests",
+  5 | 		"!tests"
+  6 | 	]
+  7 | }
+
+`;
+
+exports[`invalid(28): {\n\t\"files\": [\n\t\t\"tests\",\n\t\t\"!tests\",\n\t\t\"dist\",\n\t\t\"!tests\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"files": [
+  3 | 		"tests",
+  4 | 		"!tests",
+  5 | 		"dist",
+  6 | 		"!tests"
+  7 | 	]
+  8 | }
+
+`;
+
+exports[`invalid(28): {\n\t\"files\": [\n\t\t\"tests\",\n\t\t\"!tests\",\n\t\t\"dist\",\n\t\t\"!tests\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"files": [
+  3 | 		"tests",
+  4 | 		"!tests",
+  5 | 		"dist",
+> 6 | 		"!tests"
+    | 		^^^^^^^^ \`!tests\` is a duplicate entry in \`files\`.
+  7 | 	]
+  8 | }
+
+Output:
+  1 | {
+  2 | 	"files": [
+  3 | 		"tests",
+  4 | 		"!tests",
+  5 | 		"dist"
+  6 | 	]
+  7 | }
+
+`;
+
 exports[`invalid(3): {\n\t\"files\": [\n\t\t\"!tests\",\n\t\t\"tests\"\n\t]\n} 1`] = `
 
 [Input]

@@ -23,6 +23,7 @@ test.snapshot({
 		// Ambiguous overlap is ignored.
 		'{"files": ["src/*.js", "!tests"]}',
 		'{"files": ["src/*.js", "!src/test.js"]}',
+		'{"files": ["dist", "!tests/*.js", "dist"]}',
 		'{"files": ["dist/./tests", "!dist/tests"]}',
 		String.raw`{"files": ["dist\\tests", "!dist/tests"]}`,
 		'{"files": ["dist", "!tests/**"]}',
@@ -268,6 +269,24 @@ test.snapshot({
 		"src",
 		"README.md",
 		"LICENSE"
+	]
+}`,
+		// A disjoint intervening negation does not make a duplicate inclusion useful.
+		`{
+	"files": [
+		"dist",
+		"tests",
+		"!tests",
+		"dist"
+	]
+}`,
+		// A disjoint intervening inclusion does not make a duplicate negation useful.
+		`{
+	"files": [
+		"tests",
+		"!tests",
+		"dist",
+		"!tests"
 	]
 }`,
 	],
