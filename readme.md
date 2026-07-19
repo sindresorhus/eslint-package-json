@@ -144,6 +144,7 @@ export default defineConfig({
 | [require-entry-point](docs/rules/require-entry-point.md)                                               | Require an entry point field.                                                             | ✅  |    |    |
 | [require-exports-root](docs/rules/require-exports-root.md)                                             | Require a usable `.` root entry in the `exports` field.                                   |    |    |    |
 | [require-fields](docs/rules/require-fields.md)                                                         | Require specific fields to be present, always or only for published packages.             | ✅  |    |    |
+| [require-private](docs/rules/require-private.md)                                                       | Require the `private` field to be `true`.                                                 |    |    | 💡 |
 | [require-private-when-workspaces](docs/rules/require-private-when-workspaces.md)                       | Require `private` when `workspaces` is set.                                               | ✅  |    | 💡 |
 | [require-types-in-exports](docs/rules/require-types-in-exports.md)                                     | Require correctly ordered and module-compatible types in `exports`.                       | ✅  |    |    |
 | [restrict-fields-when-private](docs/rules/restrict-fields-when-private.md)                             | Disallow fields that have no effect when the package is private.                          |    |    | 💡 |

@@ -1,8 +1,8 @@
 import {
 	getRootObject,
 	findMember,
-	getIndentString,
-	getNewline,
+	isPrivatePackage,
+	setPrivate,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'require-private-when-workspaces';
@@ -33,10 +33,7 @@ const create = context => {
 
 			const privateMember = findMember(root, 'private');
 
-			if (
-				privateMember?.value.type === 'Boolean'
-				&& privateMember.value.value === true
-			) {
+			if (isPrivatePackage(root)) {
 				return;
 			}
 
@@ -46,17 +43,8 @@ const create = context => {
 				suggest: [
 					{
 						messageId: SUGGESTION_ID,
-						fix(fixer) {
-							// Replace an existing falsy `private`, otherwise append a new member. `sort-properties` handles final placement.
-							if (privateMember) {
-								return fixer.replaceText(privateMember.value, 'true');
-							}
-
-							const lastMember = root.members.at(-1);
-							const indent = getIndentString(sourceCode);
-							const newline = getNewline(sourceCode);
-
-							return fixer.insertTextAfter(lastMember, `,${newline}${indent}"private": true`);
+						* fix(fixer) {
+							yield * setPrivate(fixer, sourceCode, root, privateMember);
 						},
 					},
 				],

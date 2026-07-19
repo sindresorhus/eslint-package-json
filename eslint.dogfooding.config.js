@@ -14,6 +14,12 @@ const config = [
 		],
 	},
 	packageJson.configs.all,
+	{
+		// This project is published, so the opt-in rule intentionally does not apply to its own package.
+		rules: {
+			'package-json/require-private': 'off',
+		},
+	},
 ];
 
 export default config;

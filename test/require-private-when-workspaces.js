@@ -10,6 +10,8 @@ test.snapshot({
 		'{"name": "foo", "private": false}',
 	],
 	invalid: [
+		// Preserve compact formatting when adding `private`.
+		'{"workspaces": ["packages/*"]}',
 		// Missing `private`.
 		`{
 	"name": "foo",

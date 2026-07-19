@@ -445,6 +445,38 @@ export function lineIndentOf(sourceCode, node) {
 }
 
 /**
+Suggest setting the top-level `private` field to `true`, preserving the document's compact or multiline formatting.
+*/
+export function * setPrivate(fixer, sourceCode, rootObject, privateMember) {
+	if (privateMember) {
+		yield fixer.replaceText(privateMember.value, 'true');
+		return;
+	}
+
+	const newline = getNewline(sourceCode);
+	const lastMember = rootObject.members.at(-1);
+
+	if (lastMember) {
+		const hasMultilineMembers = sourceCode.text.slice(rootObject.range[0], lastMember.range[0]).includes('\n');
+		const separator = hasMultilineMembers
+			? `,${newline}${lineIndentOf(sourceCode, lastMember)}`
+			: ', ';
+
+		yield fixer.insertTextAfter(lastMember, `${separator}"private": true`);
+		return;
+	}
+
+	const contents = sourceCode.text.slice(rootObject.range[0] + 1, rootObject.range[1] - 1);
+
+	if (!contents.includes('\n')) {
+		yield fixer.replaceText(rootObject, '{"private": true}');
+		return;
+	}
+
+	yield fixer.replaceText(rootObject, `{${newline}${getIndentString(sourceCode)}"private": true${newline}}`);
+}
+
+/**
 Insert a new `key: value` member into a dependency-style group object, creating the group as a new top-level member if `groupMember` is absent. `value` must already be fully-formed JSON text (e.g. via `JSON.stringify`).
 */
 export function * insertGroupMember(fixer, sourceCode, root, {
