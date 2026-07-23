@@ -4,8 +4,8 @@ const MESSAGE_ID = 'no-exports-trailing-slash';
 const MESSAGE_ID_PATTERN = 'pattern';
 
 const messages = {
-	[MESSAGE_ID]: 'Trailing-slash folder mapping `{{value}}` in `{{field}}` is deprecated; use a subpath pattern like `{{suggestion}}` instead.',
-	[MESSAGE_ID_PATTERN]: 'Trailing-slash mapping `{{value}}` in `{{field}}` is deprecated; use a subpath pattern without a trailing slash.',
+	[MESSAGE_ID]: 'Trailing-slash folder mapping `{{value}}` in `{{field}}` no longer resolves in Node.js; use a subpath pattern like `{{suggestion}}` instead.',
+	[MESSAGE_ID_PATTERN]: 'Trailing-slash mapping `{{value}}` in `{{field}}` no longer resolves in Node.js; use a subpath pattern without a trailing slash.',
 };
 
 /**
@@ -96,7 +96,7 @@ const config = {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Disallow deprecated trailing-slash folder mappings in `exports`/`imports`.',
+			description: 'Disallow trailing-slash folder mappings in `exports`/`imports`.',
 			recommended: true,
 		},
 		fixable: 'code',

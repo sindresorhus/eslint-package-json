@@ -29,6 +29,8 @@ test.snapshot({
 		'{"exports": ["not:valid", "./a.js", "./b.js"]}',
 		'{"imports": {"#dep": ["../invalid.js", "./a.js", "./b.js"]}}',
 		'{"exports": ["./a%2Finvalid.js", "./fallback.js"]}',
+		// A malformed percent-escape decodes to nothing Node skips, so the target counts and the array is a real fallback list.
+		'{"exports": ["./%zz.js", "./fallback.js"]}',
 		`{
 	"exports": {
 		".": {

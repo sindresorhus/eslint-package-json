@@ -34,14 +34,50 @@ Suggestion 1/1: Use \`>=18.2\`.:
 
 `;
 
-exports[`invalid(3): {\"engines\": {\"node\": \"18.0.0\"}} 1`] = `
+exports[`invalid(3): {\"engines\": {\"node\": \"^18\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "^18"}}
+
+`;
+
+exports[`invalid(3): {\"engines\": {\"node\": \"^18\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "^18"}}
+    |                      ^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`^18\`.
+
+Suggestion 1/1: Use \`>=18\`.:
+  1 | {"engines": {"node": ">=18"}}
+
+`;
+
+exports[`invalid(4): {\"engines\": {\"node\": \"~18\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "~18"}}
+
+`;
+
+exports[`invalid(4): {\"engines\": {\"node\": \"~18\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "~18"}}
+    |                      ^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`~18\`.
+
+Suggestion 1/1: Use \`>=18\`.:
+  1 | {"engines": {"node": ">=18"}}
+
+`;
+
+exports[`invalid(5): {\"engines\": {\"node\": \"18.0.0\"}} 1`] = `
 
 [Input]
   1 | {"engines": {"node": "18.0.0"}}
 
 `;
 
-exports[`invalid(3): {\"engines\": {\"node\": \"18.0.0\"}} 2`] = `
+exports[`invalid(5): {\"engines\": {\"node\": \"18.0.0\"}} 2`] = `
 
 Message:
 > 1 | {"engines": {"node": "18.0.0"}}
@@ -52,14 +88,14 @@ Suggestion 1/1: Use \`>=18.0.0\`.:
 
 `;
 
-exports[`invalid(4): {\"engines\": {\"node\": \">=18\", \"npm\": \"^10.0.0\"}} 1`] = `
+exports[`invalid(6): {\"engines\": {\"node\": \">=18\", \"npm\": \"^10.0.0\"}} 1`] = `
 
 [Input]
   1 | {"engines": {"node": ">=18", "npm": "^10.0.0"}}
 
 `;
 
-exports[`invalid(4): {\"engines\": {\"node\": \">=18\", \"npm\": \"^10.0.0\"}} 2`] = `
+exports[`invalid(6): {\"engines\": {\"node\": \">=18\", \"npm\": \"^10.0.0\"}} 2`] = `
 
 Message:
 > 1 | {"engines": {"node": ">=18", "npm": "^10.0.0"}}
@@ -67,5 +103,59 @@ Message:
 
 Suggestion 1/1: Use \`>=10.0.0\`.:
   1 | {"engines": {"node": ">=18", "npm": ">=10.0.0"}}
+
+`;
+
+exports[`invalid(7): {\"engines\": {\"node\": \"v18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "v18.0.0"}}
+
+`;
+
+exports[`invalid(7): {\"engines\": {\"node\": \"v18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "v18.0.0"}}
+    |                      ^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`v18.0.0\`.
+
+Suggestion 1/1: Use \`>=18.0.0\`.:
+  1 | {"engines": {"node": ">=18.0.0"}}
+
+`;
+
+exports[`invalid(8): {\"engines\": {\"node\": \"^v18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "^v18.0.0"}}
+
+`;
+
+exports[`invalid(8): {\"engines\": {\"node\": \"^v18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "^v18.0.0"}}
+    |                      ^^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`^v18.0.0\`.
+
+Suggestion 1/1: Use \`>=18.0.0\`.:
+  1 | {"engines": {"node": ">=18.0.0"}}
+
+`;
+
+exports[`invalid(9): {\"engines\": {\"node\": \"18.0.0+build.1\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "18.0.0+build.1"}}
+
+`;
+
+exports[`invalid(9): {\"engines\": {\"node\": \"18.0.0+build.1\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "18.0.0+build.1"}}
+    |                      ^^^^^^^^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`18.0.0+build.1\`.
+
+Suggestion 1/1: Use \`>=18.0.0\`.:
+  1 | {"engines": {"node": ">=18.0.0"}}
 
 `;

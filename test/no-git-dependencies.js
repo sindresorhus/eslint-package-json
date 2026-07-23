@@ -34,6 +34,8 @@ test.snapshot({
 		},
 	],
 	invalid: [
+		// A `git+` URL with no `.git` suffix is only caught by the prefix check.
+		'{"dependencies": {"a": "git+https://example.com/u/r"}}',
 		// Git+ prefix.
 		'{"dependencies": {"foo": "git+https://github.com/user/repo.git"}}',
 		// git:// protocol.

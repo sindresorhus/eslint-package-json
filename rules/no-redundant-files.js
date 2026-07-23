@@ -141,12 +141,9 @@ function isKnownToBeDisjoint(positivePattern, negatedPattern) {
 
 	const normalizedPositivePattern = normalizePath(positivePattern);
 	const normalizedNegatedPattern = normalizePath(negatedPattern);
-	if (!normalizedNegatedPattern) {
+	// A pattern that normalizes away (`.`, `./`, `/`, ``) names the package root, which contains everything, so it is disjoint from nothing.
+	if (!normalizedPositivePattern || !normalizedNegatedPattern) {
 		return false;
-	}
-
-	if (!normalizedPositivePattern) {
-		return true;
 	}
 
 	return normalizedPositivePattern !== normalizedNegatedPattern

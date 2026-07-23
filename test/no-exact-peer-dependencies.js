@@ -17,6 +17,9 @@ test.snapshot({
 		'{"dependencies": {"react": "18.2.0"}}',
 	],
 	invalid: [
+		// A loose version must normalize before it is put into a range.
+		'{"peerDependencies": {"react": "v18.2.0"}}',
+		'{"peerDependencies": {"react": "18.2.0+build.1"}}',
 		'{"peerDependencies": {"react": "18.2.0"}}',
 		'{"peerDependencies": {"react": "2.0.0-beta.1"}}',
 		`{

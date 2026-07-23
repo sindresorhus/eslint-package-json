@@ -22,7 +22,10 @@ test.snapshot({
 		'{"dependencies": {"foo": 1}}',
 		// No dependencies field.
 		'{"name": "my-package"}',
-		// DevDependencies with local path is also flagged (covered in invalid), but valid example: none.
+		// A consumer never installs `devDependencies`, so a local path there breaks nobody. It is how packages point at test fixtures and self-link for dogfooding.
+		'{"devDependencies": {"foo": "file:../foo"}}',
+		'{"devDependencies": {"my-package": "file:."}}',
+		'{"devDependencies": {"fixture": "./test/fixtures/fixture"}}',
 	],
 	invalid: [
 		// File: protocol.
@@ -36,12 +39,12 @@ test.snapshot({
 		'{"dependencies": {"foo": "/home/user/foo"}}',
 		// Home directory path.
 		'{"dependencies": {"foo": "~/foo"}}',
-		// DevDependencies.
-		'{"devDependencies": {"foo": "file:../foo"}}',
 		// PeerDependencies.
 		'{"peerDependencies": {"foo": "file:../foo"}}',
+		'{"peerDependencies": {"foo": "link:../foo"}}',
 		// OptionalDependencies.
 		'{"optionalDependencies": {"foo": "file:../foo"}}',
+		'{"optionalDependencies": {"foo": "link:../foo"}}',
 		// Multiple dependencies.
 		'{"dependencies": {"foo": "file:../foo", "bar": "^1.0.0", "baz": "../baz"}}',
 	],

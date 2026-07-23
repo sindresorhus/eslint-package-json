@@ -11,6 +11,9 @@ When `exports` is present, modern TypeScript resolution reads types from it inst
 
 This is static manifest analysis. Targets must be structurally valid, arrays use only their first entry, and nested declaration fallbacks are best effort. File existence, publication, declaration contents, overlapping version ranges, and custom TypeScript conditions are not checked. Use [`valid-fields`](valid-fields.md) for malformed targets and package-aware tools for published contents.
 
+> [!NOTE]
+> TypeScript can also pick up a declaration file sitting next to a JavaScript target, so `./index.js` resolves through `./index.d.ts` even with no `types` condition. That depends on which files exist, which this rule deliberately does not inspect, so such a package is still reported. Wiring the condition explicitly also keeps dual-format packages correct, where the sibling fallback can hand a consumer declarations in the wrong module format.
+
 ## Examples
 
 ```json

@@ -74,6 +74,8 @@ test.snapshot({
 		'{"files": ["dist", "!dist/**/*.test.js", "dist/index.js"]}',
 	],
 	invalid: [
+		// A non-string, non-array, non-object `exports` value yields no entry-point targets, so `files` still sorts alphabetically.
+		'{"exports": true, "files": ["b.js", "a.js"]}',
 		// Entry-point targets sort before unrelated paths and declarations follow runtime files.
 		'{"exports": {"types": "./index.d.ts", "default": "./index.js"}, "bin": "./cli.js", "files": ["assets", "cli.js", "index.d.ts", "index.js"]}',
 		// Exports take priority over top-level entry-point fields and bin.

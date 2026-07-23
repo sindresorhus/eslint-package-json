@@ -17,5 +17,7 @@ test.snapshot({
 		'{"dependencies": {"fs": "0.0.2"}}',
 		'{"devDependencies": {"crypto": "^1.0.0"}}',
 		'{"dependencies": {"path": "^0.12.7", "util": "^0.12.0"}}',
+		// Removing only the effective member would promote the earlier duplicate into its place.
+		'{"dependencies": {"path": "^0.12.7", "path": "^0.13.0"}}',
 	],
 });

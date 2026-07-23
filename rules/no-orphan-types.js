@@ -1,7 +1,7 @@
 import {
 	getRootObject,
 	iterateDependencies,
-	removeMember,
+	removeMemberAndDuplicates,
 	optionsSchema,
 	stringArraySchema,
 } from './utils/index.js';
@@ -91,7 +91,7 @@ const create = context => {
 						{
 							messageId: SUGGESTION_ID,
 							* fix(fixer) {
-								yield * removeMember(fixer, sourceCode, member);
+								yield * removeMemberAndDuplicates(fixer, sourceCode, member);
 							},
 						},
 					],

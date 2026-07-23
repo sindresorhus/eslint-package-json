@@ -1,4 +1,9 @@
-import {getRootObject, findMember, getKey} from './utils/index.js';
+import {
+	getRootObject,
+	findMember,
+	getKey,
+	countEffectiveMembers,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-shorthand';
 
@@ -17,8 +22,11 @@ const getStringValue = (objectNode, key) => {
 
 const personFields = new Set(['name', 'email', 'url']);
 
+// The string form delimits the email with `<>` and the url with `()`, so a value containing any of those characters is re-parsed into a different field. For example `{"name": "Foo (Bar)", "email": "x@y.z"}` would become `"Foo (Bar) <x@y.z>"`, which npm reads back as the name `Foo` with the url `Bar`.
+const personDelimiterPattern = /[()<>]/u;
+
 /**
-Build the `"Name <email> (url)"` people form from an object, or `undefined` if it has no string `name` or carries fields the string form cannot represent.
+Build the `"Name <email> (url)"` people form from an object, or `undefined` if it has no string `name`, carries fields the string form cannot represent, or holds a value that would not survive the round trip.
 */
 const personToShorthand = objectNode => {
 	// The string form only carries name, email, and url; any other field would be silently dropped.
@@ -34,6 +42,10 @@ const personToShorthand = objectNode => {
 
 	const email = getStringValue(objectNode, 'email');
 	const url = getStringValue(objectNode, 'url');
+
+	if ([name, email, url].some(value => value !== undefined && personDelimiterPattern.test(value))) {
+		return undefined;
+	}
 
 	return name + (email ? ` <${email}>` : '') + (url ? ` (${url})` : '');
 };
@@ -87,11 +99,11 @@ Collect every field whose value can be replaced with a shorthand string.
 const collectShorthands = root => {
 	const results = [];
 
-	// The string shorthand carries only the URL, so it is equivalent only when `url` is the sole field; an object with `email`, `type`, or any other field would lose data.
+	// The string shorthand carries only the URL, so it is equivalent only when `url` is the sole field; an object with `email`, `type`, or any other field would lose data. A key repeated with a different value is still one field, so the count is of effective members.
 	for (const field of ['bugs', 'funding']) {
 		const member = findMember(root, field);
 
-		if (member?.value.type === 'Object' && member.value.members.length === 1) {
+		if (member?.value.type === 'Object' && countEffectiveMembers(member.value) === 1) {
 			const url = getStringValue(member.value, 'url');
 
 			if (url !== undefined) {

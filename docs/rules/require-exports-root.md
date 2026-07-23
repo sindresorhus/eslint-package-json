@@ -9,6 +9,10 @@ Require an importable package root. Subpath maps need a usable `.` runtime entry
 
 > [!NOTE]
 > Some packages intentionally expose only subpaths and have no importable root. Disable the rule for those cases.
+>
+> A types-only package such as [`type-fest`](https://www.npmjs.com/package/type-fest), whose `exports` carry nothing but `types` conditions, is likewise reported as having no runtime entry point. That shape is indistinguishable from a package that simply forgot one, so leave the rule off for types-only packages.
+
+`main` is compared textually after normalizing a leading `./`, except that an extensionless `main` also matches the paths Node's CommonJS extension search would find: `"main": "index"` is satisfied by `./index.js`, and `"main": "lib"` by `./lib/index.js`.
 
 ## Examples
 

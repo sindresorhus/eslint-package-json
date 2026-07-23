@@ -12,6 +12,8 @@ npm always includes `package.json`, readme, license, copying, and `bin` files. T
 
 `files` patterns are applied in order. A negation is reported when no earlier literal or universal pattern can cover it. Ambiguous glob overlap is ignored, and the rule does not inspect the filesystem.
 
+npm expands `files` entries as package-rooted globs, so a negation only applies at the package root: `["dist", "!tests"]` cannot drop `dist/tests`, whatever the earlier pattern matched.
+
 Always-included names (case-insensitive):
 
 - `package.json`
@@ -20,6 +22,26 @@ Always-included names (case-insensitive):
 - `LICENSE`, `LICENSE.*`, `LICENCE`, `LICENCE.*`
 
 ## Examples
+
+```json
+// ❌ — `!tests` is rooted, so it cannot exclude `dist/tests`.
+{
+	"files": [
+		"dist",
+		"!tests"
+	]
+}
+```
+
+```json
+// ✅ — a rooted negation needs a rooted path.
+{
+	"files": [
+		"dist",
+		"!dist/tests"
+	]
+}
+```
 
 ```json
 // ❌

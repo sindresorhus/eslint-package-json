@@ -4,10 +4,41 @@ const {test} = getTester(import.meta);
 
 test.snapshot({
 	valid: [
+		// A rooted negation can still be ambiguous beside a universal pattern.
+		'{"files": ["**", "!tests"]}',
+		// A repeated positive pattern is still useful when an intervening negation can affect it.
+		'{"files": ["dist", "!dist", "dist"]}',
+		// A root-like pattern is not analysable, so a negation beside it is left alone.
+		`{
+	"files": [
+		".",
+		"!tests"
+	]
+}`,
+		`{
+	"files": [
+		"./",
+		"!tests"
+	]
+}`,
+		`{
+	"files": [
+		"/",
+		"!tests"
+	]
+}`,
+		`{
+	"files": [
+		"",
+		"!tests"
+	]
+}`,
 		// Normal non-redundant files.
 		'{"files": ["src", "dist"]}',
 		// Globs are skipped for always-included check.
 		'{"files": ["README.*", "*.js"]}',
+		// A negation of the package root (`.`) contains everything, so disjointness can never be proven and no entry is called redundant.
+		'{"files": ["!.", "src", "!."]}',
 		// A negation after a covering directory is effective.
 		'{"files": ["dist", "!dist/tests"]}',
 		'{"files": ["rules/valid-fields", "!rules"]}',
@@ -56,6 +87,8 @@ test.snapshot({
 		'{"bin": {"commands:cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
 		'{"bin": {"commands/__proto__": "cli.js"}, "files": ["cli.js"]}',
 		'{"bin": {"": "cli.js"}, "files": ["cli.js"]}',
+		// A non-string `bin` target contributes no always-included path, so a listed file is not judged redundant.
+		'{"bin": {"cli": 123}, "files": ["cli.js"]}',
 		'{"name": "@scope/__proto__", "bin": "cli.js", "files": ["cli.js"]}',
 		// Filesystem-dependent main and browser paths are left alone.
 		'{"main": "./index.js", "browser": "./browser.js", "files": ["index.js", "browser.js"]}',
@@ -100,17 +133,36 @@ test.snapshot({
 }`,
 	],
 	invalid: [
-		// A negation before any positive pattern is ineffective.
+		// A negation carrying a slash is anchored to the package root, so it is comparable and provably disjoint here.
+		`{
+	"files": [
+		"dist",
+		"!lib/tests"
+	]
+}`,
+		// A leading slash anchors the negation to the package root, so it can no longer reach `dist/tests`.
+		`{
+	"files": [
+		"dist",
+		"!/tests"
+	]
+}`,
+		// A leading `./` anchors it the same way, because npm rewrites it to a leading slash.
+		`{
+	"files": [
+		"dist",
+		"!./tests"
+	]
+}`,
+		// A negation before any positive pattern is ineffective, slash or not.
 		`{
 	"files": [
 		"!tests"
 	]
 }`,
-		// Disjoint literal patterns cannot make the negation effective.
 		`{
 	"files": [
-		"dist",
-		"!tests"
+		"!lib/tests"
 	]
 }`,
 		// A later positive pattern cannot make an earlier negation effective.
@@ -281,48 +333,6 @@ test.snapshot({
 	]
 }`,
 		// A disjoint intervening negation does not make a duplicate inclusion useful.
-		`{
-	"files": [
-		"dist",
-		"tests",
-		"!tests",
-		"dist"
-	]
-}`,
-		// A disjoint intervening inclusion does not make a duplicate negation useful.
-		`{
-	"files": [
-		"tests",
-		"!tests",
-		"dist",
-		"!tests"
-	]
-}`,
-		// Root-like patterns cannot make negations effective.
-		`{
-	"files": [
-		".",
-		"!tests"
-	]
-}`,
-		`{
-	"files": [
-		"./",
-		"!tests"
-	]
-}`,
-		`{
-	"files": [
-		"/",
-		"!tests"
-	]
-}`,
-		`{
-	"files": [
-		"",
-		"!tests"
-	]
-}`,
 		// Colons in bin paths are normalized to path separators by npm.
 		`{
 	"bin": {
@@ -359,5 +369,13 @@ test.snapshot({
 		"absolute.js"
 	]
 }`,
+		// A slashless negation is rooted by npm, so it cannot exclude `dist/tests`.
+		'{"files": ["dist", "!tests"]}',
+		// A repeated positive pattern is redundant because the rooted negation cannot affect `dist`.
+		'{"files": ["dist", "tests", "!tests", "dist"]}',
+		// A repeated rooted negation is redundant when nothing changes its effect.
+		'{"files": ["tests", "!tests", "dist", "!tests"]}',
+		// Trailing slashes are stripped by npm before expanding negations, so this is rooted too.
+		'{"files": ["dist", "!tests/"]}',
 	],
 });

@@ -35,6 +35,13 @@ test.snapshot({
 		'{"repository": {"type": "svn", "url": "https://svn.example.com/repo"}}',
 		// A repository object without a `url` has nothing to shorten.
 		'{"repository": {"type": "git"}}',
+		// The string form delimits the email with `<>` and the url with `()`, so a value containing either would be re-parsed into a different field.
+		'{"author": {"name": "Foo (Bar)", "email": "foo@example.com"}}',
+		'{"author": {"name": "A <b> C"}}',
+		'{"author": {"name": "Company (Div), Inc."}}',
+		'{"author": {"name": "Ada", "url": "https://example.com/a(b)"}}',
+		'{"author": {"name": "Ada", "email": "a<b>@example.com"}}',
+		'{"contributors": [{"name": "Alice (Bob)"}]}',
 	],
 	invalid: [
 		'{"bugs": {"url": "https://github.com/user/repo/issues"}}',
@@ -45,5 +52,12 @@ test.snapshot({
 		'{"repository": {"type": "git", "url": "git+https://github.com/user/repo.git"}}',
 		// No `type` field defaults to git, so the shorthand still applies.
 		'{"repository": {"url": "git+https://github.com/user/repo.git"}}',
+		// A key repeated with a different value is still one field, and the final one wins.
+		`{
+	"bugs": {
+		"url": "https://example.com/old",
+		"url": "https://github.com/user/repo/issues"
+	}
+}`,
 	],
 });

@@ -4,8 +4,11 @@ import {
 	findMember,
 	getKey,
 	getNewline,
+	countEffectiveMembers,
+	iterateEffectiveMembers,
 	lineIndentOf,
-	removeMember,
+	removeMemberAndDuplicates,
+	removeShadowedDuplicates,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-package-manager-engines';
@@ -43,8 +46,9 @@ const getMinimumVersion = value => {
 function * migrateToPackageManager(fixer, sourceCode, {engines, member, packageManagerValue}) {
 	const packageManagerText = `"packageManager": ${JSON.stringify(packageManagerValue)}`;
 
-	if (engines.value.members.length === 1) {
+	if (countEffectiveMembers(engines.value) === 1) {
 		yield fixer.replaceText(engines, packageManagerText);
+		yield * removeShadowedDuplicates(fixer, sourceCode, engines);
 		return;
 	}
 
@@ -55,7 +59,7 @@ function * migrateToPackageManager(fixer, sourceCode, {engines, member, packageM
 		: ', ';
 
 	yield fixer.insertTextAfter(engines, `${separator}${packageManagerText}`);
-	yield * removeMember(fixer, sourceCode, member);
+	yield * removeMemberAndDuplicates(fixer, sourceCode, member);
 }
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -75,23 +79,30 @@ const create = context => ({
 
 		const {sourceCode} = context;
 		const packageManagerMember = findMember(root, 'packageManager');
-		const recognizedManagerEngineMembers = engines.value.members.filter(member => packageManagers.has(getKey(member)));
+		// Effective members, since a manager repeated with a different range is still one manager, and only the final range is the one npm enforces.
+		const recognizedManagerEngineMembers = [...iterateEffectiveMembers(engines.value)].filter(member => packageManagers.has(getKey(member)));
+
+		// `packageManager` names a single manager, so it cannot express "runs under npm or yarn or pnpm". A tool declaring several is stating which ones it supports, which is a different claim this rule has no replacement for.
+		if (recognizedManagerEngineMembers.length > 1) {
+			return;
+		}
+
 		const canMigrate = !packageManagerMember && recognizedManagerEngineMembers.length === 1;
 
-		for (const member of engines.value.members) {
+		for (const member of recognizedManagerEngineMembers) {
 			const manager = getKey(member);
 
-			if (!packageManagers.has(manager)) {
-				continue;
-			}
-
-			const memberToRemove = engines.value.members.length === 1 ? engines : member;
 			const suggest = [
 				{
 					messageId: REMOVE_SUGGESTION_ID,
 					data: {manager},
 					* fix(fixer) {
-						yield * removeMember(fixer, sourceCode, memberToRemove);
+						// Dropping the only engine leaves an empty `engines`, so remove the whole field — including any duplicate `engines` that would otherwise be promoted into its place.
+						if (countEffectiveMembers(engines.value) === 1) {
+							yield * removeMemberAndDuplicates(fixer, sourceCode, engines);
+						} else {
+							yield * removeMemberAndDuplicates(fixer, sourceCode, member);
+						}
 					},
 				},
 			];

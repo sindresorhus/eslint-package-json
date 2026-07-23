@@ -1,4 +1,9 @@
-import {getRootObject, findMember, getKey} from './utils/index.js';
+import {
+	getRootObject,
+	findMember,
+	getKey,
+	iterateEffectiveMembers,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'require-exports-root';
 const MESSAGE_ID_NO_RUNTIME = 'noRuntime';
@@ -25,7 +30,8 @@ function * iterateRuntimeTargets(node) {
 		}
 
 		case 'Object': {
-			for (const member of node.members) {
+			// Only the effective member counts: a runtime target hiding under a shadowed duplicate is not part of the object Node resolves, so it must not make the root look usable.
+			for (const member of iterateEffectiveMembers(node)) {
 				if (isTypesCondition(getKey(member))) {
 					continue;
 				}
@@ -47,13 +53,32 @@ function * iterateRuntimeTargets(node) {
 	}
 }
 
+// `main` and an export target can spell the same file differently, so both sides drop a leading `./` before they are compared. `main` also drops a trailing `/`, while export targets retain it because Node no longer resolves trailing-slash targets. `.` and `./` both name the package root, which is the empty path.
 function normalizePath(value) {
-	return value.replace(/^\.\//u, '');
+	const path = value.replace(/^\.\//u, '');
+	return path === '.' ? '' : path;
 }
+
+const normalizeMainPath = value => normalizePath(value.replace(/\/+$/u, ''));
 
 function isSubpathMap(objectNode) {
 	return objectNode.members.some(member => getKey(member).startsWith('.'));
 }
+
+// Node's legacy CommonJS resolution first tries the `main` path as a file, then appends `.js`, `.json`, and `.node`, and finally tries the same extensions under an `index` path. Without reading the filesystem the rule cannot tell which form resolves, so every form Node would try counts as a match.
+const cjsExtensions = ['.js', '.json', '.node'];
+
+const getMainCandidates = mainPath => {
+	// The package root normalizes to the empty path, so the `index` file under it carries no directory prefix.
+	const directoryPrefix = mainPath === '' ? '' : `${mainPath}/`;
+	const extensionCandidates = mainPath === '' ? [] : cjsExtensions.map(extension => mainPath + extension);
+
+	return [
+		mainPath,
+		...extensionCandidates,
+		...cjsExtensions.map(extension => `${directoryPrefix}index${extension}`),
+	];
+};
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
@@ -86,7 +111,9 @@ const create = context => ({
 			rootValue = rootMember.value;
 		}
 
-		if ([...iterateRuntimeTargets(rootValue)].length === 0) {
+		const runtimeTargets = [...iterateRuntimeTargets(rootValue)];
+
+		if (runtimeTargets.length === 0) {
 			context.report({
 				node: rootValue,
 				messageId: MESSAGE_ID_NO_RUNTIME,
@@ -100,9 +127,9 @@ const create = context => ({
 			return;
 		}
 
-		const mainPath = normalizePath(main.value.value);
+		const mainCandidates = new Set(getMainCandidates(normalizeMainPath(main.value.value)));
 
-		if ([...iterateRuntimeTargets(rootValue)].some(target => normalizePath(target.value) === mainPath)) {
+		if (runtimeTargets.some(target => !target.value.endsWith('/') && mainCandidates.has(normalizePath(target.value)))) {
 			return;
 		}
 

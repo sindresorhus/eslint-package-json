@@ -9,7 +9,7 @@ exports[`invalid(1): {\"exports\": {\"./foo/\": \"./dist/foo/\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./foo/": "./dist/foo/"}}
-    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` is deprecated; use a subpath pattern like \`./foo/*\` instead.
+    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./foo/*\` instead.
 
 Output:
   1 | {"exports": {"./foo/*": "./dist/foo/"}}
@@ -20,7 +20,7 @@ exports[`invalid(1): {\"exports\": {\"./foo/\": \"./dist/foo/\"}} 3`] = `
 
 Message:
 > 1 | {"exports": {"./foo/": "./dist/foo/"}}
-    |                        ^^^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/foo/\` in \`exports\` is deprecated; use a subpath pattern like \`./dist/foo/*\` instead.
+    |                        ^^^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./dist/foo/*\` instead.
 
 Output:
   1 | {"exports": {"./foo/": "./dist/foo/*"}}
@@ -38,7 +38,7 @@ exports[`invalid(10): {\"exports\": {\".\": [\"./dist/\", \"./other.js\"]}} 2`] 
 
 Message:
 > 1 | {"exports": {".": ["./dist/", "./other.js"]}}
-    |                    ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` is deprecated; use a subpath pattern like \`./dist/*\` instead.
+    |                    ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./dist/*\` instead.
 
 `;
 
@@ -53,7 +53,7 @@ exports[`invalid(2): {\"exports\": {\"./foo/\": \"./dist/*/\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./foo/": "./dist/*/"}}
-    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` is deprecated; use a subpath pattern like \`./foo/*\` instead.
+    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./foo/*\` instead.
 
 `;
 
@@ -61,7 +61,7 @@ exports[`invalid(2): {\"exports\": {\"./foo/\": \"./dist/*/\"}} 3`] = `
 
 Message:
 > 1 | {"exports": {"./foo/": "./dist/*/"}}
-    |                        ^^^^^^^^^^^ Trailing-slash mapping \`./dist/*/\` in \`exports\` is deprecated; use a subpath pattern without a trailing slash.
+    |                        ^^^^^^^^^^^ Trailing-slash mapping \`./dist/*/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
 
 `;
 
@@ -76,7 +76,7 @@ exports[`invalid(3): {\"exports\": {\"./foo/*/\": \"./dist/foo/\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./foo/*/": "./dist/foo/"}}
-    |              ^^^^^^^^^^ Trailing-slash mapping \`./foo/*/\` in \`exports\` is deprecated; use a subpath pattern without a trailing slash.
+    |              ^^^^^^^^^^ Trailing-slash mapping \`./foo/*/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
 
 `;
 
@@ -84,7 +84,7 @@ exports[`invalid(3): {\"exports\": {\"./foo/*/\": \"./dist/foo/\"}} 3`] = `
 
 Message:
 > 1 | {"exports": {"./foo/*/": "./dist/foo/"}}
-    |                          ^^^^^^^^^^^^^ Trailing-slash mapping \`./dist/foo/\` in \`exports\` is deprecated; use a subpath pattern without a trailing slash.
+    |                          ^^^^^^^^^^^^^ Trailing-slash mapping \`./dist/foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
 
 `;
 
@@ -99,7 +99,7 @@ exports[`invalid(4): {\"exports\": {\"./foo/*/\": [\"./dist/foo/\"]}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./foo/*/": ["./dist/foo/"]}}
-    |              ^^^^^^^^^^ Trailing-slash mapping \`./foo/*/\` in \`exports\` is deprecated; use a subpath pattern without a trailing slash.
+    |              ^^^^^^^^^^ Trailing-slash mapping \`./foo/*/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
 
 `;
 
@@ -107,7 +107,7 @@ exports[`invalid(4): {\"exports\": {\"./foo/*/\": [\"./dist/foo/\"]}} 3`] = `
 
 Message:
 > 1 | {"exports": {"./foo/*/": ["./dist/foo/"]}}
-    |                           ^^^^^^^^^^^^^ Trailing-slash mapping \`./dist/foo/\` in \`exports\` is deprecated; use a subpath pattern without a trailing slash.
+    |                           ^^^^^^^^^^^^^ Trailing-slash mapping \`./dist/foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
 
 `;
 
@@ -122,7 +122,7 @@ exports[`invalid(5): {\"exports\": {\".\": \"./lib/\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {".": "./lib/"}}
-    |                   ^^^^^^^^ Trailing-slash folder mapping \`./lib/\` in \`exports\` is deprecated; use a subpath pattern like \`./lib/*\` instead.
+    |                   ^^^^^^^^ Trailing-slash folder mapping \`./lib/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./lib/*\` instead.
 
 `;
 
@@ -146,7 +146,7 @@ Message:
   2 | 			"exports": {
   3 | 				".": {
 > 4 | 					"import": "./dist/"
-    | 					          ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` is deprecated; use a subpath pattern like \`./dist/*\` instead.
+    | 					          ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./dist/*\` instead.
   5 | 				}
   6 | 			}
   7 | 		}
@@ -164,7 +164,7 @@ exports[`invalid(7): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 2`] = 
 
 Message:
 > 1 | {"imports": {"#internal/": "./src/internal/"}}
-    |              ^^^^^^^^^^^^ Trailing-slash folder mapping \`#internal/\` in \`imports\` is deprecated; use a subpath pattern like \`#internal/*\` instead.
+    |              ^^^^^^^^^^^^ Trailing-slash folder mapping \`#internal/\` in \`imports\` no longer resolves in Node.js; use a subpath pattern like \`#internal/*\` instead.
 
 Output:
   1 | {"imports": {"#internal/*": "./src/internal/"}}
@@ -175,7 +175,7 @@ exports[`invalid(7): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 3`] = 
 
 Message:
 > 1 | {"imports": {"#internal/": "./src/internal/"}}
-    |                            ^^^^^^^^^^^^^^^^^ Trailing-slash folder mapping \`./src/internal/\` in \`imports\` is deprecated; use a subpath pattern like \`./src/internal/*\` instead.
+    |                            ^^^^^^^^^^^^^^^^^ Trailing-slash folder mapping \`./src/internal/\` in \`imports\` no longer resolves in Node.js; use a subpath pattern like \`./src/internal/*\` instead.
 
 Output:
   1 | {"imports": {"#internal/": "./src/internal/*"}}
@@ -193,7 +193,7 @@ exports[`invalid(8): {\"exports\": \"./dist/\"} 2`] = `
 
 Message:
 > 1 | {"exports": "./dist/"}
-    |             ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` is deprecated; use a subpath pattern like \`./dist/*\` instead.
+    |             ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./dist/*\` instead.
 
 `;
 
@@ -208,6 +208,6 @@ exports[`invalid(9): {\"imports\": {\"#dep\": \"./src/\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": "./src/"}}
-    |                      ^^^^^^^^ Trailing-slash folder mapping \`./src/\` in \`imports\` is deprecated; use a subpath pattern like \`./src/*\` instead.
+    |                      ^^^^^^^^ Trailing-slash folder mapping \`./src/\` in \`imports\` no longer resolves in Node.js; use a subpath pattern like \`./src/*\` instead.
 
 `;

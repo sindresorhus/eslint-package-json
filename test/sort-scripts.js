@@ -20,6 +20,8 @@ test.snapshot({
 	invalid: [
 		// Ordinary script names.
 		'{"scripts": {"test": "node --test", "build": "tsc", "lint": "eslint"}}',
+		// Mixed case and separators — the ordering must not depend on the machine's locale.
+		'{"scripts": {"Zebra": "echo z", "apple": "echo a", "Apple": "echo b"}}',
 		// Lifecycle and colon-qualified script names.
 		'{"scripts": {"prebuild": "echo start", "postbuild": "echo done", "build:watch": "tsc --watch", "build": "tsc"}}',
 		// Multiline with tab indentation.

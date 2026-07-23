@@ -2,6 +2,7 @@ import {
 	findMember,
 	getKey,
 	removeMember,
+	removeMemberAndDuplicates,
 } from '../utils/index.js';
 
 const MESSAGE_ID = 'valid-peer-dependencies-meta';
@@ -59,7 +60,7 @@ export function * check(root, context) {
 				messageId: REDUNDANT_OPTIONAL_MESSAGE_ID,
 				data: {name},
 				* fix(fixer) {
-					yield * removeMember(fixer, sourceCode, optional);
+					yield * removeMemberAndDuplicates(fixer, sourceCode, optional);
 				},
 			};
 		}

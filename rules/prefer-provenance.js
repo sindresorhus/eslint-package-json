@@ -4,6 +4,7 @@ import {
 	isPrivatePackage,
 	getIndentString,
 	getNewline,
+	lineIndentOf,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-provenance';
@@ -62,11 +63,10 @@ const create = context => {
 							// Insert a new `"provenance": true` member, matching the object's existing indentation.
 							const {members} = publishConfigValue;
 							const newline = getNewline(sourceCode);
-							const lineIndentOf = node => sourceCode.lines[node.loc.start.line - 1].match(/^(\s*)/u)[1];
 
 							if (members.length === 0) {
 								// Empty object: indent one level deeper than the `publishConfig` key.
-								const outerIndent = lineIndentOf(publishConfigMember);
+								const outerIndent = lineIndentOf(sourceCode, publishConfigMember);
 								const memberIndent = outerIndent + getIndentString(sourceCode);
 								const openBraceEnd = publishConfigValue.range[0] + 1;
 
@@ -75,7 +75,7 @@ const create = context => {
 							}
 
 							// Non-empty: append after the last member, reusing the existing members' indentation.
-							const memberIndent = lineIndentOf(members[0]);
+							const memberIndent = lineIndentOf(sourceCode, members[0]);
 
 							yield fixer.insertTextAfter(members.at(-1), `,${newline}${memberIndent}"provenance": true`);
 						},

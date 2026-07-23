@@ -13,6 +13,8 @@ npm lifecycle scripts such as `prepare`, `prepack`, and `preversion` are exempt 
 
 Common standalone tool names such as `postcss`, `posthtml`, `prettier`, and `preview`, including namespaced variants, are ignored by default. Namespaced `prepare:*` scripts and Git hook scripts named `precommit`, `pre-commit`, `prepush`, or `pre-push` are also treated as standalone commands rather than `pre` hooks.
 
+`preuninstall`, `uninstall`, and `postuninstall` get their own message. npm removed the uninstall lifecycle in v7, since it cannot tell whether a package is going away because the user removed it, removed something that depended on it, or removed one of several dependents, so these scripts [never run](https://docs.npmjs.com/cli/using-npm/scripts). Adding the missing `uninstall` script would not help; the script has to go.
+
 No fix is provided because a hook-like name may be an intentionally standalone command, and only the package author can decide whether to remove it, add its target script, or ignore it.
 
 ## Options
@@ -53,6 +55,24 @@ Regular expressions matching standalone script names to ignore. Strings are inte
 		"prebuild": "npm run clean",
 		"build": "tsc",
 		"postbuild": "npm run check"
+	}
+}
+```
+
+```json
+// ❌ — npm never runs the uninstall lifecycle, so adding `uninstall` would not help.
+{
+	"scripts": {
+		"preuninstall": "my-cleanup"
+	}
+}
+```
+
+```json
+// ✅ — the cleanup has to move somewhere npm actually runs it.
+{
+	"scripts": {
+		"clean": "my-cleanup"
 	}
 }
 ```

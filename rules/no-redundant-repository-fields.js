@@ -1,5 +1,10 @@
 import GitHost from 'hosted-git-info';
-import {getRootObject, findMember, removeMember} from './utils/index.js';
+import {
+	getRootObject,
+	findMember,
+	countEffectiveMembers,
+	removeMemberAndDuplicates,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'no-redundant-repository-fields';
 
@@ -38,7 +43,8 @@ function getBugsUrl(bugsValue) {
 		return bugsValue.value;
 	}
 
-	if (bugsValue.type === 'Object' && bugsValue.members.length === 1) {
+	// Count effective members so a duplicated `url` key still reads as an object carrying only `url`.
+	if (bugsValue.type === 'Object' && countEffectiveMembers(bugsValue) === 1) {
 		const url = findMember(bugsValue, 'url');
 		return url?.value.type === 'String' ? url.value.value : undefined;
 	}
@@ -78,7 +84,7 @@ const create = context => ({
 				messageId: MESSAGE_ID,
 				data: {field: 'homepage'},
 				* fix(fixer) {
-					yield * removeMember(fixer, sourceCode, homepage);
+					yield * removeMemberAndDuplicates(fixer, sourceCode, homepage);
 				},
 			});
 		}
@@ -92,7 +98,7 @@ const create = context => ({
 				messageId: MESSAGE_ID,
 				data: {field: 'bugs'},
 				* fix(fixer) {
-					yield * removeMember(fixer, sourceCode, bugs);
+					yield * removeMemberAndDuplicates(fixer, sourceCode, bugs);
 				},
 			});
 		}

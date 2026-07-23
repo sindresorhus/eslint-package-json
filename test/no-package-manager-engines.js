@@ -12,8 +12,16 @@ test.snapshot({
 		'{"engines": ">=18"}',
 		// The modern mechanism.
 		'{"packageManager": "pnpm@9.0.0"}',
+		// `packageManager` names a single manager, so a tool declaring which ones it supports has no replacement to migrate to.
+		'{"engines": {"node": ">=18", "npm": ">=10", "yarn": ">=1.7.0", "pnpm": ">=11", "bun": ">=1"}}',
+		'{"engines": {"npm": ">=10", "pnpm": ">=9"}}',
+		'{"engines": {"npm": ">=10", "yarn": ">=4"}}',
 	],
 	invalid: [
+		// Every alternative has a lower bound, so a `packageManager` version can be inferred.
+		'{"engines": {"npm": ">=8 || >=9"}}',
+		// One alternative has no lower bound, so no version can be inferred and only removal is offered.
+		'{"engines": {"npm": ">=8 || <9"}}',
 		'{"engines": {"npm": ">=10"}}',
 		'{"engines": {"yarn": ">=4"}}',
 		'{"engines": {"pnpm": ">=9"}}',
@@ -50,8 +58,9 @@ test.snapshot({
 			},
 			"scripts": {}
 		}`,
-		// Multiple package manager engines cannot be migrated into one field.
-		'{"engines": {"npm": ">=10", "yarn": ">=4"}}',
+		// A key repeated is still a single manager, so it is reported rather than treated as multi-manager support, and the migration pins the range npm actually enforces.
+		'{"engines": {"npm": ">=8", "npm": ">=9"}}',
+		'{"engines": {"node": ">=18", "npm": ">=10", "npm": ">=12"}}',
 		// Do not replace an existing package manager field, regardless of its value type.
 		'{"packageManager": "npm@10.0.0", "engines": {"npm": ">=10"}}',
 		'{"packageManager": true, "engines": {"npm": ">=10"}}',
@@ -73,6 +82,8 @@ test.snapshot({
 		'{"engines": {\n\t"node": ">=18",\n\t"npm": ">=10"\n}}',
 		// Preserve CRLF formatting.
 		'{\r\n\t"engines": {\r\n\t\t"node": ">=18",\r\n\t\t"npm": ">=10"\r\n\t}\r\n}',
+		// A shadowed duplicate `engines` must go too, or removing the effective one promotes it into its place.
+		'{"engines": {"npm": ">=8"}, "engines": {"yarn": ">=1"}}',
 		// Wildcards, malformed values, and non-string values cannot be safely pinned.
 		'{"engines": {"npm": "*"}}',
 		'{"engines": {"npm": ""}}',

@@ -33,5 +33,7 @@ test.snapshot({
 		'{"private": "", "overrides": {}}',
 		'{"private": 0, "overrides": {}}',
 		'{"private": null, "overrides": {}}',
+		// A shadowed duplicate must go too, or removing the effective field promotes it into its place.
+		'{"overrides": {"a": "1.0.0"}, "name": "foo", "overrides": {"b": "1.0.0"}}',
 	],
 });

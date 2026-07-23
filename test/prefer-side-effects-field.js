@@ -27,6 +27,8 @@ test.snapshot({
 		'{"exports": {"./feature": "./feature.js"}}',
 		'{"exports": ["./index.js", "./fallback.js"]}',
 		'{"exports": "./index.js", "custom": true}',
+		// An unknown field before `exports` must not pull the added `sideEffects` in front of `exports`.
+		'{"custom": "x", "exports": "./index.js"}',
 		'{\r\n\t"exports": "./index.js",\r\n\t"engines": {"node": ">=18"}\r\n}',
 		// Private packages can still be bundled from a workspace.
 		'{"private": true, "exports": "./index.js"}',

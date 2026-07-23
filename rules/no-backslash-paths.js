@@ -15,7 +15,7 @@ const create = context => ({
 			return;
 		}
 
-		for (const valueNode of iteratePathValueNodes(root)) {
+		for (const {node: valueNode} of iteratePathValueNodes(root)) {
 			if (!valueNode.value.includes('\\')) {
 				continue;
 			}

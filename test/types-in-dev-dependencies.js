@@ -43,6 +43,8 @@ test.snapshot({
 		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^19.0.0"}}',
 		// A malformed (non-object) devDependencies is left to `valid-fields`; no fix is offered.
 		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": "invalid"}',
+		// Removing only the effective member would leave the earlier duplicate in `dependencies`.
+		'{"dependencies": {"@types/node": "^19.0.0", "@types/node": "^20.0.0"}}',
 		// A non-string range is malformed; the entry is reported but no fix is offered.
 		'{"dependencies": {"@types/node": 1}}',
 		// Multiline input: the moved entry preserves the file's indentation.

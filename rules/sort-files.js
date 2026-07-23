@@ -2,11 +2,10 @@ import {
 	getRootObject,
 	findMember,
 	getKey,
-	getIndentString,
-	getNewline,
+	buildReordered,
 	isSameOrder,
-	lineIndentOf,
 	pathFields,
+	compareStrings,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'sort-files';
@@ -167,36 +166,9 @@ function compareFilesEntries(firstValue, secondValue, entryPointOrder) {
 	const firstPathSortInfo = getPathSortInfo(firstValue);
 	const secondPathSortInfo = getPathSortInfo(secondValue);
 
-	return firstPathSortInfo.stem.localeCompare(secondPathSortInfo.stem)
+	return compareStrings(firstPathSortInfo.stem, secondPathSortInfo.stem)
 		|| firstPathSortInfo.category - secondPathSortInfo.category
-		|| firstPathSortInfo.path.localeCompare(secondPathSortInfo.path);
-}
-
-/**
-Build a reordered files array while preserving the document's indentation and newline style.
-*/
-function buildReorderedArray(sourceCode, arrayNode, orderedElements) {
-	const newline = getNewline(sourceCode);
-	const indentation = getIndentString(sourceCode);
-	const arrayIndentation = lineIndentOf(sourceCode, arrayNode);
-	const firstElementStart = arrayNode.elements[0].value.range[0];
-	const textBeforeFirstElement = sourceCode.text.slice(arrayNode.range[0] + 1, firstElementStart);
-	const elementIndentation = textBeforeFirstElement.includes('\n')
-		? textBeforeFirstElement.slice(textBeforeFirstElement.lastIndexOf('\n') + 1)
-		: arrayIndentation + indentation;
-
-	const lastElementEnd = arrayNode.elements.at(-1).value.range[1];
-	const textBeforeClosingBracket = sourceCode.text.slice(lastElementEnd, arrayNode.range[1] - 1);
-	const closingIndentation = textBeforeClosingBracket.includes('\n')
-		? textBeforeClosingBracket.slice(textBeforeClosingBracket.lastIndexOf('\n') + 1)
-		: arrayIndentation;
-
-	return '['
-		+ newline
-		+ orderedElements.map(element => elementIndentation + sourceCode.getText(element.value)).join(',' + newline)
-		+ newline
-		+ closingIndentation
-		+ ']';
+		|| compareStrings(firstPathSortInfo.path, secondPathSortInfo.path);
 }
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -233,7 +205,7 @@ const create = context => {
 			context.report({
 				node: filesMember.value,
 				messageId: MESSAGE_ID,
-				fix: fixer => fixer.replaceText(filesMember.value, buildReorderedArray(sourceCode, filesMember.value, orderedElements)),
+				fix: fixer => fixer.replaceText(filesMember.value, buildReordered(sourceCode, filesMember.value, orderedElements.map(element => element.value))),
 			});
 		},
 	};

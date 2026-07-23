@@ -2,7 +2,7 @@ import {
 	getRootObject,
 	findMember,
 	isPrivatePackage,
-	removeMember,
+	removeMemberAndDuplicates,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-overrides-in-published-package';
@@ -41,7 +41,7 @@ const create = context => ({
 				{
 					messageId: SUGGESTION_ID,
 					* fix(fixer) {
-						yield * removeMember(fixer, sourceCode, overrides);
+						yield * removeMemberAndDuplicates(fixer, sourceCode, overrides);
 					},
 				},
 			],

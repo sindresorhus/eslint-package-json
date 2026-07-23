@@ -19,6 +19,9 @@ test.snapshot({
 		'{"modules": "index.js"}',
 	],
 	invalid: [
+		// A four-character field is the shortest the edit-distance heuristic considers.
+		'{"nome": "x"}',
+		'{"bugz": "https://example.com"}',
 		'{"dependancies": {}}',
 		'{"devDependences": {}}',
 		'{"dev-dependencies": {}}',

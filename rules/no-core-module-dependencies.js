@@ -4,7 +4,7 @@ import {
 	iterateDependencies,
 	optionsSchema,
 	stringArraySchema,
-	removeMember,
+	removeMemberAndDuplicates,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-core-module-dependencies';
@@ -40,7 +40,7 @@ const create = context => {
 							{
 								messageId: SUGGESTION_ID,
 								* fix(fixer) {
-									yield * removeMember(fixer, sourceCode, member);
+									yield * removeMemberAndDuplicates(fixer, sourceCode, member);
 								},
 							},
 						],

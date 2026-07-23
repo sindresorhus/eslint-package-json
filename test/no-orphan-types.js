@@ -55,5 +55,7 @@ test.snapshot({
 		'{"devDependencies": {"@types/foo__bar": "^1.0.0"}}',
 		// An orphan type in `dependencies` is flagged too, not just `devDependencies`.
 		'{"dependencies": {"@types/foo": "^1.0.0"}}',
+		// Removing only the effective member would promote the earlier duplicate into its place.
+		'{"devDependencies": {"@types/foo": "^1.0.0", "@types/foo": "^2.0.0"}}',
 	],
 });

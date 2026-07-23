@@ -1,4 +1,4 @@
-import {getRootObject, findMember} from './utils/index.js';
+import {getRootObject, findMember, tryDecodeUriComponent} from './utils/index.js';
 
 const MESSAGE_ID = 'no-fallback-export-arrays';
 
@@ -10,11 +10,9 @@ const messages = {
 Whether a path segment is invalid in a package target.
 */
 function isInvalidPackageTargetSegment(segment) {
-	let decodedSegment;
+	const decodedSegment = tryDecodeUriComponent(segment);
 
-	try {
-		decodedSegment = decodeURIComponent(segment);
-	} catch {
+	if (decodedSegment === undefined) {
 		return false;
 	}
 

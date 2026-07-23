@@ -19,7 +19,65 @@ Output:
 
 `;
 
-exports[`invalid(10): {\"scripts\": {\"z\": \"run z\", \"a\": \"run a\"}} 1`] = `
+exports[`invalid(10): {\"dependencies\": {\"pkg-10\": \"^1.0.0\", \"pkg-9\": \"^1.0.0\", \"pkg-1\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"pkg-10": "^1.0.0", "pkg-9": "^1.0.0", "pkg-1": "^1.0.0"}}
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"pkg-10\": \"^1.0.0\", \"pkg-9\": \"^1.0.0\", \"pkg-1\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"pkg-10": "^1.0.0", "pkg-9": "^1.0.0", "pkg-1": "^1.0.0"}}
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Keys in \`dependencies\` should be sorted alphabetically.
+
+Output:
+  1 | {"dependencies": {
+  2 | 	"pkg-1": "^1.0.0",
+  3 | 	"pkg-10": "^1.0.0",
+  4 | 	"pkg-9": "^1.0.0"
+  5 | }}
+
+`;
+
+exports[`invalid(11): {\r\n\t\"dependencies\": {\r\n\t\t\"b\": \"^2.0.0\",\r\n\t\t\"a\": \"^1.0.0\"\r\n\t}\r\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"dependencies": {
+  3 | 		"b": "^2.0.0",
+  4 | 		"a": "^1.0.0"
+  5 | 	}
+  6 | }
+
+`;
+
+exports[`invalid(11): {\r\n\t\"dependencies\": {\r\n\t\t\"b\": \"^2.0.0\",\r\n\t\t\"a\": \"^1.0.0\"\r\n\t}\r\n} 2`] = `
+
+Message:
+  1 | {
+> 2 | 	"dependencies": {
+    | 	                ^
+> 3 | 		"b": "^2.0.0",
+    | ^^^^^^^^^^^^^^^^
+> 4 | 		"a": "^1.0.0"
+    | ^^^^^^^^^^^^^^^
+> 5 | 	}
+    | ^^ Keys in \`dependencies\` should be sorted alphabetically.
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"dependencies": {
+  3 | 		"a": "^1.0.0",
+  4 | 		"b": "^2.0.0"
+  5 | 	}
+  6 | }
+
+`;
+
+exports[`invalid(12): {\"scripts\": {\"z\": \"run z\", \"a\": \"run a\"}} 1`] = `
 
 [Input]
 Options:
@@ -31,7 +89,7 @@ Code:
 
 `;
 
-exports[`invalid(10): {\"scripts\": {\"z\": \"run z\", \"a\": \"run a\"}} 2`] = `
+exports[`invalid(12): {\"scripts\": {\"z\": \"run z\", \"a\": \"run a\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"z": "run z", "a": "run a"}}
@@ -45,14 +103,14 @@ Output:
 
 `;
 
-exports[`invalid(11): {\"dependencies\": {\"b\": \"^1.0.0\", \"a\": \"^2.0.0\"}, \"devDependencies\": {\"z\": \"^1.0.0\", \"a\": \"^2.0.0\"}} 1`] = `
+exports[`invalid(13): {\"dependencies\": {\"b\": \"^1.0.0\", \"a\": \"^2.0.0\"}, \"devDependencies\": {\"z\": \"^1.0.0\", \"a\": \"^2.0.0\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"b": "^1.0.0", "a": "^2.0.0"}, "devDependencies": {"z": "^1.0.0", "a": "^2.0.0"}}
 
 `;
 
-exports[`invalid(11): {\"dependencies\": {\"b\": \"^1.0.0\", \"a\": \"^2.0.0\"}, \"devDependencies\": {\"z\": \"^1.0.0\", \"a\": \"^2.0.0\"}} 2`] = `
+exports[`invalid(13): {\"dependencies\": {\"b\": \"^1.0.0\", \"a\": \"^2.0.0\"}, \"devDependencies\": {\"z\": \"^1.0.0\", \"a\": \"^2.0.0\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"b": "^1.0.0", "a": "^2.0.0"}, "devDependencies": {"z": "^1.0.0", "a": "^2.0.0"}}
@@ -66,7 +124,7 @@ Output:
 
 `;
 
-exports[`invalid(11): {\"dependencies\": {\"b\": \"^1.0.0\", \"a\": \"^2.0.0\"}, \"devDependencies\": {\"z\": \"^1.0.0\", \"a\": \"^2.0.0\"}} 3`] = `
+exports[`invalid(13): {\"dependencies\": {\"b\": \"^1.0.0\", \"a\": \"^2.0.0\"}, \"devDependencies\": {\"z\": \"^1.0.0\", \"a\": \"^2.0.0\"}} 3`] = `
 
 Message:
 > 1 | {"dependencies": {"b": "^1.0.0", "a": "^2.0.0"}, "devDependencies": {"z": "^1.0.0", "a": "^2.0.0"}}
@@ -257,38 +315,27 @@ Output:
 
 `;
 
-exports[`invalid(9): {\r\n\t\"dependencies\": {\r\n\t\t\"b\": \"^2.0.0\",\r\n\t\t\"a\": \"^1.0.0\"\r\n\t}\r\n} 1`] = `
+exports[`invalid(9): {\"dependencies\": {\"Zebra\": \"^1.0.0\", \"apple\": \"^1.0.0\", \"Apple\": \"^1.0.0\", \"a-b\": \"^1.0.0\", \"ab\": \"^1.0.0\", \"a_b\": \"^1.0.0\"}} 1`] = `
 
 [Input]
-  1 | {
-  2 | 	"dependencies": {
-  3 | 		"b": "^2.0.0",
-  4 | 		"a": "^1.0.0"
-  5 | 	}
-  6 | }
+  1 | {"dependencies": {"Zebra": "^1.0.0", "apple": "^1.0.0", "Apple": "^1.0.0", "a-b": "^1.0.0", "ab": "^1.0.0", "a_b": "^1.0.0"}}
 
 `;
 
-exports[`invalid(9): {\r\n\t\"dependencies\": {\r\n\t\t\"b\": \"^2.0.0\",\r\n\t\t\"a\": \"^1.0.0\"\r\n\t}\r\n} 2`] = `
+exports[`invalid(9): {\"dependencies\": {\"Zebra\": \"^1.0.0\", \"apple\": \"^1.0.0\", \"Apple\": \"^1.0.0\", \"a-b\": \"^1.0.0\", \"ab\": \"^1.0.0\", \"a_b\": \"^1.0.0\"}} 2`] = `
 
 Message:
-  1 | {
-> 2 | 	"dependencies": {
-    | 	                ^
-> 3 | 		"b": "^2.0.0",
-    | ^^^^^^^^^^^^^^^^
-> 4 | 		"a": "^1.0.0"
-    | ^^^^^^^^^^^^^^^
-> 5 | 	}
-    | ^^ Keys in \`dependencies\` should be sorted alphabetically.
-  6 | }
+> 1 | {"dependencies": {"Zebra": "^1.0.0", "apple": "^1.0.0", "Apple": "^1.0.0", "a-b": "^1.0.0", "ab": "^1.0.0", "a_b": "^1.0.0"}}
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Keys in \`dependencies\` should be sorted alphabetically.
 
 Output:
-  1 | {
-  2 | 	"dependencies": {
-  3 | 		"a": "^1.0.0",
-  4 | 		"b": "^2.0.0"
-  5 | 	}
-  6 | }
+  1 | {"dependencies": {
+  2 | 	"a_b": "^1.0.0",
+  3 | 	"a-b": "^1.0.0",
+  4 | 	"ab": "^1.0.0",
+  5 | 	"apple": "^1.0.0",
+  6 | 	"Apple": "^1.0.0",
+  7 | 	"Zebra": "^1.0.0"
+  8 | }}
 
 `;

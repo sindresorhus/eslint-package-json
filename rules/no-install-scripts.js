@@ -2,7 +2,7 @@ import {
 	getRootObject,
 	findMember,
 	getKey,
-	removeMember,
+	removeMemberAndDuplicates,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-install-scripts';
@@ -48,7 +48,7 @@ const create = context => ({
 						messageId: SUGGESTION_ID,
 						data: {script: getKey(member)},
 						* fix(fixer) {
-							yield * removeMember(fixer, sourceCode, member);
+							yield * removeMemberAndDuplicates(fixer, sourceCode, member);
 						},
 					},
 				],

@@ -1,6 +1,25 @@
+import nodeTest from 'node:test';
+import assert from 'node:assert/strict';
+import {Linter} from 'eslint';
+import json from '@eslint/json';
 import {getTester} from './utils/test.js';
 
-const {test} = getTester(import.meta);
+const {test, ruleId, rule} = getTester(import.meta);
+
+// Writing a glob where a regular expression is expected is an easy mistake, and `RegExp` throwing raw would surface as an unattributed "Error while loading rule".
+nodeTest('an invalid `ignore` pattern explains itself', () => {
+	const linter = new Linter();
+
+	assert.throws(
+		() => linter.verify('{"scripts": {"prebuild": "x"}}', {
+			files: ['**/package.json'],
+			language: 'json/json',
+			plugins: {json, 'rule-to-test': {rules: {[ruleId]: rule}}},
+			rules: {[`rule-to-test/${ruleId}`]: ['error', {ignore: ['*build']}]},
+		}, {filename: 'package.json'}),
+		/takes regular expressions, not globs, and "\*build" is not a valid one/,
+	);
+});
 
 test.snapshot({
 	valid: [
@@ -52,6 +71,8 @@ test.snapshot({
 		{code: '{"scripts": {"prebuild": "npm run build", "pretest": "npm test"}}', options: [{ignore: [/^pre/g]}]},
 		// An implicit npm `start` script needs an explicit exemption.
 		{code: '{"scripts": {"prestart": "npm run setup"}}', options: [{ignore: ['prestart']}]},
+		// `ignore` also silences the removed uninstall lifecycle, since it is checked before every report.
+		{code: '{"scripts": {"preuninstall": "cleanup"}}', options: [{ignore: ['^preuninstall$']}]},
 	],
 	invalid: [
 		`{
@@ -68,5 +89,11 @@ test.snapshot({
 		'{"scripts": {"precommit:lint": "lint-staged", "pre-commit:checks": "lint-staged", "prepush:ci": "npm test", "pre-push:checks": "npm test"}}',
 		// A standalone command with a hook-like name needs `ignore`.
 		'{"scripts": {"preflight": "npm run check"}}',
+		// The npm CLI removed the uninstall lifecycle in v7, so these never run and adding `uninstall` would not help.
+		'{"scripts": {"preuninstall": "cleanup"}}',
+		'{"scripts": {"uninstall": "cleanup"}}',
+		'{"scripts": {"postuninstall": "cleanup"}}',
+		// Even with the target script present, since npm runs none of the three.
+		'{"scripts": {"preuninstall": "cleanup", "uninstall": "cleanup"}}',
 	],
 });

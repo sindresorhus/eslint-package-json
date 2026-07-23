@@ -67,5 +67,10 @@ test.snapshot({
 			code: '{\n\t"name": "foo",\n\t"funding": "x"\n}',
 			options: [{fields: ['funding']}],
 		},
+		// Removing only the effective member would promote the earlier duplicate into its place.
+		{
+			code: '{"funding": "x", "funding": "y", "name": "foo"}',
+			options: [{fields: ['funding']}],
+		},
 	],
 });

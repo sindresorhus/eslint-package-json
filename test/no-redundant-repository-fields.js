@@ -31,6 +31,8 @@ test.snapshot({
 		'{"repository": "foo/bar", "bugs": "https://github.com/foo/bar/issues", "homepage": "https://github.com/foo/bar#readme"}',
 		// `bugs` as a redundant `{url}`-only object.
 		'{"repository": "foo/bar", "bugs": {"url": "https://github.com/foo/bar/issues"}}',
+		// A `bugs` object with a duplicated `url` key still effectively carries only `url`, so it is redundant.
+		'{"repository": "foo/bar", "bugs": {"url": "https://example.com", "url": "https://github.com/foo/bar/issues"}}',
 		// Full git URL form.
 		'{"repository": {"url": "git+https://github.com/foo/bar.git"}, "bugs": "https://github.com/foo/bar/issues"}',
 		// GitLab.
@@ -41,5 +43,8 @@ test.snapshot({
 		'{"repository": "gist:abc123", "bugs": "https://gist.github.com/abc123", "homepage": "https://gist.github.com/abc123"}',
 		// Sourcehut still infers a homepage even though it does not infer bugs.
 		'{"repository": "https://git.sr.ht/~foo/bar", "homepage": "https://git.sr.ht/~foo/bar#readme"}',
+		// A shadowed duplicate must go too, or removing the effective field promotes it into its place.
+		'{"repository": "foo/bar", "homepage": "https://old.example.com", "homepage": "https://github.com/foo/bar#readme"}',
+		'{"repository": "foo/bar", "bugs": "https://old.example.com/issues", "bugs": "https://github.com/foo/bar/issues"}',
 	],
 });

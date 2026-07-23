@@ -1,7 +1,7 @@
 import {
 	getRootObject,
 	findMember,
-	removeMember,
+	removeMemberAndDuplicates,
 	optionsSchema,
 } from './utils/index.js';
 
@@ -50,7 +50,7 @@ const create = context => {
 						{
 							messageId: SUGGESTION_ID,
 							* fix(fixer) {
-								yield * removeMember(fixer, sourceCode, member);
+								yield * removeMemberAndDuplicates(fixer, sourceCode, member);
 							},
 						},
 					],

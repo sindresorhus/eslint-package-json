@@ -11,7 +11,9 @@
 
 Constraining a package manager version through `engines` (for example `engines.npm`, `engines.yarn`, `engines.pnpm`, or `engines.bun`) commonly goes stale and blocks installs for users on a different, perfectly compatible version. The modern mechanism for Corepack-supported package managers is the [`packageManager`](https://nodejs.org/api/corepack.html) field, which Corepack uses to provision the exact package manager version for the project.
 
-The migration suggestion is available for npm, Yarn, and pnpm. It infers the lowest semver version allowed by the engine range and pins it in `packageManager` (for example, `>=10` becomes `npm@10.0.0`). Bun is reported but offers only the removal suggestion because Corepack does not support it. Ranges without a usable lower bound, multiple package manager engines, or an existing `packageManager` field also offer only the removal suggestion.
+The migration suggestion is available for npm, Yarn, and pnpm. It infers the lowest semver version allowed by the engine range and pins it in `packageManager` (for example, `>=10` becomes `npm@10.0.0`). Bun is reported but offers only the removal suggestion because Corepack does not support it. Ranges without a usable lower bound, or an existing `packageManager` field, also offer only the removal suggestion.
+
+Declaring more than one package manager is not reported at all. `packageManager` names a single manager, so it cannot express "runs under npm or Yarn or pnpm" — a tool that lists several is stating which ones it supports, and this rule has no replacement to offer.
 
 `engines.node` is unaffected and remains the right place to declare the supported Node.js version.
 
@@ -34,5 +36,17 @@ The migration suggestion is available for npm, Yarn, and pnpm. It infers the low
 		"node": ">=18"
 	},
 	"packageManager": "npm@10.0.0"
+}
+```
+
+```json
+// ✅ — several managers state what the tool supports, which `packageManager` cannot express.
+{
+	"engines": {
+		"node": ">=18",
+		"npm": ">=10",
+		"yarn": ">=1.7.0",
+		"pnpm": ">=11"
+	}
 }
 ```

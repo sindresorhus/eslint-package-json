@@ -1,4 +1,46 @@
-exports[`invalid(1): {\n\t\"name\": \"foo\",\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
+exports[`invalid(1): {\"maintainers\": [\"a\"], \"maintainers\": [\"b\"]} 1`] = `
+
+[Input]
+  1 | {"maintainers": ["a"], "maintainers": ["b"]}
+
+`;
+
+exports[`invalid(1): {\"maintainers\": [\"a\"], \"maintainers\": [\"b\"]} 2`] = `
+
+Message:
+> 1 | {"maintainers": ["a"], "maintainers": ["b"]}
+    |                        ^^^^^^^^^^^^^ The \`maintainers\` field is managed by npm from the publishing account; remove it from \`package.json\`.
+
+Suggestion 1/2: Remove the \`maintainers\` field.:
+  1 | {}
+
+Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
+  1 | {"contributors": ["b"]}
+
+`;
+
+exports[`invalid(2): {\"maintainers\": [\"a\"], \"x\": 1, \"maintainers\": [\"b\"]} 1`] = `
+
+[Input]
+  1 | {"maintainers": ["a"], "x": 1, "maintainers": ["b"]}
+
+`;
+
+exports[`invalid(2): {\"maintainers\": [\"a\"], \"x\": 1, \"maintainers\": [\"b\"]} 2`] = `
+
+Message:
+> 1 | {"maintainers": ["a"], "x": 1, "maintainers": ["b"]}
+    |                                ^^^^^^^^^^^^^ The \`maintainers\` field is managed by npm from the publishing account; remove it from \`package.json\`.
+
+Suggestion 1/2: Remove the \`maintainers\` field.:
+  1 | {"x": 1}
+
+Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
+  1 | {"x": 1, "contributors": ["b"]}
+
+`;
+
+exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -10,7 +52,7 @@ exports[`invalid(1): {\n\t\"name\": \"foo\",\n\t\"maintainers\": [\n\t\t\"Jane D
 
 `;
 
-exports[`invalid(1): {\n\t\"name\": \"foo\",\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
+exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -36,7 +78,7 @@ Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
 
 `;
 
-exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"contributors\": [\n\t\t\"John Smith <john@example.com>\"\n\t],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
+exports[`invalid(4): {\n\t\"name\": \"foo\",\n\t\"contributors\": [\n\t\t\"John Smith <john@example.com>\"\n\t],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -51,7 +93,7 @@ exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"contributors\": [\n\t\t\"John 
 
 `;
 
-exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"contributors\": [\n\t\t\"John Smith <john@example.com>\"\n\t],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
+exports[`invalid(4): {\n\t\"name\": \"foo\",\n\t\"contributors\": [\n\t\t\"John Smith <john@example.com>\"\n\t],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -84,7 +126,7 @@ Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
 
 `;
 
-exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"contributors\": [],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
+exports[`invalid(5): {\n\t\"name\": \"foo\",\n\t\"contributors\": [],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -97,7 +139,7 @@ exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"contributors\": [],\n\t\"maint
 
 `;
 
-exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"contributors\": [],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
+exports[`invalid(5): {\n\t\"name\": \"foo\",\n\t\"contributors\": [],\n\t\"maintainers\": [\n\t\t\"Jane Doe <jane@example.com>\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -125,14 +167,35 @@ Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
 
 `;
 
-exports[`invalid(4): {\"maintainers\": []} 1`] = `
+exports[`invalid(6): {\"contributors\": [\"Bob\"], \"maintainers\": [\"Alice\", \"Carol\"]} 1`] = `
+
+[Input]
+  1 | {"contributors": ["Bob"], "maintainers": ["Alice", "Carol"]}
+
+`;
+
+exports[`invalid(6): {\"contributors\": [\"Bob\"], \"maintainers\": [\"Alice\", \"Carol\"]} 2`] = `
+
+Message:
+> 1 | {"contributors": ["Bob"], "maintainers": ["Alice", "Carol"]}
+    |                           ^^^^^^^^^^^^^ The \`maintainers\` field is managed by npm from the publishing account; remove it from \`package.json\`.
+
+Suggestion 1/2: Remove the \`maintainers\` field.:
+  1 | {"contributors": ["Bob"]}
+
+Suggestion 2/2: Move the \`maintainers\` entries into \`contributors\`.:
+  1 | {"contributors": ["Bob", "Alice", "Carol"]}
+
+`;
+
+exports[`invalid(7): {\"maintainers\": []} 1`] = `
 
 [Input]
   1 | {"maintainers": []}
 
 `;
 
-exports[`invalid(4): {\"maintainers\": []} 2`] = `
+exports[`invalid(7): {\"maintainers\": []} 2`] = `
 
 Message:
 > 1 | {"maintainers": []}
@@ -143,14 +206,14 @@ Suggestion 1/1: Remove the \`maintainers\` field.:
 
 `;
 
-exports[`invalid(5): {\"contributors\": \"John Smith\", \"maintainers\": [\"Jane Doe <jane@example.com>\"]} 1`] = `
+exports[`invalid(8): {\"contributors\": \"John Smith\", \"maintainers\": [\"Jane Doe <jane@example.com>\"]} 1`] = `
 
 [Input]
   1 | {"contributors": "John Smith", "maintainers": ["Jane Doe <jane@example.com>"]}
 
 `;
 
-exports[`invalid(5): {\"contributors\": \"John Smith\", \"maintainers\": [\"Jane Doe <jane@example.com>\"]} 2`] = `
+exports[`invalid(8): {\"contributors\": \"John Smith\", \"maintainers\": [\"Jane Doe <jane@example.com>\"]} 2`] = `
 
 Message:
 > 1 | {"contributors": "John Smith", "maintainers": ["Jane Doe <jane@example.com>"]}

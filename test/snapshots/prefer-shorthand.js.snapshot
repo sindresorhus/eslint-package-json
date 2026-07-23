@@ -123,3 +123,36 @@ Output:
   1 | {"repository": "github:user/repo"}
 
 `;
+
+exports[`invalid(8): {\n\t\"bugs\": {\n\t\t\"url\": \"https://example.com/old\",\n\t\t\"url\": \"https://github.com/user/repo/issues\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"bugs": {
+  3 | 		"url": "https://example.com/old",
+  4 | 		"url": "https://github.com/user/repo/issues"
+  5 | 	}
+  6 | }
+
+`;
+
+exports[`invalid(8): {\n\t\"bugs\": {\n\t\t\"url\": \"https://example.com/old\",\n\t\t\"url\": \"https://github.com/user/repo/issues\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+> 2 | 	"bugs": {
+    | 	        ^
+> 3 | 		"url": "https://example.com/old",
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 4 | 		"url": "https://github.com/user/repo/issues"
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 5 | 	}
+    | ^^ The \`bugs\` field can use the shorthand string form.
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"bugs": "https://github.com/user/repo/issues"
+  3 | }
+
+`;

@@ -2,6 +2,7 @@ import {
 	getRootObject,
 	findMember,
 	getKey,
+	validRange,
 	validVersion,
 } from './utils/index.js';
 
@@ -17,21 +18,29 @@ const messages = {
 Compute the `>=` replacement for a caret/tilde/exact engines range, or `undefined` if it should be left alone.
 */
 const toOpenRange = range => {
+	const normalized = validRange(range);
+
+	// A malformed range (`^`, `^abc`) has nothing to convert and would only yield another malformed range; `valid-fields` reports it. A wildcard (`*`, `x`, `~x`) is already open-ended.
+	if (normalized === null || normalized === '*') {
+		return undefined;
+	}
+
 	// Only simple single-comparator ranges convert cleanly. Compound ranges (`^18 || ^20`, `^18 <20`) must be left alone.
 	if (range.includes(' ') || range.includes('|')) {
 		return undefined;
 	}
 
-	if (range.startsWith('^') || range.startsWith('~')) {
-		return '>=' + range.slice(1);
+	const isPrefixed = range.startsWith('^') || range.startsWith('~');
+	const version = isPrefixed ? range.slice(1) : range;
+	const normalizedVersion = validVersion(version);
+
+	// A bare range only converts when it is an exact version (e.g. `18.0.0`), which implies only that version. Anything else (`>=18`, `18.x`) is already open-ended or not ours to rewrite.
+	if (!isPrefixed && normalizedVersion === null) {
+		return undefined;
 	}
 
-	// A bare exact version (e.g. `18.0.0`) implies only that version.
-	if (validVersion(range) !== null) {
-		return '>=' + range;
-	}
-
-	return undefined;
+	// Build from the normalized version so a loose input like `v18.0.0` or `18.0.0+build` becomes a clean `>=18.0.0`. A partial version (`18`, `18.x`) does not normalize and is kept as written.
+	return '>=' + (normalizedVersion ?? version);
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */

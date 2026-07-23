@@ -4,6 +4,8 @@ const {test} = getTester(import.meta);
 
 test.snapshot({
 	valid: [
+		// An empty object holds no conditions to complete.
+		'{"exports": {}}',
 		// Conditions object ending in `default`.
 		`{
 			"exports": {
@@ -50,8 +52,13 @@ test.snapshot({
 				".": ["./index.js", "./fallback.js"]
 			}
 		}`,
+		// A duplicated `default` resolves to its final entry, which is last, so the shadowed earlier one must not raise a false `defaultNotLast`.
+		'{"exports": {"import": "./index.mjs", "default": "./old.cjs", "default": "./new.cjs"}}',
+		'{"exports": {"default": "./a.js", "default": "./b.js"}}',
 	],
 	invalid: [
+		// A subpath map nested inside an array is still a subpath map, not a conditions object.
+		'{"exports": [{".": {"a": 2, "require": 4}}]}',
 		// Conditions object without `default`.
 		`{
 			"exports": {
@@ -81,5 +88,7 @@ test.snapshot({
 		// `default` must be last.
 		'{"exports": {"default": "./index.js", "import": "./index.mjs"}}',
 		'{"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}',
+		// The effective `default` (the final duplicate) keeps its first appearance's position, so with a condition after it the report is genuine and points at the surviving node.
+		'{"exports": {"default": "./a.js", "import": "./b.js", "default": "./c.js"}}',
 	],
 });

@@ -13,7 +13,7 @@ Several fields accept both an object form and a more concise string form. When t
 
 - `bugs`: an object with only a `url` key becomes the URL string.
 - `funding`: an object with only a `url` key becomes the URL string.
-- `author` and `contributors`: an object with a `name` and no keys beyond `name`, `email`, and `url` becomes the `"Name <email> (url)"` string.
+- `author` and `contributors`: an object with a `name` and no keys beyond `name`, `email`, and `url` becomes the `"Name <email> (url)"` string. The string form delimits the email with `<>` and the url with `()`, so an object whose values contain any of those characters is left as-is.
 - `repository`: an object pointing at a github.com URL becomes the `github:user/repo` shorthand. Objects with a non-github URL, a `directory` (monorepo subpath), a non-`git` `type`, or any other extra key are left as-is, since they have no unambiguous shorthand.
 
 Each conversion only applies when the shorthand carries the exact same information as the object form — anything that would be lost is left as-is — so this rule is autofixable.
@@ -71,6 +71,16 @@ Each conversion only applies when the shorthand carries the exact same informati
 	"bugs": {
 		"url": "https://example.com",
 		"email": "bugs@example.com"
+	}
+}
+```
+
+```json
+// ✅ — `(Bar)` would be re-read as the url, so the object form is kept.
+{
+	"author": {
+		"name": "Foo (Bar)",
+		"email": "foo@example.com"
 	}
 }
 ```

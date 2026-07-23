@@ -5,6 +5,7 @@ import {
 	keyConsistencyMessages,
 	hasInvalidPackageTargetSegment,
 	isArrayIndexKey,
+	iterateStringValues,
 } from '../utils/index.js';
 
 const MESSAGE_ID_RELATIVE_PATH = 'relativePath';
@@ -28,45 +29,12 @@ export const messages = {
 	[MESSAGE_ID_ROOT_TYPE]: 'The top-level `exports` field must be a string, an object, or an array.',
 };
 
-/**
-Recursively yields every `String` leaf (a file target) in a value node.
-*/
-function * iterateStringLeaves(node) {
-	switch (node.type) {
-		case 'String': {
-			yield node;
-
-			break;
-		}
-
-		case 'Object': {
-			for (const member of node.members) {
-				yield * iterateStringLeaves(member.value);
-			}
-
-			break;
-		}
-
-		case 'Array': {
-			for (const element of node.elements) {
-				yield * iterateStringLeaves(element.value);
-			}
-
-			break;
-		}
-
-		default: {
-			break;
-		}
-	}
-}
-
 function * checkPatternTarget(node, key) {
 	if (key.includes('*')) {
 		return;
 	}
 
-	for (const leaf of iterateStringLeaves(node)) {
+	for (const leaf of iterateStringValues(node)) {
 		if (leaf.value.includes('*')) {
 			yield {
 				node: leaf,

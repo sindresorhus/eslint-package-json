@@ -21,7 +21,7 @@ Changing a version range alters which versions npm will install, so this rule of
 Type: `'caret' | 'tilde' | 'exact' | 'consistent'`\
 Default: `'caret'`
 
-The required version range style. `'consistent'` does not mandate a specific style; instead it picks the style already used by most dependencies and flags the outliers, so a file using a single style throughout always passes. Ties are broken in favor of caret (`^`).
+The required version range style. `'consistent'` does not mandate a specific style; instead it picks the style already used by most dependencies and flags the outliers, so a file using a single style throughout always passes. Ties are broken in favor of caret (`^`), then tilde (`~`), then exact.
 
 ### `dependencyTypes`
 

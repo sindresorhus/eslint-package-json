@@ -1,10 +1,12 @@
 import npa from 'npm-package-arg';
 import semver from 'semver';
 import {
+	findMember,
 	getIndentString,
 	getKey,
 	getNewline,
 	getRootObject,
+	isArrayIndexKey,
 	lineIndentOf,
 } from './utils/index.js';
 
@@ -22,30 +24,9 @@ const dependencyGroupPrecedence = [
 	'devDependencies',
 ];
 
-const arrayIndexPattern = /^(?:0|[1-9]\d*)$/;
-
 const getCaseInsensitiveKey = name => name.normalize('NFKD').toLowerCase();
 
-const findLastMember = (object, key) => {
-	let result;
-
-	for (const member of object?.members ?? []) {
-		if (getKey(member) === key) {
-			result = member;
-		}
-	}
-
-	return result;
-};
-
-const getArrayIndex = key => {
-	if (!arrayIndexPattern.test(key)) {
-		return undefined;
-	}
-
-	const index = Number(key);
-	return index < (2 ** 32) - 1 ? index : undefined;
-};
+const getArrayIndex = key => isArrayIndexKey(key) ? Number(key) : undefined;
 
 // Overrides are parsed as a JavaScript object, so final duplicate keys win and array-index keys enumerate first.
 function * iterateOverrideMembers(members) {
@@ -80,7 +61,7 @@ const getDirectDependencies = root => {
 	const dependencies = new Map();
 
 	for (const groupName of dependencyGroupPrecedence) {
-		const group = findLastMember(root, groupName);
+		const group = findMember(root, groupName);
 
 		if (group?.value.type !== 'Object') {
 			continue;
@@ -103,8 +84,8 @@ const getDirectDependencies = root => {
 
 const getReferencedSpecifier = (root, name) => {
 	for (const groupName of dependencyGroupPrecedence.toReversed()) {
-		const group = findLastMember(root, groupName);
-		const member = findLastMember(group?.value, name);
+		const group = findMember(root, groupName);
+		const member = findMember(group?.value, name);
 
 		if (!member) {
 			continue;
@@ -185,7 +166,7 @@ const getEffectiveOverride = (member, keySpecifier) => {
 		return undefined;
 	}
 
-	const self = findLastMember(member.value, '.');
+	const self = findMember(member.value, '.');
 
 	if (self) {
 		return self.value.type === 'String' ? {node: self.value, specifier: self.value.value} : undefined;
@@ -244,7 +225,7 @@ const create = context => {
 				return;
 			}
 
-			const overrides = findLastMember(root, 'overrides');
+			const overrides = findMember(root, 'overrides');
 
 			if (overrides?.value.type !== 'Object') {
 				return;

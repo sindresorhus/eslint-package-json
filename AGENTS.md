@@ -93,16 +93,35 @@ Name boolean options in the positive `check*` form, never the negated `ignore*`/
 `rules/utils/index.js` provides:
 
 - `getRootObject(document)`, `findMember(object, key)`, `getKey(member)` — AST navigation.
+- `iterateEffectiveMembers(object)` / `countEffectiveMembers(object)` / `withoutShadowedMembers(node)` — the object as `JSON.parse` builds it, one member per key. See “Duplicate keys” below.
 - `iterateDependencies(root, types?)` — yields `{groupName, group, member, name}` across dependency groups.
 - `dependencyTypes` — the four standard dependency group names.
-- `removeMember`/`removeElement` — comma-aware removal (generators yielding fixes).
-- `buildReorderedObject(sourceCode, object, orderedMembers)` + `isSameOrder` — for sorting fixes that preserve indentation.
+- `removeMember`/`removeMemberAndDuplicates`/`removeShadowedDuplicates`/`removeMembers`/`removeElement` — comma-aware removal (generators yielding fixes). See “Duplicate keys” below for which to use.
+- `buildReordered(sourceCode, container, orderedNodes)` + `isSameOrder` — for sorting fixes on objects or arrays that preserve indentation. Pass an object's members, or an array's element values (`Element` nodes carry no range).
+- `compareStrings` — locale-independent alphabetical comparison. Always use it instead of `String#localeCompare`, whose locale-dependent result would make a fix disagree between a contributor and CI.
+- `iterateStringValues(node)` — every `String` value node in an `exports`/`imports` tree; `iteratePathValueNodes(root)` yields `{node, field}` across every path-bearing field, since the same text means different things per field (a leading `/` is absolute in `main`, redundant in a `files` pattern).
 - `getIndentString`/`getNewline` — detect the file's formatting.
 - `optionsSchema(properties)` + `stringArraySchema` — build a rule's options schema without boilerplate.
 
 Import from `'./utils/index.js'`.
 
 External: `semver`, `validate-npm-package-name`, `spdx-expression-parse`, `detect-indent`.
+
+### Duplicate keys
+
+`findMember` resolves a key to its *final* member, matching `JSON.parse`. Which remover a fix needs follows from that:
+
+- `removeMemberAndDuplicates` — the rule found the field with `findMember` and deletes it. Deleting only the final member promotes an earlier duplicate into its place, so the reported problem would survive its own fix.
+- `removeMember` — the rule iterates members and reports each one separately (`no-empty-fields`, `no-duplicate-dependencies`, the orphaned-entry report in `valid-fields/peer-dependencies-meta`), so each suggestion should remove only its own member. The distinction is per report, not per rule.
+- `removeShadowedDuplicates` — the fix rewrites the effective member instead of deleting it, by renaming its key or replacing it with a member under a different key (`no-manual-maintainers`, `no-package-manager-engines`). It drops the earlier duplicates and leaves the rewritten member alone.
+- `removeMembers` — removing several members, a contiguous run at a time. One at a time does not work: each removal also consumes an adjacent comma, so neighboring members produce overlapping ranges and ESLint rejects the report with `Fix objects must not be overlapped`.
+
+`test/package.js` enforces this: every suggestion must reduce the number of reports of its own `messageId`, so a fix that only unmasks a shadowed duplicate fails the suite.
+
+Duplicates matter for *reports* too, and the dividing line is what the rule is asking:
+
+- Asking what the manifest **means** — does this target resolve, which condition matches, is `url` the only field — must go through the effective members, since a shadowed duplicate is not part of the object npm and Node see, and answering from one makes the rule declare a broken manifest fine. Use `iterateEffectiveMembers(object)` for one object, or `withoutShadowedMembers(node)` to collapse a whole `exports`/`imports` subtree at the rule's entry point (`require-types-in-exports`, `no-missing-files`). Collapsing at the boundary leaves the traversal unchanged, and the surviving nodes are the originals, so reports still point at real source ranges.
+- Reporting on **each entry the author wrote** — an empty field, a duplicated dependency, a typo'd key — should keep using plain `.members`. Extra reports on a document that already has duplicate keys are fine; `json/no-duplicate-keys` flags the underlying problem anyway.
 
 ## Autofix
 
@@ -169,6 +188,13 @@ test.snapshot({
 Test cases are single-quoted JS strings containing JSON. Use `{code, options: [...]}` for option cases. For autofix/suggestion rules that rewrite structure, include multiline JSON inputs so the snapshot proves formatting is preserved. Cover matching and non-matching cases, every option, and edge cases the rule intentionally ignores (non-string values, missing fields).
 
 `test/package.js` is a meta-test (plain `node:test` + `node:assert/strict`) asserting rule↔doc↔test↔config consistency, well-formed `meta`, and that no rule crashes on a non-object root. It runs automatically and should stay green.
+
+It also runs every rule at once over two corpora, where cross-rule problems surface that a rule's own tests cannot:
+
+- **The installed dependency tree** — a few hundred manifests people actually wrote. Real data is what caught `no-absolute-paths` calling `"files": ["/dist"]` an absolute path and `no-self-dependency` rejecting the `"file:."` self-link.
+- **Hand-written unusual manifests** — mistakes published packages never ship (absolute paths, `EOVERRIDE` conflicts, `workspace:` ranges), so the rules the dependency tree never triggers get exercised alongside the others too. That test asserts each of those rules fires, so a rule going silent fails the suite.
+
+Both check the same four properties: no rule crashes, every fix leaves valid JSON, fixing converges in one round, and every suggestion leaves valid JSON. A rule firing on nearly every real manifest usually means the corpus is normalized rather than that the rule is wrong — npm rewrites `author`, `bugs`, `repository`, and key order in its registry metadata.
 
 - Run targeted tests while developing: `node --test --experimental-test-snapshots test/<rule>.js`. Update snapshots with `npm run fix:snapshots` (or add `--test-update-snapshots`).
 - Focus a single case with `test.only(...)` and run with `--test-only`.

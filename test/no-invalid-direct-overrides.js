@@ -39,6 +39,16 @@ test.snapshot({
 		'{"dependencies": {"foo": 1}, "overrides": {"foo": "^2.0.0"}}',
 		'{"dependencies": {"foo": "^1.0.0"}, "overrides": []}',
 		'{"dependencies": {"foo": "^1.0.0"}, "overrides": {"foo": {".": 1}}}',
+		// A non-object, non-string override value has no effective specifier to compare.
+		'{"dependencies": {"foo": "^1.0.0"}, "overrides": {"foo": 123}}',
+		// A `$`-reference to a dependency whose value is non-string cannot resolve, so nothing is reported.
+		'{"dependencies": {"bar": "^1.0.0", "foo": 123}, "overrides": {"bar": "$foo"}}',
+		// An override key npm's parser rejects is skipped rather than crashing the rule.
+		'{"dependencies": {"foo": "^1.0.0"}, "overrides": {"@a/b@not a range": "1.0.0"}}',
+		// An override key that resolves to no package name (a path) is not a package override.
+		'{"overrides": {"./local-pkg": "^1.0.0"}}',
+		// A direct dependency whose git range is unparseable cannot be intersected, so the override is left alone.
+		'{"dependencies": {"foo": "git+https://github.com/foo/bar#semver:not-valid"}, "overrides": {"foo@^1.0.0": "^2.0.0"}}',
 	],
 	invalid: [
 		'{"dependencies": {"foo": "^1.0.0"}, "overrides": {"foo": "^2.0.0"}}',

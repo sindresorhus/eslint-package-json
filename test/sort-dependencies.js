@@ -43,8 +43,12 @@ test.snapshot({
 		'{\n\t"dependencies": {\n\t\t"b": "^2.0.0",\n\t\t"a": "^1.0.0"\n\t}\n}',
 		// Multiline with 2-space indentation — fix must preserve spaces.
 		'{\n  "dependencies": {\n    "b": "^2.0.0",\n    "a": "^1.0.0"\n  }\n}',
-		// Scoped packages sort before unscoped by localeCompare (so this input is unsorted).
+		// Scoped packages sort before unscoped (so this input is unsorted).
 		'{"dependencies": {"zod": "^3.0.0", "@scope/a": "^1.0.0"}}',
+		// Mixed case and separators — ordering must not depend on the machine's locale.
+		'{"dependencies": {"Zebra": "^1.0.0", "apple": "^1.0.0", "Apple": "^1.0.0", "a-b": "^1.0.0", "ab": "^1.0.0", "a_b": "^1.0.0"}}',
+		// Digits sort before letters and are compared as text, not numerically.
+		'{"dependencies": {"pkg-10": "^1.0.0", "pkg-9": "^1.0.0", "pkg-1": "^1.0.0"}}',
 		// CRLF line endings — fix must preserve them.
 		'{\r\n\t"dependencies": {\r\n\t\t"b": "^2.0.0",\r\n\t\t"a": "^1.0.0"\r\n\t}\r\n}',
 		// Custom properties option.

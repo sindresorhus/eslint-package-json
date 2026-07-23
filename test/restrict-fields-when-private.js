@@ -41,6 +41,11 @@ test.snapshot({
 			code: '{"name": "foo", "private": true, "files": ["dist"]}',
 			options: [{fields: ['files']}],
 		},
+		// Removing only the effective `files` would promote the earlier duplicate into its place.
+		{
+			code: '{"name": "foo", "private": true, "files": ["a"], "files": ["b"]}',
+			options: [{fields: ['files']}],
+		},
 		// Multiline object — removal preserves the remaining members' formatting.
 		{
 			code: '{\n\t"name": "foo",\n\t"private": true,\n\t"files": ["dist"]\n}',

@@ -3,7 +3,7 @@ import {
 	findMember,
 	getKey,
 	getRootObject,
-	removeMember,
+	removeMemberAndDuplicates,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-nested-exports';
@@ -61,27 +61,20 @@ const create = context => {
 					continue;
 				}
 
-				const hasDuplicate = root.members.some(candidate => candidate !== member && getKey(candidate) === field);
-				const report = {
+				context.report({
 					node: member.name,
 					messageId: MESSAGE_ID,
 					data: {field},
-				};
-
-				// Removing only the effective member would expose the earlier duplicate.
-				if (!hasDuplicate) {
-					report.suggest = [
+					suggest: [
 						{
 							messageId: SUGGESTION_ID,
 							data: {field},
 							* fix(fixer) {
-								yield * removeMember(fixer, sourceCode, member);
+								yield * removeMemberAndDuplicates(fixer, sourceCode, member);
 							},
 						},
-					];
-				}
-
-				context.report(report);
+					],
+				});
 			}
 		},
 	};

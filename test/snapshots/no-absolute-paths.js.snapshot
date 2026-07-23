@@ -13,6 +13,102 @@ Message:
 
 `;
 
+exports[`invalid(10): {\"files\": [\"//dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["//dist"]}
+
+`;
+
+exports[`invalid(10): {\"files\": [\"//dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["//dist"]}
+    |            ^^^^^^^^ \`files\` pattern \`//dist\` is already relative to the package root. Write it as \`dist\`.
+
+Suggestion 1/1: Remove the leading slash.:
+  1 | {"files": ["dist"]}
+
+`;
+
+exports[`invalid(11): {\"files\": [\"!!/dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["!!/dist"]}
+
+`;
+
+exports[`invalid(11): {\"files\": [\"!!/dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["!!/dist"]}
+    |            ^^^^^^^^^ \`files\` pattern \`!!/dist\` is already relative to the package root. Write it as \`!!dist\`.
+
+Suggestion 1/1: Remove the leading slash.:
+  1 | {"files": ["!!dist"]}
+
+`;
+
+exports[`invalid(12): {\"files\": [\"/\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["/"]}
+
+`;
+
+exports[`invalid(12): {\"files\": [\"/\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["/"]}
+    |            ^^^ Path \`/\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(13): {\"files\": [\"!/\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["!/"]}
+
+`;
+
+exports[`invalid(13): {\"files\": [\"!/\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["!/"]}
+    |            ^^^^ Path \`/\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(14): {\"files\": [\"C:/project/dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["C:/project/dist"]}
+
+`;
+
+exports[`invalid(14): {\"files\": [\"C:/project/dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["C:/project/dist"]}
+    |            ^^^^^^^^^^^^^^^^^ Path \`C:/project/dist\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(15): {\"files\": [\"!C:/project/dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["!C:/project/dist"]}
+
+`;
+
+exports[`invalid(15): {\"files\": [\"!C:/project/dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["!C:/project/dist"]}
+    |            ^^^^^^^^^^^^^^^^^^ Path \`C:/project/dist\` must be relative, not absolute.
+
+`;
+
 exports[`invalid(2): {\"bin\": {\"foo\": \"/usr/local/bin/foo\"}} 1`] = `
 
 [Input]
@@ -43,29 +139,14 @@ Message:
 
 `;
 
-exports[`invalid(4): {\"files\": [\"/dist\"]} 1`] = `
-
-[Input]
-  1 | {"files": ["/dist"]}
-
-`;
-
-exports[`invalid(4): {\"files\": [\"/dist\"]} 2`] = `
-
-Message:
-> 1 | {"files": ["/dist"]}
-    |            ^^^^^^^ Path \`/dist\` must be relative, not absolute.
-
-`;
-
-exports[`invalid(5): {\"main\": \"C:/project/index.js\"} 1`] = `
+exports[`invalid(4): {\"main\": \"C:/project/index.js\"} 1`] = `
 
 [Input]
   1 | {"main": "C:/project/index.js"}
 
 `;
 
-exports[`invalid(5): {\"main\": \"C:/project/index.js\"} 2`] = `
+exports[`invalid(4): {\"main\": \"C:/project/index.js\"} 2`] = `
 
 Message:
 > 1 | {"main": "C:/project/index.js"}
@@ -73,14 +154,14 @@ Message:
 
 `;
 
-exports[`invalid(6): {\"bin\": \"/usr/local/bin/foo\"} 1`] = `
+exports[`invalid(5): {\"bin\": \"/usr/local/bin/foo\"} 1`] = `
 
 [Input]
   1 | {"bin": "/usr/local/bin/foo"}
 
 `;
 
-exports[`invalid(6): {\"bin\": \"/usr/local/bin/foo\"} 2`] = `
+exports[`invalid(5): {\"bin\": \"/usr/local/bin/foo\"} 2`] = `
 
 Message:
 > 1 | {"bin": "/usr/local/bin/foo"}
@@ -88,17 +169,82 @@ Message:
 
 `;
 
-exports[`invalid(7): {\"exports\": [\"./index.js\", \"/abs/fallback.js\"]} 1`] = `
+exports[`invalid(6): {\"exports\": [\"./index.js\", \"/abs/fallback.js\"]} 1`] = `
 
 [Input]
   1 | {"exports": ["./index.js", "/abs/fallback.js"]}
 
 `;
 
-exports[`invalid(7): {\"exports\": [\"./index.js\", \"/abs/fallback.js\"]} 2`] = `
+exports[`invalid(6): {\"exports\": [\"./index.js\", \"/abs/fallback.js\"]} 2`] = `
 
 Message:
 > 1 | {"exports": ["./index.js", "/abs/fallback.js"]}
     |                            ^^^^^^^^^^^^^^^^^^ Path \`/abs/fallback.js\` must be relative, not absolute.
+
+`;
+
+exports[`invalid(7): {\"files\": [\"/dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["/dist"]}
+
+`;
+
+exports[`invalid(7): {\"files\": [\"/dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["/dist"]}
+    |            ^^^^^^^ \`files\` pattern \`/dist\` is already relative to the package root. Write it as \`dist\`.
+
+Suggestion 1/1: Remove the leading slash.:
+  1 | {"files": ["dist"]}
+
+`;
+
+exports[`invalid(8): {\"files\": [\"/dist\", \"/src\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["/dist", "/src"]}
+
+`;
+
+exports[`invalid(8): {\"files\": [\"/dist\", \"/src\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["/dist", "/src"]}
+    |            ^^^^^^^ \`files\` pattern \`/dist\` is already relative to the package root. Write it as \`dist\`.
+
+Suggestion 1/1: Remove the leading slash.:
+  1 | {"files": ["dist", "/src"]}
+
+`;
+
+exports[`invalid(8): {\"files\": [\"/dist\", \"/src\"]} 3`] = `
+
+Message:
+> 1 | {"files": ["/dist", "/src"]}
+    |                     ^^^^^^ \`files\` pattern \`/src\` is already relative to the package root. Write it as \`src\`.
+
+Suggestion 1/1: Remove the leading slash.:
+  1 | {"files": ["/dist", "src"]}
+
+`;
+
+exports[`invalid(9): {\"files\": [\"dist\", \"!/dist/test\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["dist", "!/dist/test"]}
+
+`;
+
+exports[`invalid(9): {\"files\": [\"dist\", \"!/dist/test\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["dist", "!/dist/test"]}
+    |                    ^^^^^^^^^^^^^ \`files\` pattern \`!/dist/test\` is already relative to the package root. Write it as \`!dist/test\`.
+
+Suggestion 1/1: Remove the leading slash.:
+  1 | {"files": ["dist", "!dist/test"]}
 
 `;

@@ -8,6 +8,9 @@ test.snapshot({
 		'{"author": "Jane Doe <jane@example.com>"}',
 	],
 	invalid: [
+		// A shadowed duplicate must not survive either suggestion.
+		'{"maintainers": ["a"], "maintainers": ["b"]}',
+		'{"maintainers": ["a"], "x": 1, "maintainers": ["b"]}',
 		// No `contributors` field: offers renaming `maintainers` to `contributors`.
 		`{
 	"name": "foo",
@@ -33,6 +36,8 @@ test.snapshot({
 		"Jane Doe <jane@example.com>"
 	]
 }`,
+		// A single-line `contributors` array: the moved entries stay on the same line instead of breaking onto an unindented one.
+		'{"contributors": ["Bob"], "maintainers": ["Alice", "Carol"]}',
 		// Empty `maintainers` array: nothing to move, only the remove suggestion is offered.
 		'{"maintainers": []}',
 		// Non-array `contributors`: too malformed to merge into, only the remove suggestion is offered.

@@ -63,7 +63,9 @@ const toSpecifier = (range, version) => {
 };
 
 /**
-Pick the most common style among the classified dependencies, falling back to `caret` on a tie or when there is nothing to compare.
+Pick the most common style among the classified dependencies.
+
+Ties are broken by the fixed preference caret, tilde, exact, so a file with no clear majority (including an empty one) settles on the most conventional style rather than an arbitrary one.
 */
 const dominantStyle = classifieds => {
 	const counts = {caret: 0, tilde: 0, exact: 0};

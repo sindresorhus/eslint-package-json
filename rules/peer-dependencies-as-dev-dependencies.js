@@ -3,6 +3,7 @@ import {
 	getRootObject,
 	getKey,
 	findMember,
+	iterateEffectiveMembers,
 	insertGroupMember,
 	validRange,
 } from './utils/index.js';
@@ -30,8 +31,9 @@ function getOptionalPeers(root) {
 		return optionalPeers;
 	}
 
-	for (const member of peerDependenciesMetaGroup.value.members) {
-		const optionalMember = member.value.type === 'Object' && findMember(member.value, 'optional');
+	for (const member of iterateEffectiveMembers(peerDependenciesMetaGroup.value)) {
+		// `findMember` returns `undefined` for a non-object entry, so a malformed one needs no separate guard.
+		const optionalMember = findMember(member.value, 'optional');
 
 		if (optionalMember?.value.type === 'Boolean' && optionalMember.value.value === true) {
 			optionalPeers.add(getKey(member));
@@ -66,7 +68,7 @@ const create = context => {
 
 			const optionalPeers = getOptionalPeers(root);
 
-			for (const member of peerDependenciesGroup.value.members) {
+			for (const member of iterateEffectiveMembers(peerDependenciesGroup.value)) {
 				const name = getKey(member);
 
 				// A non-string peer range is malformed; `valid-fields` reports it, so skip it here.

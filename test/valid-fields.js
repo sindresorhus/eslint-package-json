@@ -280,6 +280,10 @@ test.snapshot({
 		'{"overrides": {"foo": "$foo", "bar": {".": "1.0.0"}}}',
 	],
 	invalid: [
+		// A recognized protocol is required, not merely a hostname.
+		'{"repository": "ftp://example.com/repo"}',
+		// An absolute path is not a valid `imports` target.
+		'{"imports": {"#a": "/abs.js"}}',
 		// `name`
 		'{"name": "Foo"}',
 		'{"name": " foo"}',
@@ -614,5 +618,8 @@ test.snapshot({
 		// `publishConfig.tag` must not be a valid SemVer range.
 		'{"publishConfig": {"tag": "1.0.0"}}',
 		'{"publishConfig": {"tag": "v1.4"}}',
+		// A shadowed duplicate must go too. Removing only the effective `optional` would promote the earlier `true`, flipping the peer dependency to optional.
+		'{"peerDependencies": {"a": "^1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true, "optional": false}}}',
+		'{"name": "foo", "publishConfig": {"access": "restricted", "access": "public"}}',
 	],
 });

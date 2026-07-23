@@ -21,6 +21,59 @@ Message:
 
 `;
 
+exports[`invalid(10): {\"scripts\": {\"uninstall\": \"cleanup\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"uninstall": "cleanup"}}
+
+`;
+
+exports[`invalid(10): {\"scripts\": {\"uninstall\": \"cleanup\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"uninstall": "cleanup"}}
+    |              ^^^^^^^^^^^ The \`uninstall\` script never runs, because npm removed the uninstall lifecycle in v7.
+
+`;
+
+exports[`invalid(11): {\"scripts\": {\"postuninstall\": \"cleanup\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"postuninstall": "cleanup"}}
+
+`;
+
+exports[`invalid(11): {\"scripts\": {\"postuninstall\": \"cleanup\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"postuninstall": "cleanup"}}
+    |              ^^^^^^^^^^^^^^^ The \`postuninstall\` script never runs, because npm removed the uninstall lifecycle in v7.
+
+`;
+
+exports[`invalid(12): {\"scripts\": {\"preuninstall\": \"cleanup\", \"uninstall\": \"cleanup\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"preuninstall": "cleanup", "uninstall": "cleanup"}}
+
+`;
+
+exports[`invalid(12): {\"scripts\": {\"preuninstall\": \"cleanup\", \"uninstall\": \"cleanup\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"preuninstall": "cleanup", "uninstall": "cleanup"}}
+    |              ^^^^^^^^^^^^^^ The \`preuninstall\` script never runs, because npm removed the uninstall lifecycle in v7.
+
+`;
+
+exports[`invalid(12): {\"scripts\": {\"preuninstall\": \"cleanup\", \"uninstall\": \"cleanup\"}} 3`] = `
+
+Message:
+> 1 | {"scripts": {"preuninstall": "cleanup", "uninstall": "cleanup"}}
+    |                                         ^^^^^^^^^^^ The \`uninstall\` script never runs, because npm removed the uninstall lifecycle in v7.
+
+`;
+
 exports[`invalid(2): {\"scripts\": {\"posttest\": \"npm run clean\"}} 1`] = `
 
 [Input]
@@ -171,5 +224,20 @@ exports[`invalid(8): {\"scripts\": {\"preflight\": \"npm run check\"}} 2`] = `
 Message:
 > 1 | {"scripts": {"preflight": "npm run check"}}
     |              ^^^^^^^^^^^ The \`preflight\` script has no corresponding \`flight\` script.
+
+`;
+
+exports[`invalid(9): {\"scripts\": {\"preuninstall\": \"cleanup\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"preuninstall": "cleanup"}}
+
+`;
+
+exports[`invalid(9): {\"scripts\": {\"preuninstall\": \"cleanup\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"preuninstall": "cleanup"}}
+    |              ^^^^^^^^^^^^^^ The \`preuninstall\` script never runs, because npm removed the uninstall lifecycle in v7.
 
 `;

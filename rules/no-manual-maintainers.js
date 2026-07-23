@@ -1,8 +1,10 @@
 import {
 	getRootObject,
 	findMember,
-	removeMember,
+	removeMemberAndDuplicates,
+	removeShadowedDuplicates,
 	getIndentString,
+	getIndentPrefix,
 	getNewline,
 	lineIndentOf,
 } from './utils/index.js';
@@ -37,7 +39,7 @@ const create = context => ({
 			{
 				messageId: REMOVE_SUGGESTION_ID,
 				* fix(fixer) {
-					yield * removeMember(fixer, sourceCode, maintainers);
+					yield * removeMemberAndDuplicates(fixer, sourceCode, maintainers);
 				},
 			},
 		];
@@ -48,7 +50,10 @@ const create = context => ({
 			if (!contributors) {
 				suggest.push({
 					messageId: MOVE_SUGGESTION_ID,
-					fix: fixer => fixer.replaceText(maintainers.name, '"contributors"'),
+					* fix(fixer) {
+						yield fixer.replaceText(maintainers.name, '"contributors"');
+						yield * removeShadowedDuplicates(fixer, sourceCode, maintainers);
+					},
 				});
 			} else if (contributors.value.type === 'Array') {
 				suggest.push({
@@ -66,14 +71,16 @@ const create = context => ({
 								`${newline}${entryIndent}${entriesText.join(`,${newline}${entryIndent}`)}${newline}${outerIndent}`,
 							);
 						} else {
-							const entryIndent = lineIndentOf(sourceCode, contributorsElements[0].value);
+							// A single-line array keeps the moved entries on the same line; a multiline one puts each on its own line at the existing entry indentation.
+							const prefix = getIndentPrefix(sourceCode, contributorsElements[0].value);
+							const separator = prefix === '' ? ' ' : `${newline}${prefix}`;
 							yield fixer.insertTextAfter(
 								contributorsElements.at(-1).value,
-								`,${newline}${entryIndent}${entriesText.join(`,${newline}${entryIndent}`)}`,
+								`,${separator}${entriesText.join(`,${separator}`)}`,
 							);
 						}
 
-						yield * removeMember(fixer, sourceCode, maintainers);
+						yield * removeMemberAndDuplicates(fixer, sourceCode, maintainers);
 					},
 				});
 			}

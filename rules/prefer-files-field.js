@@ -2,9 +2,12 @@ import {
 	getRootObject,
 	findMember,
 	isPrivatePackage,
+	iterateEffectiveMembers,
 	pathFields,
 	hasGlob,
 	hasInvalidPackageTargetSegment,
+	iterateStringValues,
+	withoutShadowedMembers,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-files-field';
@@ -18,8 +21,9 @@ const messages = {
 const automaticallyIncludedFields = new Set(['main', 'bin']);
 const maximumCoverageComparisons = 1000;
 
+// A leading `./` or `/` is stripped from a `files` pattern by npm, so `dist`, `./dist`, and `/dist` all name the same package-root directory. Entry-point targets never carry either prefix beyond `./`, so the same normalization serves both sides of a comparison.
 function normalizePath(value) {
-	return value.replace(/^\.\//u, '');
+	return value.replace(/^(?:\.\/|\/)+/u, '');
 }
 
 function isPackagePath(value) {
@@ -31,37 +35,11 @@ function isPackagePath(value) {
 		&& !hasInvalidPackageTargetSegment(value);
 }
 
-function * iterateStringValues(node) {
-	switch (node.type) {
-		case 'String': {
-			yield node;
-			break;
-		}
-
-		case 'Object': {
-			for (const member of node.members) {
-				yield * iterateStringValues(member.value);
-			}
-
-			break;
-		}
-
-		case 'Array': {
-			for (const element of node.elements) {
-				yield * iterateStringValues(element.value);
-			}
-
-			break;
-		}
-	// No default
-	}
-}
-
 function * iterateEntryPoints(root) {
 	const exports = findMember(root, 'exports');
 
 	if (exports) {
-		for (const value of iterateStringValues(exports.value)) {
+		for (const value of iterateStringValues(withoutShadowedMembers(exports.value))) {
 			if (isPackagePath(value.value)) {
 				yield {node: value, field: 'exports', value: value.value};
 			}
@@ -81,7 +59,8 @@ function * iterateEntryPoints(root) {
 	if (bin?.value.type === 'String' && isPackagePath(bin.value.value)) {
 		yield {node: bin.value, field: 'bin', value: bin.value.value};
 	} else if (bin?.value.type === 'Object') {
-		for (const member of bin.value.members) {
+		// Effective members, since npm publishes only the final value per `bin` key; a shadowed duplicate is not an entry point.
+		for (const member of iterateEffectiveMembers(bin.value)) {
 			if (member.value.type === 'String' && isPackagePath(member.value.value)) {
 				yield {node: member.value, field: 'bin', value: member.value.value};
 			}
@@ -89,28 +68,73 @@ function * iterateEntryPoints(root) {
 	}
 }
 
-function matchesSimpleGlob(pattern, value) {
-	const wildcardStart = pattern.indexOf('*');
+/**
+Match one path segment against a pattern segment, where `*` stands for any run of characters within the segment.
+*/
+function matchesSegment(pattern, value) {
+	const parts = pattern.split('*');
 
-	if (wildcardStart === -1) {
+	if (parts.length === 1) {
 		return pattern === value;
 	}
 
-	const wildcardEnd = pattern.lastIndexOf('*');
-	const prefix = pattern.slice(0, wildcardStart);
-	const hasOptionalDirectory = wildcardEnd === wildcardStart + 1 && pattern[wildcardEnd + 1] === '/';
-	const suffix = pattern.slice(wildcardEnd + (hasOptionalDirectory ? 2 : 1));
+	const first = parts[0];
+	const last = parts.at(-1);
 
-	if (prefix.length + suffix.length > value.length || !value.startsWith(prefix) || !value.endsWith(suffix)) {
+	if (first.length + last.length > value.length || !value.startsWith(first) || !value.endsWith(last)) {
 		return false;
 	}
 
-	if (wildcardStart !== wildcardEnd) {
-		// Multiple wildcards are ambiguous, so only require their literal prefix and suffix to match.
-		return true;
+	// The literals between the wildcards must appear in order, without overrunning the trailing literal.
+	let index = first.length;
+	for (const part of parts.slice(1, -1)) {
+		const found = value.indexOf(part, index);
+
+		if (found === -1) {
+			return false;
+		}
+
+		index = found + part.length;
 	}
 
-	return !value.slice(prefix.length, value.length - suffix.length).includes('/');
+	return index <= value.length - last.length;
+}
+
+/**
+Match a `files` pattern against a package-relative path.
+
+A single `*` never crosses a path separator, so the pattern is compared segment by segment. npm expands directories matched by wildcard patterns, so callers also check each ancestor directory. A `**` segment can match any number of path segments, while an embedded `**` is handled like an ordinary `*` within its segment.
+*/
+function matchesSimpleGlob(pattern, value) {
+	const patternSegments = pattern.split('/');
+	const valueSegments = value.split('/');
+	const results = new Map();
+
+	const match = (patternIndex, valueIndex) => {
+		const key = `${patternIndex}:${valueIndex}`;
+
+		if (results.has(key)) {
+			return results.get(key);
+		}
+
+		let result;
+
+		if (patternIndex === patternSegments.length) {
+			result = valueIndex === valueSegments.length;
+		} else if (patternSegments[patternIndex] === '**') {
+			result = match(patternIndex + 1, valueIndex)
+				|| (valueIndex < valueSegments.length && match(patternIndex, valueIndex + 1));
+		} else {
+			result = valueIndex < valueSegments.length
+				&& matchesSegment(patternSegments[patternIndex], valueSegments[valueIndex])
+				&& match(patternIndex + 1, valueIndex + 1);
+		}
+
+		results.set(key, result);
+		return result;
+	};
+
+	return match(0, 0);
 }
 
 function isCovered(target, patterns) {
@@ -145,10 +169,17 @@ function isCovered(target, patterns) {
 			}
 		}
 
-		const globTarget = patternForMatching.includes('/') ? normalizedTarget : normalizedTarget.split('/').at(-1);
-
-		if (matchesSimpleGlob(patternForMatching, globTarget)) {
+		// `files` patterns are rooted at the package directory: `*.js` publishes `index.js` but not `lib/index.js`, so the whole path has to match, not just the file name.
+		if (matchesSimpleGlob(patternForMatching, normalizedTarget)) {
 			return true;
+		}
+
+		const targetSegments = normalizedTarget.split('/');
+		for (let index = 1; index < targetSegments.length; index++) {
+			const ancestor = targetSegments.slice(0, index).join('/');
+			if (matchesSimpleGlob(patternForMatching, ancestor)) {
+				return true;
+			}
 		}
 	}
 

@@ -28,7 +28,9 @@ const create = context => ({
 			const version = member.value.value;
 
 			// `validVersion` returns non-`null` only for a single exact version (e.g. `1.2.3`), not ranges, wildcards, or other specifiers.
-			if (validVersion(version) === null) {
+			const normalized = validVersion(version);
+
+			if (normalized === null) {
 				continue;
 			}
 
@@ -39,11 +41,12 @@ const create = context => ({
 				suggest: [
 					{
 						messageId: CARET_SUGGESTION_ID,
-						fix: fixer => fixer.replaceText(member.value, JSON.stringify('^' + version)),
+						// Build the range from the normalized version so a loose input like `v1.2.3` or `1.2.3+build` becomes a clean `^1.2.3`.
+						fix: fixer => fixer.replaceText(member.value, JSON.stringify('^' + normalized)),
 					},
 					{
 						messageId: GTE_SUGGESTION_ID,
-						fix: fixer => fixer.replaceText(member.value, JSON.stringify('>=' + semver.major(version))),
+						fix: fixer => fixer.replaceText(member.value, JSON.stringify('>=' + semver.major(normalized))),
 					},
 				],
 			});

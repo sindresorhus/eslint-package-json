@@ -4,6 +4,8 @@ const {test} = getTester(import.meta);
 
 test.snapshot({
 	valid: [
+		// A shadowed duplicate is not part of the object TypeScript resolves, so the bad declaration hiding under it must not be reported. The reverse order is reported; see the invalid cases.
+		'{"exports": {".": {"types": "./a.js", "types": "./a.d.ts", "default": "./a.js"}}}',
 		// No `exports` field.
 		'{"types": "./index.d.ts"}',
 		// No type metadata means this rule has no type coverage contract to check.
@@ -106,6 +108,9 @@ test.snapshot({
 	invalid: [
 		// A top-level declaration does not cover an exported runtime branch.
 		'{"types": "./index.d.ts", "exports": "./index.js"}',
+		// TypeScript ignores the top-level `types` field once `exports` is present, including for a `.` subpath.
+		'{"types": "./index.d.ts", "exports": {".": "./index.js"}}',
+		'{"typings": "./index.d.ts", "exports": {".": "./index.js", "./sub": "./sub.js"}}',
 		'{"typings": "./index.d.ts", "exports": {".": "./index.js"}}',
 		// Type conditions must come before runtime conditions, including versioned ones.
 		'{"exports": {"default": "./index.js", "types": "./index.d.ts"}}',
@@ -120,6 +125,8 @@ test.snapshot({
 		'{"exports": {"types@1.0.0-01": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"types@1.0.0-a..b": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"types@1.0.0+foo..bar": "./index.d.ts", "default": "./index.js"}}',
+		// A hyphen range with an unparseable bound is not TypeScript-compatible semver.
+		'{"exports": {"types@1 - abc": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"types": {"types@v5": "./index.d.ts"}, "default": "./index.js"}}',
 		// Type conditions must point to declaration files.
 		'{"exports": {"types": "./index.js", "default": "./index.js"}}',
@@ -213,5 +220,7 @@ test.snapshot({
 		'{"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}',
 		// Shared wrappers also compare their nested default targets.
 		'{"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.mts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}',
+		// When the *effective* `types` is the bad one, it is reported and the shadowed good one does not excuse it.
+		'{"exports": {".": {"types": "./a.d.ts", "types": "./a.js", "default": "./a.js"}}}',
 	],
 });

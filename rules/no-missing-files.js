@@ -5,6 +5,8 @@ import {
 	getKey,
 	getRootObject,
 	hasGlob,
+	iterateEffectiveMembers,
+	withoutShadowedMembers,
 } from './utils/index.js';
 
 const MESSAGE_ID_EXPORT = 'missingExportTarget';
@@ -22,6 +24,8 @@ const atExtglobPattern = /@\(/u;
 const absolutePathPattern = /^(?:\/|[a-z]:[/\\])/iu;
 const invalidExportTargetPattern = /(?:^|\/)(?:\.{1,2}|node_modules)(?:\/|$)|%2e|%2f|%5c|(?:^|\/)%6eode_modules(?:\/|$)/iu;
 const maximumPatternExpansions = 256;
+const alwaysActiveNodeConditionKeys = new Set(['default', 'module-sync', 'node', 'node-addons']);
+const nodeConditionKeys = new Set([...alwaysActiveNodeConditionKeys, 'import', 'require']);
 
 const isGlobPattern = value => hasGlob(value) || atExtglobPattern.test(value);
 
@@ -650,7 +654,8 @@ const checkBin = (context, packageDirectory, root) => {
 	if (binMember?.value.type === 'String') {
 		checkBinTarget(context, packageDirectory, binMember.value);
 	} else if (binMember?.value.type === 'Object') {
-		for (const member of binMember.value.members) {
+		// Effective members, so a shadowed duplicate's missing target is not reported: npm only installs the final value per key.
+		for (const member of iterateEffectiveMembers(binMember.value)) {
 			checkBinTarget(context, packageDirectory, member.value);
 		}
 	}
@@ -675,7 +680,49 @@ const createExportChecker = (context, packageDirectory) => {
 		}
 	};
 
-	const check = (node, shouldReport = true, isPatternAllowed = false) => {
+	/*
+	Judge an array of targets. An array is not a fallback list: Node stops at the first element that yields a target path, and a missing file there is a hard failure rather than a cue to try the next element. It skips an element only when *resolution* fails (`null`, a target outside the package, a conditions object matching nothing).
+
+	So the first element that always yields a target — a decisive one — decides the outcome, and everything after it is unreachable. An element that may yield nothing would let a later element apply, so an array headed by one of those stays permissive. Decisiveness is a property of the whole subtree, tracked as `isDecisive` on every result: a usable string target, an object whose `node` subtree has a target or whose `default` condition is decisive, or an array holding a decisive element.
+	*/
+	const checkArray = (node, results, shouldReport, isPatternAllowed) => {
+		// One decisive element makes the whole array decisive: either an earlier element yields a target first, or iteration falls through to the decisive one, which always yields.
+		const isDecisive = results.some(result => result.isDecisive);
+		const firstDecisiveIndex = results.findIndex(result => result.isDecisive);
+		const firstIndex = results.findIndex(result => result.hasTarget);
+
+		if (firstIndex === -1) {
+			return {hasTarget: false, resolves: true, isDecisive};
+		}
+
+		if (firstDecisiveIndex !== -1) {
+			const firstDecisive = results[firstDecisiveIndex];
+
+			if (!firstDecisive.resolves && shouldReport) {
+				for (let index = 0; index <= firstDecisiveIndex; index++) {
+					if (results[index].hasTarget && !results[index].resolves) {
+						check(node.elements[index].value, true, isPatternAllowed);
+					}
+				}
+			}
+
+			return {hasTarget: true, resolves: firstDecisive.resolves, isDecisive};
+		}
+
+		if (results.some(result => result.hasTarget && result.resolves)) {
+			return {hasTarget: true, resolves: true, isDecisive};
+		}
+
+		if (shouldReport) {
+			for (const element of node.elements) {
+				check(element.value, true, isPatternAllowed);
+			}
+		}
+
+		return {hasTarget: true, resolves: false, isDecisive};
+	};
+
+	const check = (node, shouldReport = true, isPatternAllowed = false, isNodeCondition = false) => {
 		switch (node.type) {
 			case 'String': {
 				const relativePath = node.value.slice(2);
@@ -687,7 +734,8 @@ const createExportChecker = (context, packageDirectory) => {
 					|| invalidExportTargetPattern.test(relativePath)
 					|| (node.value.includes('*') && !isPatternAllowed)
 				) {
-					return {hasTarget: false, resolves: true};
+					// Node treats an unusable target as a failed *resolution*, so it falls through to the next element of an enclosing array rather than stopping here.
+					return {hasTarget: false, resolves: true, isDecisive: false};
 				}
 
 				const resolves = hasMatchingExportTarget(packageDirectory, node.value);
@@ -696,45 +744,48 @@ const createExportChecker = (context, packageDirectory) => {
 					reportMissingTarget(node);
 				}
 
-				return {hasTarget: true, resolves};
+				return {hasTarget: true, resolves, isDecisive: true};
 			}
 
 			case 'Object': {
-				const results = node.members.map(member => {
+				const defaultIndex = node.members.findIndex(member => getKey(member) === 'default');
+				const hasNullDefault = defaultIndex !== -1 && node.members[defaultIndex].value.type === 'Null';
+				const results = node.members.map((member, index) => {
 					const key = getKey(member);
 					const childIsPatternAllowed = key.startsWith('.') ? key.includes('*') : isPatternAllowed;
-					return check(member.value, shouldReport, childIsPatternAllowed);
+					const shouldReportChild = shouldReport && (!hasNullDefault || index < defaultIndex);
+					return check(member.value, shouldReportChild, childIsPatternAllowed, isNodeCondition || key === 'node');
 				});
-				const relevantResults = results.filter(result => result.hasTarget);
+				const relevantResults = results.filter((result, index) => result.hasTarget && (!hasNullDefault || index < defaultIndex));
+				// Every other condition may match nothing, so an object yields a target unconditionally when `node` or `default` does or when a decisive branch precedes a `null` default. The tree is already free of shadowed duplicates, so at most one member holds the key.
+				const decisiveIndex = node.members.findIndex((member, index) => {
+					const key = getKey(member);
+					return alwaysActiveNodeConditionKeys.has(key)
+						&& results[index].isDecisive
+						&& (!hasNullDefault || index < defaultIndex);
+				});
+				const hasDecisiveBranchBeforeNullDefault = hasNullDefault && results.some((result, index) => index < defaultIndex && result.isDecisive);
+				const hasDecisiveNodeCondition = isNodeCondition && node.members.some((member, index) =>
+					nodeConditionKeys.has(getKey(member))
+					&& results[index].isDecisive
+					&& (!hasNullDefault || index < defaultIndex),
+				);
 
 				return {
 					hasTarget: relevantResults.length > 0,
 					resolves: relevantResults.every(result => result.resolves),
+					isDecisive: decisiveIndex !== -1
+						|| hasDecisiveNodeCondition
+						|| hasDecisiveBranchBeforeNullDefault,
 				};
 			}
 
 			case 'Array': {
-				const results = node.elements.map(element => check(element.value, false, isPatternAllowed));
-				const relevantResults = results.filter(result => result.hasTarget);
-
-				if (relevantResults.some(result => result.resolves)) {
-					return {hasTarget: true, resolves: true};
-				}
-
-				if (shouldReport) {
-					for (const element of node.elements) {
-						check(element.value, true, isPatternAllowed);
-					}
-				}
-
-				return {
-					hasTarget: relevantResults.length > 0,
-					resolves: relevantResults.length === 0,
-				};
+				return checkArray(node, node.elements.map(element => check(element.value, false, isPatternAllowed, isNodeCondition)), shouldReport, isPatternAllowed);
 			}
 
 			default: {
-				return {hasTarget: false, resolves: true};
+				return {hasTarget: false, resolves: true, isDecisive: false};
 			}
 		}
 	};
@@ -755,7 +806,8 @@ const create = context => ({
 		const exportsMember = findMember(root, 'exports');
 
 		if (exportsMember) {
-			createExportChecker(context, packageDirectory)(exportsMember.value);
+			// The question is which targets Node resolves, so the tree is walked as `JSON.parse` builds it: a shadowed duplicate neither satisfies a lookup nor deserves a missing-file report, since nothing ever resolves through it.
+			createExportChecker(context, packageDirectory)(withoutShadowedMembers(exportsMember.value));
 		}
 
 		checkBin(context, packageDirectory, root);

@@ -1,7 +1,7 @@
 import {
 	getRootObject,
 	getKey,
-	buildReorderedObject,
+	buildReordered,
 	isSameOrder,
 	optionsSchema,
 	stringArraySchema,
@@ -57,7 +57,7 @@ const create = context => {
 				messageId: MESSAGE_ID,
 				fix: fixer => fixer.replaceText(
 					root,
-					buildReorderedObject(sourceCode, root, desired),
+					buildReordered(sourceCode, root, desired),
 				),
 			});
 		},

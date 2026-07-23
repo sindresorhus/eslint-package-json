@@ -40,6 +40,11 @@ test.snapshot({
 		},
 	],
 	invalid: [
+		// A tie between tilde and exact resolves by the fixed caret/tilde/exact preference.
+		{
+			code: '{"dependencies": {"a": "~1.0.0", "b": "2.0.0"}}',
+			options: [{range: 'consistent'}],
+		},
 		'{"dependencies": {"foo": "1.0.0"}}',
 		'{"dependencies": {"foo": "~1.0.0"}}',
 		// A `v`-prefixed version normalizes to a clean `^1.0.0` suggestion, not `^v1.0.0`.

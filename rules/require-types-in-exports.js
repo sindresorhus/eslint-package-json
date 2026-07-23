@@ -1,4 +1,9 @@
-import {getRootObject, findMember, getKey} from './utils/index.js';
+import {
+	getRootObject,
+	findMember,
+	getKey,
+	withoutShadowedMembers,
+} from './utils/index.js';
 
 const MESSAGE_ID_MISSING = 'missing';
 const MESSAGE_ID_TYPES_FIRST = 'typesFirst';
@@ -754,11 +759,14 @@ const create = context => ({
 		const isTopLevelTypes = [findMember(root, 'types'), findMember(root, 'typings')]
 			.some(member => member?.value.type === 'String');
 
-		if (!isTopLevelTypes && !hasTypesCondition(exportsMember.value)) {
+		// This rule reasons about what TypeScript resolves, so it walks the tree as `JSON.parse` builds it. Traversing the raw members would let a shadowed duplicate supply a declaration that no consumer ever sees.
+		const exportsValue = withoutShadowedMembers(exportsMember.value);
+
+		if (!isTopLevelTypes && !hasTypesCondition(exportsValue)) {
 			return;
 		}
 
-		for (const problem of checkNode(exportsMember.value, getPackageType(root))) {
+		for (const problem of checkNode(exportsValue, getPackageType(root))) {
 			context.report(problem);
 		}
 	},

@@ -3,6 +3,7 @@ import {
 	getKey,
 	hasInvalidPackageTargetSegment,
 	isArrayIndexKey,
+	tryDecodeUriComponent,
 } from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
@@ -28,9 +29,7 @@ function isValidExternalTarget(value) {
 		return false;
 	}
 
-	try {
-		decodeURIComponent(value);
-	} catch {
+	if (tryDecodeUriComponent(value) === undefined) {
 		return false;
 	}
 

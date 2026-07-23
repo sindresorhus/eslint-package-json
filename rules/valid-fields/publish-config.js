@@ -1,6 +1,6 @@
 import {
 	findMember,
-	removeMember,
+	removeMemberAndDuplicates,
 	isHttpUrl,
 	validRange,
 } from '../utils/index.js';
@@ -60,7 +60,7 @@ export function * check(root, context) {
 					{
 						messageId: REMOVE_SUGGESTION_ID,
 						* fix(fixer) {
-							yield * removeMember(fixer, context.sourceCode, access);
+							yield * removeMemberAndDuplicates(fixer, context.sourceCode, access);
 						},
 					},
 				],

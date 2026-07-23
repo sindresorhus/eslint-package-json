@@ -78,7 +78,8 @@ const findCorrection = key => {
 		return undefined;
 	}
 
-	return longFields.find(field => editDistance(key, field) === 1);
+	// A single edit can only ever change the length by one, so the length check rejects almost every candidate before the quadratic distance runs. It is exact, not an approximation.
+	return longFields.find(field => Math.abs(key.length - field.length) <= 1 && editDistance(key, field) === 1);
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */

@@ -13,6 +13,9 @@ const messages = {
 
 const localPrefixes = ['file:', 'link:', './', '../', '/', '~/'];
 
+// A consumer never installs `devDependencies`, so a local path there cannot break anyone: it is how packages point at test fixtures and self-link for dogfooding. Only the groups npm actually installs downstream are checked.
+const installedDependencyTypes = ['dependencies', 'optionalDependencies', 'peerDependencies'];
+
 /**
 Check if a dependency specifier references the local filesystem.
 */
@@ -30,7 +33,7 @@ const create = context => {
 				return;
 			}
 
-			for (const {member, name} of iterateDependencies(root)) {
+			for (const {member, name} of iterateDependencies(root, installedDependencyTypes)) {
 				if (ignore.includes(name) || member.value.type !== 'String') {
 					continue;
 				}

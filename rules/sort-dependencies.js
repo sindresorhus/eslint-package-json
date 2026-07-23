@@ -2,8 +2,9 @@ import {
 	getRootObject,
 	getKey,
 	findMember,
-	buildReorderedObject,
+	buildReordered,
 	isSameOrder,
+	compareStrings,
 	optionsSchema,
 	stringArraySchema,
 } from './utils/index.js';
@@ -52,8 +53,7 @@ const create = context => {
 					continue;
 				}
 
-				const sortedMembers = members.toSorted((a, b) =>
-					getKey(a).localeCompare(getKey(b)));
+				const sortedMembers = members.toSorted((a, b) => compareStrings(getKey(a), getKey(b)));
 
 				if (isSameOrder(members, sortedMembers)) {
 					continue;
@@ -65,7 +65,7 @@ const create = context => {
 					data: {group: groupName},
 					fix: fixer => fixer.replaceText(
 						objectNode,
-						buildReorderedObject(sourceCode, objectNode, sortedMembers),
+						buildReordered(sourceCode, objectNode, sortedMembers),
 					),
 				});
 			}

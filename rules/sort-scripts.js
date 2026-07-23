@@ -2,8 +2,9 @@ import {
 	getRootObject,
 	getKey,
 	findMember,
-	buildReorderedObject,
+	buildReordered,
 	isSameOrder,
+	compareStrings,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'sort-scripts';
@@ -37,8 +38,7 @@ const create = context => {
 				return;
 			}
 
-			const sortedMembers = members.toSorted((a, b) =>
-				getKey(a).localeCompare(getKey(b)));
+			const sortedMembers = members.toSorted((a, b) => compareStrings(getKey(a), getKey(b)));
 
 			if (isSameOrder(members, sortedMembers)) {
 				return;
@@ -49,7 +49,7 @@ const create = context => {
 				messageId: MESSAGE_ID,
 				fix: fixer => fixer.replaceText(
 					scripts,
-					buildReorderedObject(sourceCode, scripts, sortedMembers),
+					buildReordered(sourceCode, scripts, sortedMembers),
 				),
 			});
 		},

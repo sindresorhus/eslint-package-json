@@ -24,14 +24,21 @@ const addSideEffects = (fixer, sourceCode, root, value) => {
 	const separator = root.loc.start.line === root.loc.end.line
 		? ' '
 		: getNewline(sourceCode) + getIndentString(sourceCode);
-	const anchor = root.members.find(member => {
+
+	// Anchor on the canonical order of known fields only. Treating an unknown field as an anchor would insert `sideEffects` ahead of it, and `sort-properties` keeps every unknown field after the known ones, so an unknown field appearing before `exports` would otherwise pull `sideEffects` in front of `exports`.
+	const knownAfter = root.members.find(member => fieldOrder.indexOf(getKey(member)) > sideEffectsOrder);
+
+	if (knownAfter) {
+		return fixer.insertTextBefore(knownAfter, `${entry},${separator}`);
+	}
+
+	// `exports` is a precondition of this rule and sorts before `sideEffects`, so there is always a known field to place it after.
+	const knownBefore = root.members.findLast(member => {
 		const order = fieldOrder.indexOf(getKey(member));
-		return order === -1 || order > sideEffectsOrder;
+		return order !== -1 && order < sideEffectsOrder;
 	});
 
-	return anchor
-		? fixer.insertTextBefore(anchor, `${entry},${separator}`)
-		: fixer.insertTextAfter(root.members.at(-1), `,${separator}${entry}`);
+	return fixer.insertTextAfter(knownBefore ?? root.members.at(-1), `,${separator}${entry}`);
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */

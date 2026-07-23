@@ -2,7 +2,7 @@ import {
 	getRootObject,
 	iterateDependencies,
 	findMember,
-	removeMember,
+	removeMemberAndDuplicates,
 	insertGroupMember,
 	optionsSchema,
 	stringArraySchema,
@@ -53,7 +53,7 @@ const create = context => {
 							{
 								messageId: SUGGESTION_ID,
 								* fix(fixer) {
-									yield * removeMember(fixer, sourceCode, member);
+									yield * removeMemberAndDuplicates(fixer, sourceCode, member);
 									yield * insertGroupMember(fixer, sourceCode, root, {
 										groupMember: devDependenciesGroup,
 										groupName: 'devDependencies',

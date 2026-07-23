@@ -22,6 +22,12 @@ test.snapshot({
 		{code: '{"imports": {"#internal": "./internal.js"}}', filename: nestedPackageFilename},
 		{code: '{"exports": "./index.js", "imports": null}', filename: nestedPackageFilename},
 		{code: '{"exports": "./first.js", "exports": "./second.js"}', filename: nestedPackageFilename},
+		// An adjacent run of duplicates ending the object takes the comma before it.
+		{code: '{"name": "foo", "exports": "./first.js", "exports": "./second.js"}', filename: nestedPackageFilename},
+		// An adjacent run of duplicates opening the object takes the comma after it.
+		{code: '{"exports": "./first.js", "exports": "./second.js", "name": "foo"}', filename: nestedPackageFilename},
+		// Duplicates separated by a kept member remove as two runs, so neither fix range may overlap the other.
+		{code: '{"exports": "./first.js", "name": "foo", "exports": "./second.js"}', filename: nestedPackageFilename},
 		{code: '{"imports": {"#first": "./first.js"}, "imports": {"#second": "./second.js"}}', filename: nestedPackageFilename},
 		{
 			code: `{

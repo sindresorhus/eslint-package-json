@@ -1,4 +1,9 @@
-import {getRootObject, findMember, getKey} from './utils/index.js';
+import {
+	getRootObject,
+	findMember,
+	getKey,
+	withoutShadowedMembers,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'require-default-condition';
 const MESSAGE_ID_NOT_LAST = 'defaultNotLast';
@@ -68,7 +73,8 @@ const create = context => ({
 				continue;
 			}
 
-			for (const problem of checkNode(member.value, subpathPrefix)) {
+			// This rule reasons about condition resolution order, so it walks the tree as `JSON.parse` builds it. A shadowed duplicate `default` is not part of the object Node sees, so it must not decide whether `default` comes last.
+			for (const problem of checkNode(withoutShadowedMembers(member.value), subpathPrefix)) {
 				context.report({
 					node: problem.node,
 					messageId: problem.messageId,

@@ -20,30 +20,7 @@ Output:
 
 `;
 
-exports[`invalid(2): {\"scripts\": {\"prebuild\": \"echo start\", \"postbuild\": \"echo done\", \"build:watch\": \"tsc --watch\", \"build\": \"tsc\"}} 1`] = `
-
-[Input]
-  1 | {"scripts": {"prebuild": "echo start", "postbuild": "echo done", "build:watch": "tsc --watch", "build": "tsc"}}
-
-`;
-
-exports[`invalid(2): {\"scripts\": {\"prebuild\": \"echo start\", \"postbuild\": \"echo done\", \"build:watch\": \"tsc --watch\", \"build\": \"tsc\"}} 2`] = `
-
-Message:
-> 1 | {"scripts": {"prebuild": "echo start", "postbuild": "echo done", "build:watch": "tsc --watch", "build": "tsc"}}
-    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Script names should be sorted alphabetically.
-
-Output:
-  1 | {"scripts": {
-  2 | 	"build": "tsc",
-  3 | 	"build:watch": "tsc --watch",
-  4 | 	"postbuild": "echo done",
-  5 | 	"prebuild": "echo start"
-  6 | }}
-
-`;
-
-exports[`invalid(3): {\n\t\"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"build\": \"tsc\"\n\t}\n} 1`] = `
+exports[`invalid(10): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n\t\t\"build\": \"tsc\"\r\n\t}\r\n} 1`] = `
 
 [Input]
   1 | {
@@ -55,7 +32,7 @@ exports[`invalid(3): {\n\t\"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"
 
 `;
 
-exports[`invalid(3): {\n\t\"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"build\": \"tsc\"\n\t}\n} 2`] = `
+exports[`invalid(10): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n\t\t\"build\": \"tsc\"\r\n\t}\r\n} 2`] = `
 
 Message:
   1 | {
@@ -79,7 +56,88 @@ Output:
 
 `;
 
-exports[`invalid(4): {\n  \"scripts\": {\n    \"test\": \"node --test\",\n    \"build\": \"tsc\"\n  }\n} 1`] = `
+exports[`invalid(2): {\"scripts\": {\"Zebra\": \"echo z\", \"apple\": \"echo a\", \"Apple\": \"echo b\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"Zebra": "echo z", "apple": "echo a", "Apple": "echo b"}}
+
+`;
+
+exports[`invalid(2): {\"scripts\": {\"Zebra\": \"echo z\", \"apple\": \"echo a\", \"Apple\": \"echo b\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"Zebra": "echo z", "apple": "echo a", "Apple": "echo b"}}
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Script names should be sorted alphabetically.
+
+Output:
+  1 | {"scripts": {
+  2 | 	"apple": "echo a",
+  3 | 	"Apple": "echo b",
+  4 | 	"Zebra": "echo z"
+  5 | }}
+
+`;
+
+exports[`invalid(3): {\"scripts\": {\"prebuild\": \"echo start\", \"postbuild\": \"echo done\", \"build:watch\": \"tsc --watch\", \"build\": \"tsc\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"prebuild": "echo start", "postbuild": "echo done", "build:watch": "tsc --watch", "build": "tsc"}}
+
+`;
+
+exports[`invalid(3): {\"scripts\": {\"prebuild\": \"echo start\", \"postbuild\": \"echo done\", \"build:watch\": \"tsc --watch\", \"build\": \"tsc\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"prebuild": "echo start", "postbuild": "echo done", "build:watch": "tsc --watch", "build": "tsc"}}
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Script names should be sorted alphabetically.
+
+Output:
+  1 | {"scripts": {
+  2 | 	"build": "tsc",
+  3 | 	"build:watch": "tsc --watch",
+  4 | 	"postbuild": "echo done",
+  5 | 	"prebuild": "echo start"
+  6 | }}
+
+`;
+
+exports[`invalid(4): {\n\t\"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"build\": \"tsc\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"scripts": {
+  3 | 		"test": "node --test",
+  4 | 		"build": "tsc"
+  5 | 	}
+  6 | }
+
+`;
+
+exports[`invalid(4): {\n\t\"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"build\": \"tsc\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+> 2 | 	"scripts": {
+    | 	           ^
+> 3 | 		"test": "node --test",
+    | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 4 | 		"build": "tsc"
+    | ^^^^^^^^^^^^^^^^
+> 5 | 	}
+    | ^^ Script names should be sorted alphabetically.
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"scripts": {
+  3 | 		"build": "tsc",
+  4 | 		"test": "node --test"
+  5 | 	}
+  6 | }
+
+`;
+
+exports[`invalid(5): {\n  \"scripts\": {\n    \"test\": \"node --test\",\n    \"build\": \"tsc\"\n  }\n} 1`] = `
 
 [Input]
   1 | {
@@ -91,7 +149,7 @@ exports[`invalid(4): {\n  \"scripts\": {\n    \"test\": \"node --test\",\n    \"
 
 `;
 
-exports[`invalid(4): {\n  \"scripts\": {\n    \"test\": \"node --test\",\n    \"build\": \"tsc\"\n  }\n} 2`] = `
+exports[`invalid(5): {\n  \"scripts\": {\n    \"test\": \"node --test\",\n    \"build\": \"tsc\"\n  }\n} 2`] = `
 
 Message:
   1 | {
@@ -115,7 +173,7 @@ Output:
 
 `;
 
-exports[`invalid(5): {\n  \"scripts\": {\"test\": \"node --test\", \"build\": \"tsc\"}\n} 1`] = `
+exports[`invalid(6): {\n  \"scripts\": {\"test\": \"node --test\", \"build\": \"tsc\"}\n} 1`] = `
 
 [Input]
   1 | {
@@ -124,7 +182,7 @@ exports[`invalid(5): {\n  \"scripts\": {\"test\": \"node --test\", \"build\": \"
 
 `;
 
-exports[`invalid(5): {\n  \"scripts\": {\"test\": \"node --test\", \"build\": \"tsc\"}\n} 2`] = `
+exports[`invalid(6): {\n  \"scripts\": {\"test\": \"node --test\", \"build\": \"tsc\"}\n} 2`] = `
 
 Message:
   1 | {
@@ -142,7 +200,7 @@ Output:
 
 `;
 
-exports[`invalid(6): {\n  \"scripts\": { \"test\": \"node --test\", \"build\": \"tsc\"}\n} 1`] = `
+exports[`invalid(7): {\n  \"scripts\": { \"test\": \"node --test\", \"build\": \"tsc\"}\n} 1`] = `
 
 [Input]
   1 | {
@@ -151,7 +209,7 @@ exports[`invalid(6): {\n  \"scripts\": { \"test\": \"node --test\", \"build\": \
 
 `;
 
-exports[`invalid(6): {\n  \"scripts\": { \"test\": \"node --test\", \"build\": \"tsc\"}\n} 2`] = `
+exports[`invalid(7): {\n  \"scripts\": { \"test\": \"node --test\", \"build\": \"tsc\"}\n} 2`] = `
 
 Message:
   1 | {
@@ -169,7 +227,7 @@ Output:
 
 `;
 
-exports[`invalid(7): {\n  \"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"build\": \"tsc\"\n  }\n} 1`] = `
+exports[`invalid(8): {\n  \"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"build\": \"tsc\"\n  }\n} 1`] = `
 
 [Input]
   1 | {
@@ -181,7 +239,7 @@ exports[`invalid(7): {\n  \"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"
 
 `;
 
-exports[`invalid(7): {\n  \"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"build\": \"tsc\"\n  }\n} 2`] = `
+exports[`invalid(8): {\n  \"scripts\": {\n\t\t\"test\": \"node --test\",\n\t\t\"build\": \"tsc\"\n  }\n} 2`] = `
 
 Message:
   1 | {
@@ -205,7 +263,7 @@ Output:
 
 `;
 
-exports[`invalid(8): {\n\"scripts\": {\n\"test\": \"node --test\",\n\"build\": \"tsc\"\n}\n} 1`] = `
+exports[`invalid(9): {\n\"scripts\": {\n\"test\": \"node --test\",\n\"build\": \"tsc\"\n}\n} 1`] = `
 
 [Input]
   1 | {
@@ -217,7 +275,7 @@ exports[`invalid(8): {\n\"scripts\": {\n\"test\": \"node --test\",\n\"build\": \
 
 `;
 
-exports[`invalid(8): {\n\"scripts\": {\n\"test\": \"node --test\",\n\"build\": \"tsc\"\n}\n} 2`] = `
+exports[`invalid(9): {\n\"scripts\": {\n\"test\": \"node --test\",\n\"build\": \"tsc\"\n}\n} 2`] = `
 
 Message:
   1 | {
@@ -237,42 +295,6 @@ Output:
   3 | "build": "tsc",
   4 | "test": "node --test"
   5 | }
-  6 | }
-
-`;
-
-exports[`invalid(9): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n\t\t\"build\": \"tsc\"\r\n\t}\r\n} 1`] = `
-
-[Input]
-  1 | {
-  2 | 	"scripts": {
-  3 | 		"test": "node --test",
-  4 | 		"build": "tsc"
-  5 | 	}
-  6 | }
-
-`;
-
-exports[`invalid(9): {\r\n\t\"scripts\": {\r\n\t\t\"test\": \"node --test\",\r\n\t\t\"build\": \"tsc\"\r\n\t}\r\n} 2`] = `
-
-Message:
-  1 | {
-> 2 | 	"scripts": {
-    | 	           ^
-> 3 | 		"test": "node --test",
-    | ^^^^^^^^^^^^^^^^^^^^^^^^
-> 4 | 		"build": "tsc"
-    | ^^^^^^^^^^^^^^^^
-> 5 | 	}
-    | ^^ Script names should be sorted alphabetically.
-  6 | }
-
-Output:
-  1 | {
-  2 | 	"scripts": {
-  3 | 		"build": "tsc",
-  4 | 		"test": "node --test"
-  5 | 	}
   6 | }
 
 `;
