@@ -51,6 +51,7 @@ export {default as 'require-entry-point'} from './require-entry-point.js';
 export {default as 'require-exports-root'} from './require-exports-root.js';
 export {default as 'require-fields'} from './require-fields.js';
 export {default as 'require-private-when-workspaces'} from './require-private-when-workspaces.js';
+export {default as 'require-private'} from './require-private.js';
 export {default as 'require-types-in-exports'} from './require-types-in-exports.js';
 export {default as 'restrict-fields-when-private'} from './restrict-fields-when-private.js';
 export {default as 'sort-dependencies'} from './sort-dependencies.js';

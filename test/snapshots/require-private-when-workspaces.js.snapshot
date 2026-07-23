@@ -1,4 +1,22 @@
-exports[`invalid(1): {\n\t\"name\": \"foo\",\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t]\n} 1`] = `
+exports[`invalid(1): {\"workspaces\": [\"packages/*\"]} 1`] = `
+
+[Input]
+  1 | {"workspaces": ["packages/*"]}
+
+`;
+
+exports[`invalid(1): {\"workspaces\": [\"packages/*\"]} 2`] = `
+
+Message:
+> 1 | {"workspaces": ["packages/*"]}
+    |  ^^^^^^^^^^^^ A package with \`workspaces\` should set \`"private": true\` to avoid accidentally publishing the workspace root.
+
+Suggestion 1/1: Set \`"private": true\`.:
+  1 | {"workspaces": ["packages/*"], "private": true}
+
+`;
+
+exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -10,7 +28,7 @@ exports[`invalid(1): {\n\t\"name\": \"foo\",\n\t\"workspaces\": [\n\t\t\"package
 
 `;
 
-exports[`invalid(1): {\n\t\"name\": \"foo\",\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t]\n} 2`] = `
+exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
@@ -32,7 +50,7 @@ Suggestion 1/1: Set \`"private": true\`.:
 
 `;
 
-exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"workspaces\": {\n\t\t\"packages\": [\n\t\t\t\"packages/*\"\n\t\t]\n\t}\n} 1`] = `
+exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"workspaces\": {\n\t\t\"packages\": [\n\t\t\t\"packages/*\"\n\t\t]\n\t}\n} 1`] = `
 
 [Input]
   1 | {
@@ -46,7 +64,7 @@ exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"workspaces\": {\n\t\t\"package
 
 `;
 
-exports[`invalid(2): {\n\t\"name\": \"foo\",\n\t\"workspaces\": {\n\t\t\"packages\": [\n\t\t\t\"packages/*\"\n\t\t]\n\t}\n} 2`] = `
+exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"workspaces\": {\n\t\t\"packages\": [\n\t\t\t\"packages/*\"\n\t\t]\n\t}\n} 2`] = `
 
 Message:
   1 | {
@@ -72,7 +90,7 @@ Suggestion 1/1: Set \`"private": true\`.:
 
 `;
 
-exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"private\": false,\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t]\n} 1`] = `
+exports[`invalid(4): {\n\t\"name\": \"foo\",\n\t\"private\": false,\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t]\n} 1`] = `
 
 [Input]
   1 | {
@@ -85,7 +103,7 @@ exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"private\": false,\n\t\"workspa
 
 `;
 
-exports[`invalid(3): {\n\t\"name\": \"foo\",\n\t\"private\": false,\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t]\n} 2`] = `
+exports[`invalid(4): {\n\t\"name\": \"foo\",\n\t\"private\": false,\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t]\n} 2`] = `
 
 Message:
   1 | {
