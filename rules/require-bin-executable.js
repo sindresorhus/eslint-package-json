@@ -5,11 +5,11 @@ const MESSAGE_ID = 'invalid';
 const STRING_MESSAGE_ID = 'invalidString';
 
 const messages = {
-	[MESSAGE_ID]: 'The `bin` file for `{{name}}` must have executable permission.',
-	[STRING_MESSAGE_ID]: 'The `bin` file must have executable permission.',
+	[MESSAGE_ID]: 'The `bin` file for `{{name}}` must be executable by its owner.',
+	[STRING_MESSAGE_ID]: 'The `bin` file must be executable by its owner.',
 };
 
-const executePermissionMask = 0o111;
+const ownerExecutePermissionMask = 0o100;
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
@@ -26,7 +26,7 @@ const create = context => ({
 
 		for (const entry of iterateExistingBinFiles(context, root)) {
 			// eslint-disable-next-line no-bitwise -- Unix permissions are a bitmask.
-			if ((entry.mode & executePermissionMask) !== 0) {
+			if ((entry.mode & ownerExecutePermissionMask) !== 0) {
 				continue;
 			}
 
@@ -45,7 +45,7 @@ const config = {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Require `bin` files to have Unix executable permission.',
+			description: 'Require `bin` files to be executable by their owner.',
 			recommended: true,
 		},
 		schema: [],

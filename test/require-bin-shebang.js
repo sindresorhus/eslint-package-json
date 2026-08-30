@@ -22,7 +22,7 @@ test.snapshot({
 		{code: '{"bin": "invalid.js", "bin": "valid.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": "invalid.js", "foo": "valid.js"}}', filename: fixturePackageFilename},
 		{code: '{"directories": {"bin": "invalid.js"}}', filename: fixturePackageFilename},
-		{code: '{"bin": "invalid.js"}', filename: '<text>'},
+		{code: '{"bin": "index.js"}', filename: '<text>'},
 	],
 	invalid: [
 		{code: '{"bin": "invalid.js"}', filename: fixturePackageFilename},
