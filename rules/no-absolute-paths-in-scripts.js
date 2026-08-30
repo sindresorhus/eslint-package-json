@@ -12,39 +12,15 @@ const messages = {
 	[MESSAGE_ID]: 'The `{{script}}` script contains an absolute path.',
 };
 
-const hierarchicalUrlPrefixPatternSource = String.raw`(?:blob:)?[a-z][\d+\-.a-z]+:\/\/`;
-const fileUrlPrefixPatternSource = String.raw`file:(?:(?:\/\/)?[a-z]:)?\/`;
-const opaqueUrlPrefixPatternSource = '(?:data|mailto|urn):';
-// URLs may also follow a shell parameter alternative operator.
-const urlPrefixBoundaryPatternSource = String.raw`(?:(?<![\w+\-.])|(?<=:[+-]))`;
-const hierarchicalUrlPatternSource = `${urlPrefixBoundaryPatternSource}${hierarchicalUrlPrefixPatternSource}`;
-const fileUrlPatternSource = `${urlPrefixBoundaryPatternSource}${fileUrlPrefixPatternSource}`;
-const opaqueUrlPatternSource = `${urlPrefixBoundaryPatternSource}${opaqueUrlPrefixPatternSource}`;
-const urlCharacterPatternSource = String.raw`[^\s"&';<>|]`;
-const urlCharacterBeforeQueryPatternSource = String.raw`[^\s"#&';<>?|]`;
-const quotedUrlCharacterPatternSource = String.raw`[^\s"']`;
-// Quoted and unquoted URL matching allow `:/` in query text and Windows drive URL paths, while their fallbacks stop before a neighboring absolute path-list entry.
-const quotedUrlPatternSource = [
-	`${hierarchicalUrlPrefixPatternSource}${urlCharacterBeforeQueryPatternSource}*[#?]${quotedUrlCharacterPatternSource}*`,
-	`${fileUrlPrefixPatternSource}${quotedUrlCharacterPatternSource}*`,
-	`${hierarchicalUrlPrefixPatternSource}${urlCharacterPatternSource}*/[a-z]:/${urlCharacterPatternSource}*`,
-	`${hierarchicalUrlPrefixPatternSource}(?:(?!:/)${urlCharacterPatternSource})*`,
-	`${opaqueUrlPrefixPatternSource}${quotedUrlCharacterPatternSource}*`,
-].join('|');
-const quotedUrlPattern = new RegExp(String.raw`(["'])(?:${quotedUrlPatternSource})\1`, 'gi');
-const urlPattern = new RegExp([
-	`${hierarchicalUrlPatternSource}${urlCharacterBeforeQueryPatternSource}*[#?]${urlCharacterPatternSource}*`,
-	`${fileUrlPatternSource}${urlCharacterPatternSource}*`,
-	`${hierarchicalUrlPatternSource}${urlCharacterPatternSource}*/[a-z]:/${urlCharacterPatternSource}*`,
-	`${hierarchicalUrlPatternSource}(?:(?!:/)${urlCharacterPatternSource})*`,
-	`${opaqueUrlPatternSource}${urlCharacterPatternSource}*`,
-].join('|'), 'gi');
+const urlPrefixPatternSource = String.raw`(?:(?:blob:)?[a-z][\d+\-.a-z]+:\/\/|file:(?:(?:\/\/)?[a-z]:)?\/|(?:data|mailto|urn):)`;
+const quotedUrlPattern = new RegExp(String.raw`(["'])${urlPrefixPatternSource}[^\s"']*\1`, 'giu');
+const urlPattern = new RegExp(String.raw`(?<![\w+\-.])${urlPrefixPatternSource}[^\s"&';<>|]*`, 'giu');
 const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*'|[<>]+|[^\s"&',;<>`{|}]+/gu;
 const unambiguousValueIntroducers = new Set(['=', '<', '<>', '>', '>>']);
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z])((?:[a-z]:)?[/\\].*)$/i;
 const quoteDelimiterPattern = /^["']+|["']+$/gu;
-const shellParameterAlternativeValuePattern = /\$\{(?:[a-z_]\w*|\d+):?[+-]([^{}]*)\}/giu;
+const shellParameterExpansionPattern = /\$\{[^{}]*\}/gu;
 
 /**
 Check whether a candidate is an absolute path, including one attached to an option.
@@ -89,14 +65,9 @@ const hasAbsolutePathInCandidate = candidate => {
 Check whether a script command contains an absolute POSIX or Windows path.
 */
 const hasAbsolutePath = command => {
-	const commandWithoutQuotedUrls = command.replaceAll(quotedUrlPattern, '$1$1');
+	const commandWithMaskedShellParameterExpansions = command.replaceAll(shellParameterExpansionPattern, 'shell-parameter');
+	const commandWithoutQuotedUrls = commandWithMaskedShellParameterExpansions.replaceAll(quotedUrlPattern, '$1$1');
 	const commandWithoutUrls = commandWithoutQuotedUrls.replaceAll(urlPattern, '');
-
-	for (const match of commandWithoutUrls.matchAll(shellParameterAlternativeValuePattern)) {
-		if (hasAbsolutePathInValue(match[1], false)) {
-			return true;
-		}
-	}
 
 	const candidates = (commandWithoutUrls.match(commandWordPattern) ?? []).flatMap(word => word.split(/\s+/u));
 
