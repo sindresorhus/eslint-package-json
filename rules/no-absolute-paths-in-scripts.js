@@ -32,7 +32,7 @@ const urlPattern = new RegExp([
 ].join('|'), 'gi');
 const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*'|[^\s"&',;<>`{|}]+/gu;
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
-const attachedPathPattern = /^(?:@|-[a-z]{1,2})((?:[a-z]:)?[/\\].*)$/i;
+const attachedPathPattern = /^(?:@|-[a-z])((?:[a-z]:)?[/\\].*)$/i;
 const quoteDelimiterPattern = /^["']+|["']+$/gu;
 const shellParameterAlternativeValuePattern = /\$\{[a-z_]\w*:?[+-]([^{}]*)\}/giu;
 
@@ -59,7 +59,7 @@ const hasAbsolutePathInValue = (value, canBeWindowsOption) => {
 		return true;
 	}
 
-	return ungroupedValue.split(':').some(pathListEntry => isAbsolutePath(pathListEntry));
+	return ungroupedValue.split(/[:;]/u).some(pathListEntry => isAbsolutePath(pathListEntry));
 };
 
 /**

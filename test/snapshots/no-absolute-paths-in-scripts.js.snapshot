@@ -373,14 +373,29 @@ Message:
 
 `;
 
-exports[`invalid(32): {\"scripts\": {\"test\": \"OUT=/tmp=https://example.com tool\"}} 1`] = `
+exports[`invalid(32): {\"scripts\": {\"test\": \"set \\\"PATH=bin;\\\\\\\\server\\\\share\\\" && tool\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "set \\"PATH=bin;\\\\\\\\server\\\\share\\" && tool"}}
+
+`;
+
+exports[`invalid(32): {\"scripts\": {\"test\": \"set \\\"PATH=bin;\\\\\\\\server\\\\share\\\" && tool\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "set \\"PATH=bin;\\\\\\\\server\\\\share\\" && tool"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(33): {\"scripts\": {\"test\": \"OUT=/tmp=https://example.com tool\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "OUT=/tmp=https://example.com tool"}}
 
 `;
 
-exports[`invalid(32): {\"scripts\": {\"test\": \"OUT=/tmp=https://example.com tool\"}} 2`] = `
+exports[`invalid(33): {\"scripts\": {\"test\": \"OUT=/tmp=https://example.com tool\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "OUT=/tmp=https://example.com tool"}}
@@ -388,14 +403,14 @@ Message:
 
 `;
 
-exports[`invalid(33): {\"scripts\": {\"test\": \"(/usr/bin/node --test)\"}} 1`] = `
+exports[`invalid(34): {\"scripts\": {\"test\": \"(/usr/bin/node --test)\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "(/usr/bin/node --test)"}}
 
 `;
 
-exports[`invalid(33): {\"scripts\": {\"test\": \"(/usr/bin/node --test)\"}} 2`] = `
+exports[`invalid(34): {\"scripts\": {\"test\": \"(/usr/bin/node --test)\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "(/usr/bin/node --test)"}}
@@ -403,14 +418,14 @@ Message:
 
 `;
 
-exports[`invalid(34): {\"scripts\": {\"test\": \"echo $(/usr/bin/tool)\"}} 1`] = `
+exports[`invalid(35): {\"scripts\": {\"test\": \"echo $(/usr/bin/tool)\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "echo $(/usr/bin/tool)"}}
 
 `;
 
-exports[`invalid(34): {\"scripts\": {\"test\": \"echo $(/usr/bin/tool)\"}} 2`] = `
+exports[`invalid(35): {\"scripts\": {\"test\": \"echo $(/usr/bin/tool)\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "echo $(/usr/bin/tool)"}}
@@ -418,14 +433,14 @@ Message:
 
 `;
 
-exports[`invalid(35): {\"scripts\": {\"test\": \"C:/tools/node.exe test.js\"}} 1`] = `
+exports[`invalid(36): {\"scripts\": {\"test\": \"C:/tools/node.exe test.js\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "C:/tools/node.exe test.js"}}
 
 `;
 
-exports[`invalid(35): {\"scripts\": {\"test\": \"C:/tools/node.exe test.js\"}} 2`] = `
+exports[`invalid(36): {\"scripts\": {\"test\": \"C:/tools/node.exe test.js\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "C:/tools/node.exe test.js"}}
@@ -433,14 +448,14 @@ Message:
 
 `;
 
-exports[`invalid(36): {\"scripts\": {\"test\": \"C://tools/node.exe test.js\"}} 1`] = `
+exports[`invalid(37): {\"scripts\": {\"test\": \"C://tools/node.exe test.js\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "C://tools/node.exe test.js"}}
 
 `;
 
-exports[`invalid(36): {\"scripts\": {\"test\": \"C://tools/node.exe test.js\"}} 2`] = `
+exports[`invalid(37): {\"scripts\": {\"test\": \"C://tools/node.exe test.js\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "C://tools/node.exe test.js"}}
@@ -448,14 +463,14 @@ Message:
 
 `;
 
-exports[`invalid(37): {\"scripts\": {\"test\": \"C:///tools/node.exe test.js\"}} 1`] = `
+exports[`invalid(38): {\"scripts\": {\"test\": \"C:///tools/node.exe test.js\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "C:///tools/node.exe test.js"}}
 
 `;
 
-exports[`invalid(37): {\"scripts\": {\"test\": \"C:///tools/node.exe test.js\"}} 2`] = `
+exports[`invalid(38): {\"scripts\": {\"test\": \"C:///tools/node.exe test.js\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "C:///tools/node.exe test.js"}}
@@ -463,33 +478,18 @@ Message:
 
 `;
 
-exports[`invalid(38): {\"scripts\": {\"test\": \"C:\\\\tools\\\\node.exe test.js\"}} 1`] = `
+exports[`invalid(39): {\"scripts\": {\"test\": \"C:\\\\tools\\\\node.exe test.js\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "C:\\\\tools\\\\node.exe test.js"}}
 
 `;
 
-exports[`invalid(38): {\"scripts\": {\"test\": \"C:\\\\tools\\\\node.exe test.js\"}} 2`] = `
+exports[`invalid(39): {\"scripts\": {\"test\": \"C:\\\\tools\\\\node.exe test.js\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "C:\\\\tools\\\\node.exe test.js"}}
     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
-
-`;
-
-exports[`invalid(39): {\"scripts\": {\"test\": \"\\\"C:\\\\Program Files\\\\tool.exe\\\" --version\"}} 1`] = `
-
-[Input]
-  1 | {"scripts": {"test": "\\"C:\\\\Program Files\\\\tool.exe\\" --version"}}
-
-`;
-
-exports[`invalid(39): {\"scripts\": {\"test\": \"\\\"C:\\\\Program Files\\\\tool.exe\\\" --version\"}} 2`] = `
-
-Message:
-> 1 | {"scripts": {"test": "\\"C:\\\\Program Files\\\\tool.exe\\" --version"}}
-    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
 
 `;
 
@@ -508,14 +508,29 @@ Message:
 
 `;
 
-exports[`invalid(40): {\"scripts\": {\"test\": \"\\\\tools\\\\test.exe\"}} 1`] = `
+exports[`invalid(40): {\"scripts\": {\"test\": \"\\\"C:\\\\Program Files\\\\tool.exe\\\" --version\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "\\"C:\\\\Program Files\\\\tool.exe\\" --version"}}
+
+`;
+
+exports[`invalid(40): {\"scripts\": {\"test\": \"\\\"C:\\\\Program Files\\\\tool.exe\\\" --version\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "\\"C:\\\\Program Files\\\\tool.exe\\" --version"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(41): {\"scripts\": {\"test\": \"\\\\tools\\\\test.exe\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "\\\\tools\\\\test.exe"}}
 
 `;
 
-exports[`invalid(40): {\"scripts\": {\"test\": \"\\\\tools\\\\test.exe\"}} 2`] = `
+exports[`invalid(41): {\"scripts\": {\"test\": \"\\\\tools\\\\test.exe\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "\\\\tools\\\\test.exe"}}
@@ -523,14 +538,14 @@ Message:
 
 `;
 
-exports[`invalid(41): {\"scripts\": {\"test\": \"\\\\\\\\server\\\\share\\\\tool.exe\"}} 1`] = `
+exports[`invalid(42): {\"scripts\": {\"test\": \"\\\\\\\\server\\\\share\\\\tool.exe\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "\\\\\\\\server\\\\share\\\\tool.exe"}}
 
 `;
 
-exports[`invalid(41): {\"scripts\": {\"test\": \"\\\\\\\\server\\\\share\\\\tool.exe\"}} 2`] = `
+exports[`invalid(42): {\"scripts\": {\"test\": \"\\\\\\\\server\\\\share\\\\tool.exe\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "\\\\\\\\server\\\\share\\\\tool.exe"}}
@@ -538,14 +553,14 @@ Message:
 
 `;
 
-exports[`invalid(42): {\"scripts\": {\"test\": \"/usr/bin/node /tmp/test.js\"}} 1`] = `
+exports[`invalid(43): {\"scripts\": {\"test\": \"/usr/bin/node /tmp/test.js\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "/usr/bin/node /tmp/test.js"}}
 
 `;
 
-exports[`invalid(42): {\"scripts\": {\"test\": \"/usr/bin/node /tmp/test.js\"}} 2`] = `
+exports[`invalid(43): {\"scripts\": {\"test\": \"/usr/bin/node /tmp/test.js\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "/usr/bin/node /tmp/test.js"}}
@@ -553,14 +568,14 @@ Message:
 
 `;
 
-exports[`invalid(43): {\"scripts\": {\"test\": \"node --test\", \"test\": \"/usr/bin/node --test\"}} 1`] = `
+exports[`invalid(44): {\"scripts\": {\"test\": \"node --test\", \"test\": \"/usr/bin/node --test\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "node --test", "test": "/usr/bin/node --test"}}
 
 `;
 
-exports[`invalid(43): {\"scripts\": {\"test\": \"node --test\", \"test\": \"/usr/bin/node --test\"}} 2`] = `
+exports[`invalid(44): {\"scripts\": {\"test\": \"node --test\", \"test\": \"/usr/bin/node --test\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "node --test", "test": "/usr/bin/node --test"}}
@@ -568,14 +583,14 @@ Message:
 
 `;
 
-exports[`invalid(44): {\"scripts\": {\"test\": \"node --test\"}, \"scripts\": {\"test\": \"/usr/bin/node --test\"}} 1`] = `
+exports[`invalid(45): {\"scripts\": {\"test\": \"node --test\"}, \"scripts\": {\"test\": \"/usr/bin/node --test\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "node --test"}, "scripts": {"test": "/usr/bin/node --test"}}
 
 `;
 
-exports[`invalid(44): {\"scripts\": {\"test\": \"node --test\"}, \"scripts\": {\"test\": \"/usr/bin/node --test\"}} 2`] = `
+exports[`invalid(45): {\"scripts\": {\"test\": \"node --test\"}, \"scripts\": {\"test\": \"/usr/bin/node --test\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "node --test"}, "scripts": {"test": "/usr/bin/node --test"}}
@@ -583,14 +598,14 @@ Message:
 
 `;
 
-exports[`invalid(45): {\"scripts\": {\"pretest\": null, \"test\": \"/usr/bin/node --test\"}} 1`] = `
+exports[`invalid(46): {\"scripts\": {\"pretest\": null, \"test\": \"/usr/bin/node --test\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"pretest": null, "test": "/usr/bin/node --test"}}
 
 `;
 
-exports[`invalid(45): {\"scripts\": {\"pretest\": null, \"test\": \"/usr/bin/node --test\"}} 2`] = `
+exports[`invalid(46): {\"scripts\": {\"pretest\": null, \"test\": \"/usr/bin/node --test\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"pretest": null, "test": "/usr/bin/node --test"}}
@@ -598,14 +613,14 @@ Message:
 
 `;
 
-exports[`invalid(46): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 1`] = `
+exports[`invalid(47): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "/usr/bin/node", "build": "C:/tools/build.exe"}}
 
 `;
 
-exports[`invalid(46): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 2`] = `
+exports[`invalid(47): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "/usr/bin/node", "build": "C:/tools/build.exe"}}
@@ -613,7 +628,7 @@ Message:
 
 `;
 
-exports[`invalid(46): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 3`] = `
+exports[`invalid(47): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 3`] = `
 
 Message:
 > 1 | {"scripts": {"test": "/usr/bin/node", "build": "C:/tools/build.exe"}}
