@@ -12,18 +12,22 @@ const messages = {
 	[MESSAGE_ID]: 'The `{{script}}` script contains an absolute path.',
 };
 
-const hierarchicalUrlSchemePatternSource = String.raw`(?:blob:)?[a-z][\d+\-.a-z]+:\/\/`;
-const fileUrlSchemePatternSource = String.raw`file:(?:(?:\/\/)?[a-z]:)?\/`;
-const opaqueUrlSchemePatternSource = '(?:data|mailto|urn):';
+const hierarchicalUrlPrefixPatternSource = String.raw`(?:blob:)?[a-z][\d+\-.a-z]+:\/\/`;
+const fileUrlPrefixPatternSource = String.raw`file:(?:(?:\/\/)?[a-z]:)?\/`;
+const opaqueUrlPrefixPatternSource = '(?:data|mailto|urn):';
+const urlPrefixBoundaryPatternSource = String.raw`(?<![\w+\-.])`;
+const hierarchicalUrlPatternSource = `${urlPrefixBoundaryPatternSource}${hierarchicalUrlPrefixPatternSource}`;
+const fileUrlPatternSource = `${urlPrefixBoundaryPatternSource}${fileUrlPrefixPatternSource}`;
+const opaqueUrlPatternSource = `${urlPrefixBoundaryPatternSource}${opaqueUrlPrefixPatternSource}`;
 const urlCharacterPatternSource = String.raw`[^\s"&';<>|]`;
 const urlCharacterBeforeQueryPatternSource = String.raw`[^\s"#&';<>?|]`;
-const quotedUrlPattern = new RegExp(String.raw`(["'])(?:${hierarchicalUrlSchemePatternSource}|${fileUrlSchemePatternSource}|${opaqueUrlSchemePatternSource})[^"']*\1`, 'gi');
+const quotedUrlPattern = new RegExp(String.raw`(["'])(?:${hierarchicalUrlPrefixPatternSource}|${fileUrlPrefixPatternSource}|${opaqueUrlPrefixPatternSource})[^\s"']*\1`, 'gi');
 const urlPattern = new RegExp([
-	`${hierarchicalUrlSchemePatternSource}${urlCharacterBeforeQueryPatternSource}*[#?]${urlCharacterPatternSource}*`,
-	`${fileUrlSchemePatternSource}${urlCharacterPatternSource}*`,
-	`${hierarchicalUrlSchemePatternSource}${urlCharacterPatternSource}*/[a-z]:/${urlCharacterPatternSource}*`,
-	`${hierarchicalUrlSchemePatternSource}(?:(?!:/)${urlCharacterPatternSource})*`,
-	`${opaqueUrlSchemePatternSource}${urlCharacterPatternSource}*`,
+	`${hierarchicalUrlPatternSource}${urlCharacterBeforeQueryPatternSource}*[#?]${urlCharacterPatternSource}*`,
+	`${fileUrlPatternSource}${urlCharacterPatternSource}*`,
+	`${hierarchicalUrlPatternSource}${urlCharacterPatternSource}*/[a-z]:/${urlCharacterPatternSource}*`,
+	`${hierarchicalUrlPatternSource}(?:(?!:/)${urlCharacterPatternSource})*`,
+	`${opaqueUrlPatternSource}${urlCharacterPatternSource}*`,
 ].join('|'), 'gi');
 const commandWordPattern = /"[^"]*"|'[^']*'|[^\s"&',;<>`{|}]+/gu;
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
@@ -39,16 +43,12 @@ const isAbsolutePath = candidate => {
 };
 
 /**
-Check whether a shell-like word contains an absolute path.
+Check whether a path candidate contains an absolute path.
 */
-const hasAbsolutePathInWord = word => {
-	const quote = word[0];
-	const unquotedWord = (quote === '"' || quote === '\'') && word.at(-1) === quote
-		? word.slice(1, -1)
-		: word;
-	const wordWithoutOption = unquotedWord.replace(windowsOptionPrefixPattern, '');
+const hasAbsolutePathInCandidate = candidate => {
+	const candidateWithoutWindowsOptionPrefix = candidate.replace(windowsOptionPrefixPattern, '');
 
-	for (const assignmentPart of wordWithoutOption.split('=')) {
+	for (const assignmentPart of candidateWithoutWindowsOptionPrefix.split('=')) {
 		const ungroupedPart = assignmentPart.replace(/^(?:\$\(\(?|\(+)/u, '');
 
 		if (isAbsolutePath(ungroupedPart)) {
@@ -63,6 +63,17 @@ const hasAbsolutePathInWord = word => {
 	}
 
 	return false;
+};
+
+/**
+Check whether a shell-like word contains an absolute path.
+*/
+const hasAbsolutePathInWord = word => {
+	const quote = word[0];
+	const unquotedWord = (quote === '"' || quote === '\'') && word.at(-1) === quote
+		? word.slice(1, -1)
+		: word;
+	return unquotedWord.split(/\s+/u).some(subword => hasAbsolutePathInCandidate(subword));
 };
 
 /**
