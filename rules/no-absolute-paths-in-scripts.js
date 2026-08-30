@@ -12,40 +12,41 @@ const messages = {
 	[MESSAGE_ID]: 'The `{{script}}` script contains an absolute path.',
 };
 
-const commandWordSeparatorPattern = /[\s"&';<>`|]+/u;
-const quotedUrlPattern = /(["'])(?:[a-z][\d+\-.a-z]*:\/\/|data:|file:\/)[^"']*\1/gi;
-const urlPattern = /(^|[\s(=])(?:[a-z][\d+\-.a-z]*:\/\/|data:|file:\/)[^\s"&':;<>|]*/gi;
-const windowsOptionPattern = /^\/[a-z]+$/i;
-const windowsOptionWithValuePattern = /^\/[a-z]+:/i;
+const hierarchicalUrlSchemePatternSource = String.raw`(?:blob:)?[a-z][\d+\-.a-z]+:\/\/`;
+const fileUrlSchemePatternSource = String.raw`file:(?:(?:\/\/)?[a-z]:)?\/`;
+const opaqueUrlSchemePatternSource = '(?:data|mailto|urn):';
+const urlCharacterPatternSource = String.raw`[^\s"&';<>|]`;
+const urlCharacterBeforeQueryPatternSource = String.raw`[^\s"#&';<>?|]`;
+const quotedUrlPattern = new RegExp(String.raw`(["'])(?:${hierarchicalUrlSchemePatternSource}|${fileUrlSchemePatternSource}|${opaqueUrlSchemePatternSource})[^"']*\1`, 'gi');
+const urlPattern = new RegExp([
+	`${hierarchicalUrlSchemePatternSource}${urlCharacterBeforeQueryPatternSource}*[#?]${urlCharacterPatternSource}*`,
+	`${fileUrlSchemePatternSource}${urlCharacterPatternSource}*`,
+	`${hierarchicalUrlSchemePatternSource}${urlCharacterPatternSource}*/[a-z]:/${urlCharacterPatternSource}*`,
+	`${hierarchicalUrlSchemePatternSource}(?:(?!:/)${urlCharacterPatternSource})*`,
+	`${opaqueUrlSchemePatternSource}${urlCharacterPatternSource}*`,
+].join('|'), 'gi');
+const commandWordPattern = /"[^"]*"|'[^']*'|[^\s"&',;<>`{|}]+/gu;
+const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z]{1,2})((?:[a-z]:)?[/\\].*)$/i;
 
 /**
 Check whether a candidate is an absolute path, including one attached to an option.
 */
 const isAbsolutePath = candidate => {
-	if (
-		path.posix.isAbsolute(candidate)
-		|| path.win32.isAbsolute(candidate)
-	) {
-		return true;
-	}
+	const pathCandidate = attachedPathPattern.exec(candidate)?.[1] ?? candidate;
 
-	const attachedPath = attachedPathPattern.exec(candidate)?.[1];
-
-	return attachedPath !== undefined && isAbsolutePath(attachedPath);
+	return path.posix.isAbsolute(pathCandidate) || path.win32.isAbsolute(pathCandidate);
 };
 
 /**
 Check whether a shell-like word contains an absolute path.
 */
 const hasAbsolutePathInWord = word => {
-	if (windowsOptionPattern.test(word)) {
-		return false;
-	}
-
-	const wordWithoutOption = windowsOptionWithValuePattern.test(word)
-		? word.slice(word.indexOf(':') + 1)
+	const quote = word[0];
+	const unquotedWord = (quote === '"' || quote === '\'') && word.at(-1) === quote
+		? word.slice(1, -1)
 		: word;
+	const wordWithoutOption = unquotedWord.replace(windowsOptionPrefixPattern, '');
 
 	for (const assignmentPart of wordWithoutOption.split('=')) {
 		const ungroupedPart = assignmentPart.replace(/^(?:\$\(\(?|\(+)/u, '');
@@ -69,9 +70,10 @@ Check whether a script command contains an absolute POSIX or Windows path.
 */
 const hasAbsolutePath = command => {
 	const commandWithoutQuotedUrls = command.replaceAll(quotedUrlPattern, '$1$1');
-	const commandWithoutUrls = commandWithoutQuotedUrls.replaceAll(urlPattern, '$1');
+	const commandWithoutUrls = commandWithoutQuotedUrls.replaceAll(urlPattern, '');
+	const words = commandWithoutUrls.match(commandWordPattern) ?? [];
 
-	return commandWithoutUrls.split(commandWordSeparatorPattern).some(word => hasAbsolutePathInWord(word));
+	return words.some(word => hasAbsolutePathInWord(word));
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */
