@@ -15,7 +15,8 @@ const messages = {
 const hierarchicalUrlPrefixPatternSource = String.raw`(?:blob:)?[a-z][\d+\-.a-z]+:\/\/`;
 const fileUrlPrefixPatternSource = String.raw`file:(?:(?:\/\/)?[a-z]:)?\/`;
 const opaqueUrlPrefixPatternSource = '(?:data|mailto|urn):';
-const urlPrefixBoundaryPatternSource = String.raw`(?<![\w+\-.])`;
+// URLs may also follow a shell parameter alternative operator.
+const urlPrefixBoundaryPatternSource = String.raw`(?:(?<![\w+\-.])|(?<=:[+-]))`;
 const hierarchicalUrlPatternSource = `${urlPrefixBoundaryPatternSource}${hierarchicalUrlPrefixPatternSource}`;
 const fileUrlPatternSource = `${urlPrefixBoundaryPatternSource}${fileUrlPrefixPatternSource}`;
 const opaqueUrlPatternSource = `${urlPrefixBoundaryPatternSource}${opaqueUrlPrefixPatternSource}`;

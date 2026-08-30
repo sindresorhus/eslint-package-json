@@ -37,6 +37,7 @@ test.snapshot({
 		String.raw`{"scripts": {"download": "curl \"https://example.com/?a=1&next=/archive.tgz\""}}`,
 		'{"scripts": {"download": "curl \'https://example.com/?a=1&next=/tmp\'"}}',
 		`{"scripts": {"test": "echo ${shellParameterPrefix}TMPDIR:-./tmp/cache}"}}`,
+		`{"scripts": {"test": "echo ${shellParameterPrefix}URL:-https://example.com/path}"}}`,
 		`{"scripts": {"test": "echo ${shellParameterPrefix}MESSAGE:?/tmp/file}"}}`,
 		'{"scripts": {"test": "PATH=https://example.com/bin:node_modules/.bin tool"}}',
 		'{"scripts": {"test": "PATH=bin:https://example.com/bin tool"}}',
@@ -122,5 +123,6 @@ test.snapshot({
 		String.raw`{"scripts": {"test": "PATH=\"https://example.com/bin:/usr/bin\" tool"}}`,
 		String.raw`{"scripts": {"test": "PATH=\"https://example.com/bin;C:\\tools\" tool"}}`,
 		`{"scripts": {"test": "echo ${shellParameterPrefix}1:-/tmp/file}"}}`,
+		`{"scripts": {"test": "echo ${shellParameterPrefix}PATH:-https://example.com/bin:/usr/bin}"}}`,
 	],
 });
