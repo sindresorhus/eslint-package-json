@@ -726,6 +726,36 @@ Message:
 
 `;
 
+exports[`invalid(53): {\"scripts\": {\"test\": \"PATH=\\\"https://example.com/bin:/usr/bin\\\" tool\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "PATH=\\"https://example.com/bin:/usr/bin\\" tool"}}
+
+`;
+
+exports[`invalid(53): {\"scripts\": {\"test\": \"PATH=\\\"https://example.com/bin:/usr/bin\\\" tool\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "PATH=\\"https://example.com/bin:/usr/bin\\" tool"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(54): {\"scripts\": {\"test\": \"PATH=\\\"https://example.com/bin;C:\\\\tools\\\" tool\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "PATH=\\"https://example.com/bin;C:\\\\tools\\" tool"}}
+
+`;
+
+exports[`invalid(54): {\"scripts\": {\"test\": \"PATH=\\\"https://example.com/bin;C:\\\\tools\\\" tool\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "PATH=\\"https://example.com/bin;C:\\\\tools\\" tool"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
 exports[`invalid(6): {\"scripts\": {\"test\": \"sh -c '\\\"/Applications/My Tool/tool\\\" --version'\"}} 1`] = `
 
 [Input]

@@ -21,8 +21,16 @@ const fileUrlPatternSource = `${urlPrefixBoundaryPatternSource}${fileUrlPrefixPa
 const opaqueUrlPatternSource = `${urlPrefixBoundaryPatternSource}${opaqueUrlPrefixPatternSource}`;
 const urlCharacterPatternSource = String.raw`[^\s"&';<>|]`;
 const urlCharacterBeforeQueryPatternSource = String.raw`[^\s"#&';<>?|]`;
-const quotedUrlPattern = new RegExp(String.raw`(["'])(?:${hierarchicalUrlPrefixPatternSource}|${fileUrlPrefixPatternSource}|${opaqueUrlPrefixPatternSource})[^\s"']*\1`, 'gi');
-// Query text and URL paths may contain `:/`, while the fallback must stop before a neighboring absolute path-list entry.
+const quotedUrlCharacterPatternSource = String.raw`[^\s"']`;
+// Quoted and unquoted URL matching allow `:/` in query text and Windows drive URL paths, while their fallbacks stop before a neighboring absolute path-list entry.
+const quotedUrlPatternSource = [
+	`${hierarchicalUrlPrefixPatternSource}${urlCharacterBeforeQueryPatternSource}*[#?]${quotedUrlCharacterPatternSource}*`,
+	`${fileUrlPrefixPatternSource}${quotedUrlCharacterPatternSource}*`,
+	`${hierarchicalUrlPrefixPatternSource}${urlCharacterPatternSource}*/[a-z]:/${urlCharacterPatternSource}*`,
+	`${hierarchicalUrlPrefixPatternSource}(?:(?!:/)${urlCharacterPatternSource})*`,
+	`${opaqueUrlPrefixPatternSource}${quotedUrlCharacterPatternSource}*`,
+].join('|');
+const quotedUrlPattern = new RegExp(String.raw`(["'])(?:${quotedUrlPatternSource})\1`, 'gi');
 const urlPattern = new RegExp([
 	`${hierarchicalUrlPatternSource}${urlCharacterBeforeQueryPatternSource}*[#?]${urlCharacterPatternSource}*`,
 	`${fileUrlPatternSource}${urlCharacterPatternSource}*`,
@@ -31,7 +39,7 @@ const urlPattern = new RegExp([
 	`${opaqueUrlPatternSource}${urlCharacterPatternSource}*`,
 ].join('|'), 'gi');
 const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*'|[<>]+|[^\s"&',;<>`{|}]+/gu;
-const fileRedirectionOperatorPattern = /^(?:<>?|>>?)$/u;
+const fileRedirectionOperators = new Set(['<', '<>', '>', '>>']);
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z])((?:[a-z]:)?[/\\].*)$/i;
 const quoteDelimiterPattern = /^["']+|["']+$/gu;
@@ -92,8 +100,8 @@ const hasAbsolutePath = command => {
 	const candidates = (commandWithoutUrls.match(commandWordPattern) ?? []).flatMap(word => word.split(/\s+/u));
 
 	return candidates.some((candidate, index) => {
-		const previousCandidate = candidates[index - 1] ?? '';
-		const isUnambiguousValue = previousCandidate === '=' || fileRedirectionOperatorPattern.test(previousCandidate);
+		const previousCandidate = candidates[index - 1];
+		const isUnambiguousValue = previousCandidate === '=' || fileRedirectionOperators.has(previousCandidate);
 
 		return hasAbsolutePathInCandidate(candidate)
 			|| (isUnambiguousValue && hasAbsolutePathInValue(candidate, false));

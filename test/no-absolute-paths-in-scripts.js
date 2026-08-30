@@ -118,5 +118,8 @@ test.snapshot({
 		'{"scripts": {"test": "echo value >> /tmp"}}',
 		String.raw`{"scripts": {"test": "echo value > \"/tmp\""}}`,
 		'{"scripts": {"test": "tool < /tmp"}}',
+		// Quoting a URL-first path list must not hide later absolute entries.
+		String.raw`{"scripts": {"test": "PATH=\"https://example.com/bin:/usr/bin\" tool"}}`,
+		String.raw`{"scripts": {"test": "PATH=\"https://example.com/bin;C:\\tools\" tool"}}`,
 	],
 });
