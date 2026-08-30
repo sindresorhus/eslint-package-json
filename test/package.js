@@ -79,6 +79,7 @@ const recommendedRuleIds = [
 	'no-exports-trailing-slash',
 	'no-fallback-export-arrays',
 	'no-http-dependencies',
+	'no-incompatible-peer-dependency-ranges',
 	'no-install-scripts',
 	'no-invalid-direct-overrides',
 	'no-manual-maintainers',
@@ -295,6 +296,7 @@ const trickyDocuments = [
 	'{"overrides":{"foo":"1.0.0"},"dependencies":{"foo":"^2.0.0"}}',
 	'{"overrides":{"foo":{}},"dependencies":{"foo":"^2.0.0"}}',
 	'{"peerDependencies":{"foo":"^1.0.0"}}',
+	'{"peerDependencies":{"foo":"^3.0.0","foo":"^1.0.0"},"dependencies":{"foo":"^1.5.0","foo":"^2.0.0"}}',
 	'{"dependancies":{"a":"^1.0.0"}}',
 	// Duplicate keys at the top level and nested, where a fix that removes only the effective member promotes the shadowed one into its place.
 	'{"engines":{"npm":">=8"},"engines":{"yarn":">=1"}}',
@@ -657,6 +659,7 @@ const unusualManifests = [
 	['{"name":"a","version":"1.0.0","dependencies":{"semver":"^7.0.0"},"devDependencies":{"semver":"^7.0.0"},"files":["dist"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","dependencies":{"semver":"^7.0.0"},"devDependencies":{"semver":"^6.0.0"},"files":["dist"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","peerDependencies":{"react":"18.2.0"},"files":["dist"]}', 'package.json'],
+	['{"name":"a","version":"1.0.0","peerDependencies":{"semver":"^6.0.0"},"dependencies":{"semver":"^7.0.0"},"files":["dist"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","exports":{"./lib/":"./lib/"},"files":["lib"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","exports":{".":["./index.js","./fallback.js"]},"files":["dist"]}', 'package.json'],
 	// eslint-disable-next-line unicorn/prefer-https -- The insecure URL is the mistake `no-http-dependencies` exists to catch.
@@ -716,6 +719,7 @@ test('every rule takes part on a realistic manifest without breaking its neighbo
 		'no-exports-trailing-slash',
 		'no-fallback-export-arrays',
 		'no-http-dependencies',
+		'no-incompatible-peer-dependency-ranges',
 		'no-invalid-direct-overrides',
 		'no-nested-exports',
 		'no-restricted-dependencies',
