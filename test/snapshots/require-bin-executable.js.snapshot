@@ -1,0 +1,112 @@
+exports[`invalid(1): {\"bin\": \"not-executable.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": "not-executable.js"}
+
+`;
+
+exports[`invalid(1): {\"bin\": \"not-executable.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "not-executable.js"}
+    |         ^^^^^^^^^^^^^^^^^^^ The \`bin\` file must have executable permission.
+
+`;
+
+exports[`invalid(2): {\"bin\": \"not-executable\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": "not-executable"}
+
+`;
+
+exports[`invalid(2): {\"bin\": \"not-executable\"} 2`] = `
+
+Message:
+> 1 | {"bin": "not-executable"}
+    |         ^^^^^^^^^^^^^^^^ The \`bin\` file must have executable permission.
+
+`;
+
+exports[`invalid(3): {\"bin\": {\"foo\": \"not-executable.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "not-executable.js"}}
+
+`;
+
+exports[`invalid(3): {\"bin\": {\"foo\": \"not-executable.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "not-executable.js"}}
+    |                 ^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must have executable permission.
+
+`;
+
+exports[`invalid(4): {\"bin\": {\"foo\": \"not-executable.js\", \"bar\": \"not-executable\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "not-executable.js", "bar": "not-executable"}}
+
+`;
+
+exports[`invalid(4): {\"bin\": {\"foo\": \"not-executable.js\", \"bar\": \"not-executable\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "not-executable.js", "bar": "not-executable"}}
+    |                 ^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must have executable permission.
+
+`;
+
+exports[`invalid(4): {\"bin\": {\"foo\": \"not-executable.js\", \"bar\": \"not-executable\"}} 3`] = `
+
+Message:
+> 1 | {"bin": {"foo": "not-executable.js", "bar": "not-executable"}}
+    |                                             ^^^^^^^^^^^^^^^^ The \`bin\` file for \`bar\` must have executable permission.
+
+`;
+
+exports[`invalid(5): {\"bin\": \"inside-not-executable.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": "inside-not-executable.js"}
+
+`;
+
+exports[`invalid(5): {\"bin\": \"inside-not-executable.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "inside-not-executable.js"}
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`bin\` file must have executable permission.
+
+`;
+
+exports[`invalid(6): {\"bin\": \"executable.js\", \"bin\": \"not-executable.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": "executable.js", "bin": "not-executable.js"}
+
+`;
+
+exports[`invalid(6): {\"bin\": \"executable.js\", \"bin\": \"not-executable.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "executable.js", "bin": "not-executable.js"}
+    |                                 ^^^^^^^^^^^^^^^^^^^ The \`bin\` file must have executable permission.
+
+`;
+
+exports[`invalid(7): {\"bin\": {\"foo\": \"executable.js\", \"foo\": \"not-executable.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "executable.js", "foo": "not-executable.js"}}
+
+`;
+
+exports[`invalid(7): {\"bin\": {\"foo\": \"executable.js\", \"foo\": \"not-executable.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "executable.js", "foo": "not-executable.js"}}
+    |                                         ^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must have executable permission.
+
+`;

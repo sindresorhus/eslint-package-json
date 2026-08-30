@@ -43,6 +43,21 @@ Message:
 
 `;
 
+exports[`invalid(12): {\"bin\": {\"foo\": \"valid.js\", \"foo\": \"invalid.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": {"foo": "valid.js", "foo": "invalid.js"}}
+
+`;
+
+exports[`invalid(12): {\"bin\": {\"foo\": \"valid.js\", \"foo\": \"invalid.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "valid.js", "foo": "invalid.js"}}
+    |                                    ^^^^^^^^^^^^ The \`bin\` file for \`foo\` must start with \`#!/usr/bin/env node\`.
+
+`;
+
 exports[`invalid(2): {\"bin\": \"wrong-shebang.js\"} 1`] = `
 
 [Input 'test/fixtures/require-bin-shebang/package.json']

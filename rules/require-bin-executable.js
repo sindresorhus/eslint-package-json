@@ -1,21 +1,23 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import process from 'node:process';
 import {getRootObject, iterateExistingBinFiles} from './utils/index.js';
 
 const MESSAGE_ID = 'invalid';
 const STRING_MESSAGE_ID = 'invalidString';
 
 const messages = {
-	[MESSAGE_ID]: 'The `bin` file for `{{name}}` must start with `#!/usr/bin/env node`.',
-	[STRING_MESSAGE_ID]: 'The `bin` file must start with `#!/usr/bin/env node`.',
+	[MESSAGE_ID]: 'The `bin` file for `{{name}}` must have executable permission.',
+	[STRING_MESSAGE_ID]: 'The `bin` file must have executable permission.',
 };
 
-const supportedExtensions = new Set(['.js', '.mjs', '.cjs']);
-const nodeShebangPattern = /^#!\/usr\/bin\/env node(?:\n|$)/u;
+const executableMode = 0o111;
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
 	Document(node) {
+		if (process.platform === 'win32') {
+			return;
+		}
+
 		const root = getRootObject(node);
 
 		if (!root) {
@@ -23,21 +25,8 @@ const create = context => ({
 		}
 
 		for (const entry of iterateExistingBinFiles(context, root)) {
-			const extension = path.extname(entry.value);
-
-			if (!supportedExtensions.has(extension)) {
-				continue;
-			}
-
-			let content;
-
-			try {
-				content = fs.readFileSync(entry.filePath, 'utf8');
-			} catch {
-				continue;
-			}
-
-			if (nodeShebangPattern.test(content)) {
+			// eslint-disable-next-line no-bitwise -- Unix permissions are a bitmask.
+			if ((entry.statistics.mode & executableMode) !== 0) {
 				continue;
 			}
 
@@ -56,7 +45,7 @@ const config = {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Require `bin` files to start with the exact `#!/usr/bin/env node` shebang.',
+			description: 'Require `bin` files to have Unix executable permission.',
 			recommended: true,
 		},
 		schema: [],
