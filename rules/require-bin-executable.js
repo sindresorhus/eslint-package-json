@@ -9,7 +9,7 @@ const messages = {
 	[STRING_MESSAGE_ID]: 'The `bin` file must have executable permission.',
 };
 
-const executableMode = 0o111;
+const executePermissionMask = 0o111;
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
@@ -26,7 +26,7 @@ const create = context => ({
 
 		for (const entry of iterateExistingBinFiles(context, root)) {
 			// eslint-disable-next-line no-bitwise -- Unix permissions are a bitmask.
-			if ((entry.statistics.mode & executableMode) !== 0) {
+			if ((entry.mode & executePermissionMask) !== 0) {
 				continue;
 			}
 

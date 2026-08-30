@@ -13,7 +13,7 @@ test.snapshot({
 		{code: '{"bin": {"foo": "valid.js", "bar": "valid.cjs"}}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": "unsupported.txt"}}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": "missing.js"}}', filename: fixturePackageFilename},
-		{code: '{"bin": {"foo": "../index.js"}}', filename: fixturePackageFilename},
+		{code: '{"bin": {"foo": "../../../index.js"}}', filename: fixturePackageFilename},
 		{code: '{"bin": "outside.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": "directory.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": ""}', filename: fixturePackageFilename},

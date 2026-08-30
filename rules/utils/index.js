@@ -211,16 +211,9 @@ export function * iterateExistingBinFiles(context, rootObject) {
 			continue;
 		}
 
-		let statistics;
 		let realFilePath;
 
 		try {
-			statistics = fs.statSync(filePath);
-
-			if (!statistics.isFile()) {
-				continue;
-			}
-
 			realFilePath = fs.realpathSync(filePath);
 		} catch {
 			continue;
@@ -236,7 +229,19 @@ export function * iterateExistingBinFiles(context, rootObject) {
 			continue;
 		}
 
-		yield {...entry, filePath: realFilePath, statistics};
+		let statistics;
+
+		try {
+			statistics = fs.statSync(realFilePath);
+		} catch {
+			continue;
+		}
+
+		if (!statistics.isFile()) {
+			continue;
+		}
+
+		yield {...entry, filePath: realFilePath, mode: statistics.mode};
 	}
 }
 
