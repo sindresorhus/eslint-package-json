@@ -39,7 +39,7 @@ const urlPattern = new RegExp([
 	`${opaqueUrlPatternSource}${urlCharacterPatternSource}*`,
 ].join('|'), 'gi');
 const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*'|[<>]+|[^\s"&',;<>`{|}]+/gu;
-const fileRedirectionOperators = new Set(['<', '<>', '>', '>>']);
+const unambiguousValueIntroducers = new Set(['=', '<', '<>', '>', '>>']);
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z])((?:[a-z]:)?[/\\].*)$/i;
 const quoteDelimiterPattern = /^["']+|["']+$/gu;
@@ -101,7 +101,7 @@ const hasAbsolutePath = command => {
 
 	return candidates.some((candidate, index) => {
 		const previousCandidate = candidates[index - 1];
-		const isUnambiguousValue = previousCandidate === '=' || fileRedirectionOperators.has(previousCandidate);
+		const isUnambiguousValue = unambiguousValueIntroducers.has(previousCandidate);
 
 		return hasAbsolutePathInCandidate(candidate)
 			|| (isUnambiguousValue && hasAbsolutePathInValue(candidate, false));
