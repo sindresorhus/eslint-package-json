@@ -36,7 +36,6 @@ snapshotTest.snapshot({
 		{code: '{"bin": "not-executable.js", "bin": "executable.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": "not-executable.js", "foo": "executable.js"}}', filename: fixturePackageFilename},
 		{code: '{"bin": "missing.js"}', filename: fixturePackageFilename},
-		{code: '{"bin": "directory"}', filename: fixturePackageFilename},
 		{code: '{"bin": "../../../index.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": "outside.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": ""}', filename: fixturePackageFilename},
@@ -50,7 +49,7 @@ snapshotTest.snapshot({
 	invalid: process.platform === 'win32' ? [] : permissionCases,
 });
 
-test('requires the owner execute bit', t => {
+test('requires the owner execute bit and ignores directories', t => {
 	const temporaryDirectory = path.resolve('.ai-temporary');
 	fs.mkdirSync(temporaryDirectory, {recursive: true});
 	const packageDirectory = fs.mkdtempSync(path.join(temporaryDirectory, 'require-bin-executable-'));
@@ -61,10 +60,13 @@ test('requires the owner execute bit', t => {
 	const binFile = path.join(packageDirectory, 'cli.js');
 	fs.writeFileSync(binFile, '#!/usr/bin/env node\n');
 	fs.chmodSync(binFile, 0o611);
+	const binDirectory = path.join(packageDirectory, 'directory');
+	fs.mkdirSync(binDirectory);
+	fs.chmodSync(binDirectory, 0o611);
 
 	const linter = new Linter({cwd: packageDirectory});
 	const messages = linter.verify(
-		'{"bin": "cli.js"}',
+		'{"bin": {"cli": "cli.js", "directory": "directory"}}',
 		{
 			files: ['**'],
 			language: 'json/json',
@@ -74,6 +76,6 @@ test('requires the owner execute bit', t => {
 		{filename: 'package.json'},
 	);
 
-	const expectedMessageIds = process.platform === 'win32' ? [] : ['invalidString'];
+	const expectedMessageIds = process.platform === 'win32' ? [] : ['invalid'];
 	t.assert.deepStrictEqual(messages.map(({messageId}) => messageId), expectedMessageIds);
 });
