@@ -22,6 +22,7 @@ const opaqueUrlPatternSource = `${urlPrefixBoundaryPatternSource}${opaqueUrlPref
 const urlCharacterPatternSource = String.raw`[^\s"&';<>|]`;
 const urlCharacterBeforeQueryPatternSource = String.raw`[^\s"#&';<>?|]`;
 const quotedUrlPattern = new RegExp(String.raw`(["'])(?:${hierarchicalUrlPrefixPatternSource}|${fileUrlPrefixPatternSource}|${opaqueUrlPrefixPatternSource})[^\s"']*\1`, 'gi');
+// Query text and URL paths may contain `:/`, while the fallback must stop before a neighboring absolute path-list entry.
 const urlPattern = new RegExp([
 	`${hierarchicalUrlPatternSource}${urlCharacterBeforeQueryPatternSource}*[#?]${urlCharacterPatternSource}*`,
 	`${fileUrlPatternSource}${urlCharacterPatternSource}*`,
@@ -29,9 +30,10 @@ const urlPattern = new RegExp([
 	`${hierarchicalUrlPatternSource}(?:(?!:/)${urlCharacterPatternSource})*`,
 	`${opaqueUrlPatternSource}${urlCharacterPatternSource}*`,
 ].join('|'), 'gi');
-const commandWordPattern = /"[^"]*"|'[^']*'|[^\s"&',;<>`{|}]+/gu;
+const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*'|[^\s"&',;<>`{|}]+/gu;
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z]{1,2})((?:[a-z]:)?[/\\].*)$/i;
+const quoteDelimiterPattern = /^["']+|["']+$/gu;
 
 /**
 Check whether a candidate is an absolute path, including one attached to an option.
@@ -46,10 +48,12 @@ const isAbsolutePath = candidate => {
 Check whether a path candidate contains an absolute path.
 */
 const hasAbsolutePathInCandidate = candidate => {
-	const candidateWithoutWindowsOptionPrefix = candidate.replace(windowsOptionPrefixPattern, '');
-
-	for (const assignmentPart of candidateWithoutWindowsOptionPrefix.split('=')) {
-		const ungroupedPart = assignmentPart.replace(/^(?:\$\(\(?|\(+)/u, '');
+	for (const [index, assignmentPart] of candidate.split('=').entries()) {
+		const unquotedAssignmentPart = assignmentPart.replaceAll(quoteDelimiterPattern, '');
+		const assignmentPartWithoutWindowsOptionPrefix = index === 0
+			? unquotedAssignmentPart.replace(windowsOptionPrefixPattern, '')
+			: unquotedAssignmentPart;
+		const ungroupedPart = assignmentPartWithoutWindowsOptionPrefix.replace(/^(?:\$\(\(?|\(+)/u, '');
 
 		if (isAbsolutePath(ungroupedPart)) {
 			return true;
@@ -68,13 +72,9 @@ const hasAbsolutePathInCandidate = candidate => {
 /**
 Check whether a shell-like word contains an absolute path.
 */
-const hasAbsolutePathInWord = word => {
-	const quote = word[0];
-	const unquotedWord = (quote === '"' || quote === '\'') && word.at(-1) === quote
-		? word.slice(1, -1)
-		: word;
-	return unquotedWord.split(/\s+/u).some(subword => hasAbsolutePathInCandidate(subword));
-};
+const hasAbsolutePathInWord = word => word
+	.split(/\s+/u)
+	.some(subword => hasAbsolutePathInCandidate(subword));
 
 /**
 Check whether a script command contains an absolute POSIX or Windows path.

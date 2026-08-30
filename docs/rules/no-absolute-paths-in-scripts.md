@@ -11,7 +11,7 @@ Package scripts should not contain absolute paths. Absolute paths depend on a pa
 
 [npm runs scripts](https://docs.npmjs.com/cli/using-npm/scripts/) from the package root and adds dependency executables to `PATH`. Use paths relative to the package root for files, and invoke dependency executables by name.
 
-This rule checks every effective string value in `scripts` for absolute POSIX and Windows paths, including executable paths, arguments, environment variable values, path lists, and redirection targets. Common URL forms are ignored.
+This rule checks every effective string value in `scripts` for absolute POSIX and Windows paths, including executable paths, arguments, environment-variable assignment values, path lists, and redirection targets. Common URL forms are ignored.
 
 Slash-prefixed single-component words such as `/restore` and option prefixes such as `/Fo:` are ambiguous: POSIX treats them as absolute paths, while Windows tools commonly use them as options. To avoid false positives in cross-platform scripts, the rule ignores the ambiguous prefix and still checks any attached value. Paths with another separator, such as `/usr/bin`, are still reported.
 
