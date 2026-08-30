@@ -34,6 +34,7 @@ const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z]{1,2})((?:[a-z]:)?[/\\].*)$/i;
 const quoteDelimiterPattern = /^["']+|["']+$/gu;
+const shellParameterAlternativeValuePattern = /\$\{[a-z_]\w*:?[+-]([^{}]*)\}/giu;
 
 /**
 Check whether a candidate is an absolute path, including one attached to an option.
@@ -45,24 +46,29 @@ const isAbsolutePath = candidate => {
 };
 
 /**
+Check whether a value contains an absolute path.
+*/
+const hasAbsolutePathInValue = (value, canBeWindowsOption) => {
+	const unquotedValue = value.replaceAll(quoteDelimiterPattern, '');
+	const valueWithoutWindowsOptionPrefix = canBeWindowsOption
+		? unquotedValue.replace(windowsOptionPrefixPattern, '')
+		: unquotedValue;
+	const ungroupedValue = valueWithoutWindowsOptionPrefix.replace(/^(?:\$\(\(?|\(+)/u, '');
+
+	if (isAbsolutePath(ungroupedValue)) {
+		return true;
+	}
+
+	return ungroupedValue.split(':').some(pathListEntry => isAbsolutePath(pathListEntry));
+};
+
+/**
 Check whether a path candidate contains an absolute path.
 */
 const hasAbsolutePathInCandidate = candidate => {
 	for (const [index, assignmentPart] of candidate.split('=').entries()) {
-		const unquotedAssignmentPart = assignmentPart.replaceAll(quoteDelimiterPattern, '');
-		const assignmentPartWithoutWindowsOptionPrefix = index === 0
-			? unquotedAssignmentPart.replace(windowsOptionPrefixPattern, '')
-			: unquotedAssignmentPart;
-		const ungroupedPart = assignmentPartWithoutWindowsOptionPrefix.replace(/^(?:\$\(\(?|\(+)/u, '');
-
-		if (isAbsolutePath(ungroupedPart)) {
+		if (hasAbsolutePathInValue(assignmentPart, index === 0)) {
 			return true;
-		}
-
-		for (const pathListEntry of ungroupedPart.split(':')) {
-			if (isAbsolutePath(pathListEntry)) {
-				return true;
-			}
 		}
 	}
 
@@ -70,21 +76,22 @@ const hasAbsolutePathInCandidate = candidate => {
 };
 
 /**
-Check whether a shell-like word contains an absolute path.
-*/
-const hasAbsolutePathInWord = word => word
-	.split(/\s+/u)
-	.some(subword => hasAbsolutePathInCandidate(subword));
-
-/**
 Check whether a script command contains an absolute POSIX or Windows path.
 */
 const hasAbsolutePath = command => {
 	const commandWithoutQuotedUrls = command.replaceAll(quotedUrlPattern, '$1$1');
 	const commandWithoutUrls = commandWithoutQuotedUrls.replaceAll(urlPattern, '');
-	const words = commandWithoutUrls.match(commandWordPattern) ?? [];
 
-	return words.some(word => hasAbsolutePathInWord(word));
+	for (const match of commandWithoutUrls.matchAll(shellParameterAlternativeValuePattern)) {
+		if (hasAbsolutePathInValue(match[1], false)) {
+			return true;
+		}
+	}
+
+	const candidates = (commandWithoutUrls.match(commandWordPattern) ?? []).flatMap(word => word.split(/\s+/u));
+
+	return candidates.some((candidate, index) => hasAbsolutePathInCandidate(candidate)
+		|| (candidates[index - 1] === '=' && hasAbsolutePathInValue(candidate, false)));
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */

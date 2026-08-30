@@ -1,6 +1,7 @@
 import {getTester} from './utils/test.js';
 
 const {test} = getTester(import.meta);
+const shellParameterPrefix = '${';
 
 test.snapshot({
 	valid: [
@@ -32,6 +33,9 @@ test.snapshot({
 		'{"scripts": {"download": "curl https://example.com/?next=C:/archive.tgz"}}',
 		'{"scripts": {"download": "curl https://user:password@example.com/C:/archive.tgz"}}',
 		String.raw`{"scripts": {"download": "curl \"https://example.com/?a=1&next=/archive.tgz\""}}`,
+		'{"scripts": {"download": "curl \'https://example.com/?a=1&next=/tmp\'"}}',
+		`{"scripts": {"test": "echo ${shellParameterPrefix}TMPDIR:-./tmp/cache}"}}`,
+		`{"scripts": {"test": "echo ${shellParameterPrefix}MESSAGE:?/tmp/file}"}}`,
 		'{"scripts": {"test": "PATH=https://example.com/bin:node_modules/.bin tool"}}',
 		'{"scripts": {"test": "PATH=bin:https://example.com/bin tool"}}',
 		'{"scripts": {"test": "node --import=file:///tmp/setup.js --test"}}',
@@ -63,9 +67,16 @@ test.snapshot({
 		String.raw`{"scripts": {"test": "sh -c '\"/Applications/My Tool/tool\" --version'"}}`,
 		String.raw`{"scripts": {"test": "echo \"https://example.com /tmp/file\""}}`,
 		'{"scripts": {"test": "node --test > /dev/null"}}',
+		'{"scripts": {"test": "node --test 2>/dev/null"}}',
 		'{"scripts": {"test": "node --test&&/usr/bin/tool"}}',
 		'{"scripts": {"test": "CACHE_DIR=/tmp/cache node test.js"}}',
 		String.raw`{"scripts": {"test": "TMPDIR=\"/tmp\" tool"}}`,
+		'{"scripts": {"test": "TMPDIR=\'/tmp\' tool"}}',
+		`{"scripts": {"test": "tool --cache=${shellParameterPrefix}CACHE_DIR:-/tmp/cache}"}}`,
+		`{"scripts": {"test": "echo ${shellParameterPrefix}TMPDIR:+/tmp/file}"}}`,
+		`{"scripts": {"test": "echo ${shellParameterPrefix}TMPDIR-/tmp/file}"}}`,
+		String.raw`{"scripts": {"test": "echo \"${shellParameterPrefix}TMPDIR:-/tmp/file}\""}}`,
+		String.raw`{"scripts": {"test": "pwsh -c \"$p = '/tmp'\""}}`,
 		'{"scripts": {"test": "tool --config=/etc/tool.json"}}',
 		'{"scripts": {"test": "tool --profile:/tmp/config"}}',
 		'{"scripts": {"test": "tool profile_file:/tmp/config"}}',
