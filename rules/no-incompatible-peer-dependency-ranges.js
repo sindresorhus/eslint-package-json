@@ -12,6 +12,7 @@ const messages = {
 };
 
 const runtimeDependencyTypes = ['dependencies', 'optionalDependencies'];
+const prereleaseVersionPattern = /(?:^|[\s|])[<=>^~]*\s*v?\d+\.\d+\.\d+-[-0-9A-Za-z]/u;
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
@@ -28,6 +29,7 @@ const create = context => ({
 			if (
 				member.value.type === 'String'
 				&& validRange(member.value.value) !== null
+				&& !prereleaseVersionPattern.test(member.value.value)
 			) {
 				peerDependencies.set(name, member);
 			}
@@ -48,9 +50,28 @@ const create = context => ({
 
 			if (
 				validRange(dependencyRange) === null
+				|| prereleaseVersionPattern.test(dependencyRange)
 				|| semver.intersects(peerRange, dependencyRange)
 			) {
 				continue;
+			}
+
+			const suggest = [];
+
+			if (semver.minVersion(peerRange)) {
+				suggest.push({
+					messageId: USE_PEER_RANGE_SUGGESTION_ID,
+					data: {groupName, peerRange},
+					fix: fixer => fixer.replaceText(member.value, JSON.stringify(peerRange)),
+				});
+			}
+
+			if (semver.minVersion(dependencyRange)) {
+				suggest.push({
+					messageId: USE_DEPENDENCY_RANGE_SUGGESTION_ID,
+					data: {groupName, dependencyRange},
+					fix: fixer => fixer.replaceText(peerMember.value, JSON.stringify(dependencyRange)),
+				});
 			}
 
 			context.report({
@@ -62,18 +83,7 @@ const create = context => ({
 					dependencyRange,
 					peerRange,
 				},
-				suggest: [
-					{
-						messageId: USE_PEER_RANGE_SUGGESTION_ID,
-						data: {groupName, peerRange},
-						fix: fixer => fixer.replaceText(member.value, JSON.stringify(peerRange)),
-					},
-					{
-						messageId: USE_DEPENDENCY_RANGE_SUGGESTION_ID,
-						data: {groupName, dependencyRange},
-						fix: fixer => fixer.replaceText(peerMember.value, JSON.stringify(dependencyRange)),
-					},
-				],
+				suggest,
 			});
 		}
 	},

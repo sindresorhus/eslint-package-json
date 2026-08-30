@@ -296,6 +296,7 @@ const trickyDocuments = [
 	'{"overrides":{"foo":"1.0.0"},"dependencies":{"foo":"^2.0.0"}}',
 	'{"overrides":{"foo":{}},"dependencies":{"foo":"^2.0.0"}}',
 	'{"peerDependencies":{"foo":"^1.0.0"}}',
+	'{"peerDependencies":{"foo":">2.0.0 <1.0.0"},"dependencies":{"foo":"*"}}',
 	'{"peerDependencies":{"foo":"^3.0.0","foo":"^1.0.0"},"dependencies":{"foo":"^1.5.0","foo":"^2.0.0"}}',
 	'{"dependancies":{"a":"^1.0.0"}}',
 	// Duplicate keys at the top level and nested, where a fix that removes only the effective member promotes the shadowed one into its place.
