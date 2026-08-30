@@ -636,6 +636,36 @@ Message:
 
 `;
 
+exports[`invalid(48): {\"scripts\": {\"test\": \"echo value > /tmp\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo value > /tmp"}}
+
+`;
+
+exports[`invalid(48): {\"scripts\": {\"test\": \"echo value > /tmp\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo value > /tmp"}}
+    |                      ^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(49): {\"scripts\": {\"test\": \"echo value >/tmp\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo value >/tmp"}}
+
+`;
+
+exports[`invalid(49): {\"scripts\": {\"test\": \"echo value >/tmp\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo value >/tmp"}}
+    |                      ^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
 exports[`invalid(5): {\"scripts\": {\"test\": \"sh -c 'node \\\"/usr/bin/tool\\\"'\"}} 1`] = `
 
 [Input]
@@ -648,6 +678,51 @@ exports[`invalid(5): {\"scripts\": {\"test\": \"sh -c 'node \\\"/usr/bin/tool\\\
 Message:
 > 1 | {"scripts": {"test": "sh -c 'node \\"/usr/bin/tool\\"'"}}
     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(50): {\"scripts\": {\"test\": \"echo value >> /tmp\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo value >> /tmp"}}
+
+`;
+
+exports[`invalid(50): {\"scripts\": {\"test\": \"echo value >> /tmp\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo value >> /tmp"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(51): {\"scripts\": {\"test\": \"echo value > \\\"/tmp\\\"\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo value > \\"/tmp\\""}}
+
+`;
+
+exports[`invalid(51): {\"scripts\": {\"test\": \"echo value > \\\"/tmp\\\"\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo value > \\"/tmp\\""}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(52): {\"scripts\": {\"test\": \"tool < /tmp\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "tool < /tmp"}}
+
+`;
+
+exports[`invalid(52): {\"scripts\": {\"test\": \"tool < /tmp\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "tool < /tmp"}}
+    |                      ^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
 
 `;
 

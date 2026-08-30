@@ -30,7 +30,8 @@ const urlPattern = new RegExp([
 	`${hierarchicalUrlPatternSource}(?:(?!:/)${urlCharacterPatternSource})*`,
 	`${opaqueUrlPatternSource}${urlCharacterPatternSource}*`,
 ].join('|'), 'gi');
-const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*'|[^\s"&',;<>`{|}]+/gu;
+const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*'|[<>]+|[^\s"&',;<>`{|}]+/gu;
+const fileRedirectionOperatorPattern = /^(?:<>?|>>?)$/u;
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z])((?:[a-z]:)?[/\\].*)$/i;
 const quoteDelimiterPattern = /^["']+|["']+$/gu;
@@ -90,8 +91,13 @@ const hasAbsolutePath = command => {
 
 	const candidates = (commandWithoutUrls.match(commandWordPattern) ?? []).flatMap(word => word.split(/\s+/u));
 
-	return candidates.some((candidate, index) => hasAbsolutePathInCandidate(candidate)
-		|| (candidates[index - 1] === '=' && hasAbsolutePathInValue(candidate, false)));
+	return candidates.some((candidate, index) => {
+		const previousCandidate = candidates[index - 1] ?? '';
+		const isUnambiguousValue = previousCandidate === '=' || fileRedirectionOperatorPattern.test(previousCandidate);
+
+		return hasAbsolutePathInCandidate(candidate)
+			|| (isUnambiguousValue && hasAbsolutePathInValue(candidate, false));
+	});
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */

@@ -55,6 +55,8 @@ test.snapshot({
 		String.raw`{"scripts": {"test": "cross-env-shell \"cmd '/c' echo hello\""}}`,
 		'{"scripts": {"test": "msbuild /p:Configuration=Release project.sln"}}',
 		'{"scripts": {"test": "cat /tmp"}}',
+		'{"scripts": {"test": "cat << /tmp"}}',
+		'{"scripts": {"test": "cat <<< /tmp"}}',
 		// Only the effective top-level `scripts` field is checked.
 		'{"scripts": {"test": "/usr/bin/node --test"}, "scripts": {"test": "node --test"}}',
 		// Only the effective script value is checked.
@@ -110,5 +112,11 @@ test.snapshot({
 		'{"scripts": {"test": "node --test"}, "scripts": {"test": "/usr/bin/node --test"}}',
 		'{"scripts": {"pretest": null, "test": "/usr/bin/node --test"}}',
 		'{"scripts": {"test": "/usr/bin/node", "build": "C:/tools/build.exe"}}',
+		// Single-component slash paths are unambiguous after a file redirection operator.
+		'{"scripts": {"test": "echo value > /tmp"}}',
+		'{"scripts": {"test": "echo value >/tmp"}}',
+		'{"scripts": {"test": "echo value >> /tmp"}}',
+		String.raw`{"scripts": {"test": "echo value > \"/tmp\""}}`,
+		'{"scripts": {"test": "tool < /tmp"}}',
 	],
 });
