@@ -43,14 +43,29 @@ Message:
 
 `;
 
-exports[`invalid(12): {\"bin\": {\"foo\": \"valid.js\", \"foo\": \"invalid.js\"}} 1`] = `
+exports[`invalid(12): {\"bin\": \"valid.js\", \"bin\": \"invalid.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "valid.js", "bin": "invalid.js"}
+
+`;
+
+exports[`invalid(12): {\"bin\": \"valid.js\", \"bin\": \"invalid.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "valid.js", "bin": "invalid.js"}
+    |                            ^^^^^^^^^^^^ The \`bin\` file must start with \`#!/usr/bin/env node\`.
+
+`;
+
+exports[`invalid(13): {\"bin\": {\"foo\": \"valid.js\", \"foo\": \"invalid.js\"}} 1`] = `
 
 [Input 'test/fixtures/require-bin-shebang/package.json']
   1 | {"bin": {"foo": "valid.js", "foo": "invalid.js"}}
 
 `;
 
-exports[`invalid(12): {\"bin\": {\"foo\": \"valid.js\", \"foo\": \"invalid.js\"}} 2`] = `
+exports[`invalid(13): {\"bin\": {\"foo\": \"valid.js\", \"foo\": \"invalid.js\"}} 2`] = `
 
 Message:
 > 1 | {"bin": {"foo": "valid.js", "foo": "invalid.js"}}

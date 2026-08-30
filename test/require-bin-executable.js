@@ -9,6 +9,7 @@ const permissionCases = [
 	{code: '{"bin": "not-executable"}', filename: fixturePackageFilename},
 	{code: '{"bin": {"foo": "not-executable.js"}}', filename: fixturePackageFilename},
 	{code: '{"bin": {"foo": "not-executable.js", "bar": "not-executable"}}', filename: fixturePackageFilename},
+	{code: '{"bin": {"foo": "executable.js", "bar": "not-executable.js"}}', filename: fixturePackageFilename},
 	{code: '{"bin": "inside-not-executable.js"}', filename: fixturePackageFilename},
 	// Only the final top-level `bin` field or object value per key is installed.
 	{code: '{"bin": "executable.js", "bin": "not-executable.js"}', filename: fixturePackageFilename},

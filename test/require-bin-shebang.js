@@ -19,6 +19,7 @@ test.snapshot({
 		{code: '{"bin": ""}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": 123}}', filename: fixturePackageFilename},
 		// A shadowed target is not installed.
+		{code: '{"bin": "invalid.js", "bin": "valid.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": "invalid.js", "foo": "valid.js"}}', filename: fixturePackageFilename},
 		{code: '{"directories": {"bin": "invalid.js"}}', filename: fixturePackageFilename},
 		{code: '{"bin": "invalid.js"}', filename: '<text>'},
@@ -36,6 +37,7 @@ test.snapshot({
 		{code: '{"bin": "invalid.cjs"}', filename: fixturePackageFilename},
 		{code: '{"bin": "invalid.mjs"}', filename: fixturePackageFilename},
 		// Only the final value per `bin` key is installed.
+		{code: '{"bin": "valid.js", "bin": "invalid.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": "valid.js", "foo": "invalid.js"}}', filename: fixturePackageFilename},
 	],
 });
