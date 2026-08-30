@@ -14,6 +14,14 @@ const messages = {
 const runtimeDependencyTypes = ['dependencies', 'optionalDependencies'];
 const prereleaseVersionPattern = /(?:^|[\s|])[<=>^~]*\s*v?\d+\.\d+\.\d+-[-0-9A-Za-z]/u;
 
+const hasStableVersions = range => semver.toComparators(range).some(comparators => semver.minVersion(comparators.join(' ')) !== null);
+
+const hasStableRangeOverlap = (firstRange, secondRange) => {
+	const secondComparatorSets = semver.toComparators(secondRange);
+
+	return semver.toComparators(firstRange).some(firstComparators => secondComparatorSets.some(secondComparators => semver.minVersion([...firstComparators, ...secondComparators].join(' ')) !== null));
+};
+
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
 	Document(node) {
@@ -51,14 +59,14 @@ const create = context => ({
 			if (
 				validRange(dependencyRange) === null
 				|| prereleaseVersionPattern.test(dependencyRange)
-				|| semver.intersects(peerRange, dependencyRange)
+				|| hasStableRangeOverlap(peerRange, dependencyRange)
 			) {
 				continue;
 			}
 
 			const suggest = [];
 
-			if (semver.minVersion(peerRange)) {
+			if (hasStableVersions(peerRange)) {
 				suggest.push({
 					messageId: USE_PEER_RANGE_SUGGESTION_ID,
 					data: {groupName, peerRange},
@@ -66,7 +74,7 @@ const create = context => ({
 				});
 			}
 
-			if (semver.minVersion(dependencyRange)) {
+			if (hasStableVersions(dependencyRange)) {
 				suggest.push({
 					messageId: USE_DEPENDENCY_RANGE_SUGGESTION_ID,
 					data: {groupName, dependencyRange},
