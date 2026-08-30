@@ -756,6 +756,21 @@ Message:
 
 `;
 
+exports[`invalid(55): {\"scripts\": {\"test\": \"echo \${1:-/tmp/file}\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo \${1:-/tmp/file}"}}
+
+`;
+
+exports[`invalid(55): {\"scripts\": {\"test\": \"echo \${1:-/tmp/file}\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo \${1:-/tmp/file}"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
 exports[`invalid(6): {\"scripts\": {\"test\": \"sh -c '\\\"/Applications/My Tool/tool\\\" --version'\"}} 1`] = `
 
 [Input]

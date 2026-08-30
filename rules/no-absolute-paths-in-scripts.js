@@ -43,7 +43,7 @@ const fileRedirectionOperators = new Set(['<', '<>', '>', '>>']);
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z])((?:[a-z]:)?[/\\].*)$/i;
 const quoteDelimiterPattern = /^["']+|["']+$/gu;
-const shellParameterAlternativeValuePattern = /\$\{[a-z_]\w*:?[+-]([^{}]*)\}/giu;
+const shellParameterAlternativeValuePattern = /\$\{(?:[a-z_]\w*|\d+):?[+-]([^{}]*)\}/giu;
 
 /**
 Check whether a candidate is an absolute path, including one attached to an option.
