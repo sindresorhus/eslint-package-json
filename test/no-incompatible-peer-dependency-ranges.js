@@ -10,6 +10,7 @@ test.snapshot({
 		'{"dependencies": {"foo": "^1.0.0"}}',
 		'{"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": ">=1.5.0 <2.0.0"}}',
 		'{"peerDependencies": {"foo": "^1.0.0 || ^3.0.0"}, "dependencies": {"foo": "^3.1.0"}}',
+		'{"peerDependencies": {"foo": "2"}, "dependencies": {"foo": ">1.2.3 <1.2.4 || 2"}}',
 		'{"peerDependencies": {"foo": "1.x"}, "optionalDependencies": {"foo": "1.2.3"}}',
 		'{"peerDependencies": {"foo": "*"}, "dependencies": {"foo": "^9.0.0"}}',
 		// Ranges that explicitly mention prerelease versions are not compared.
