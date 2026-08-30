@@ -70,6 +70,7 @@ const recommendedRuleIds = [
 	'consistent-path-prefix',
 	'dependency-version-range',
 	'no-absolute-paths',
+	'no-absolute-paths-in-scripts',
 	'no-backslash-paths',
 	'no-core-module-dependencies',
 	'no-deprecated-fields',
@@ -653,6 +654,7 @@ const findManifests = (directory, depth = 4) => {
 // Manifests shaped like real packages, each carrying a mistake that the installed dependency tree happens never to contain — published packages do not ship absolute paths, `EOVERRIDE` conflicts, or `workspace:` ranges. Without these, a third of the rules would only ever be exercised in isolation by their own tests, never alongside the others.
 const unusualManifests = [
 	['{"name":"a","version":"1.0.0","main":"C:/build/index.js","files":["dist"]}', 'package.json'],
+	['{"name":"a","version":"1.0.0","scripts":{"test":"/usr/bin/node --test"},"files":["dist"]}', 'package.json'],
 	[String.raw`{"name":"a","version":"1.0.0","main":"dist\\index.js","files":["dist"]}`, 'package.json'],
 	['{"name":"a","version":"1.0.0","dependencies":{"semver":"^7.0.0"},"devDependencies":{"semver":"^7.0.0"},"files":["dist"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","dependencies":{"semver":"^7.0.0"},"devDependencies":{"semver":"^6.0.0"},"files":["dist"]}', 'package.json'],
@@ -710,6 +712,7 @@ test('every rule takes part on a realistic manifest without breaking its neighbo
 	// Rules the real-world corpus never reaches, so this is their only all-rules-together coverage. A rule dropping off this list means it went silent.
 	const requiredToFire = [
 		'no-absolute-paths',
+		'no-absolute-paths-in-scripts',
 		'no-backslash-paths',
 		'no-duplicate-dependencies',
 		'no-exact-peer-dependencies',

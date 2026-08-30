@@ -4,6 +4,7 @@ export {default as 'consistent-name-casing'} from './consistent-name-casing.js';
 export {default as 'consistent-path-prefix'} from './consistent-path-prefix.js';
 export {default as 'dependency-version-range'} from './dependency-version-range.js';
 export {default as 'description-format'} from './description-format.js';
+export {default as 'no-absolute-paths-in-scripts'} from './no-absolute-paths-in-scripts.js';
 export {default as 'no-absolute-paths'} from './no-absolute-paths.js';
 export {default as 'no-backslash-paths'} from './no-backslash-paths.js';
 export {default as 'no-core-module-dependencies'} from './no-core-module-dependencies.js';

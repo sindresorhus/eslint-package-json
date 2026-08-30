@@ -1,0 +1,66 @@
+import {getTester} from './utils/test.js';
+
+const {test} = getTester(import.meta);
+
+test.snapshot({
+	valid: [
+		'{}',
+		'{"scripts": ["node --test"]}',
+		'{"scripts": {"test": 1}}',
+		'{"scripts": {"test": "node --test", "build": "node ./scripts/build.js"}}',
+		'{"scripts": {"test": "node ../test.js"}}',
+		'{"scripts": {"lint": "node_modules/.bin/eslint ."}}',
+		String.raw`{"scripts": {"test": ".\\scripts\\test.js"}}`,
+		String.raw`{"scripts": {"test": "C:tools\\test.js"}}`,
+		'{"scripts": {"test": "node $HOME/test.js"}}',
+		String.raw`{"scripts": {"test": "%USERPROFILE%\\test.js"}}`,
+		'{"scripts": {"test": "tool $(pwd)/file"}}',
+		'{"scripts": {"test": "tool $((1))/file"}}',
+		'{"scripts": {"test": "cmd /c echo hello"}}',
+		'{"scripts": {"test": "cl /Fo:build/output.obj source.c"}}',
+		'{"scripts": {"test": "cl /Fo output.obj source.c"}}',
+		'{"scripts": {"test": "msbuild /restore project.sln"}}',
+		'{"scripts": {"test": "cc -Isrc/include source.c"}}',
+		'{"scripts": {"test": "cc -I./include source.c"}}',
+		'{"scripts": {"test": "tool @./options"}}',
+		'{"scripts": {"test": "npm exec @scope/tool"}}',
+		'{"scripts": {"download": "curl https://example.com/archive.tgz"}}',
+		'{"scripts": {"download": "curl https://example.com/?next=/archive.tgz"}}',
+		String.raw`{"scripts": {"download": "curl \"https://example.com/?a=1&next=/archive.tgz\""}}`,
+		'{"scripts": {"test": "PATH=https://example.com/bin:node_modules/.bin tool"}}',
+		'{"scripts": {"test": "node --import=file:///tmp/setup.js --test"}}',
+		'{"scripts": {"test": "node --import=file:/tmp/setup.js --test"}}',
+		'{"scripts": {"test": "echo data:text/plain,/tmp/example"}}',
+		'{"scripts": {"test": "msbuild /p:Configuration=Release project.sln"}}',
+		'{"scripts": {"test": "cat /tmp"}}',
+		// Only the effective top-level `scripts` field is checked.
+		'{"scripts": {"test": "/usr/bin/node --test"}, "scripts": {"test": "node --test"}}',
+		// Only the effective script value is checked.
+		'{"scripts": {"test": "/usr/bin/node --test", "test": "node --test"}}',
+	],
+	invalid: [
+		'{"scripts": {"test": "/usr/bin/node --test"}}',
+		'{"scripts": {"test": "node /Users/me/project/test.js"}}',
+		String.raw`{"scripts": {"test": "\"/Applications/My Tool/tool\" --version"}}`,
+		'{"scripts": {"test": "node --test > /dev/null"}}',
+		'{"scripts": {"test": "CACHE_DIR=/tmp/cache node test.js"}}',
+		'{"scripts": {"test": "tool --config=/etc/tool.json"}}',
+		'{"scripts": {"test": "cc -I/usr/include source.c"}}',
+		'{"scripts": {"test": "tool @/tmp/options"}}',
+		'{"scripts": {"test": "PATH=bin:/usr/bin tool"}}',
+		'{"scripts": {"test": "PATH=https://example.com/bin:/usr/bin tool"}}',
+		'{"scripts": {"test": "OUT=/tmp=https://example.com tool"}}',
+		'{"scripts": {"test": "(/usr/bin/node --test)"}}',
+		'{"scripts": {"test": "echo $(/usr/bin/tool)"}}',
+		'{"scripts": {"test": "C:/tools/node.exe test.js"}}',
+		String.raw`{"scripts": {"test": "C:\\tools\\node.exe test.js"}}`,
+		String.raw`{"scripts": {"test": "\"C:\\Program Files\\tool.exe\" --version"}}`,
+		String.raw`{"scripts": {"test": "\\tools\\test.exe"}}`,
+		String.raw`{"scripts": {"test": "\\\\server\\share\\tool.exe"}}`,
+		// A script receives one report even when it contains several absolute paths.
+		'{"scripts": {"test": "/usr/bin/node /tmp/test.js"}}',
+		// The final duplicate is the effective script value.
+		'{"scripts": {"test": "node --test", "test": "/usr/bin/node --test"}}',
+		'{"scripts": {"test": "node --test"}, "scripts": {"test": "/usr/bin/node --test"}}',
+	],
+});
