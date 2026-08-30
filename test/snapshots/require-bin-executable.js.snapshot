@@ -81,14 +81,29 @@ Message:
 
 `;
 
-exports[`invalid(6): {\"bin\": \"inside-not-executable.js\"} 1`] = `
+exports[`invalid(6): {\"bin\": {\"foo\": \"nested/not-executable.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "nested/not-executable.js"}}
+
+`;
+
+exports[`invalid(6): {\"bin\": {\"foo\": \"nested/not-executable.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "nested/not-executable.js"}}
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must have executable permission.
+
+`;
+
+exports[`invalid(7): {\"bin\": \"inside-not-executable.js\"} 1`] = `
 
 [Input 'test/fixtures/require-bin-executable/package.json']
   1 | {"bin": "inside-not-executable.js"}
 
 `;
 
-exports[`invalid(6): {\"bin\": \"inside-not-executable.js\"} 2`] = `
+exports[`invalid(7): {\"bin\": \"inside-not-executable.js\"} 2`] = `
 
 Message:
 > 1 | {"bin": "inside-not-executable.js"}
@@ -96,14 +111,14 @@ Message:
 
 `;
 
-exports[`invalid(7): {\"bin\": \"executable.js\", \"bin\": \"not-executable.js\"} 1`] = `
+exports[`invalid(8): {\"bin\": \"executable.js\", \"bin\": \"not-executable.js\"} 1`] = `
 
 [Input 'test/fixtures/require-bin-executable/package.json']
   1 | {"bin": "executable.js", "bin": "not-executable.js"}
 
 `;
 
-exports[`invalid(7): {\"bin\": \"executable.js\", \"bin\": \"not-executable.js\"} 2`] = `
+exports[`invalid(8): {\"bin\": \"executable.js\", \"bin\": \"not-executable.js\"} 2`] = `
 
 Message:
 > 1 | {"bin": "executable.js", "bin": "not-executable.js"}
@@ -111,14 +126,14 @@ Message:
 
 `;
 
-exports[`invalid(8): {\"bin\": {\"foo\": \"executable.js\", \"foo\": \"not-executable.js\"}} 1`] = `
+exports[`invalid(9): {\"bin\": {\"foo\": \"executable.js\", \"foo\": \"not-executable.js\"}} 1`] = `
 
 [Input 'test/fixtures/require-bin-executable/package.json']
   1 | {"bin": {"foo": "executable.js", "foo": "not-executable.js"}}
 
 `;
 
-exports[`invalid(8): {\"bin\": {\"foo\": \"executable.js\", \"foo\": \"not-executable.js\"}} 2`] = `
+exports[`invalid(9): {\"bin\": {\"foo\": \"executable.js\", \"foo\": \"not-executable.js\"}} 2`] = `
 
 Message:
 > 1 | {"bin": {"foo": "executable.js", "foo": "not-executable.js"}}

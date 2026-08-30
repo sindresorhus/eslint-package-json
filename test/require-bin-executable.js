@@ -10,6 +10,7 @@ const permissionCases = [
 	{code: '{"bin": {"foo": "not-executable.js"}}', filename: fixturePackageFilename},
 	{code: '{"bin": {"foo": "not-executable.js", "bar": "not-executable"}}', filename: fixturePackageFilename},
 	{code: '{"bin": {"foo": "executable.js", "bar": "not-executable.js"}}', filename: fixturePackageFilename},
+	{code: '{"bin": {"foo": "nested/not-executable.js"}}', filename: fixturePackageFilename},
 	{code: '{"bin": "inside-not-executable.js"}', filename: fixturePackageFilename},
 	// Only the final top-level `bin` field or object value per key is installed.
 	{code: '{"bin": "executable.js", "bin": "not-executable.js"}', filename: fixturePackageFilename},
@@ -21,6 +22,8 @@ test.snapshot({
 		'{"name": "foo"}',
 		{code: '{"bin": "executable.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": "executable"}', filename: fixturePackageFilename},
+		{code: '{"bin": "executable-without-shebang.js"}', filename: fixturePackageFilename},
+		{code: '{"bin": "./nested/executable.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": "executable.js", "bar": "executable"}}', filename: fixturePackageFilename},
 		{code: '{"bin": "inside-executable.js"}', filename: fixturePackageFilename},
 		// A shadowed top-level field or object target is not installed.
