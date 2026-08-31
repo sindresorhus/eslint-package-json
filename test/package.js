@@ -200,7 +200,7 @@ test('the recommended config works end-to-end through ESLint', () => {
 		'an ignored field in a nested package.json should be reported via the recommended config',
 	);
 
-	const cleanInput = JSON.stringify({
+	const cleanManifest = {
 		name: 'foo',
 		version: '1.0.0',
 		description: 'A test package.',
@@ -215,9 +215,16 @@ test('the recommended config works end-to-end through ESLint', () => {
 		scripts: {test: 'node --test', build: 'node build.js'},
 		files: ['index.js'],
 		keywords: ['cli'],
-	});
+	};
+	const cleanInput = JSON.stringify(cleanManifest);
 	const clean = linter.verify(cleanInput, config, {filename: 'package.json'});
 	assert.deepEqual(clean, [], 'a clean package.json should produce no problems');
+
+	const redundantPackageJsonInput = JSON.stringify({...cleanManifest, files: [...cleanManifest.files, 'package.json']});
+	const fixed = linter.verifyAndFix(redundantPackageJsonInput, config, {filename: 'package.json'});
+	assert.equal(fixed.fixed, true);
+	assert.equal(fixed.output, cleanInput);
+	assert.deepEqual(fixed.messages, [], 'removing redundant `package.json` should leave the recommended config clean');
 
 	// The config is scoped to package.json, so its rules never run on other JSON files.
 	const otherFile = linter.verify('{"name": "Foo"}', config, {filename: 'tsconfig.json'});

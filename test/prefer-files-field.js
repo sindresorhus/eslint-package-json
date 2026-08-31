@@ -32,7 +32,7 @@ test.snapshot({
 		'{"name": "p", "exports": "./aXb.js", "files": ["a**b.js"]}',
 		// `main` is published by npm regardless of the allowlist, so only `types` needs covering.
 		'{"name": "p", "main": "diff.js", "types": "diff.d.ts", "files": ["diff.d.ts"]}',
-		// The root package.json is always published by npm, including when it is exported.
+		// The root `package.json` is always published by npm, including when it is exported.
 		'{"name": "p", "exports": {".": "./lib/index.js", "./package.json": "./package.json"}, "files": ["lib"]}',
 		// A non-array `files` is left to `valid-fields`.
 		'{"name": "p", "files": 1}',
@@ -78,7 +78,7 @@ test.snapshot({
 		'{"name": "p", "exports": "./dist/b.js", "files": ["other*"]}',
 		// `files` patterns are rooted, so `*.js` publishes only root-level files, not `dist/foo.js`.
 		'{"exports": "./dist/foo.js", "files": ["*.js"]}',
-		// Only the root package.json is automatically included; nested manifests still need coverage.
+		// Only the root `package.json` is automatically included; nested manifests still need coverage.
 		'{"name": "p", "exports": {".": "./lib/index.js", "./metadata": "./sub/package.json"}, "files": ["lib"]}',
 		'{"name": "foo"}',
 		'{"name": "foo", "private": false}',
