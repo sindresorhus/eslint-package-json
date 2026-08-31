@@ -8,13 +8,13 @@
 
 <!-- end auto-generated rule header -->
 
-When a package appears in both `peerDependencies` and a runtime dependency group, the ranges should share at least one stable version. Disjoint ranges encode contradictory runtime requirements and advertised host compatibility, usually indicating that one declaration was not updated when supported versions changed.
+When a package appears in both `peerDependencies` and a runtime dependency group, the ranges must share at least one stable version. Disjoint ranges contradict the installed runtime requirement and advertised peer compatibility.
 
 This rule checks `dependencies` and `optionalDependencies`. Compatibility with `devDependencies` is handled by [`peer-dependencies-as-dev-dependencies`](./peer-dependencies-as-dev-dependencies.md), which also ensures each required peer is installed for local development.
 
-Only valid semver ranges are compared. Ranges that explicitly mention prerelease versions are ignored because prerelease admission is tuple-specific and cannot be accurately determined by a general range-intersection check. Dist-tags and `workspace:`, `file:`, git, URL, and other non-semver specifiers are also ignored because they do not describe ranges that can be intersected.
+Only valid semver ranges are compared. Ranges that mention prerelease versions and non-semver specifiers such as dist-tags, `workspace:`, `file:`, git, and URLs are ignored.
 
-The rule offers whichever of two suggestions would produce a satisfiable declaration: use the peer range for the runtime dependency, or use the runtime range for the peer dependency. Choose based on whether the installed version requirement or the public compatibility contract is authoritative.
+When possible, suggestions can copy either range to the other declaration. Choose whether the installed version requirement or public compatibility contract is authoritative.
 
 ## Examples
 
