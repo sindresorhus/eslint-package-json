@@ -178,18 +178,18 @@ Message:
 
 `;
 
-exports[`invalid(5): {\"name\": \"p\", \"exports\": {\".\": \"./lib/index.js\", \"./package.json\": \"./package.json\"}, \"files\": [\"lib\"]} 1`] = `
+exports[`invalid(5): {\"name\": \"p\", \"exports\": {\".\": \"./lib/index.js\", \"./metadata\": \"./sub/package.json\"}, \"files\": [\"lib\"]} 1`] = `
 
 [Input]
-  1 | {"name": "p", "exports": {".": "./lib/index.js", "./package.json": "./package.json"}, "files": ["lib"]}
+  1 | {"name": "p", "exports": {".": "./lib/index.js", "./metadata": "./sub/package.json"}, "files": ["lib"]}
 
 `;
 
-exports[`invalid(5): {\"name\": \"p\", \"exports\": {\".\": \"./lib/index.js\", \"./package.json\": \"./package.json\"}, \"files\": [\"lib\"]} 2`] = `
+exports[`invalid(5): {\"name\": \"p\", \"exports\": {\".\": \"./lib/index.js\", \"./metadata\": \"./sub/package.json\"}, \"files\": [\"lib\"]} 2`] = `
 
 Message:
-> 1 | {"name": "p", "exports": {".": "./lib/index.js", "./package.json": "./package.json"}, "files": ["lib"]}
-    |                                                                    ^^^^^^^^^^^^^^^^ Entry point \`./package.json\` is not covered by the \`files\` allowlist.
+> 1 | {"name": "p", "exports": {".": "./lib/index.js", "./metadata": "./sub/package.json"}, "files": ["lib"]}
+    |                                                                ^^^^^^^^^^^^^^^^^^^^ Entry point \`./sub/package.json\` is not covered by the \`files\` allowlist.
 
 `;
 

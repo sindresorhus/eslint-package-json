@@ -206,7 +206,10 @@ test('the recommended config works end-to-end through ESLint', () => {
 		description: 'A test package.',
 		license: 'MIT',
 		type: 'module',
-		exports: './index.js',
+		exports: {
+			'.': './index.js',
+			'./package.json': './package.json',
+		},
 		sideEffects: false,
 		engines: {node: '>=18'},
 		scripts: {test: 'node --test', build: 'node build.js'},

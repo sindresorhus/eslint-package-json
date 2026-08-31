@@ -222,7 +222,7 @@ const create = context => ({
 			return;
 		}
 
-		const automaticallyIncluded = new Set();
+		const automaticallyIncluded = new Set(['package.json']);
 
 		for (const entryPoint of entryPoints) {
 			if (automaticallyIncludedFields.has(entryPoint.field)) {
