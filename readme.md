@@ -110,6 +110,7 @@ export default defineConfig({
 | [no-fallback-export-arrays](docs/rules/no-fallback-export-arrays.md)                                   | Discourage string-target fallback arrays in `exports`/`imports`.                          | ✅  |    |    |
 | [no-git-dependencies](docs/rules/no-git-dependencies.md)                                               | Disallow git URLs as dependency specifiers.                                               |    |    |    |
 | [no-http-dependencies](docs/rules/no-http-dependencies.md)                                             | Disallow HTTP URLs as dependency specifiers.                                              | ✅  |    |    |
+| [no-incompatible-peer-dependency-ranges](docs/rules/no-incompatible-peer-dependency-ranges.md)         | Disallow incompatible ranges for peer dependencies also listed as runtime dependencies.   | ✅  |    | 💡 |
 | [no-install-scripts](docs/rules/no-install-scripts.md)                                                 | Disallow `install` lifecycle scripts.                                                     | ✅  |    | 💡 |
 | [no-invalid-direct-overrides](docs/rules/no-invalid-direct-overrides.md)                               | Disallow npm overrides that conflict with direct dependencies.                            | ✅  | 🔧 |    |
 | [no-local-dependencies](docs/rules/no-local-dependencies.md)                                           | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
