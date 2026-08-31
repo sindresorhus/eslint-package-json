@@ -34,6 +34,8 @@ test.snapshot({
 		'{"name": "p", "main": "diff.js", "types": "diff.d.ts", "files": ["diff.d.ts"]}',
 		// The root `package.json` is always published by npm, including when it is exported.
 		'{"name": "p", "exports": {".": "./lib/index.js", "./package.json": "./package.json"}, "files": ["lib"]}',
+		// The root `package.json` is matched case-insensitively by npm.
+		'{"name": "p", "exports": "./Package.json", "files": []}',
 		// A non-array `files` is left to `valid-fields`.
 		'{"name": "p", "files": 1}',
 		// A non-string entry makes the allowlist unanalysable, so coverage is not judged.

@@ -208,7 +208,7 @@ test('the recommended config works end-to-end through ESLint', () => {
 		type: 'module',
 		exports: {
 			'.': './index.js',
-			'./package.json': './package.json',
+			'./package.json': './Package.json',
 		},
 		sideEffects: false,
 		engines: {node: '>=18'},
@@ -220,11 +220,11 @@ test('the recommended config works end-to-end through ESLint', () => {
 	const clean = linter.verify(cleanInput, config, {filename: 'package.json'});
 	assert.deepEqual(clean, [], 'a clean package.json should produce no problems');
 
-	const redundantPackageJsonInput = JSON.stringify({...cleanManifest, files: [...cleanManifest.files, 'package.json']});
+	const redundantPackageJsonInput = JSON.stringify({...cleanManifest, files: [...cleanManifest.files, 'Package.json']});
 	const fixed = linter.verifyAndFix(redundantPackageJsonInput, config, {filename: 'package.json'});
 	assert.equal(fixed.fixed, true);
 	assert.equal(fixed.output, cleanInput);
-	assert.deepEqual(fixed.messages, [], 'removing redundant `package.json` should leave the recommended config clean');
+	assert.deepEqual(fixed.messages, [], 'removing redundant `Package.json` should leave the recommended config clean');
 
 	// The config is scoped to package.json, so its rules never run on other JSON files.
 	const otherFile = linter.verify('{"name": "Foo"}', config, {filename: 'tsconfig.json'});

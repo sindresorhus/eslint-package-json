@@ -7,7 +7,7 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-This rule requires non-private packages to declare a `files` allowlist and reports entry points definitely omitted by simple paths, directories, or globs. It skips negated or ambiguous patterns and accounts for npm automatically including the root `package.json`, `main`, and `bin`. An exported `./package.json` therefore does not need a corresponding `files` entry.
+This rule requires non-private packages to declare a `files` allowlist and reports entry points definitely omitted by simple paths, directories, or globs. It skips negated or ambiguous patterns and accounts for npm automatically including the root `package.json`, `main`, and `bin`. npm matches the root manifest name case-insensitively, so an exported `./package.json` does not need a corresponding `files` entry.
 
 Matching follows npm's own `files` semantics, which are stricter than they look:
 
