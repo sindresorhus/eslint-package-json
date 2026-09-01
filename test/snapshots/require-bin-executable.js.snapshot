@@ -1,0 +1,157 @@
+exports[`invalid(1): {\"bin\": \"not-executable.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": "not-executable.js"}
+
+`;
+
+exports[`invalid(1): {\"bin\": \"not-executable.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "not-executable.js"}
+    |         ^^^^^^^^^^^^^^^^^^^ The \`bin\` file must be executable by its owner.
+
+`;
+
+exports[`invalid(10): {\"bin\": {\"foo\": \"executable.js\", \"foo\": \"not-executable.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "executable.js", "foo": "not-executable.js"}}
+
+`;
+
+exports[`invalid(10): {\"bin\": {\"foo\": \"executable.js\", \"foo\": \"not-executable.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "executable.js", "foo": "not-executable.js"}}
+    |                                         ^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must be executable by its owner.
+
+`;
+
+exports[`invalid(2): {\"bin\": \"not-executable\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": "not-executable"}
+
+`;
+
+exports[`invalid(2): {\"bin\": \"not-executable\"} 2`] = `
+
+Message:
+> 1 | {"bin": "not-executable"}
+    |         ^^^^^^^^^^^^^^^^ The \`bin\` file must be executable by its owner.
+
+`;
+
+exports[`invalid(3): {\"bin\": {\"foo\": \"not-executable.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "not-executable.js"}}
+
+`;
+
+exports[`invalid(3): {\"bin\": {\"foo\": \"not-executable.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "not-executable.js"}}
+    |                 ^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must be executable by its owner.
+
+`;
+
+exports[`invalid(4): {\"bin\": {\"foo\": \"not-executable.js\", \"bar\": \"not-executable\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "not-executable.js", "bar": "not-executable"}}
+
+`;
+
+exports[`invalid(4): {\"bin\": {\"foo\": \"not-executable.js\", \"bar\": \"not-executable\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "not-executable.js", "bar": "not-executable"}}
+    |                 ^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must be executable by its owner.
+
+`;
+
+exports[`invalid(4): {\"bin\": {\"foo\": \"not-executable.js\", \"bar\": \"not-executable\"}} 3`] = `
+
+Message:
+> 1 | {"bin": {"foo": "not-executable.js", "bar": "not-executable"}}
+    |                                             ^^^^^^^^^^^^^^^^ The \`bin\` file for \`bar\` must be executable by its owner.
+
+`;
+
+exports[`invalid(5): {\"bin\": {\"foo\": \"executable.js\", \"bar\": \"not-executable.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "executable.js", "bar": "not-executable.js"}}
+
+`;
+
+exports[`invalid(5): {\"bin\": {\"foo\": \"executable.js\", \"bar\": \"not-executable.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "executable.js", "bar": "not-executable.js"}}
+    |                                         ^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`bar\` must be executable by its owner.
+
+`;
+
+exports[`invalid(6): {\"bin\": {\"ignored\": 123, \"foo\": \"not-executable.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"ignored": 123, "foo": "not-executable.js"}}
+
+`;
+
+exports[`invalid(6): {\"bin\": {\"ignored\": 123, \"foo\": \"not-executable.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"ignored": 123, "foo": "not-executable.js"}}
+    |                                 ^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must be executable by its owner.
+
+`;
+
+exports[`invalid(7): {\"bin\": {\"foo\": \"nested/not-executable.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": {"foo": "nested/not-executable.js"}}
+
+`;
+
+exports[`invalid(7): {\"bin\": {\"foo\": \"nested/not-executable.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"foo": "nested/not-executable.js"}}
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`bin\` file for \`foo\` must be executable by its owner.
+
+`;
+
+exports[`invalid(8): {\"bin\": \"inside-not-executable.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": "inside-not-executable.js"}
+
+`;
+
+exports[`invalid(8): {\"bin\": \"inside-not-executable.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "inside-not-executable.js"}
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`bin\` file must be executable by its owner.
+
+`;
+
+exports[`invalid(9): {\"bin\": \"executable.js\", \"bin\": \"not-executable.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-executable/package.json']
+  1 | {"bin": "executable.js", "bin": "not-executable.js"}
+
+`;
+
+exports[`invalid(9): {\"bin\": \"executable.js\", \"bin\": \"not-executable.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "executable.js", "bin": "not-executable.js"}
+    |                                 ^^^^^^^^^^^^^^^^^^^ The \`bin\` file must be executable by its owner.
+
+`;

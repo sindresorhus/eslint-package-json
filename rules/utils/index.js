@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import semver from 'semver';
 import detectIndent from 'detect-indent';
 
@@ -153,6 +155,94 @@ Use this instead of `objectNode.members` whenever a rule asks what the object *m
 */
 export function iterateEffectiveMembers(objectNode) {
 	return getMemberIndex(objectNode).values();
+}
+
+/**
+Check whether a resolved path stays within the package directory.
+*/
+function isWithinPackage(packageDirectory, filePath) {
+	const relativePath = path.relative(packageDirectory, filePath);
+
+	return relativePath !== ''
+		&& relativePath !== '..'
+		&& !relativePath.startsWith(`..${path.sep}`)
+		&& !path.isAbsolute(relativePath);
+}
+
+/**
+Iterate the effective string-valued file paths referenced by `bin`.
+*/
+function * iterateBinEntries(rootObject) {
+	const binMember = findMember(rootObject, 'bin');
+
+	if (binMember?.value.type === 'String') {
+		yield {node: binMember.value, value: binMember.value.value};
+		return;
+	}
+
+	if (binMember?.value.type !== 'Object') {
+		return;
+	}
+
+	for (const member of iterateEffectiveMembers(binMember.value)) {
+		if (member.value.type === 'String') {
+			yield {node: member.value, value: member.value.value, name: getKey(member)};
+		}
+	}
+}
+
+/**
+Iterate existing regular files referenced by effective `bin` entries, resolving only targets that stay within the physical package directory.
+*/
+export function * iterateExistingBinFiles(context, rootObject) {
+	const {physicalFilename} = context;
+
+	if (physicalFilename.startsWith('<')) {
+		return;
+	}
+
+	const packageDirectory = path.dirname(path.resolve(context.cwd, physicalFilename));
+	let realPackageDirectory;
+
+	for (const entry of iterateBinEntries(rootObject)) {
+		const filePath = path.resolve(packageDirectory, entry.value);
+
+		if (!isWithinPackage(packageDirectory, filePath)) {
+			continue;
+		}
+
+		let realFilePath;
+
+		try {
+			realFilePath = fs.realpathSync(filePath);
+		} catch {
+			continue;
+		}
+
+		try {
+			realPackageDirectory ??= fs.realpathSync(packageDirectory);
+		} catch {
+			return;
+		}
+
+		if (!isWithinPackage(realPackageDirectory, realFilePath)) {
+			continue;
+		}
+
+		let statistics;
+
+		try {
+			statistics = fs.statSync(realFilePath);
+		} catch {
+			continue;
+		}
+
+		if (!statistics.isFile()) {
+			continue;
+		}
+
+		yield {...entry, filePath: realFilePath, mode: statistics.mode};
+	}
 }
 
 /**

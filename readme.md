@@ -140,6 +140,7 @@ export default defineConfig({
 | [prefer-shorthand](docs/rules/prefer-shorthand.md)                                                     | Prefer the shorthand string form of fields where possible.                                | ✅  | 🔧 |    |
 | [prefer-side-effects-field](docs/rules/prefer-side-effects-field.md)                                   | Recommend declaring the `sideEffects` field for packages.                                 | ✅  |    | 💡 |
 | [prefer-type-module](docs/rules/prefer-type-module.md)                                                 | Prefer the `type` field to be `module`.                                                   | ✅  |    | 💡 |
+| [require-bin-executable](docs/rules/require-bin-executable.md)                                         | Require `bin` files to be executable by their owner.                                      | ✅  |    |    |
 | [require-bin-shebang](docs/rules/require-bin-shebang.md)                                               | Require `bin` files to start with the exact `#!/usr/bin/env node` shebang.                | ✅  |    |    |
 | [require-default-condition](docs/rules/require-default-condition.md)                                   | Require a last `default` entry in `exports`/`imports` conditions objects.                 | ✅  |    |    |
 | [require-engines](docs/rules/require-engines.md)                                                       | Require the `engines.node` field.                                                         | ✅  |    |    |

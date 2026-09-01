@@ -102,6 +102,7 @@ const recommendedRuleIds = [
 	'prefer-shorthand',
 	'prefer-side-effects-field',
 	'prefer-type-module',
+	'require-bin-executable',
 	'require-bin-shebang',
 	'require-default-condition',
 	'require-engines',
