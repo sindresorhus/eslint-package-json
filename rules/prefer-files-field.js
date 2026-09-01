@@ -26,6 +26,10 @@ function normalizePath(value) {
 	return value.replace(/^(?:\.\/|\/)+/u, '');
 }
 
+function isRootPackageJson(value) {
+	return normalizePath(value).replaceAll(/[A-Z]/gu, character => character.toLowerCase()) === 'package.json';
+}
+
 function isPackagePath(value) {
 	return value !== ''
 		&& !value.includes('://')
@@ -231,7 +235,7 @@ const create = context => ({
 		}
 
 		for (const entryPoint of entryPoints) {
-			if (automaticallyIncluded.has(normalizePath(entryPoint.value)) || isCovered(entryPoint.value, patterns)) {
+			if (isRootPackageJson(entryPoint.value) || automaticallyIncluded.has(normalizePath(entryPoint.value)) || isCovered(entryPoint.value, patterns)) {
 				continue;
 			}
 
