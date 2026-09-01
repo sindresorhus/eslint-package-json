@@ -7,17 +7,13 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-Package scripts should not contain absolute paths. Absolute paths depend on a particular filesystem layout or operating system, so they break when the package is run elsewhere.
+Absolute paths make package scripts depend on a specific filesystem layout or operating system. [npm runs scripts](https://docs.npmjs.com/cli/using-npm/scripts/) from the package root and adds dependency executables to `PATH`, so use relative paths and bare executable names instead.
 
-[npm runs scripts](https://docs.npmjs.com/cli/using-npm/scripts/) from the package root and adds dependency executables to `PATH`. Use paths relative to the package root for files, and invoke dependency executables by name.
+This rule checks effective string values in `scripts` for absolute POSIX and Windows paths in commands, arguments, assignments, path lists, and redirects. URL-like spans and simple shell parameter expansions are ignored, including any paths inside them.
 
-This rule checks every effective string value in `scripts` for absolute POSIX and Windows paths, including executable paths, arguments, environment-variable assignment values, path lists, and redirection targets. Common URL forms are ignored.
+To avoid confusing Windows options with POSIX paths, slash-prefixed single-component words like `/restore` and option prefixes like `/Fo:` are ignored, while attached values are checked. Multi-component paths like `/usr/bin` are reported.
 
-Recognized URL-like spans and shell parameter expansions are ignored as lexical units. Absolute paths in those ignored portions, such as a path-list entry after a URL or a parameter fallback value, are not checked.
-
-Slash-prefixed single-component words such as `/restore` and option prefixes such as `/Fo:` are ambiguous: POSIX treats them as absolute paths, while Windows tools commonly use them as options. To avoid false positives in cross-platform scripts, the rule ignores the ambiguous prefix and still checks any attached value. Paths with another separator, such as `/usr/bin`, are still reported.
-
-Detection is lexical and independent of the configured script shell. Disable the rule for the package manifest when a script uses slash-prefixed shell syntax, such as a `sed` address, that is intentionally not a path.
+Detection is lexical and shell-independent. Disable the rule when a script intentionally uses path-like syntax, such as a `sed` address.
 
 ## Examples
 

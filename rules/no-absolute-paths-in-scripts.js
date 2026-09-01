@@ -15,12 +15,33 @@ const messages = {
 const urlPrefixPatternSource = String.raw`(?:(?:blob:)?[a-z][\d+\-.a-z]+:\/\/|file:(?:(?:\/\/)?[a-z]:)?\/|(?:data|mailto|urn):)`;
 const quotedUrlPattern = new RegExp(String.raw`(["'])${urlPrefixPatternSource}[^\s"']*\1`, 'giu');
 const urlPattern = new RegExp(String.raw`(?<![\w+\-.])${urlPrefixPatternSource}[^\s"&';<>|]*`, 'giu');
-const commandWordPattern = /[^\s"&',;<=>`{|}]*=(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*'|[<>]+|[^\s"&',;<>`{|}]+/gu;
+const commandWordPattern = /"[^"]*"|'[^']*'|[<>]+|=|[^\s"&',;<=>`{|}]+/gu;
 const unambiguousValueIntroducers = new Set(['=', '<', '<>', '>', '>>']);
 const windowsOptionPrefixPattern = /^\/[^/:=\\]+(?::|=|$)/u;
 const attachedPathPattern = /^(?:@|-[a-z])((?:[a-z]:)?[/\\].*)$/i;
-const quoteDelimiterPattern = /^["']+|["']+$/gu;
 const shellParameterExpansionPattern = /\$\{[^{}]*\}/gu;
+
+/**
+Remove quote delimiters from both ends of a value.
+*/
+const trimQuoteDelimiters = value => {
+	let startIndex = 0;
+
+	while (value[startIndex] === '"' || value[startIndex] === '\'') {
+		startIndex += 1;
+	}
+
+	let endIndex = value.length;
+
+	while (
+		endIndex > startIndex
+		&& (value[endIndex - 1] === '"' || value[endIndex - 1] === '\'')
+	) {
+		endIndex -= 1;
+	}
+
+	return value.slice(startIndex, endIndex);
+};
 
 /**
 Check whether a candidate is an absolute path, including one attached to an option.
@@ -35,7 +56,7 @@ const isAbsolutePath = candidate => {
 Check whether a value contains an absolute path.
 */
 const hasAbsolutePathInValue = (value, canBeWindowsOption) => {
-	const unquotedValue = value.replaceAll(quoteDelimiterPattern, '');
+	const unquotedValue = trimQuoteDelimiters(value);
 	const valueWithoutWindowsOptionPrefix = canBeWindowsOption
 		? unquotedValue.replace(windowsOptionPrefixPattern, '')
 		: unquotedValue;
