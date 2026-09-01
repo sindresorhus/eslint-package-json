@@ -7,17 +7,15 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-The `bin` field exposes executable commands to package consumers. This rule checks that each existing regular file referenced by `bin` has its Unix owner execute bit set, regardless of its extension. Git uses this bit to determine whether a file is recorded as executable.
+The `bin` field exposes executable commands. This rule requires every existing regular file it references to have the Unix owner execute bit, regardless of extension. Git uses this bit to record files as executable.
 
-Run `chmod u+x path/to/file` to make a file executable by its owner. To record the file as executable in Git's index, use `git update-index --chmod=+x path/to/file`.
+Use `chmod u+x path/to/file` to set the permission. To also record the file as executable in Git's index, use `git update-index --chmod=+x path/to/file`; this does not change the working-tree mode checked by the rule. On filesystems without Unix permissions, the check is best-effort.
 
-The rule inspects working-tree filesystem metadata and does not read Git's index. On filesystems that do not preserve Unix permissions, the rule is best-effort because Node.js may expose synthesized modes, and `git update-index` does not change the mode observed by the rule.
-
-The rule does nothing on Windows because Node.js cannot observe Unix execute permissions there. Missing, inaccessible, non-regular, virtual, and out-of-package targets are ignored, as are symlinks that resolve outside the package and `directories.bin`.
+The rule does nothing on Windows. It ignores missing, inaccessible, non-regular, virtual, and out-of-package targets, symlinks resolving outside the package, and `directories.bin`.
 
 ## Examples
 
-The following package assumes that `cli.js` exists beside `package.json`. The JSON configuration is identical in both examples; only the referenced file permissions differ.
+In both examples, `cli.js` exists beside `package.json`; only its permissions differ.
 
 ```json
 // ❌
@@ -26,7 +24,7 @@ The following package assumes that `cli.js` exists beside `package.json`. The JS
 }
 ```
 
-Referenced `cli.js` is not executable (`-rw-r--r--`).
+`cli.js` is `-rw-r--r--`.
 
 ```json
 // ✅
@@ -35,4 +33,4 @@ Referenced `cli.js` is not executable (`-rw-r--r--`).
 }
 ```
 
-Referenced `cli.js` is executable by its owner (`-rwxr--r--`).
+`cli.js` is `-rwxr--r--`.
