@@ -363,80 +363,21 @@ const matchCharacterClass = ({valueSegment, patternSegment, valueIndex, patternI
 };
 
 /**
-Check whether a filesystem path matches a glob pattern with exact casing.
+Match one path segment against one glob segment, with exact casing. `*` also matches dotfiles, as npm's `files` handling does.
 */
-const matchesGlobExactly = (value, pattern) => {
-	const expandedPatterns = expandGlobPatterns(pattern);
-
-	if (!expandedPatterns) {
-		return false;
+const matchesSegment = (valueSegment, patternSegment) => {
+	if (!hasGlob(patternSegment)) {
+		return valueSegment === patternSegment;
 	}
 
-	if (expandedPatterns.length !== 1 || expandedPatterns[0] !== pattern) {
-		return expandedPatterns.some(expandedPattern => matchesGlobExactly(value, expandedPattern));
-	}
-
-	const valueSegments = value.replaceAll(path.sep, '/').replace(/^\.\//u, '').split('/');
-	const patternSegments = pattern.replace(/^\.\//u, '').split('/');
-
-	function matchesSegment(valueSegment, patternSegment) {
-		const cache = new Map();
-
-		const match = (valueIndex, patternIndex) => {
-			const cacheKey = `${valueIndex}:${patternIndex}`;
-
-			const cachedResult = cache.get(cacheKey);
-
-			if (cachedResult !== undefined) {
-				return cachedResult;
-			}
-
-			let result;
-
-			if (patternIndex === patternSegment.length) {
-				result = valueIndex === valueSegment.length;
-			} else {
-				switch (patternSegment[patternIndex]) {
-					case '*': {
-						result = match(valueIndex, patternIndex + 1)
-							|| (valueIndex < valueSegment.length && match(valueIndex + 1, patternIndex));
-						break;
-					}
-
-					case '?': {
-						result = valueIndex < valueSegment.length && match(valueIndex + 1, patternIndex + 1);
-						break;
-					}
-
-					case '[': {
-						result = matchCharacterClass({
-							valueSegment, patternSegment, valueIndex, patternIndex, match,
-						});
-
-						break;
-					}
-
-					default: {
-						result = valueIndex < valueSegment.length
-							&& valueSegment[valueIndex] === patternSegment[patternIndex]
-							&& match(valueIndex + 1, patternIndex + 1);
-					}
-				}
-			}
-
-			cache.set(cacheKey, result);
-			return result;
-		};
-
-		return match(0, 0);
-	}
-
-	const cache = new Map();
+	// One memo slot per (value position, pattern position) pair, indexed arithmetically since this runs once per directory entry.
+	const patternWidth = patternSegment.length + 1;
+	const cache = [];
 
 	const match = (valueIndex, patternIndex) => {
-		const cacheKey = `${valueIndex}:${patternIndex}`;
+		const cacheKey = (valueIndex * patternWidth) + patternIndex;
 
-		const cachedResult = cache.get(cacheKey);
+		const cachedResult = cache[cacheKey];
 
 		if (cachedResult !== undefined) {
 			return cachedResult;
@@ -444,18 +385,38 @@ const matchesGlobExactly = (value, pattern) => {
 
 		let result;
 
-		if (patternIndex === patternSegments.length) {
-			result = valueIndex === valueSegments.length;
-		} else if (patternSegments[patternIndex] === '**') {
-			result = match(valueIndex, patternIndex + 1)
-				|| (valueIndex < valueSegments.length && match(valueIndex + 1, patternIndex));
+		if (patternIndex === patternSegment.length) {
+			result = valueIndex === valueSegment.length;
 		} else {
-			result = valueIndex < valueSegments.length
-				&& matchesSegment(valueSegments[valueIndex], patternSegments[patternIndex])
-				&& match(valueIndex + 1, patternIndex + 1);
+			switch (patternSegment[patternIndex]) {
+				case '*': {
+					result = match(valueIndex, patternIndex + 1)
+						|| (valueIndex < valueSegment.length && match(valueIndex + 1, patternIndex));
+					break;
+				}
+
+				case '?': {
+					result = valueIndex < valueSegment.length && match(valueIndex + 1, patternIndex + 1);
+					break;
+				}
+
+				case '[': {
+					result = matchCharacterClass({
+						valueSegment, patternSegment, valueIndex, patternIndex, match,
+					});
+
+					break;
+				}
+
+				default: {
+					result = valueIndex < valueSegment.length
+						&& valueSegment[valueIndex] === patternSegment[patternIndex]
+						&& match(valueIndex + 1, patternIndex + 1);
+				}
+			}
 		}
 
-		cache.set(cacheKey, result);
+		cache[cacheKey] = result;
 		return result;
 	};
 
@@ -463,32 +424,104 @@ const matchesGlobExactly = (value, pattern) => {
 };
 
 /**
-Add dot-file alternatives to a filesystem glob pattern because Node's glob does not include dotfiles by default.
+Check whether a directory entry matches the required type, following a symlink or an entry of unknown type with a `stat`.
 */
-const getDotFilePattern = pattern => pattern.split('/').map(segment =>
-	segment.startsWith('.') || segment.startsWith('{') ? segment : `{.,}${segment}`,
-).join('/');
+const isMatchingEntry = (entryPath, entry, requiresDirectory) => {
+	if (entry.isDirectory()) {
+		return true;
+	}
 
-/**
-Check whether a filesystem glob has an exact-case match.
-*/
-const hasMatchingGlob = (packageDirectory, pattern, requiresFile) => {
-	if (!isSafeGlobPattern(pattern)) {
-		return false;
+	if (entry.isFile()) {
+		return !requiresDirectory;
 	}
 
 	try {
-		return fs.globSync(getDotFilePattern(pattern), {
-			cwd: packageDirectory.path,
-		}).some(match => {
-			const relativePath = match.replaceAll(path.sep, '/');
-			return matchesGlobExactly(relativePath, pattern)
-				&& hasExactPath(packageDirectory, `./${relativePath}`, requiresFile);
-		});
+		const statistics = fs.statSync(entryPath);
+		return statistics.isDirectory() || (!requiresDirectory && statistics.isFile());
 	} catch {
 		return false;
 	}
 };
+
+/**
+Check whether a directory entry is a real directory without following symbolic links.
+*/
+const isRealDirectoryEntry = (entryPath, entry) => {
+	if (entry.isDirectory()) {
+		return true;
+	}
+
+	if (entry.isFile() || entry.isSymbolicLink()) {
+		return false;
+	}
+
+	try {
+		return fs.lstatSync(entryPath).isDirectory();
+	} catch {
+		return false;
+	}
+};
+
+/**
+Check whether anything below a directory matches the remaining glob segments, with exact casing.
+
+The walk descends only where the pattern can still match and stops at the first match, so a globstar pattern costs a couple of directory listings rather than the whole tree. Names come from directory listings, so it can never resolve outside the package.
+*/
+const hasMatchingEntry = (packageDirectory, directory, segments, index) => {
+	if (index === segments.length) {
+		return true;
+	}
+
+	const segment = segments[index];
+	const entries = packageDirectory.readDirectory(directory);
+
+	if (segment === '**') {
+		// `**` matches zero or more directories: try the rest of the pattern here, then in every real subdirectory. Symlinks are not followed here, so a link to an ancestor cannot loop.
+		if (hasMatchingEntry(packageDirectory, directory, segments, index + 1)) {
+			return true;
+		}
+
+		for (const entry of entries.values()) {
+			const entryPath = path.join(directory, entry.name);
+
+			if (isRealDirectoryEntry(entryPath, entry) && hasMatchingEntry(packageDirectory, entryPath, segments, index)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	for (const entry of entries.values()) {
+		if (!matchesSegment(entry.name, segment)) {
+			continue;
+		}
+
+		const entryPath = path.join(directory, entry.name);
+
+		if (index === segments.length - 1) {
+			if (isMatchingEntry(entryPath, entry, false)) {
+				return true;
+			}
+
+			continue;
+		}
+
+		if (isMatchingEntry(entryPath, entry, true) && hasMatchingEntry(packageDirectory, entryPath, segments, index + 1)) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+/**
+Check whether a glob has an exact-case match in the package.
+*/
+const hasMatchingGlob = (packageDirectory, pattern) => (expandGlobPatterns(pattern) ?? []).some(expandedPattern => {
+	const segments = expandedPattern.split('/').filter(segment => segment !== '' && segment !== '.');
+	return hasMatchingEntry(packageDirectory, packageDirectory.path, segments, 0);
+});
 
 /**
 Check whether an exports target matches a path using Node's `*` replacement semantics.
@@ -596,14 +629,14 @@ const hasMatchingExportTarget = (packageDirectory, value) => {
 /**
 Check whether a relative path or glob has at least one exact-case match in the package.
 */
-const hasMatchingPath = (packageDirectory, value, requiresFile = false) => {
+const hasMatchingPath = (packageDirectory, value) => {
 	if (!value.startsWith('./') || !isSafePackagePath(value.slice(2))) {
 		return false;
 	}
 
-	return isGlobPattern(value)
-		? hasMatchingGlob(packageDirectory, value.slice(2), requiresFile)
-		: hasExactPath(packageDirectory, value, requiresFile);
+	return isGlobPattern(value) || value.endsWith('/')
+		? hasMatchingGlob(packageDirectory, value.slice(2))
+		: hasExactPath(packageDirectory, value, false);
 };
 
 /**

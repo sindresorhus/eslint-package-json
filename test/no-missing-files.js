@@ -34,7 +34,7 @@ test('supports directory entries with unknown types', t => {
 
 	const linter = new Linter();
 	const messages = linter.verify(
-		'{"exports": {".": "./index.js", "./rules/*": "./rules/*.js", "./test/*": "./test/*"}, "bin": "index.js", "files": ["index.js"]}',
+		'{"exports": {".": "./index.js", "./rules/*": "./rules/*.js", "./test/*": "./test/*"}, "bin": "index.js", "files": ["*.js"]}',
 		{
 			files: ['**'],
 			language: 'json/json',
@@ -50,9 +50,68 @@ test('supports directory entries with unknown types', t => {
 	t.assert.deepStrictEqual(messages, []);
 });
 
+test('does not follow symlinks during globstar traversal when entry types are unknown', t => {
+	const packageDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'no-missing-files-'));
+	t.after(() => {
+		fs.rmSync(packageDirectory, {recursive: true, force: true});
+	});
+
+	fs.symlinkSync(packageDirectory, path.join(packageDirectory, 'loop'));
+
+	const originalReadDirectory = fs.readdirSync;
+	const originalStat = fs.statSync;
+	const followedSymlinks = [];
+
+	t.mock.method(fs, 'readdirSync', (directory, options) => {
+		const entries = originalReadDirectory(directory, options);
+
+		if (!options?.withFileTypes) {
+			return entries;
+		}
+
+		return entries.map(entry => ({
+			name: entry.name,
+			isDirectory() {
+				return false;
+			},
+			isFile() {
+				return false;
+			},
+			isSymbolicLink() {
+				return false;
+			},
+		}));
+	});
+	t.mock.method(fs, 'statSync', entryPath => {
+		if (path.basename(entryPath) === 'loop') {
+			followedSymlinks.push(entryPath);
+		}
+
+		return originalStat(entryPath);
+	});
+
+	const linter = new Linter({cwd: packageDirectory});
+	const messages = linter.verify(
+		'{"files": ["**/missing.js"]}',
+		{
+			files: ['**'],
+			language: 'json/json',
+			plugins: {
+				json,
+				'rule-to-test': {rules: {'no-missing-files': rule}},
+			},
+			rules: {'rule-to-test/no-missing-files': 'error'},
+		},
+		{filename: path.join(packageDirectory, 'package.json')},
+	);
+
+	t.assert.strictEqual(messages.length, 1);
+	t.assert.deepStrictEqual(followedSymlinks, []);
+});
+
 snapshotTest.snapshot({
 	valid: [
-		// A trailing slash yields an empty path segment, which must be skipped rather than treated as missing.
+		// A trailing slash in `files` entries is ignored by npm.
 		'{"files": ["rules/"]}',
 
 		'{}',
@@ -252,9 +311,17 @@ test('resolves targets against a real package directory', t => {
 		[{bin: './dist'}, 1, 'a bin target pointing at a directory'],
 		[{files: ['index.js']}, 0, 'a literal files entry'],
 		[{files: ['missing.js']}, 1, 'a missing literal files entry'],
+		[{files: ['index.js/']}, 0, 'a trailing slash ignored on a literal file entry'],
+		[{files: ['missing.js/']}, 1, 'a trailing slash ignored on a missing literal entry'],
 		[{files: ['dist']}, 0, 'a files entry naming a directory'],
 		[{files: ['dist/*.js']}, 0, 'a files glob with matches'],
 		[{files: ['dist/*.ts']}, 1, 'a files glob without matches'],
+		[{files: ['link*.js']}, 0, 'a files glob matching a symlink to an existing file'],
+		[{files: ['dangling*.js']}, 1, 'a files glob matching only a dangling symlink'],
+		[{files: ['link.js/']}, 0, 'a trailing slash ignored on a symlink to an existing file'],
+		[{files: ['dangling.js/']}, 1, 'a trailing slash ignored on a dangling symlink'],
+		[{files: ['dist/*/']}, 0, 'a trailing-slash glob matching a directory'],
+		[{files: ['lib/*/']}, 0, 'a trailing slash ignored on a glob matching a file'],
 		[{files: ['**/*.js']}, 0, 'a files globstar'],
 		[{files: ['.hidden.js']}, 0, 'a dotfile, which Node\'s glob skips by default'],
 		[{files: ['{index,other}.js']}, 0, 'a files brace expansion'],
