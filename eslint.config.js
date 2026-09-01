@@ -88,6 +88,13 @@ const config = [
 			'eslint-plugin/require-meta-has-suggestions': 'off',
 		},
 	},
+	{
+		files: ['rules/no-absolute-paths-in-scripts.js'],
+		rules: {
+			// This rule applies its regular expressions to arbitrary script commands.
+			'regexp/no-super-linear-move': 'error',
+		},
+	},
 ];
 
 export default config;
