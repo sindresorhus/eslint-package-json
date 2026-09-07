@@ -125,6 +125,7 @@ const optInRuleIds = [
 	'no-git-dependencies',
 	'no-local-dependencies',
 	'no-missing-files',
+	'no-node-modules-bin-paths',
 	'no-pre-release-dependencies',
 	'no-redundant-repository-fields',
 	'no-restricted-dependencies',
@@ -339,6 +340,8 @@ const trickyDocuments = [
 	'{"bin":"cli.js","bin":"cli.js"}',
 	'{"exports":"./a.js","exports":"./b.js"}',
 	String.raw`{"files":["dist\\a.js"]}`,
+	'{"scripts":{"test":"node_modules/.bin/foo","test":"node_modules/.bin/bar && ./node_modules/.bin/foo"}}',
+	'{\r\n\t"dependencies": {\r\n\t\t"b": "^1.0.0",\r\n\t\t"a": "^1.0.0"\r\n\t}\r\n}',
 	'{\n    "dependencies": {\n        "b": "^1.0.0",\n        "a": "^1.0.0"\n    }\n}',
 	'{\n  "files": [\n    "b.js",\n    "a.js"\n  ]\n}',
 	// A blank line inside a container is not indentation. A rewrite that took all the whitespace before the first entry as the entry indent would write one blank line before every entry.
@@ -717,6 +720,7 @@ const findManifests = (directory, depth = 4) => {
 const unusualManifests = [
 	['{"name":"a","version":"1.0.0","main":"C:/build/index.js","files":["dist"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","scripts":{"test":"/usr/bin/node --test"},"files":["dist"]}', 'package.json'],
+	['{"name":"a","version":"1.0.0","scripts":{"test":"node_modules/.bin/foo && ./node_modules/.bin/bar"},"files":["dist"]}', 'package.json'],
 	[String.raw`{"name":"a","version":"1.0.0","main":"dist\\index.js","files":["dist"]}`, 'package.json'],
 	['{"name":"a","version":"1.0.0","dependencies":{"semver":"^7.0.0"},"devDependencies":{"semver":"^7.0.0"},"files":["dist"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","dependencies":{"semver":"^7.0.0"},"devDependencies":{"semver":"^6.0.0"},"files":["dist"]}', 'package.json'],
@@ -786,6 +790,7 @@ test('every rule takes part on a realistic manifest without breaking its neighbo
 		'no-invalid-direct-overrides',
 		'no-local-dependencies',
 		'no-nested-exports',
+		'no-node-modules-bin-paths',
 		'no-restricted-dependencies',
 		'no-restricted-fields',
 		'no-self-dependency',
