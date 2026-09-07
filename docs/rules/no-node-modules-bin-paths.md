@@ -2,6 +2,8 @@
 
 📝 Disallow direct `node_modules/.bin` paths in scripts.
 
+💼 This rule is enabled in the ✅ `recommended` [config](https://github.com/sindresorhus/eslint-package-json#configs).
+
 💡 This rule is manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions).
 
 <!-- end auto-generated rule header -->

@@ -87,6 +87,7 @@ const recommendedRuleIds = [
 	'no-invalid-direct-overrides',
 	'no-manual-maintainers',
 	'no-nested-exports',
+	'no-node-modules-bin-paths',
 	'no-orphan-script-hooks',
 	'no-orphan-types',
 	'no-overrides-in-published-package',
@@ -125,7 +126,6 @@ const optInRuleIds = [
 	'no-git-dependencies',
 	'no-local-dependencies',
 	'no-missing-files',
-	'no-node-modules-bin-paths',
 	'no-pre-release-dependencies',
 	'no-redundant-repository-fields',
 	'no-restricted-dependencies',
@@ -225,6 +225,18 @@ test('the recommended config works end-to-end through ESLint', () => {
 	const cleanInput = JSON.stringify(cleanManifest);
 	const clean = linter.verify(cleanInput, config, {filename: 'package.json'});
 	assert.deepEqual(clean, [], 'a clean package.json should produce no problems');
+
+	const binaryPathInput = JSON.stringify({...cleanManifest, scripts: {test: 'node_modules/.bin/jest'}});
+	const binaryPathResult = linter.verifyAndFix(binaryPathInput, config, {filename: 'package.json'});
+	assert.equal(binaryPathResult.fixed, false, 'binary paths must require an explicit suggestion');
+	assert.equal(binaryPathResult.output, binaryPathInput);
+	assert.deepEqual(binaryPathResult.messages.map(message => message.ruleId), ['package-json/no-node-modules-bin-paths']);
+
+	const [binaryPathSuggestion] = binaryPathResult.messages[0].suggestions;
+	const {range, text} = binaryPathSuggestion.fix;
+	const suggestedInput = binaryPathInput.slice(0, range[0]) + text + binaryPathInput.slice(range[1]);
+	assert.equal(suggestedInput, JSON.stringify({...cleanManifest, scripts: {test: 'jest'}}));
+	assert.deepEqual(linter.verify(suggestedInput, config, {filename: 'package.json'}), [], 'the binary-name suggestion should leave the recommended config clean');
 
 	const redundantPackageJsonInput = JSON.stringify({...cleanManifest, files: [...cleanManifest.files, 'Package.json']});
 	const fixed = linter.verifyAndFix(redundantPackageJsonInput, config, {filename: 'package.json'});

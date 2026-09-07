@@ -88,7 +88,7 @@ const config = {
 		type: 'suggestion',
 		docs: {
 			description: 'Disallow direct `node_modules/.bin` paths in scripts.',
-			recommended: false,
+			recommended: true,
 		},
 		hasSuggestions: true,
 		schema: [],
