@@ -6,12 +6,13 @@ const MESSAGE_ID = 'invalid';
 const STRING_MESSAGE_ID = 'invalidString';
 
 const messages = {
-	[MESSAGE_ID]: 'The `bin` file for `{{name}}` must start with `#!/usr/bin/env node`.',
-	[STRING_MESSAGE_ID]: 'The `bin` file must start with `#!/usr/bin/env node`.',
+	[MESSAGE_ID]: 'The `bin` file for `{{name}}` must start with a `#!/usr/bin/env node` shebang.',
+	[STRING_MESSAGE_ID]: 'The `bin` file must start with a `#!/usr/bin/env node` shebang.',
 };
 
 const supportedExtensions = new Set(['.js', '.mjs', '.cjs']);
-const nodeShebangPattern = /^#!\/usr\/bin\/env node(?:\n|$)/u;
+// `-S` splits the rest of the line into separate arguments, which is what makes `node --flag` work on Linux.
+const nodeShebangPattern = /^#!\/usr\/bin\/env (?:-S )?node(?: |\n|$)/u;
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
@@ -56,7 +57,7 @@ const config = {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Require `bin` files to start with the exact `#!/usr/bin/env node` shebang.',
+			description: 'Require `bin` files to start with a `#!/usr/bin/env node` shebang.',
 			recommended: true,
 		},
 		schema: [],
