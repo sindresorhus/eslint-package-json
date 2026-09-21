@@ -23,6 +23,7 @@ test.snapshot({
 		String.raw`{"scripts": {"test": "echo \\; node_modules/.bin/eslint"}}`,
 		String.raw`{"scripts": {"test": "echo \\& node_modules/.bin/eslint"}}`,
 		String.raw`{"scripts": {"test": "echo \\| node_modules/.bin/eslint"}}`,
+		String.raw`{"scripts": {"test": "echo \\\nnode_modules/.bin/eslint"}}`,
 		// Only local .bin paths, not other package installations or arbitrary package files.
 		'{"scripts": {"test": "../node_modules/.bin/eslint"}}',
 		'{"scripts": {"test": "packages/foo/node_modules/.bin/eslint"}}',
