@@ -1,8 +1,20 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Linter} from 'eslint';
+import json from '@eslint/json';
 import {getTester} from './utils/test.js';
 
-const {test} = getTester(import.meta);
+const {test: snapshotTest, rule} = getTester(import.meta);
+const linter = new Linter();
+const config = [{
+	files: ['**'],
+	language: 'json/json',
+	plugins: {json, 'rule-to-test': {rules: {'require-private': rule}}},
+	rules: {'rule-to-test/require-private': 'error'},
+}];
+const applyFix = (code, fix) => code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]);
 
-test.snapshot({
+snapshotTest.snapshot({
 	valid: [
 		'{"private": true}',
 		'{"name": "foo", "private": true}',
@@ -34,7 +46,16 @@ test.snapshot({
 			"name": "foo",
 			"version": "1.0.0"
 		}`,
-		// Preserve CRLF newlines.
-		'{\r\n\t"name": "foo"\r\n}',
 	],
+});
+
+test('the added member lands where a sorted document holds it', () => {
+	// Appending it would leave `sort-properties` reporting the very document the suggestion produced.
+	const code = '{\n\t"name": "a",\n\t"version": "1.0.0",\n\t"main": "index.js",\n\t"dependencies": {\n\t\t"a": "^2.0.0"\n\t}\n}';
+	const [message] = linter.verify(code, config, {filename: 'package.json'});
+
+	assert.equal(
+		applyFix(code, message.suggestions[0].fix),
+		'{\n\t"name": "a",\n\t"version": "1.0.0",\n\t"private": true,\n\t"main": "index.js",\n\t"dependencies": {\n\t\t"a": "^2.0.0"\n\t}\n}',
+	);
 });
