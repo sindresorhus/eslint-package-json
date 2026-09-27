@@ -72,5 +72,17 @@ test.snapshot({
 			code: '{"funding": "x", "funding": "y", "name": "foo"}',
 			options: [{fields: ['funding']}],
 		},
+		// The option schema marks the list `uniqueItems`, but a name and a `{field}` object for the same field
+		// are not equal items, so both survive validation. One field is one report, as in
+		// `no-restricted-dependencies`.
+		{
+			code: '{"funding": "x"}',
+			options: [{fields: ['funding', {field: 'funding', message: 'custom'}]}],
+		},
+		// The custom message wins over a bare name for the same field, whatever the order.
+		{
+			code: '{"funding": "x"}',
+			options: [{fields: [{field: 'funding', message: 'custom'}, 'funding']}],
+		},
 	],
 });

@@ -22,7 +22,16 @@ const normalizeEntry = entry => typeof entry === 'string' ? {field: entry} : ent
 const create = context => {
 	const {fields = []} = context.options[0] ?? {};
 	const {sourceCode} = context;
-	const normalizedFields = fields.map(field => normalizeEntry(field));
+	// The option schema marks the list `uniqueItems`, but a name and a `{field}` object for the same field are not equal items, so both survive validation and both resolve to the same field. One field is one report, so the entries are keyed by name, and an entry with a custom message wins over one without, so the message the author wrote is never dropped for the default.
+	const restrictedFields = new Map();
+
+	for (const field of fields) {
+		const entry = normalizeEntry(field);
+
+		if (entry.message || !restrictedFields.get(entry.field)?.message) {
+			restrictedFields.set(entry.field, entry);
+		}
+	}
 
 	return {
 		Document(node) {
@@ -32,8 +41,8 @@ const create = context => {
 				return;
 			}
 
-			for (const entry of normalizedFields) {
-				const member = findMember(root, entry.field);
+			for (const [field, entry] of restrictedFields) {
+				const member = findMember(root, field);
 
 				if (!member) {
 					continue;

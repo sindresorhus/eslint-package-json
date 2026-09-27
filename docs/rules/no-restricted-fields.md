@@ -17,7 +17,7 @@ Each entry can be a plain string (uses a default message) or an object with a `f
 Type: `(string | {field: string, message?: string})[]`\
 Default: `[]`
 
-The fields to disallow. Each item is either a field name string or an object with a `field` name and an optional `message` explaining why the field is not allowed.
+The fields to disallow. Each item is either a field name string or an object with a `field` name and an optional `message` explaining why the field is not allowed. When a field is listed more than once, an entry with a `message` wins over one without.
 
 ```js
 {
