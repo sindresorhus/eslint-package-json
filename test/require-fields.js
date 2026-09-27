@@ -1,8 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Linter} from 'eslint';
+import json from '@eslint/json';
 import {getTester} from './utils/test.js';
 
-const {test} = getTester(import.meta);
+const {test: snapshotTest, rule} = getTester(import.meta);
+const linter = new Linter();
 
-test.snapshot({
+snapshotTest.snapshot({
 	valid: [
 		// Default fields present.
 		'{"name": "foo", "version": "1.0.0", "license": "MIT", "keywords": ["x"], "description": "bar"}',
@@ -69,4 +74,31 @@ test.snapshot({
 			options: [{fieldsWhenPublic: ['description', 'license']}],
 		},
 	],
+});
+
+test('a name no manifest can spell is refused by the schema', () => {
+	// The rule has no fix, so a name that can never be a key is an error nothing can resolve. Saying so in the
+	// configuration beats a rule that is permanently red on every file it lints.
+	const verify = options => linter.verify('{"name": "foo"}', {
+		files: ['**'],
+		language: 'json/json',
+		plugins: {json, 'rule-to-test': {rules: {'require-fields': rule}}},
+		rules: {'rule-to-test/require-fields': ['error', options]},
+	}, {filename: 'package.json'});
+
+	const problems = [];
+	const unsatisfiable = [{fields: ['']}, {fields: [' ']}, {fieldsWhenPublic: ['']}, {fields: ['\t']}];
+
+	for (const options of unsatisfiable) {
+		try {
+			verify(options);
+			problems.push(`${JSON.stringify(options)} was accepted`);
+		} catch (error) {
+			if (!/should NOT|should match/u.test(error.message)) {
+				problems.push(`${JSON.stringify(options)}: ${error.message}`);
+			}
+		}
+	}
+
+	assert.deepEqual(problems, []);
 });

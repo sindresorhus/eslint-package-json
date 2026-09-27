@@ -3,7 +3,6 @@ import {
 	findMember,
 	isPrivatePackage,
 	optionsSchema,
-	stringArraySchema,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'require-fields';
@@ -12,6 +11,19 @@ const MESSAGE_ID_WHEN_PUBLIC = 'require-fields-when-public';
 const messages = {
 	[MESSAGE_ID]: 'Missing required field `{{field}}`.',
 	[MESSAGE_ID_WHEN_PUBLIC]: 'A published package should declare `{{field}}`.',
+};
+
+// The rule has no fix, so a name no manifest can carry would be an error nothing can ever resolve. A schema that
+// rejects it says so in the configuration instead.
+const fieldNameSchema = {
+	type: 'array',
+	items: {
+		type: 'string',
+		minLength: 1,
+		// Whitespace is not a name any manifest can spell either, and one reads as a mistake rather than one.
+		pattern: String.raw`\S`,
+	},
+	uniqueItems: true,
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -71,8 +83,8 @@ const config = {
 			recommended: true,
 		},
 		schema: optionsSchema({
-			fields: stringArraySchema,
-			fieldsWhenPublic: stringArraySchema,
+			fields: fieldNameSchema,
+			fieldsWhenPublic: fieldNameSchema,
 		}),
 		messages,
 		languages: ['json/json'],
