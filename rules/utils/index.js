@@ -964,7 +964,7 @@ function getMemberIndent(sourceCode, objectNode) {
 /**
 Insert the member text `entry` into an object so it becomes the member at `index`, in the object's own layout.
 */
-function insertMember(fixer, sourceCode, objectNode, {index, entry}) {
+export function insertMember(fixer, sourceCode, objectNode, {index, entry}) {
 	const {members} = objectNode;
 	const indent = getMemberIndent(sourceCode, objectNode);
 

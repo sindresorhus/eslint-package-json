@@ -2,9 +2,7 @@ import {
 	getRootObject,
 	findMember,
 	isPrivatePackage,
-	getIndentString,
-	getNewline,
-	lineIndentOf,
+	insertMember,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-provenance';
@@ -60,24 +58,8 @@ const create = context => {
 								return;
 							}
 
-							// Insert a new `"provenance": true` member, matching the object's existing indentation.
-							const {members} = publishConfigValue;
-							const newline = getNewline(sourceCode);
-
-							if (members.length === 0) {
-								// Empty object: indent one level deeper than the `publishConfig` key.
-								const outerIndent = lineIndentOf(sourceCode, publishConfigMember);
-								const memberIndent = outerIndent + getIndentString(sourceCode);
-								const openBraceEnd = publishConfigValue.range[0] + 1;
-
-								yield fixer.insertTextAfterRange([publishConfigValue.range[0], openBraceEnd], `${newline}${memberIndent}"provenance": true${newline}${outerIndent}`);
-								return;
-							}
-
-							// Non-empty: append after the last member, reusing the existing members' indentation.
-							const memberIndent = lineIndentOf(sourceCode, members[0]);
-
-							yield fixer.insertTextAfter(members.at(-1), `,${newline}${memberIndent}"provenance": true`);
+							// Append a new `"provenance": true` member in the object's own layout.
+							yield insertMember(fixer, sourceCode, publishConfigValue, {index: publishConfigValue.members.length, entry: '"provenance": true'});
 						},
 					},
 				],
