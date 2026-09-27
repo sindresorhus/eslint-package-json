@@ -24,6 +24,10 @@ test.snapshot({
 		// Non-string and non-object values are ignored.
 		'{"engines": {"node": true}}',
 		'{"engines": "node"}',
+		// A compound range is left alone whatever its operators.
+		'{"engines": {"node": ">=18 || >=20"}}',
+		// A bare `=` pin on a major-only version is the same closed range as the bare `18`.
+		'{"engines": {"node": "=18"}}',
 	],
 	invalid: [
 		'{"engines": {"node": "^18.0.0"}}',
@@ -37,5 +41,15 @@ test.snapshot({
 		'{"engines": {"node": "v18.0.0"}}',
 		'{"engines": {"node": "^v18.0.0"}}',
 		'{"engines": {"node": "18.0.0+build.1"}}',
+		// Node-semver also spells a tilde range with two characters, and the whole operator goes.
+		'{"engines": {"node": "~>1.2.3"}}',
+		'{"engines": {"node": "~=1.2.3"}}',
+		'{"engines": {"node": "~>18"}}',
+		// Node-semver reads an `=` after either operator as a pin, not a comparator.
+		'{"engines": {"node": "~>=1.2.3"}}',
+		'{"engines": {"node": "^=1.2.3"}}',
+		// A bare `=` pin is the same exact version as the bare `18.0.0`.
+		'{"engines": {"node": "=18.0.0"}}',
+		'{"engines": {"node": "=v18.0.0"}}',
 	],
 });

@@ -16,6 +16,132 @@ Suggestion 1/1: Use \`>=18.0.0\`.:
 
 `;
 
+exports[`invalid(10): {\"engines\": {\"node\": \"~>1.2.3\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "~>1.2.3"}}
+
+`;
+
+exports[`invalid(10): {\"engines\": {\"node\": \"~>1.2.3\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "~>1.2.3"}}
+    |                      ^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`~>1.2.3\`.
+
+Suggestion 1/1: Use \`>=1.2.3\`.:
+  1 | {"engines": {"node": ">=1.2.3"}}
+
+`;
+
+exports[`invalid(11): {\"engines\": {\"node\": \"~=1.2.3\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "~=1.2.3"}}
+
+`;
+
+exports[`invalid(11): {\"engines\": {\"node\": \"~=1.2.3\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "~=1.2.3"}}
+    |                      ^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`~=1.2.3\`.
+
+Suggestion 1/1: Use \`>=1.2.3\`.:
+  1 | {"engines": {"node": ">=1.2.3"}}
+
+`;
+
+exports[`invalid(12): {\"engines\": {\"node\": \"~>18\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "~>18"}}
+
+`;
+
+exports[`invalid(12): {\"engines\": {\"node\": \"~>18\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "~>18"}}
+    |                      ^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`~>18\`.
+
+Suggestion 1/1: Use \`>=18\`.:
+  1 | {"engines": {"node": ">=18"}}
+
+`;
+
+exports[`invalid(13): {\"engines\": {\"node\": \"~>=1.2.3\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "~>=1.2.3"}}
+
+`;
+
+exports[`invalid(13): {\"engines\": {\"node\": \"~>=1.2.3\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "~>=1.2.3"}}
+    |                      ^^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`~>=1.2.3\`.
+
+Suggestion 1/1: Use \`>=1.2.3\`.:
+  1 | {"engines": {"node": ">=1.2.3"}}
+
+`;
+
+exports[`invalid(14): {\"engines\": {\"node\": \"^=1.2.3\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "^=1.2.3"}}
+
+`;
+
+exports[`invalid(14): {\"engines\": {\"node\": \"^=1.2.3\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "^=1.2.3"}}
+    |                      ^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`^=1.2.3\`.
+
+Suggestion 1/1: Use \`>=1.2.3\`.:
+  1 | {"engines": {"node": ">=1.2.3"}}
+
+`;
+
+exports[`invalid(15): {\"engines\": {\"node\": \"=18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "=18.0.0"}}
+
+`;
+
+exports[`invalid(15): {\"engines\": {\"node\": \"=18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "=18.0.0"}}
+    |                      ^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`=18.0.0\`.
+
+Suggestion 1/1: Use \`>=18.0.0\`.:
+  1 | {"engines": {"node": ">=18.0.0"}}
+
+`;
+
+exports[`invalid(16): {\"engines\": {\"node\": \"=v18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": "=v18.0.0"}}
+
+`;
+
+exports[`invalid(16): {\"engines\": {\"node\": \"=v18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": "=v18.0.0"}}
+    |                      ^^^^^^^^^^ The \`engines.node\` range should be an open-ended \`>=\` range, not \`=v18.0.0\`.
+
+Suggestion 1/1: Use \`>=18.0.0\`.:
+  1 | {"engines": {"node": ">=18.0.0"}}
+
+`;
+
 exports[`invalid(2): {\"engines\": {\"node\": \"~18.2\"}} 1`] = `
 
 [Input]

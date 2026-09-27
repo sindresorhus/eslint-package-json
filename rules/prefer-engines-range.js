@@ -30,8 +30,10 @@ const toOpenRange = range => {
 		return undefined;
 	}
 
-	const isPrefixed = range.startsWith('^') || range.startsWith('~');
-	const version = isPrefixed ? range.slice(1) : range;
+	// Node-semver spells a tilde range `~1.2.3` or `~>1.2.3`, and accepts a run of `=` pins after either operator (`~=1.2.3`, `~>=1.2.3`, `^=1.2.3`) or on its own (`=1.2.3`), so all of it goes. Only a caret or tilde makes the range more than the version it names.
+	const [prefix, operator] = /^(?:(\^|~>?)=*|=*)/u.exec(range);
+	const isPrefixed = operator !== undefined;
+	const version = range.slice(prefix.length);
 	const normalizedVersion = validVersion(version);
 
 	// A bare range only converts when it is an exact version (e.g. `18.0.0`), which implies only that version. Anything else (`>=18`, `18.x`) is already open-ended or not ours to rewrite.
