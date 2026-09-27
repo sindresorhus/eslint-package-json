@@ -2,6 +2,7 @@ import {
 	dependencyTypes,
 	findMember,
 	getKey,
+	iterateEffectiveMembers,
 } from '../utils/index.js';
 
 const GROUP_MESSAGE_ID = 'group';
@@ -29,7 +30,9 @@ export function * check(root) {
 			continue;
 		}
 
-		for (const dependency of member.value.members) {
+		// Effective members, since the message is about the version npm reads, and a shadowed duplicate is
+		// not one it ever sees. The duplicate key itself is `json/no-duplicate-keys`' business.
+		for (const dependency of iterateEffectiveMembers(member.value)) {
 			if (dependency.value.type !== 'String') {
 				yield {
 					node: dependency.value,
