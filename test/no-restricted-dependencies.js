@@ -70,5 +70,33 @@ test.snapshot({
 			code: '{"dependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}}',
 			options: [{packages: ['foo', {name: 'bar', message: 'Deprecated.'}]}],
 		},
+		// A ban list names packages, and an `npm:` alias installs that exact package under another key, so
+		// matching only the key would let a ban be bypassed with an alias.
+		{
+			code: '{"dependencies": {"my-lodash": "npm:lodash@^4.0.0"}}',
+			options: [{packages: ['lodash']}],
+		},
+		{
+			code: '{"dependencies": {"x": "NPM:lodash@^4.0.0"}}',
+			options: [{packages: ['lodash']}],
+		},
+		{
+			code: '{"devDependencies": {"my-lodash": "npm:lodash@^4.0.0"}}',
+			options: [{packages: [{name: 'lodash', message: 'use the lodash-es fork'}]}],
+		},
+		// An empty name is a name the list holds, and `no-restricted-fields` reports the same key.
+		{
+			code: '{"dependencies": {"": "^1.0.0"}}',
+			options: [{packages: ['']}],
+		},
+		// The custom message wins over a bare name for the same package, whatever the order, as in `no-restricted-fields`.
+		{
+			code: '{"dependencies": {"x": "^1.0.0"}}',
+			options: [{packages: [{name: 'x', message: 'custom'}, 'x']}],
+		},
+		{
+			code: '{"dependencies": {"x": "^1.0.0"}}',
+			options: [{packages: ['x', {name: 'x', message: 'custom'}]}],
+		},
 	],
 });

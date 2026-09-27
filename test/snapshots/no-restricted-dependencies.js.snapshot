@@ -18,6 +18,131 @@ Message:
 
 `;
 
+exports[`invalid(10): {\"dependencies\": {\"my-lodash\": \"npm:lodash@^4.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- packages:
+    - 'lodash'
+
+Code:
+  1 | {"dependencies": {"my-lodash": "npm:lodash@^4.0.0"}}
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"my-lodash\": \"npm:lodash@^4.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"my-lodash": "npm:lodash@^4.0.0"}}
+    |                   ^^^^^^^^^^^ Do not use \`lodash\`.
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"x\": \"NPM:lodash@^4.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- packages:
+    - 'lodash'
+
+Code:
+  1 | {"dependencies": {"x": "NPM:lodash@^4.0.0"}}
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"x\": \"NPM:lodash@^4.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"x": "NPM:lodash@^4.0.0"}}
+    |                   ^^^ Do not use \`lodash\`.
+
+`;
+
+exports[`invalid(12): {\"devDependencies\": {\"my-lodash\": \"npm:lodash@^4.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- packages:
+    - name: 'lodash'
+      message: 'use the lodash-es fork'
+
+Code:
+  1 | {"devDependencies": {"my-lodash": "npm:lodash@^4.0.0"}}
+
+`;
+
+exports[`invalid(12): {\"devDependencies\": {\"my-lodash\": \"npm:lodash@^4.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"my-lodash": "npm:lodash@^4.0.0"}}
+    |                      ^^^^^^^^^^^ use the lodash-es fork
+
+`;
+
+exports[`invalid(13): {\"dependencies\": {\"\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- packages:
+    - ''
+
+Code:
+  1 | {"dependencies": {"": "^1.0.0"}}
+
+`;
+
+exports[`invalid(13): {\"dependencies\": {\"\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"": "^1.0.0"}}
+    |                   ^^ Do not use \`\`.
+
+`;
+
+exports[`invalid(14): {\"dependencies\": {\"x\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- packages:
+    - name: 'x'
+      message: 'custom'
+    - 'x'
+
+Code:
+  1 | {"dependencies": {"x": "^1.0.0"}}
+
+`;
+
+exports[`invalid(14): {\"dependencies\": {\"x\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"x": "^1.0.0"}}
+    |                   ^^^ custom
+
+`;
+
+exports[`invalid(15): {\"dependencies\": {\"x\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+Options:
+- packages:
+    - 'x'
+    - name: 'x'
+      message: 'custom'
+
+Code:
+  1 | {"dependencies": {"x": "^1.0.0"}}
+
+`;
+
+exports[`invalid(15): {\"dependencies\": {\"x\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"x": "^1.0.0"}}
+    |                   ^^^ custom
+
+`;
+
 exports[`invalid(2): {\"dependencies\": {\"foo\": \"^1.0.0\"}} 1`] = `
 
 [Input]

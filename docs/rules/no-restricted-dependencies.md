@@ -13,7 +13,7 @@ Ban specific packages across all dependency groups. Useful for enforcing policie
 Type: `(string | {name: string, message?: string})[]`\
 Default: `[]`
 
-The list of banned packages. Each entry is either a package name string, or an object with a `name` and an optional custom `message`.
+The list of banned packages. Each entry is either a package name string, or an object with a `name` and an optional custom `message`. An `npm:` alias is matched by the package it installs, so `"my-lodash": "npm:lodash@^4.0.0"` is reported under a ban on `lodash`.
 
 ```js
 {
