@@ -5050,6 +5050,51 @@ Output:
 
 `;
 
+exports[`invalid(387): {\"os\": [\"any\", \"!win32\"]} 1`] = `
+
+[Input]
+  1 | {"os": ["any", "!win32"]}
+
+`;
+
+exports[`invalid(387): {\"os\": [\"any\", \"!win32\"]} 2`] = `
+
+Message:
+> 1 | {"os": ["any", "!win32"]}
+    |         ^^^^^ \`any\` means no restriction only as the sole \`os\` value. Anywhere else npm compares \`any\` like a real value, which no platform matches.
+
+`;
+
+exports[`invalid(388): {\"os\": [\"any\", \"linux\"]} 1`] = `
+
+[Input]
+  1 | {"os": ["any", "linux"]}
+
+`;
+
+exports[`invalid(388): {\"os\": [\"any\", \"linux\"]} 2`] = `
+
+Message:
+> 1 | {"os": ["any", "linux"]}
+    |         ^^^^^ \`any\` means no restriction only as the sole \`os\` value. Anywhere else npm compares \`any\` like a real value, which no platform matches.
+
+`;
+
+exports[`invalid(389): {\"os\": [\"!any\"]} 1`] = `
+
+[Input]
+  1 | {"os": ["!any"]}
+
+`;
+
+exports[`invalid(389): {\"os\": [\"!any\"]} 2`] = `
+
+Message:
+> 1 | {"os": ["!any"]}
+    |         ^^^^^^ \`any\` means no restriction only as the sole \`os\` value. Anywhere else npm compares \`!any\` like a real value, which no platform matches.
+
+`;
+
 exports[`invalid(39): {\"repository\": null} 1`] = `
 
 [Input]
@@ -5062,6 +5107,66 @@ exports[`invalid(39): {\"repository\": null} 2`] = `
 Message:
 > 1 | {"repository": null}
     |                ^^^^ The \`repository\` field must be a URL string or an object.
+
+`;
+
+exports[`invalid(390): {\"cpu\": [\"!any\"]} 1`] = `
+
+[Input]
+  1 | {"cpu": ["!any"]}
+
+`;
+
+exports[`invalid(390): {\"cpu\": [\"!any\"]} 2`] = `
+
+Message:
+> 1 | {"cpu": ["!any"]}
+    |          ^^^^^^ \`any\` means no restriction only as the sole \`cpu\` value. Anywhere else npm compares \`!any\` like a real value, which no platform matches.
+
+`;
+
+exports[`invalid(391): {\"packageManager\": \"yarn@v4.0.0\"} 1`] = `
+
+[Input]
+  1 | {"packageManager": "yarn@v4.0.0"}
+
+`;
+
+exports[`invalid(391): {\"packageManager\": \"yarn@v4.0.0\"} 2`] = `
+
+Message:
+> 1 | {"packageManager": "yarn@v4.0.0"}
+    |                    ^^^^^^^^^^^^^ The \`packageManager\` field must be \`npm\`, \`yarn\`, \`pnpm\`, or \`bun\` at an exact version (e.g. \`pnpm@9.1.0\`).
+
+`;
+
+exports[`invalid(392): {\"packageManager\": \"npm@ 10.0.0\"} 1`] = `
+
+[Input]
+  1 | {"packageManager": "npm@ 10.0.0"}
+
+`;
+
+exports[`invalid(392): {\"packageManager\": \"npm@ 10.0.0\"} 2`] = `
+
+Message:
+> 1 | {"packageManager": "npm@ 10.0.0"}
+    |                    ^^^^^^^^^^^^^ The \`packageManager\` field must be \`npm\`, \`yarn\`, \`pnpm\`, or \`bun\` at an exact version (e.g. \`pnpm@9.1.0\`).
+
+`;
+
+exports[`invalid(393): {\"packageManager\": \"pnpm@9.0.0 \"} 1`] = `
+
+[Input]
+  1 | {"packageManager": "pnpm@9.0.0 "}
+
+`;
+
+exports[`invalid(393): {\"packageManager\": \"pnpm@9.0.0 \"} 2`] = `
+
+Message:
+> 1 | {"packageManager": "pnpm@9.0.0 "}
+    |                    ^^^^^^^^^^^^^ The \`packageManager\` field must be \`npm\`, \`yarn\`, \`pnpm\`, or \`bun\` at an exact version (e.g. \`pnpm@9.1.0\`).
 
 `;
 

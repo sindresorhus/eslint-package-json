@@ -1042,5 +1042,9 @@ test.snapshot({
 		// Npm reads a version loosely and publishes these rewritten, so they are not canonical rather than invalid.
 		'{"version": "01.0.0"}',
 		'{"version": "1.0.0beta"}',
+		// SemVer reads these, but Corepack puts the version into the download URL as written.
+		'{"packageManager": "yarn@v4.0.0"}',
+		'{"packageManager": "npm@ 10.0.0"}',
+		'{"packageManager": "pnpm@9.0.0 "}',
 	],
 });
