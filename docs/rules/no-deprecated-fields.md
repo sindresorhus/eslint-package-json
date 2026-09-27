@@ -16,7 +16,7 @@ Detected:
 - `engineStrict`: ignored by npm.
 - `licenses`: the old array form. Use the `license` field with an SPDX expression instead.
 - `modules`: a non-standard bundler convention. Use the `exports` field instead.
-- The `prepublish` script: it ran on both `npm publish` and a plain `npm install`, which surprised everyone. Use `prepublishOnly` to run only on publish, or `prepare` to also run on local install.
+- The `prepublish` script: npm no longer runs it on `npm publish`, only on `npm install` and `npm ci` in the project itself. Use `prepublishOnly` to run only on publish.
 
 The deprecated `license` object form is handled by [`valid-fields`](./valid-fields.md).
 

@@ -99,7 +99,7 @@ exports[`invalid(7): {\"scripts\": {\"prepublish\": \"build\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"prepublish": "build"}}
-    |              ^^^^^^^^^^^^ The \`prepublish\` script is deprecated. Use \`prepublishOnly\` to run only on publish, or \`prepare\` to also run on local install.
+    |              ^^^^^^^^^^^^ The \`prepublish\` script no longer runs on \`npm publish\`, but it still runs on \`npm install\`. Use \`prepublishOnly\` to run only on publish.
 
 `;
 
@@ -122,6 +122,6 @@ exports[`invalid(8): {\"jsnext:main\": \"index.js\", \"scripts\": {\"prepublish\
 
 Message:
 > 1 | {"jsnext:main": "index.js", "scripts": {"prepublish": "build"}}
-    |                                         ^^^^^^^^^^^^ The \`prepublish\` script is deprecated. Use \`prepublishOnly\` to run only on publish, or \`prepare\` to also run on local install.
+    |                                         ^^^^^^^^^^^^ The \`prepublish\` script no longer runs on \`npm publish\`, but it still runs on \`npm install\`. Use \`prepublishOnly\` to run only on publish.
 
 `;

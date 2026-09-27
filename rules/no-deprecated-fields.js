@@ -5,7 +5,7 @@ const SCRIPT_MESSAGE_ID = 'deprecatedScript';
 
 const messages = {
 	[FIELD_MESSAGE_ID]: 'The `{{field}}` field is deprecated. {{advice}}',
-	[SCRIPT_MESSAGE_ID]: 'The `prepublish` script is deprecated. Use `prepublishOnly` to run only on publish, or `prepare` to also run on local install.',
+	[SCRIPT_MESSAGE_ID]: 'The `prepublish` script no longer runs on `npm publish`, but it still runs on `npm install`. Use `prepublishOnly` to run only on publish.',
 };
 
 // Top-level fields npm no longer honors, mapped to migration advice.
