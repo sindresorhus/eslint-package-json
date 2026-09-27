@@ -344,6 +344,8 @@ test.snapshot({
 		'{"bugs": "a@b.com"}',
 		'{"bugs": "https://x.com"}',
 		'{"readme": null}',
+		'{"readme": false}',
+		'{"readme": 0}',
 		'{"readme": "# Title"}',
 		'{"maintainers": [{"name": "A"}]}',
 		'{"maintainers": []}',
@@ -852,7 +854,7 @@ test.snapshot({
 		'{"bugs": {"email": "not an email"}}',
 		'{"bugs": "not a url"}',
 		// Npm calls `.trim()` on `readme` to derive the description, so a non-string throws
-		// `description.trim is not a function` and the package cannot be published. A `null` is skipped.
+		// `description.trim is not a function` and the package cannot be published. A falsy value is replaced first.
 		'{"readme": 42}',
 		'{"readme": ["# x"]}',
 		'{"readme": true}',

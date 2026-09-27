@@ -20,7 +20,7 @@ Semantic checks include repository URLs and `exports`/`imports` targets. Some ch
 - `funding`: each URL needs an `http:` or `https:` host, since `npm fund` drops the whole field when one entry holds anything else.
 - `exports`/`imports` targets: `.`, `..`, and `node_modules` segments are rejected, even percent-encoded.
 - `imports`: a `#` key nested in a conditions object is reported, since Node reads it as a condition name.
-- `readme`: it must be a string, since npm calls `.trim()` on it when publishing.
+- `readme`: a truthy value must be a string, since npm calls `.trim()` on it when publishing.
 - `contributors` and `maintainers`: each entry must be a person, since a `null` entry makes npm throw.
 - `license` and `licence`: a custom `LicenseRef` or `DocumentRef` is reported, since npm does not count it as valid. `licence` is checked when `license` is missing or falsy, since npm reads it then.
 - `workspaces`: an object must hold its globs in a `packages` array.

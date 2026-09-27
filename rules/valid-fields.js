@@ -3,6 +3,7 @@ import * as name from './valid-fields/name.js';
 import * as version from './valid-fields/version.js';
 import * as private_ from './valid-fields/private.js';
 import * as description from './valid-fields/description.js';
+import * as readme from './valid-fields/readme.js';
 import * as license from './valid-fields/license.js';
 import * as repository from './valid-fields/repository.js';
 import * as homepage from './valid-fields/homepage.js';
@@ -38,6 +39,7 @@ const fields = {
 	version,
 	private: private_,
 	description,
+	readme,
 	license,
 	repository,
 	homepage,
