@@ -104,7 +104,21 @@ snapshotTest.snapshot({
 		// The created group and the moved entry go where a sorted document holds them.
 		'{"name": "x", "dependencies": {"@types/node": "^20.0.0", "foo": "^1.0.0"}, "peerDependencies": {"bar": "^1.0.0"}}',
 		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"ava": "1", "xo": "1"}}',
+		// Renaming the group to `devDependencies` would promote the earlier duplicate `dependencies` into its place.
+		'{\n\t"dependencies": {\n\t\t"b": "1"\n\t},\n\t"dependencies": {\n\t\t"@types/x": "^1.0.0"\n\t}\n}',
 	],
+});
+
+test('renaming the group drops its shadowed duplicates', () => {
+	// Renaming only the effective `dependencies` member would promote the earlier one back into its place, and with it a dependency the manifest does not have.
+	assert.deepEqual(
+		JSON.parse(applySuggestion('{\n\t"dependencies": {\n\t\t"b": "1"\n\t},\n\t"dependencies": {\n\t\t"@types/x": "^1.0.0"\n\t}\n}')),
+		{devDependencies: {'@types/x': '^1.0.0'}},
+	);
+	assert.deepEqual(
+		JSON.parse(applySuggestion('{"name": "x", "dependencies": {"b": "1"}, "dependencies": {"@types/x": "^1.0.0"}}')),
+		{name: 'x', devDependencies: {'@types/x': '^1.0.0'}},
+	);
 });
 
 test('the suggestion keeps a sorted document sorted', () => {
