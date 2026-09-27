@@ -786,6 +786,7 @@ test('every rule takes part on a realistic manifest without breaking its neighbo
 		'no-http-dependencies',
 		'no-incompatible-peer-dependency-ranges',
 		'no-invalid-direct-overrides',
+		'no-local-dependencies',
 		'no-nested-exports',
 		'no-restricted-dependencies',
 		'no-restricted-fields',

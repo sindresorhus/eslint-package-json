@@ -597,11 +597,6 @@ export function isGitRemote(specifier) {
 	}
 }
 
-// A single `.` subsumes `./foo` and `../foo` as well as `.` and `..`, so those two entries are gone.
-// `link:` and `portal:` are the Yarn local-directory protocols.
-const localSpecifierPrefixes = ['file:', 'link:', 'portal:', '.', '/', '~/'];
-const windowsDrivePattern = /^[a-z]:[/\\]/iu;
-
 /**
 Normalize a `bin` path the way npm does before it publishes the target, or `''` when the path names nothing.
 Npm turns every `\` and `:` into a path separator, so `scripts\cli.js` and `C:cli.js` are the files
@@ -619,14 +614,6 @@ Normalize a `bin` command name the way npm does, which is the basename of the no
 export function normalizeBinName(value) {
 	return path.posix.basename(normalizeBinPath(value));
 }
-
-// A bare specifier with no protocol is a directory npm copies into `node_modules` as soon as it is three path
-// segments long or ends in a slash, because `npm-package-arg` reads a one- or two-segment one as the hosted
-// `owner/repo` shorthand instead. The first segment may not hold a colon, which is what tells the two apart.
-const bareDirectoryPattern = /^[^/:]+\/(?:[^/]*\/)+[^/]*$/u;
-// A single segment with a trailing slash is a directory by that same rule, and it has no second slash for the
-// pattern above to find.
-const bareDirectorySlashPattern = /^[^/:]+\/$/u;
 
 // Files npm force-includes at the package root whatever `files` says, matched case-insensitively, so a casing
 // variant needs no `files` entry either. The family is root-only: a nested `docs/README.md` is not published,
@@ -646,16 +633,6 @@ export function isAlwaysIncludedFile(value) {
 	const normalized = value.replace(/^(?:\.\/|\/)+/u, '').replaceAll(/[A-Z]/gu, character => character.toLowerCase());
 
 	return normalized !== '' && alwaysIncludedFilePattern.test(normalized);
-}
-
-/**
-Check whether a dependency specifier references the local filesystem.
-*/
-export function isLocalSpecifier(specifier) {
-	return localSpecifierPrefixes.some(prefix => specifier.startsWith(prefix))
-		|| windowsDrivePattern.test(specifier)
-		|| bareDirectoryPattern.test(specifier)
-		|| bareDirectorySlashPattern.test(specifier);
 }
 
 /**

@@ -6,6 +6,8 @@
 
 Local filesystem path specifiers (like `file:../foo`, `./foo`, `../foo`, `/path/to/foo`, `~/foo`, `link:../foo`) should not be published to npm. They only work on the author's machine and will break for consumers.
 
+A specifier is local when [`npm-package-arg`](https://github.com/npm/npm-package-arg) resolves it to a file or a directory, or when it uses Yarn's `link:` or `portal:` protocol. That includes Windows drive paths (`C:/foo`), tarball file names (`foo.tgz`), and bare paths with three or more segments or a trailing slash. A two-segment bare path such as `packages/utils` is the `owner/repo` shorthand, not a path.
+
 Only `dependencies`, `optionalDependencies`, and `peerDependencies` are checked, since those are what npm installs downstream. A local path in `devDependencies` reaches nobody — it is how packages point at test fixtures and self-link to dogfood their own entry points — so it is left alone.
 
 ## Options

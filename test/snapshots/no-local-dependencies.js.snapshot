@@ -13,14 +13,89 @@ Message:
 
 `;
 
-exports[`invalid(10): {\"optionalDependencies\": {\"foo\": \"link:../foo\"}} 1`] = `
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"/home/user/foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "/home/user/foo"}}
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"/home/user/foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "/home/user/foo"}}
+    |                          ^^^^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"foo\": \"~/foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "~/foo"}}
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"foo\": \"~/foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "~/foo"}}
+    |                          ^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(12): {\"peerDependencies\": {\"foo\": \"file:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "file:../foo"}}
+
+`;
+
+exports[`invalid(12): {\"peerDependencies\": {\"foo\": \"file:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "file:../foo"}}
+    |                              ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(13): {\"peerDependencies\": {\"foo\": \"link:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "link:../foo"}}
+
+`;
+
+exports[`invalid(13): {\"peerDependencies\": {\"foo\": \"link:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "link:../foo"}}
+    |                              ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(14): {\"optionalDependencies\": {\"foo\": \"file:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"optionalDependencies": {"foo": "file:../foo"}}
+
+`;
+
+exports[`invalid(14): {\"optionalDependencies\": {\"foo\": \"file:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"optionalDependencies": {"foo": "file:../foo"}}
+    |                                  ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(15): {\"optionalDependencies\": {\"foo\": \"link:../foo\"}} 1`] = `
 
 [Input]
   1 | {"optionalDependencies": {"foo": "link:../foo"}}
 
 `;
 
-exports[`invalid(10): {\"optionalDependencies\": {\"foo\": \"link:../foo\"}} 2`] = `
+exports[`invalid(15): {\"optionalDependencies\": {\"foo\": \"link:../foo\"}} 2`] = `
 
 Message:
 > 1 | {"optionalDependencies": {"foo": "link:../foo"}}
@@ -28,14 +103,14 @@ Message:
 
 `;
 
-exports[`invalid(11): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 1`] = `
+exports[`invalid(16): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 1`] = `
 
 [Input]
   1 | {"dependencies": {"foo": "file:../foo", "bar": "^1.0.0", "baz": "../baz"}}
 
 `;
 
-exports[`invalid(11): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 2`] = `
+exports[`invalid(16): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 2`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "file:../foo", "bar": "^1.0.0", "baz": "../baz"}}
@@ -43,11 +118,56 @@ Message:
 
 `;
 
-exports[`invalid(11): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 3`] = `
+exports[`invalid(16): {\"dependencies\": {\"foo\": \"file:../foo\", \"bar\": \"^1.0.0\", \"baz\": \"../baz\"}} 3`] = `
 
 Message:
 > 1 | {"dependencies": {"foo": "file:../foo", "bar": "^1.0.0", "baz": "../baz"}}
     |                                                                 ^^^^^^^^ Local dependency \`baz\` should not be published.
+
+`;
+
+exports[`invalid(17): {\"dependencies\": {\"foo\": \"portal:../foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "portal:../foo"}}
+
+`;
+
+exports[`invalid(17): {\"dependencies\": {\"foo\": \"portal:../foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "portal:../foo"}}
+    |                          ^^^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(18): {\"dependencies\": {\"foo\": \"portal:.\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "portal:."}}
+
+`;
+
+exports[`invalid(18): {\"dependencies\": {\"foo\": \"portal:.\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "portal:."}}
+    |                          ^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(19): {\"dependencies\": {\"foo\": \"packages/utils/\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "packages/utils/"}}
+
+`;
+
+exports[`invalid(19): {\"dependencies\": {\"foo\": \"packages/utils/\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "packages/utils/"}}
+    |                          ^^^^^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
 
 `;
 
@@ -66,6 +186,188 @@ Message:
 
 `;
 
+exports[`invalid(20): {\"dependencies\": {\"foo\": \"a/b/c\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "a/b/c"}}
+
+`;
+
+exports[`invalid(20): {\"dependencies\": {\"foo\": \"a/b/c\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "a/b/c"}}
+    |                          ^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(21): {\"dependencies\": {\"foo\": \"a/b/c/d\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "a/b/c/d"}}
+
+`;
+
+exports[`invalid(21): {\"dependencies\": {\"foo\": \"a/b/c/d\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "a/b/c/d"}}
+    |                          ^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(22): {\"dependencies\": {\"foo\": \"a/\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "a/"}}
+
+`;
+
+exports[`invalid(22): {\"dependencies\": {\"foo\": \"a/\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "a/"}}
+    |                          ^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(23): {\"dependencies\": {\"foo\": \"x/\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "x/"}}
+
+`;
+
+exports[`invalid(23): {\"dependencies\": {\"foo\": \"x/\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "x/"}}
+    |                          ^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(24): {\"peerDependencies\": {\"foo\": \"packages/utils/\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "packages/utils/"}}
+
+`;
+
+exports[`invalid(24): {\"peerDependencies\": {\"foo\": \"packages/utils/\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "packages/utils/"}}
+    |                              ^^^^^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(25): {\"dependencies\": {\"foo\": \"@scope/a/b\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "@scope/a/b"}}
+
+`;
+
+exports[`invalid(25): {\"dependencies\": {\"foo\": \"@scope/a/b\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "@scope/a/b"}}
+    |                          ^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(26): {\"dependencies\": {\"a\": \"~/x\", \"b\": \"/abs\", \"c\": \"C:/x\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"a": "~/x", "b": "/abs", "c": "C:/x"}}
+
+`;
+
+exports[`invalid(26): {\"dependencies\": {\"a\": \"~/x\", \"b\": \"/abs\", \"c\": \"C:/x\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"a": "~/x", "b": "/abs", "c": "C:/x"}}
+    |                        ^^^^^ Local dependency \`a\` should not be published.
+
+`;
+
+exports[`invalid(26): {\"dependencies\": {\"a\": \"~/x\", \"b\": \"/abs\", \"c\": \"C:/x\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"a": "~/x", "b": "/abs", "c": "C:/x"}}
+    |                                    ^^^^^^ Local dependency \`b\` should not be published.
+
+`;
+
+exports[`invalid(26): {\"dependencies\": {\"a\": \"~/x\", \"b\": \"/abs\", \"c\": \"C:/x\"}} 4`] = `
+
+Message:
+> 1 | {"dependencies": {"a": "~/x", "b": "/abs", "c": "C:/x"}}
+    |                                                 ^^^^^^ Local dependency \`c\` should not be published.
+
+`;
+
+exports[`invalid(27): {\"dependencies\": {\"foo\": \"FILE:../foo\", \"bar\": \"File:.\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "FILE:../foo", "bar": "File:."}}
+
+`;
+
+exports[`invalid(27): {\"dependencies\": {\"foo\": \"FILE:../foo\", \"bar\": \"File:.\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "FILE:../foo", "bar": "File:."}}
+    |                          ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(27): {\"dependencies\": {\"foo\": \"FILE:../foo\", \"bar\": \"File:.\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "FILE:../foo", "bar": "File:."}}
+    |                                                ^^^^^^^^ Local dependency \`bar\` should not be published.
+
+`;
+
+exports[`invalid(28): {\"dependencies\": {\"foo\": \"foo.tgz\", \"bar\": \"foo-1.0.0.tar.gz\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "foo.tgz", "bar": "foo-1.0.0.tar.gz"}}
+
+`;
+
+exports[`invalid(28): {\"dependencies\": {\"foo\": \"foo.tgz\", \"bar\": \"foo-1.0.0.tar.gz\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "foo.tgz", "bar": "foo-1.0.0.tar.gz"}}
+    |                          ^^^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(28): {\"dependencies\": {\"foo\": \"foo.tgz\", \"bar\": \"foo-1.0.0.tar.gz\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "foo.tgz", "bar": "foo-1.0.0.tar.gz"}}
+    |                                            ^^^^^^^^^^^^^^^^^^ Local dependency \`bar\` should not be published.
+
+`;
+
+exports[`invalid(29): {\"dependencies\": {\"foo\": \"C:foo\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "C:foo"}}
+
+`;
+
+exports[`invalid(29): {\"dependencies\": {\"foo\": \"C:foo\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "C:foo"}}
+    |                          ^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
 exports[`invalid(3): {\"dependencies\": {\"foo\": \"./foo\"}} 1`] = `
 
 [Input]
@@ -78,6 +380,21 @@ exports[`invalid(3): {\"dependencies\": {\"foo\": \"./foo\"}} 2`] = `
 Message:
 > 1 | {"dependencies": {"foo": "./foo"}}
     |                          ^^^^^^^ Local dependency \`foo\` should not be published.
+
+`;
+
+exports[`invalid(30): {\"dependencies\": {\"foo\": \"@scope/a\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "@scope/a"}}
+
+`;
+
+exports[`invalid(30): {\"dependencies\": {\"foo\": \"@scope/a\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "@scope/a"}}
+    |                          ^^^^^^^^^^ Local dependency \`foo\` should not be published.
 
 `;
 
@@ -96,77 +413,77 @@ Message:
 
 `;
 
-exports[`invalid(5): {\"dependencies\": {\"foo\": \"/home/user/foo\"}} 1`] = `
+exports[`invalid(5): {\"dependencies\": {\"foo\": \".\"}} 1`] = `
 
 [Input]
-  1 | {"dependencies": {"foo": "/home/user/foo"}}
+  1 | {"dependencies": {"foo": "."}}
 
 `;
 
-exports[`invalid(5): {\"dependencies\": {\"foo\": \"/home/user/foo\"}} 2`] = `
+exports[`invalid(5): {\"dependencies\": {\"foo\": \".\"}} 2`] = `
 
 Message:
-> 1 | {"dependencies": {"foo": "/home/user/foo"}}
-    |                          ^^^^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+> 1 | {"dependencies": {"foo": "."}}
+    |                          ^^^ Local dependency \`foo\` should not be published.
 
 `;
 
-exports[`invalid(6): {\"dependencies\": {\"foo\": \"~/foo\"}} 1`] = `
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"..\"}} 1`] = `
 
 [Input]
-  1 | {"dependencies": {"foo": "~/foo"}}
+  1 | {"dependencies": {"foo": ".."}}
 
 `;
 
-exports[`invalid(6): {\"dependencies\": {\"foo\": \"~/foo\"}} 2`] = `
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"..\"}} 2`] = `
 
 Message:
-> 1 | {"dependencies": {"foo": "~/foo"}}
-    |                          ^^^^^^^ Local dependency \`foo\` should not be published.
+> 1 | {"dependencies": {"foo": ".."}}
+    |                          ^^^^ Local dependency \`foo\` should not be published.
 
 `;
 
-exports[`invalid(7): {\"peerDependencies\": {\"foo\": \"file:../foo\"}} 1`] = `
+exports[`invalid(7): {\"peerDependencies\": {\"foo\": \".\"}} 1`] = `
 
 [Input]
-  1 | {"peerDependencies": {"foo": "file:../foo"}}
+  1 | {"peerDependencies": {"foo": "."}}
 
 `;
 
-exports[`invalid(7): {\"peerDependencies\": {\"foo\": \"file:../foo\"}} 2`] = `
+exports[`invalid(7): {\"peerDependencies\": {\"foo\": \".\"}} 2`] = `
 
 Message:
-> 1 | {"peerDependencies": {"foo": "file:../foo"}}
-    |                              ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+> 1 | {"peerDependencies": {"foo": "."}}
+    |                              ^^^ Local dependency \`foo\` should not be published.
 
 `;
 
-exports[`invalid(8): {\"peerDependencies\": {\"foo\": \"link:../foo\"}} 1`] = `
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"C:/foo\"}} 1`] = `
 
 [Input]
-  1 | {"peerDependencies": {"foo": "link:../foo"}}
+  1 | {"dependencies": {"foo": "C:/foo"}}
 
 `;
 
-exports[`invalid(8): {\"peerDependencies\": {\"foo\": \"link:../foo\"}} 2`] = `
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"C:/foo\"}} 2`] = `
 
 Message:
-> 1 | {"peerDependencies": {"foo": "link:../foo"}}
-    |                              ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+> 1 | {"dependencies": {"foo": "C:/foo"}}
+    |                          ^^^^^^^^ Local dependency \`foo\` should not be published.
 
 `;
 
-exports[`invalid(9): {\"optionalDependencies\": {\"foo\": \"file:../foo\"}} 1`] = `
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"C:\\\\foo\"}} 1`] = `
 
 [Input]
-  1 | {"optionalDependencies": {"foo": "file:../foo"}}
+  1 | {"dependencies": {"foo": "C:\\\\foo"}}
 
 `;
 
-exports[`invalid(9): {\"optionalDependencies\": {\"foo\": \"file:../foo\"}} 2`] = `
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"C:\\\\foo\"}} 2`] = `
 
 Message:
-> 1 | {"optionalDependencies": {"foo": "file:../foo"}}
-    |                                  ^^^^^^^^^^^^^ Local dependency \`foo\` should not be published.
+> 1 | {"dependencies": {"foo": "C:\\\\foo"}}
+    |                          ^^^^^^^^^ Local dependency \`foo\` should not be published.
 
 `;

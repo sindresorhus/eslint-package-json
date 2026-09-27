@@ -1,3 +1,4 @@
+import npa from 'npm-package-arg';
 import {
 	getRootObject,
 	iterateDependencies,
@@ -11,15 +12,28 @@ const messages = {
 	[MESSAGE_ID]: 'Local dependency `{{name}}` should not be published.',
 };
 
-const localPrefixes = ['file:', 'link:', './', '../', '/', '~/'];
-
 // A consumer never installs `devDependencies`, so a local path there cannot break anyone: it is how packages point at test fixtures and self-link for dogfooding. Only the groups npm actually installs downstream are checked.
 const installedDependencyTypes = ['dependencies', 'optionalDependencies', 'peerDependencies'];
 
+// `link:` and `portal:` are the Yarn local-directory protocols, which `npm-package-arg` does not know.
+const yarnLocalPrefixes = ['link:', 'portal:'];
+
 /**
-Check if a dependency specifier references the local filesystem.
+Check whether a dependency specifier references the local filesystem, the way npm resolves it.
 */
-const isLocalSpecifier = specifier => localPrefixes.some(prefix => specifier.startsWith(prefix));
+function isLocalSpecifier(name, specifier) {
+	if (yarnLocalPrefixes.some(prefix => specifier.startsWith(prefix))) {
+		return true;
+	}
+
+	try {
+		const {type} = npa.resolve(name, specifier);
+		return type === 'file' || type === 'directory';
+	} catch {
+		// `npm-package-arg` throws on a protocol it does not know, such as `workspace:`, and on a name npm cannot install.
+		return false;
+	}
+}
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
@@ -38,7 +52,7 @@ const create = context => {
 					continue;
 				}
 
-				if (!isLocalSpecifier(member.value.value)) {
+				if (!isLocalSpecifier(name, member.value.value)) {
 					continue;
 				}
 
