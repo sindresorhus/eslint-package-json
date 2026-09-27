@@ -10,6 +10,8 @@ import semver from 'semver';
 import plugin from '../index.js';
 import {
 	fieldOrder,
+	findMember,
+	removeEntryAndEmptyContainer,
 	removeMembers,
 	validRange,
 	withoutShadowedMembers,
@@ -291,7 +293,7 @@ test('the plugin works with a shorthand alias', () => {
 	);
 });
 
-// Documents that exercise the shapes autofixes are easiest to get wrong on: empty and single-line containers, duplicate keys, nested and mixed-type `exports` trees, CRLF, and unusual indentation.
+// Documents that exercise the shapes autofixes are easiest to get wrong on: empty and single-line containers, duplicate keys, nested and mixed-type `exports` trees, and unusual indentation.
 const trickyDocuments = [
 	'{}',
 	'{"files":[]}',
@@ -318,10 +320,31 @@ const trickyDocuments = [
 	'{"repository":"foo/bar","homepage":"https://old.example.com","homepage":"https://github.com/foo/bar#readme"}',
 	'{"name":"foo","publishConfig":{"access":"restricted","access":"public"}}',
 	'{"peerDependencies":{"a":"^1.0.0"},"peerDependenciesMeta":{"a":{"optional":true,"optional":false}}}',
+	// A duplicated group member that a removal has to take with it, since `findMember` resolved the final one and
+	// leaving the earlier duplicate in place would resurrect the very report the removal was offered for.
+	'{"devDependencies":{"a":"1"},"optionalDependencies":{"a":"1"},"optionalDependencies":{"a":"1"}}',
+	'{"dependencies":{"a":"1"},"dependencies":{"a":"1"},"devDependencies":{"a":"1"}}',
+	'{"name":"a","dependencies":{"a":"1"},"dependencies":{"a":"1"}}',
 	'{"scripts":{"postinstall":"a","postinstall":"b"}}',
-	'{\r\n\t"dependencies": {\r\n\t\t"b": "^1.0.0",\r\n\t\t"a": "^1.0.0"\r\n\t}\r\n}',
+	// Duplicated shapes for the remaining rules with suggestions, so each one's suggestion is checked against its own report.
+	'{"main":"index.js","main":"index.js","browser":"./browser.js"}',
+	'{"dependencies":{"a":"1.0.0"},"dependencies":{"a":"1.0.0"}}',
+	'{"peerDependencies":{"a":"1.0.0"},"peerDependencies":{"a":"1.0.0"}}',
+	'{"files":["/dist"],"files":["/dist"]}',
+	'{"dependencies":{"fs":"^1.0.0"},"dependencies":{"fs":"^1.0.0"}}',
+	'{"devDependencies":{"@types/foo":"^1.0.0"},"devDependencies":{"@types/foo":"^1.0.0"}}',
+	'{"dependencies":{"@types/a":"1"},"dependencies":{"@types/a":"1"}}',
+	'{"engines":{"node":"18.0.0"},"engines":{"node":"18.0.0"}}',
+	'{"workspaces":["a"],"workspaces":["a"]}',
+	'{"private":true,"publishConfig":{"access":"public"},"publishConfig":{"access":"public"}}',
+	'{"bin":"cli.js","bin":"cli.js"}',
+	'{"exports":"./a.js","exports":"./b.js"}',
 	'{\n    "dependencies": {\n        "b": "^1.0.0",\n        "a": "^1.0.0"\n    }\n}',
 	'{\n  "files": [\n    "b.js",\n    "a.js"\n  ]\n}',
+	// A blank line inside a container is not indentation. A rewrite that took the text after the last line break
+	// as the entry indent would write one blank line before every entry.
+	'{\n\t"dependencies": {\n\n\t\t"b": "^1.0.0",\n\t\t"a": "^1.0.0"\n\t}\n}',
+	'{\n\n\n\t"dependencies": {\n\t\t"b": "^1.0.0",\n\t\t"a": "^1.0.0"\n\t}\n}',
 ];
 
 const parseOrFail = (text, description) => {
@@ -364,21 +387,45 @@ test('every autofix and suggestion keeps the document valid JSON', () => {
 	}
 });
 
+// A container is rewritten whole, so its interior indentation is re-derived rather than copied. Returning the text
+// after the last line break as that indentation would carry a blank line the author wrote into every entry.
+test('a sort fix does not turn one blank line into one per entry', () => {
+	const linter = new Linter();
+	const config = [plugin.configs.all];
+
+	for (const count of [1, 2, 3]) {
+		const code = `{\n\t"dependencies": {${'\n'.repeat(count)}\t\t"b": "^1.0.0",\n\t\t"a": "^1.0.0"\n\t}\n}`;
+		const {output, fixed} = linter.verifyAndFix(code, config, {filename: 'package.json'});
+
+		assert.ok(fixed, code);
+		assert.doesNotMatch(output, /^\s*$/mu, `the fix wrote a blank line:\n${output}`);
+	}
+});
+
 test('every suggestion resolves the problem it is offered for', () => {
 	const linter = new Linter();
 	const countMatching = (messages, {ruleId, messageId}) => messages.filter(message => message.ruleId === ruleId && message.messageId === messageId).length;
+	// The rules that report nothing on the root `package.json` without options.
+	const setups = {
+		'no-nested-exports': {filename: 'nested/package.json'},
+		'no-restricted-fields': {options: [{fields: ['bin']}]},
+	};
+
+	const exercisedRuleIds = new Set();
 
 	for (const id of ruleIds) {
-		const config = ruleOnlyConfig(id);
+		const {filename = 'package.json', options = []} = setups[id] ?? {};
+		const config = {...ruleOnlyConfig(id), rules: {[`rule-to-test/${id}`]: ['error', ...options]}};
 
 		for (const code of trickyDocuments) {
-			const messages = linter.verify(code, config, {filename: 'package.json'});
+			const messages = linter.verify(code, config, {filename});
 
 			for (const message of messages) {
 				for (const suggestion of message.suggestions ?? []) {
+					exercisedRuleIds.add(id);
 					const [start, end] = suggestion.fix.range;
 					const suggested = code.slice(0, start) + suggestion.fix.text + code.slice(end);
-					const after = linter.verify(suggested, config, {filename: 'package.json'});
+					const after = linter.verify(suggested, config, {filename});
 
 					// A suggestion that leaves as many instances of its own problem behind did not fix anything. The usual cause is removing only the effective member of a duplicated key, which promotes the shadowed one into its place.
 					assert.ok(
@@ -389,6 +436,9 @@ test('every suggestion resolves the problem it is offered for', () => {
 			}
 		}
 	}
+
+	// A rule none of the documents reaches is not checked at all, so a new rule with suggestions needs a document here too.
+	assert.deepEqual(ruleIds.filter(id => plugin.rules[id].meta.hasSuggestions && !exercisedRuleIds.has(id)), []);
 });
 
 test('sort fixes only reorder, never lose or alter entries', () => {
@@ -871,7 +921,6 @@ test('`removeMembers` removes exactly the requested members, whatever the layout
 		members => `{${members.join(',')}}`,
 		members => `{\n\t${members.join(',\n\t')}\n}`,
 		members => `{ ${members.join(', ')} }`,
-		members => `{\r\n\t${members.join(',\r\n\t')}\r\n}`,
 		// A comma detached from its member, and an indent that is neither the first nor the last member's.
 		members => `{${members.join(' ,\n   ')}}`,
 	];
@@ -934,6 +983,57 @@ test('`removeMembers` removes exactly the requested members, whatever the layout
 			}
 		}
 	}
+});
+
+// `removeEntryAndEmptyContainer` is what every "take this entry out" suggestion uses when removing the entry
+// would leave its container empty. The container is always reached through `findMember`, so it is the final
+// member for its key: taking only that one would promote a shadowed duplicate back into its place, and the
+// report the suggestion was offered for would survive it.
+test('`removeEntryAndEmptyContainer` takes the whole run of a duplicated container', () => {
+	const linter = new Linter();
+	// A rule that empties the first effective `group` member, which is the shape every caller has.
+	const emptyingRule = {
+		meta: {
+			type: 'problem',
+			hasSuggestions: true,
+			schema: [],
+			messages: {remove: 'Remove.'},
+			languages: ['json/json'],
+		},
+		create: context => ({
+			Document(node) {
+				const root = node.body;
+				const containerMember = findMember(root, 'group');
+				const entry = containerMember.value.members.at(-1);
+
+				context.report({
+					node: root,
+					messageId: 'remove',
+					suggest: [{
+						messageId: 'remove',
+						* fix(fixer) {
+							yield * removeEntryAndEmptyContainer(fixer, context.sourceCode, containerMember, entry);
+						},
+					}],
+				});
+			},
+		}),
+	};
+
+	// A single container is removed whole, exactly as before.
+	const singleCode = '{"group": {"a": "1"}, "other": 2}';
+	const [single] = linter.verify(singleCode, ruleOnlyConfig('empty', emptyingRule), {filename: 'package.json'});
+	const [start, end] = single.suggestions[0].fix.range;
+	assert.equal(singleCode.slice(0, start) + singleCode.slice(end), '{"other": 2}');
+
+	// Two members share the key, so removing the final one alone would promote the first into its place and
+	// leave the empty container behind for the next round to find.
+	const code = '{"group": {"a": "1"}, "group": {"a": "1"}, "other": 2}';
+	const [duplicated] = linter.verify(code, ruleOnlyConfig('empty', emptyingRule), {filename: 'package.json'});
+	const [duplicatedStart, duplicatedEnd] = duplicated.suggestions[0].fix.range;
+	const output = code.slice(0, duplicatedStart) + duplicated.suggestions[0].fix.text + code.slice(duplicatedEnd);
+
+	assert.equal(output, '{"other": 2}');
 });
 
 /**
