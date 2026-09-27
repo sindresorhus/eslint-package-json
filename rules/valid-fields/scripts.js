@@ -1,4 +1,4 @@
-import {findMember, getKey} from '../utils/index.js';
+import {findMember, getKey, iterateEffectiveMembers} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const VALUE_MESSAGE_ID = 'value';
@@ -23,7 +23,8 @@ export function * check(root) {
 		return;
 	}
 
-	for (const member of scripts.value.members) {
+	// Effective members, since a shadowed duplicate is not a script npm ever runs.
+	for (const member of iterateEffectiveMembers(scripts.value)) {
 		if (member.value.type !== 'String') {
 			yield {
 				node: member.value,
