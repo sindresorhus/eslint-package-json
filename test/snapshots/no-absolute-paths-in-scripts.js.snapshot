@@ -463,33 +463,33 @@ Message:
 
 `;
 
-exports[`invalid(38): {\"scripts\": {\"test\": \"\\\\tools\\\\test.exe\"}} 1`] = `
-
-[Input]
-  1 | {"scripts": {"test": "\\\\tools\\\\test.exe"}}
-
-`;
-
-exports[`invalid(38): {\"scripts\": {\"test\": \"\\\\tools\\\\test.exe\"}} 2`] = `
-
-Message:
-> 1 | {"scripts": {"test": "\\\\tools\\\\test.exe"}}
-    |                      ^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
-
-`;
-
-exports[`invalid(39): {\"scripts\": {\"test\": \"\\\\\\\\server\\\\share\\\\tool.exe\"}} 1`] = `
+exports[`invalid(38): {\"scripts\": {\"test\": \"\\\\\\\\server\\\\share\\\\tool.exe\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "\\\\\\\\server\\\\share\\\\tool.exe"}}
 
 `;
 
-exports[`invalid(39): {\"scripts\": {\"test\": \"\\\\\\\\server\\\\share\\\\tool.exe\"}} 2`] = `
+exports[`invalid(38): {\"scripts\": {\"test\": \"\\\\\\\\server\\\\share\\\\tool.exe\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "\\\\\\\\server\\\\share\\\\tool.exe"}}
     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(39): {\"scripts\": {\"test\": \"/usr/bin/node /tmp/test.js\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "/usr/bin/node /tmp/test.js"}}
+
+`;
+
+exports[`invalid(39): {\"scripts\": {\"test\": \"/usr/bin/node /tmp/test.js\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "/usr/bin/node /tmp/test.js"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
 
 `;
 
@@ -508,29 +508,14 @@ Message:
 
 `;
 
-exports[`invalid(40): {\"scripts\": {\"test\": \"/usr/bin/node /tmp/test.js\"}} 1`] = `
-
-[Input]
-  1 | {"scripts": {"test": "/usr/bin/node /tmp/test.js"}}
-
-`;
-
-exports[`invalid(40): {\"scripts\": {\"test\": \"/usr/bin/node /tmp/test.js\"}} 2`] = `
-
-Message:
-> 1 | {"scripts": {"test": "/usr/bin/node /tmp/test.js"}}
-    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
-
-`;
-
-exports[`invalid(41): {\"scripts\": {\"test\": \"node --test\", \"test\": \"/usr/bin/node --test\"}} 1`] = `
+exports[`invalid(40): {\"scripts\": {\"test\": \"node --test\", \"test\": \"/usr/bin/node --test\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "node --test", "test": "/usr/bin/node --test"}}
 
 `;
 
-exports[`invalid(41): {\"scripts\": {\"test\": \"node --test\", \"test\": \"/usr/bin/node --test\"}} 2`] = `
+exports[`invalid(40): {\"scripts\": {\"test\": \"node --test\", \"test\": \"/usr/bin/node --test\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "node --test", "test": "/usr/bin/node --test"}}
@@ -538,14 +523,14 @@ Message:
 
 `;
 
-exports[`invalid(42): {\"scripts\": {\"test\": \"node --test\"}, \"scripts\": {\"test\": \"/usr/bin/node --test\"}} 1`] = `
+exports[`invalid(41): {\"scripts\": {\"test\": \"node --test\"}, \"scripts\": {\"test\": \"/usr/bin/node --test\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "node --test"}, "scripts": {"test": "/usr/bin/node --test"}}
 
 `;
 
-exports[`invalid(42): {\"scripts\": {\"test\": \"node --test\"}, \"scripts\": {\"test\": \"/usr/bin/node --test\"}} 2`] = `
+exports[`invalid(41): {\"scripts\": {\"test\": \"node --test\"}, \"scripts\": {\"test\": \"/usr/bin/node --test\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "node --test"}, "scripts": {"test": "/usr/bin/node --test"}}
@@ -553,14 +538,14 @@ Message:
 
 `;
 
-exports[`invalid(43): {\"scripts\": {\"pretest\": null, \"test\": \"/usr/bin/node --test\"}} 1`] = `
+exports[`invalid(42): {\"scripts\": {\"pretest\": null, \"test\": \"/usr/bin/node --test\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"pretest": null, "test": "/usr/bin/node --test"}}
 
 `;
 
-exports[`invalid(43): {\"scripts\": {\"pretest\": null, \"test\": \"/usr/bin/node --test\"}} 2`] = `
+exports[`invalid(42): {\"scripts\": {\"pretest\": null, \"test\": \"/usr/bin/node --test\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"pretest": null, "test": "/usr/bin/node --test"}}
@@ -568,14 +553,14 @@ Message:
 
 `;
 
-exports[`invalid(44): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 1`] = `
+exports[`invalid(43): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "/usr/bin/node", "build": "C:/tools/build.exe"}}
 
 `;
 
-exports[`invalid(44): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 2`] = `
+exports[`invalid(43): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "/usr/bin/node", "build": "C:/tools/build.exe"}}
@@ -583,7 +568,7 @@ Message:
 
 `;
 
-exports[`invalid(44): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 3`] = `
+exports[`invalid(43): {\"scripts\": {\"test\": \"/usr/bin/node\", \"build\": \"C:/tools/build.exe\"}} 3`] = `
 
 Message:
 > 1 | {"scripts": {"test": "/usr/bin/node", "build": "C:/tools/build.exe"}}
@@ -591,14 +576,14 @@ Message:
 
 `;
 
-exports[`invalid(45): {\"scripts\": {\"test\": \"echo value > /tmp\"}} 1`] = `
+exports[`invalid(44): {\"scripts\": {\"test\": \"echo value > /tmp\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "echo value > /tmp"}}
 
 `;
 
-exports[`invalid(45): {\"scripts\": {\"test\": \"echo value > /tmp\"}} 2`] = `
+exports[`invalid(44): {\"scripts\": {\"test\": \"echo value > /tmp\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "echo value > /tmp"}}
@@ -606,14 +591,14 @@ Message:
 
 `;
 
-exports[`invalid(46): {\"scripts\": {\"test\": \"echo value >/tmp\"}} 1`] = `
+exports[`invalid(45): {\"scripts\": {\"test\": \"echo value >/tmp\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "echo value >/tmp"}}
 
 `;
 
-exports[`invalid(46): {\"scripts\": {\"test\": \"echo value >/tmp\"}} 2`] = `
+exports[`invalid(45): {\"scripts\": {\"test\": \"echo value >/tmp\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "echo value >/tmp"}}
@@ -621,14 +606,14 @@ Message:
 
 `;
 
-exports[`invalid(47): {\"scripts\": {\"test\": \"echo value >> /tmp\"}} 1`] = `
+exports[`invalid(46): {\"scripts\": {\"test\": \"echo value >> /tmp\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "echo value >> /tmp"}}
 
 `;
 
-exports[`invalid(47): {\"scripts\": {\"test\": \"echo value >> /tmp\"}} 2`] = `
+exports[`invalid(46): {\"scripts\": {\"test\": \"echo value >> /tmp\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "echo value >> /tmp"}}
@@ -636,14 +621,14 @@ Message:
 
 `;
 
-exports[`invalid(48): {\"scripts\": {\"test\": \"echo value > \\\"/tmp\\\"\"}} 1`] = `
+exports[`invalid(47): {\"scripts\": {\"test\": \"echo value > \\\"/tmp\\\"\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "echo value > \\"/tmp\\""}}
 
 `;
 
-exports[`invalid(48): {\"scripts\": {\"test\": \"echo value > \\\"/tmp\\\"\"}} 2`] = `
+exports[`invalid(47): {\"scripts\": {\"test\": \"echo value > \\\"/tmp\\\"\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "echo value > \\"/tmp\\""}}
@@ -651,18 +636,33 @@ Message:
 
 `;
 
-exports[`invalid(49): {\"scripts\": {\"test\": \"tool < /tmp\"}} 1`] = `
+exports[`invalid(48): {\"scripts\": {\"test\": \"tool < /tmp\"}} 1`] = `
 
 [Input]
   1 | {"scripts": {"test": "tool < /tmp"}}
 
 `;
 
-exports[`invalid(49): {\"scripts\": {\"test\": \"tool < /tmp\"}} 2`] = `
+exports[`invalid(48): {\"scripts\": {\"test\": \"tool < /tmp\"}} 2`] = `
 
 Message:
 > 1 | {"scripts": {"test": "tool < /tmp"}}
     |                      ^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(49): {\"scripts\": {\"test\": \"tool \\\\\\\\server\\\\share\\\\tool.exe\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "tool \\\\\\\\server\\\\share\\\\tool.exe"}}
+
+`;
+
+exports[`invalid(49): {\"scripts\": {\"test\": \"tool \\\\\\\\server\\\\share\\\\tool.exe\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "tool \\\\\\\\server\\\\share\\\\tool.exe"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
 
 `;
 
@@ -678,6 +678,36 @@ exports[`invalid(5): {\"scripts\": {\"test\": \"sh -c 'node \\\"/usr/bin/tool\\\
 Message:
 > 1 | {"scripts": {"test": "sh -c 'node \\"/usr/bin/tool\\"'"}}
     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(50): {\"scripts\": {\"test\": \"node \\\"/abs/with space/x.js\\\"\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "node \\"/abs/with space/x.js\\""}}
+
+`;
+
+exports[`invalid(50): {\"scripts\": {\"test\": \"node \\\"/abs/with space/x.js\\\"\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "node \\"/abs/with space/x.js\\""}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script contains an absolute path.
+
+`;
+
+exports[`invalid(51): {\"scripts\": {\"build\": \"tsc --outDir=/abs/out\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"build": "tsc --outDir=/abs/out"}}
+
+`;
+
+exports[`invalid(51): {\"scripts\": {\"build\": \"tsc --outDir=/abs/out\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"build": "tsc --outDir=/abs/out"}}
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^ The \`build\` script contains an absolute path.
 
 `;
 

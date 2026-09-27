@@ -13,7 +13,7 @@ This rule checks effective string values in `scripts` for absolute POSIX and Win
 
 To avoid confusing Windows options with POSIX paths, slash-prefixed single-component words like `/restore` and option prefixes like `/Fo:` are ignored, while attached values are checked. Multi-component paths like `/usr/bin` are reported.
 
-Detection is lexical and shell-independent. Disable the rule when a script intentionally uses path-like syntax, such as a `sed` address.
+A word starting with a single backslash (`\(`, `"\n"`) is a shell escape, so only UNC paths (`\\server\share`) and drive paths (`C:\tools`) count as Windows absolute paths. Detection is otherwise lexical and shell-independent. Disable the rule when a script intentionally uses path-like syntax, such as a `sed` address.
 
 ## Examples
 

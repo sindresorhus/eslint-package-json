@@ -49,6 +49,11 @@ Check whether a candidate is an absolute path, including one attached to an opti
 const isAbsolutePath = candidate => {
 	const pathCandidate = attachedPathPattern.exec(candidate)?.[1] ?? candidate;
 
+	// A backslash escapes the next character in every POSIX shell, so a candidate that starts with a single one (a `find` grouping such as `\(`, a `printf '\n'`, a `grep '\d+'` class, an `echo '\033[1m'` color) is an escape, not a path. A Windows root-relative path like `\tools\x.exe` reads the same, so only a UNC `\\server` path and a drive letter count as Windows absolute.
+	if (/^\\(?!\\)/u.test(pathCandidate)) {
+		return false;
+	}
+
 	return path.posix.isAbsolute(pathCandidate) || path.win32.isAbsolute(pathCandidate);
 };
 

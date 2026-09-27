@@ -13,6 +13,20 @@ test.snapshot({
 		'{"scripts": {"lint": "node_modules/.bin/eslint ."}}',
 		String.raw`{"scripts": {"test": ".\\scripts\\test.js"}}`,
 		String.raw`{"scripts": {"test": "C:tools\\test.js"}}`,
+		// A backslash escapes the next character in every POSIX shell, so a `find` grouping is not a
+		// path. `html-entities` ships this exact command.
+		String.raw`{"scripts": {"remove-unused-declarations": "find dist -type f \\( -name '*.d.ts' ! -name index.d.ts \\) | xargs rm"}}`,
+		String.raw`{"scripts": {"test": "grep \\! foo file"}}`,
+		String.raw`{"scripts": {"test": "sed s/\\.js//g file"}}`,
+		// A backslash in front of a single letter or digit is a POSIX escape, and so is a run of them, so the shell sequences every script reaches for are not paths.
+		String.raw`{"scripts": {"build": "printf \"\\n\""}}`,
+		String.raw`{"scripts": {"build": "echo \"\\t\" \"\\v\" \"\\r\""}}`,
+		String.raw`{"scripts": {"build": "printf \"\\n\\n\""}}`,
+		String.raw`{"scripts": {"build": "printf \"\\a\\b\""}}`,
+		String.raw`{"scripts": {"test": "grep \"\\d\" file"}}`,
+		String.raw`{"scripts": {"test": "grep \"\\d{3}\" file"}}`,
+		String.raw`{"scripts": {"test": "sed s/a\\nb/b\\nb/ file"}}`,
+		String.raw`{"scripts": {"test": "tr -d \"\\0\" < file"}}`,
 		'{"scripts": {"test": "node $HOME/test.js"}}',
 		String.raw`{"scripts": {"test": "%USERPROFILE%\\test.js"}}`,
 		String.raw`{"scripts": {"test": "set \"PATH=bin;tools\" && tool"}}`,
@@ -62,6 +76,17 @@ test.snapshot({
 		'{"scripts": {"test": "/usr/bin/node --test"}, "scripts": {"test": "node --test"}}',
 		// Only the effective script value is checked.
 		'{"scripts": {"test": "/usr/bin/node --test", "test": "node --test"}}',
+		// A word that starts with a single backslash is a shell or regex escape, not a path. A Windows root-relative path like `\tools\test.exe` reads the same, so it is not reported either.
+		String.raw`{"scripts": {"test": "grep -E '\\d+' file"}}`,
+		String.raw`{"scripts": {"test": "grep -E '\\s*' file"}}`,
+		String.raw`{"scripts": {"test": "grep -P '\\w+' x"}}`,
+		String.raw`{"scripts": {"test": "grep -E \"\\bfoo\\b\" src"}}`,
+		String.raw`{"scripts": {"test": "rg '\\bdescribe\\.only' test"}}`,
+		String.raw`{"scripts": {"build": "echo \"\\033[1m\""}}`,
+		String.raw`{"scripts": {"build": "echo -e \"\\x1b[31mred\""}}`,
+		String.raw`{"scripts": {"build": "echo \\u00e9"}}`,
+		String.raw`{"scripts": {"test": "\\tools\\test.exe"}}`,
+		String.raw`{"scripts": {"test": "tool \\Users\\me\\tool.exe"}}`,
 	],
 	invalid: [
 		'{"scripts": {"test": "/usr/bin/node --test"}}',
@@ -101,7 +126,6 @@ test.snapshot({
 		'{"scripts": {"test": "C:///tools/node.exe test.js"}}',
 		String.raw`{"scripts": {"test": "C:\\tools\\node.exe test.js"}}`,
 		String.raw`{"scripts": {"test": "\"C:\\Program Files\\tool.exe\" --version"}}`,
-		String.raw`{"scripts": {"test": "\\tools\\test.exe"}}`,
 		String.raw`{"scripts": {"test": "\\\\server\\share\\tool.exe"}}`,
 		// A script receives one report even when it contains several absolute paths.
 		'{"scripts": {"test": "/usr/bin/node /tmp/test.js"}}',
@@ -116,5 +140,9 @@ test.snapshot({
 		'{"scripts": {"test": "echo value >> /tmp"}}',
 		String.raw`{"scripts": {"test": "echo value > \"/tmp\""}}`,
 		'{"scripts": {"test": "tool < /tmp"}}',
+		// A doubled backslash is a UNC path.
+		String.raw`{"scripts": {"test": "tool \\\\server\\share\\tool.exe"}}`,
+		String.raw`{"scripts": {"test": "node \"/abs/with space/x.js\""}}`,
+		'{"scripts": {"build": "tsc --outDir=/abs/out"}}',
 	],
 });
