@@ -11,7 +11,7 @@
 
 A `@types/foo` package provides type definitions for a `foo` package. If `foo` is not a dependency anywhere, the `@types/foo` entry is dead weight, usually left behind after the runtime dependency was removed.
 
-This rule flags a `@types/*` package in `dependencies`/`devDependencies` that has no corresponding dependency. Scoped types follow the `@types/foo__bar` → `@foo/bar` convention. Ambient type packages with no runtime counterpart (`@types/node`, `@types/bun`, `@types/chrome`) are ignored by default; see the [source file](../../rules/no-orphan-types.js) for the full list, and add more with the `ignore` option.
+This rule flags a `@types/*` package in `dependencies`/`devDependencies` that has no corresponding dependency. Scoped types follow the `@types/foo__bar` → `@foo/bar` convention. Ignored by default: ambient type packages with no runtime counterpart (`@types/node`, `@types/chrome`), AST types usually provided through another package (`@types/mdast`, `@types/estree`), and the `@types/*` dependencies of a `@types/*` package. See the [source file](../../rules/no-orphan-types.js) for the full list. The rule cannot see the dependency tree, so add types for transitive dependencies to the `ignore` option.
 
 ## Options
 
