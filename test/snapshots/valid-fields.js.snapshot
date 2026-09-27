@@ -3129,7 +3129,7 @@ exports[`invalid(276): {\"devEngines\": {\"foo\": {\"name\": \"x\"}}} 2`] = `
 
 Message:
 > 1 | {"devEngines": {"foo": {"name": "x"}}}
-    |                 ^^^^^ \`devEngines.foo\` is not a \`devEngines\` engine npm recognizes; npm refuses to install dependencies or run scripts in a project that declares one.
+    |                 ^^^^^ \`devEngines.foo\` is not a \`devEngines\` engine npm recognizes; npm refuses to install a package that declares one.
 
 `;
 
@@ -3144,7 +3144,7 @@ exports[`invalid(277): {\"devEngines\": {\"RUNTIME\": {\"name\": \"node\"}}} 2`]
 
 Message:
 > 1 | {"devEngines": {"RUNTIME": {"name": "node"}}}
-    |                 ^^^^^^^^^ \`devEngines.RUNTIME\` is not a \`devEngines\` engine npm recognizes; npm refuses to install dependencies or run scripts in a project that declares one.
+    |                 ^^^^^^^^^ \`devEngines.RUNTIME\` is not a \`devEngines\` engine npm recognizes; npm refuses to install a package that declares one.
 
 `;
 
@@ -3159,7 +3159,7 @@ exports[`invalid(278): {\"devEngines\": {\"runtime\": {\"name\": \"node\"}, \"no
 
 Message:
 > 1 | {"devEngines": {"runtime": {"name": "node"}, "nope": {"name": "x"}}}
-    |                                              ^^^^^^ \`devEngines.nope\` is not a \`devEngines\` engine npm recognizes; npm refuses to install dependencies or run scripts in a project that declares one.
+    |                                              ^^^^^^ \`devEngines.nope\` is not a \`devEngines\` engine npm recognizes; npm refuses to install a package that declares one.
 
 `;
 
@@ -3174,7 +3174,7 @@ exports[`invalid(279): {\"devEngines\": {\"runtime\": {\"name\": \"node\", \"url
 
 Message:
 > 1 | {"devEngines": {"runtime": {"name": "node", "url": "x"}}}
-    |                                             ^^^^^ \`devEngines.runtime\` has an \`url\` property npm does not recognize; npm refuses to install dependencies or run scripts in a project that declares one.
+    |                                             ^^^^^ \`devEngines.runtime\` has an \`url\` property npm does not recognize; npm refuses to install a package that declares one.
 
 `;
 
@@ -3204,7 +3204,7 @@ exports[`invalid(280): {\"devEngines\": {\"runtime\": [{\"name\": \"node\"}, {\"
 
 Message:
 > 1 | {"devEngines": {"runtime": [{"name": "node"}, {"name": "x", "url": "y"}]}}
-    |                                                             ^^^^^ \`devEngines.runtime\` has an \`url\` property npm does not recognize; npm refuses to install dependencies or run scripts in a project that declares one.
+    |                                                             ^^^^^ \`devEngines.runtime\` has an \`url\` property npm does not recognize; npm refuses to install a package that declares one.
 
 `;
 
@@ -5197,39 +5197,6 @@ exports[`invalid(395): {\"bundleDependencies\": {\"bar\": true}} 2`] = `
 Message:
 > 1 | {"bundleDependencies": {"bar": true}}
     |                         ^^^^^ \`bar\` is bundled but is not a dependency, so npm adds \`"bar": "*"\` to the published \`dependencies\` and consumers get it as a wildcard runtime dependency.
-
-`;
-
-exports[`invalid(396): {\"peerDependencies\": {\"b\": \"1\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": true}, \"a\": {}, \"b\": {\"optional\": true}}} 1`] = `
-
-[Input]
-  1 | {"peerDependencies": {"b": "1"}, "peerDependenciesMeta": {"a": {"optional": true}, "a": {}, "b": {"optional": true}}}
-
-`;
-
-exports[`invalid(396): {\"peerDependencies\": {\"b\": \"1\"}, \"peerDependenciesMeta\": {\"a\": {\"optional\": true}, \"a\": {}, \"b\": {\"optional\": true}}} 2`] = `
-
-Message:
-> 1 | {"peerDependencies": {"b": "1"}, "peerDependenciesMeta": {"a": {"optional": true}, "a": {}, "b": {"optional": true}}}
-    |                                                                                    ^^^ \`a\` is in \`peerDependenciesMeta\` but not in \`peerDependencies\`.
-
-Suggestion 1/1: Remove the orphaned entry.:
-  1 | {"peerDependencies": {"b": "1"}, "peerDependenciesMeta": {"b": {"optional": true}}}
-
-`;
-
-exports[`invalid(397): {\"bugs\": {\"web\": \"https://example.com/issues\"}} 1`] = `
-
-[Input]
-  1 | {"bugs": {"web": "https://example.com/issues"}}
-
-`;
-
-exports[`invalid(397): {\"bugs\": {\"web\": \"https://example.com/issues\"}} 2`] = `
-
-Message:
-> 1 | {"bugs": {"web": "https://example.com/issues"}}
-    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A \`bugs\` object npm keeps no \`url\` or \`email\` from is deleted whole, every key in it with it.
 
 `;
 

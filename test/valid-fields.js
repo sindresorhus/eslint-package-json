@@ -297,6 +297,10 @@ test.snapshot({
 		'{"bundledDependencies": true}',
 		'{"bundleDependencies": false}',
 		'{"bundledDependencies": false}',
+		// Npm deletes `bundledDependencies` when `bundleDependencies` is present, so only the kept spelling is checked.
+		'{"dependencies": {"foo": "1"}, "bundleDependencies": ["foo"], "bundledDependencies": ["bar"]}',
+		// Npm reads an object as the list of its keys.
+		'{"dependencies": {"foo": "1"}, "bundleDependencies": {"foo": true}}',
 		// `overrides`
 		'{"name": "foo"}',
 		'{"overrides": {"foo": "1.0.0"}}',
@@ -1006,5 +1010,7 @@ test.snapshot({
 		'{"files": [".npm-extension.mjs"]}',
 		// The old `web` spelling is not modelled, so a URL held only there is reported as keeping nothing, although npm copies it to `url`. This is a documented limitation.
 		'{"bugs": {"web": "https://example.com/issues"}}',
+		'{"dependencies": {"foo": "1"}, "bundleDependencies": ["bar"], "bundledDependencies": ["foo"]}',
+		'{"bundleDependencies": {"bar": true}}',
 	],
 });
