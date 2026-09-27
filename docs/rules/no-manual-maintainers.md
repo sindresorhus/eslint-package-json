@@ -11,7 +11,7 @@
 
 npm populates the `maintainers` field from the publishing account (and the `npm owner` list) at publish time, overwriting whatever you put in `package.json`. Hand-maintaining it is therefore pointless and misleading. Use `author` and `contributors` to credit people, and `npm owner` to manage who can publish.
 
-When `maintainers` is an array, a suggestion is offered to move its entries into `contributors` (merging with an existing `contributors` array, or renaming the field if there is none) instead of just removing them.
+When `maintainers` is an array, a suggestion is offered to move its entries into `contributors` (merging with an existing `contributors` array, or renaming the field if there is none) instead of just removing them. When `contributors` is a string or an object, only the removal is offered.
 
 ## Examples
 

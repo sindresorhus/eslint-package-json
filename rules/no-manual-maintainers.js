@@ -5,7 +5,6 @@ import {
 	removeShadowedDuplicates,
 	getIndentString,
 	getIndentPrefix,
-	getNewline,
 	lineIndentOf,
 } from './utils/index.js';
 
@@ -59,17 +58,26 @@ const create = context => ({
 				suggest.push({
 					messageId: MOVE_SUGGESTION_ID,
 					* fix(fixer) {
-						const newline = getNewline(sourceCode);
+						const newline = '\n';
 						const entriesText = maintainers.value.elements.map(element => sourceCode.getText(element.value));
 						const contributorsElements = contributors.value.elements;
 
 						if (contributorsElements.length === 0) {
-							const outerIndent = lineIndentOf(sourceCode, contributors.name);
-							const entryIndent = outerIndent + getIndentString(sourceCode);
-							yield fixer.insertTextAfterRange(
-								[contributors.value.range[0], contributors.value.range[0] + 1],
-								`${newline}${entryIndent}${entriesText.join(`,${newline}${entryIndent}`)}${newline}${outerIndent}`,
-							);
+							const contents = sourceCode.text.slice(contributors.value.range[0] + 1, contributors.value.range[1] - 1);
+
+							// An empty array written on one line stays on one line, the way the non-empty branch below
+							// does. A multiline one has its contents replaced rather than appended to, or the closing
+							// indent the author wrote would end up alone on a line.
+							if (contents.includes('\n')) {
+								const outerIndent = lineIndentOf(sourceCode, contributors.name);
+								const entryIndent = outerIndent + getIndentString(sourceCode);
+								yield fixer.replaceTextRange(
+									[contributors.value.range[0] + 1, contributors.value.range[1] - 1],
+									`${newline}${entryIndent}${entriesText.join(`,${newline}${entryIndent}`)}${newline}${outerIndent}`,
+								);
+							} else {
+								yield fixer.insertTextAfterRange([contributors.value.range[0] + 1, contributors.value.range[0] + 1], `${contents}${entriesText.join(', ')}`);
+							}
 						} else {
 							// A single-line array keeps the moved entries on the same line; a multiline one puts each on its own line at the existing entry indentation.
 							const prefix = getIndentPrefix(sourceCode, contributorsElements[0].value);
