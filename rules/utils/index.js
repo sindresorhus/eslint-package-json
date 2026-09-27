@@ -442,17 +442,18 @@ export function validVersion(version) {
 }
 
 /**
-The version npm publishes for a value `semver` accepts: the surrounding whitespace and the whole leading run of
-`=` pins and `v` prefixes go, and the build metadata stays.
+The canonical spelling of a version that `semver` reads loosely, the way npm reads a `version` before it publishes it: no surrounding whitespace, no leading run of `=` pins and `v` prefixes, no leading zero in a numeric part, and a hyphen before the pre-release.
 
-`semver.clean` is what npm publishes a version through, and it strips exactly that run, so matching it is what
-makes a fix land in one round: stripping one `=` from `=v1.0.0` would leave `v1.0.0` and the rule would report
-it again. `semver.valid` and `semver.clean` both drop `+build`, so a rule that rewrites a specifier through
-either of them silently removes an identifier the author wrote. A value `semver.clean` rejects is returned as
-written, for the caller to report rather than rewrite.
+Npm publishes the result of `semver.clean`, which also drops the build metadata. This keeps a `+build` the author wrote, since a rule that rewrites a version should not silently remove an identifier. Parsing the whole value at once is what makes a fix land in one round: stripping the prefix piece by piece would turn `= v1.0.0` into `v1.0.0`, which is reported again. A value `semver` cannot read is returned as written, for the caller to report rather than rewrite.
 */
 export function canonicalVersion(version) {
-	return semver.clean(version) === null ? version : version.trim().replace(/^[=v]+/iu, '').trim();
+	const parsed = semver.parse(version, {loose: true});
+
+	if (parsed === null) {
+		return version;
+	}
+
+	return parsed.build.length > 0 ? `${parsed.version}+${parsed.build.join('.')}` : parsed.version;
 }
 
 /**

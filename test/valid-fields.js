@@ -1037,5 +1037,10 @@ test.snapshot({
 		'{"peerDependencies": {"b": "1"}, "peerDependenciesMeta": {"a": {"optional": true}, "a": {}, "b": {"optional": true}}}',
 		// Only the value `no-empty-fields` reports is skipped: the effective duplicate here is not empty.
 		'{"license": "", "license": "MITT"}',
+		// The whole prefix goes in one fix, including a `v` behind the space.
+		'{"version": "= v1.0.0"}',
+		// Npm reads a version loosely and publishes these rewritten, so they are not canonical rather than invalid.
+		'{"version": "01.0.0"}',
+		'{"version": "1.0.0beta"}',
 	],
 });

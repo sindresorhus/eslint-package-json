@@ -1,33 +1,46 @@
-import {findMember, validVersion} from '../utils/index.js';
+import semver from 'semver';
+import {findMember, canonicalVersion} from '../utils/index.js';
 
 const MESSAGE_ID = 'valid-version';
+const CANONICAL_MESSAGE_ID = 'canonical-version';
+const TYPE_MESSAGE_ID = 'type';
 
 export const messages = {
 	[MESSAGE_ID]: '`{{version}}` is not a valid semver version.',
+	[CANONICAL_MESSAGE_ID]: '`{{version}}` is not the canonical spelling of the version, which npm rewrites before it publishes. Write `{{canonical}}`.',
+	[TYPE_MESSAGE_ID]: 'The `version` field must be a string.',
 };
 
 export function * check(root) {
 	const member = findMember(root, 'version');
 
-	if (member?.value.type !== 'String') {
+	if (!member) {
+		return;
+	}
+
+	// Npm reads a version with `semver`, which rejects anything that is not a string, so a manifest declaring one cannot be published.
+	if (member.value.type !== 'String') {
+		yield {node: member.value, messageId: TYPE_MESSAGE_ID};
 		return;
 	}
 
 	const version = member.value.value;
-	const isValidSemver = validVersion(version) !== null;
+	// Npm reads a version with loose `semver` and refuses to publish one it cannot read. Loose reading accepts more than `semver.valid` does: `=1.0.0`, `01.0.0`, and `1.0.0beta` are published rewritten, while `V1.0.0` is refused.
+	if (semver.valid(version, {loose: true}) === null) {
+		yield {node: member.value, messageId: MESSAGE_ID, data: {version}};
+		return;
+	}
 
-	// A canonical package.json version has no `v` prefix and no surrounding whitespace, even though semver tolerates both. Build metadata (`+build`) is preserved, so we don't compare against the normalized form.
-	if (isValidSemver && version === version.trim() && !/^v/i.test(version)) {
+	const canonical = canonicalVersion(version);
+
+	if (version === canonical) {
 		return;
 	}
 
 	yield {
 		node: member.value,
-		messageId: MESSAGE_ID,
-		data: {version},
-		// Strip the `v` prefix and surrounding whitespace by hand rather than `semver.clean()`, which also drops build metadata (`+build`) that must be preserved.
-		fix: isValidSemver
-			? fixer => fixer.replaceText(member.value, JSON.stringify(version.trim().replace(/^v/, '')))
-			: undefined,
+		messageId: CANONICAL_MESSAGE_ID,
+		data: {version, canonical},
+		fix: fixer => fixer.replaceText(member.value, JSON.stringify(canonical)),
 	};
 }
