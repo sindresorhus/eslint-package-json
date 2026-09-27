@@ -67,5 +67,26 @@ test.snapshot({
 		'{"peerDependencies": {"foo": "^1.0.0"}, "peerDependenciesMeta": {"foo": {"optional": true}, "foo": {"optional": false}}}',
 		// An optional peer that is in devDependencies still has its range checked against the peer range.
 		'{"peerDependencies": {"react": "^18.0.0"}, "peerDependenciesMeta": {"react": {"optional": true}}, "devDependencies": {"react": "^17.0.0"}}',
+		// An existing but empty group written on one line stays on one line, the way a non-empty one does.
+		'{"peerDependencies": {"a": "^1.0.0"}, "devDependencies": {}, "name": "x"}',
+		// A `devDependencies` group that has to be created goes on one line when the root is on one line.
+		'{"name": "x", "version": "1.0.0", "peerDependencies": {"a": "^1.0.0"}}',
+		// An empty group written across lines keeps the closing indent the author wrote, so the entry goes in
+		// front of it rather than after it.
+		`{
+	"peerDependencies": {
+		"a": "^1.0.0"
+	},
+	"devDependencies": {
+	}
+}`,
+		`{
+	"peerDependencies": {
+		"a": "^1.0.0"
+	},
+	"devDependencies": {
+
+	}
+}`,
 	],
 });
