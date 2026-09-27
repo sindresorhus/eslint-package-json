@@ -7,12 +7,14 @@ import {
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-typo-fields';
+const RENAME_SUGGESTION_ID = 'rename';
 
 const messages = {
 	[MESSAGE_ID]: 'Unknown field `{{key}}`. Did you mean `{{correct}}`?',
+	[RENAME_SUGGESTION_ID]: 'Rename the field to `{{correct}}`.',
 };
 
-// Common misspellings that supplement the edit-distance check below (it only catches single-character slips), from npm/normalize-package-data's `typos.json`.
+// Common misspellings that supplement the edit-distance check below (it only catches single-character slips), from npm's own table in `@npmcli/package-json/lib/normalize-data.js`. A misspelling of a field npm ignores is left out: renaming `prefereGlobal` to `preferGlobal` would hand `no-deprecated-fields` the report the author has to act on anyway, and `no-deprecated-fields` already names the field to delete.
 const typos = new Map([
 	['dependancies', 'dependencies'],
 	['dependecies', 'dependencies'],
@@ -25,7 +27,6 @@ const typos = new Map([
 	['devdependencies', 'devDependencies'],
 	['repostitory', 'repository'],
 	['repo', 'repository'],
-	['repositories', 'repository'],
 	['hompage', 'homepage'],
 	['hampage', 'homepage'],
 	['autohr', 'author'],
@@ -78,6 +79,13 @@ const findCorrection = key => {
 		return undefined;
 	}
 
+	// A field name is a word. Punctuation only reaches this heuristic by accident, and a trailing `#` is how a
+	// manifest marks a field for removal in a later major, so "correcting" it would turn an inert marker into
+	// a live field npm then tries to resolve.
+	if (!/^[\w-]+$/u.test(key)) {
+		return undefined;
+	}
+
 	// A single edit can only ever change the length by one, so the length check rejects almost every candidate before the quadratic distance runs. It is exact, not an approximation.
 	return longFields.find(field => Math.abs(key.length - field.length) <= 1 && editDistance(key, field) === 1);
 };
@@ -104,16 +112,23 @@ const create = context => ({
 				continue;
 			}
 
-			// Only offer the rename when it would not collide with an existing field.
-			const fix = findMember(root, correct)
-				? null
-				: fixer => fixer.replaceText(member.name, JSON.stringify(correct));
+			// The rename is a suggestion rather than an autofix because it can change what npm reads: renaming
+			// `dependancies` to `dependencies` or `script` to `scripts` is the only thing that makes the value
+			// live, so a silent `--fix` would add a dependency or a script the author never wrote. It is also
+			// only offered when it would not collide with an existing field.
+			const suggest = findMember(root, correct)
+				? []
+				: [{
+					messageId: RENAME_SUGGESTION_ID,
+					data: {correct},
+					fix: fixer => fixer.replaceText(member.name, JSON.stringify(correct)),
+				}];
 
 			context.report({
 				node: member.name,
 				messageId: MESSAGE_ID,
 				data: {key, correct},
-				fix,
+				suggest,
 			});
 		}
 	},
@@ -128,7 +143,7 @@ const config = {
 			description: 'Disallow misspelled package.json field names.',
 			recommended: true,
 		},
-		fixable: 'code',
+		hasSuggestions: true,
 		schema: [],
 		messages,
 		languages: ['json/json'],
