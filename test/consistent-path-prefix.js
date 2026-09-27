@@ -18,6 +18,11 @@ test.snapshot({
 		String.raw`{"main": "C:\\foo\\index.js"}`,
 		// URLs are skipped.
 		'{"browser": "https://cdn.example.com/foo.js"}',
+		// The object form of `browser` is a replacement map whose string values are the paths it swaps in,
+		// which the sibling path rules report. A `false` value shims the module out instead.
+		'{"browser": {"fs": false, "lodash": "./lodash/index.js"}}',
+		'{"browser": {"./a.js": "/abs/b.js"}}',
+		'{"browser": {"./a.js": "old.js", "./a.js": "./b.js"}}',
 		// Globs are skipped.
 		'{"main": "dist/*.js"}',
 		// Prefix=never: no ./ is valid.
@@ -39,14 +44,44 @@ test.snapshot({
 		// Non-string values are ignored.
 		'{"main": 123}',
 		'{"bin": {"mycli": 123}}',
+		// Stripping `./` off a doubled separator would leave a path rooted at the filesystem root, which
+		// is a different file from the one the manifest points at.
+		{
+			code: '{"main": ".//index.js"}',
+			options: [{prefix: 'never'}],
+		},
+		{
+			code: '{"bin": {"mycli": ".//bin/cli.js"}}',
+			options: [{prefix: 'never'}],
+		},
+		// An empty path is malformed, and `no-empty-fields` reports it. There is nothing to prefix.
+		'{"main": ""}',
+		'{"types": ""}',
+		'{"bin": ""}',
+		'{"bin": {"mycli": ""}}',
+		// Stripping `./` off a Windows drive path would leave a drive-relative path, not a relative one.
+		'{"main": "./C:/x"}',
+		// A `bin` key repeated with a different value resolves to the last one, so the shadowed path is not the
+		// one npm installs.
+		'{"bin": {"mycli": "bin/cli.js", "mycli": "./bin/cli.js"}}',
+		{
+			code: '{"bin": {"mycli": "./bin/cli.js", "mycli": "bin/cli.js"}}',
+			options: [{prefix: 'never'}],
+		},
+		'{"files": ["a.js"], "main": "", "types": "./a.d.ts"}',
 	],
 	invalid: [
-		// Missing ./ (default: always).
+		// Missing ./ (default: always). Npm force-includes `main` and `browser` as written, so their prefix is
+		// offered as a suggestion rather than fixed; `bin` is fixed because npm normalizes its targets first.
 		'{"main": "index.js"}',
 		'{"module": "index.mjs"}',
 		'{"types": "index.d.ts"}',
 		'{"typings": "index.d.ts"}',
 		'{"browser": "dist/browser.js"}',
+		'{"browser": {"./server.js": "b.js"}}',
+		'{"browser": {"lodash": "lodash/index.js"}}',
+		'{"browser": {"x": {"y": "y.js"}}}',
+		'{"browser": {"./a.js": "./b.js", "./a.js": "old.js"}}',
 		'{"bin": "cli.js"}',
 		'{"bin": {"mycli": "bin/cli.js"}}',
 		// Prefix=never: has ./ which should be removed.
@@ -71,6 +106,20 @@ test.snapshot({
 		String.raw`{"main": ".\\dist\\index.js"}`,
 		{
 			code: '{"main": "../sibling/index.js"}',
+			options: [{prefix: 'never'}],
+		},
+		// The mirror of the rule's `always` mode: there the prefix is the form npm does not match, and in `never`
+		// mode the prefix is the one it does, so `main` and `browser` are reported without a fix either way.
+		{
+			code: '{"main": "./index.js"}',
+			options: [{prefix: 'never'}],
+		},
+		{
+			code: '{"browser": "./lib/browser.js"}',
+			options: [{prefix: 'never'}],
+		},
+		{
+			code: '{"module": "./index.mjs"}',
 			options: [{prefix: 'never'}],
 		},
 	],

@@ -2,27 +2,38 @@ import {
 	getRootObject,
 	findMember,
 	hasGlob,
+	iterateEffectiveMembers,
+	iterateStringValues,
 	optionsSchema,
 	pathFields,
+	withoutShadowedMembers,
 } from './utils/index.js';
 
 const MESSAGE_ID_MISSING = 'missing';
 const MESSAGE_ID_EXTRA = 'extra';
 const MESSAGE_ID_OUTSIDE_PACKAGE = 'outsidePackage';
+const PREFIX_SUGGESTION_ID = 'addPrefix';
 
 const messages = {
 	[MESSAGE_ID_MISSING]: 'Path `{{value}}` should start with `./`.',
 	[MESSAGE_ID_EXTRA]: 'Path `{{value}}` should not start with `./`.',
-	[MESSAGE_ID_OUTSIDE_PACKAGE]: 'Path `{{value}}` must not escape the package with a `..` segment.',
+	[MESSAGE_ID_OUTSIDE_PACKAGE]: 'Path `{{value}}` has a `..` segment, which resolves inside the package at best and outside it at worst.',
+	[PREFIX_SUGGESTION_ID]: 'Add the `./` prefix.',
 };
+
+// Npm force-includes `main` and `browser` by pushing `!/${value}` for the value as written, so a `./` prefix on
+// either stops the rule from matching and drops the file from the tarball. `bin` is not in this set because npm
+// normalizes its targets before that comparison, and the remaining fields are not force-included at all.
+const fieldsNpmComparesRaw = new Set(['main', 'browser']);
 
 const absolutePathPattern = /^(?:[/\\]|[a-z]:)/iu;
 
 /**
-Check if a string value looks like a local relative path (not a glob, not a URL, not absolute).
+Check if a string value looks like a local relative path (not empty, not a glob, not a URL, not absolute).
 */
 const isLocalRelativePath = value => {
-	if (hasGlob(value)) {
+	// An empty value is malformed rather than unprefixed, so there is nothing to add a `./` to.
+	if (value === '' || hasGlob(value)) {
 		return false;
 	}
 
@@ -44,7 +55,7 @@ const create = context => {
 	/**
 	Check a string value node and report if needed.
 	*/
-	const checkPathNode = valueNode => {
+	const checkPathNode = (valueNode, field) => {
 		if (valueNode.type !== 'String') {
 			return;
 		}
@@ -70,37 +81,50 @@ const create = context => {
 		if (prefix === 'always') {
 			if (!value.startsWith('./')) {
 				const fixed = './' + value;
-				const report = {
+				const base = {
 					node: valueNode,
 					messageId: MESSAGE_ID_MISSING,
 					data: {value},
 				};
 
-				if (canFix) {
-					report.fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
+				if (!canFix) {
+					context.report(base);
+					return;
 				}
 
-				context.report(report);
+				const fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
+
+				// Adding the prefix to a field npm compares as written takes the file out of the tarball, so
+				// it is offered as a suggestion rather than applied by `--fix`.
+				context.report(
+					fieldsNpmComparesRaw.has(field)
+						? {...base, suggest: [{messageId: PREFIX_SUGGESTION_ID, fix}]}
+						: {...base, fix},
+				);
 			}
 		} else if (prefix === 'never' && value.startsWith('./')) {
 			const fixed = value.slice(2);
 
-			// A bare `./` has nothing to strip to; leave it alone rather than produce an empty path.
-			if (fixed === '') {
+			// A bare `./` has nothing to strip to, and stripping the prefix off a doubled separator leaves a
+			// path rooted at the filesystem root, which is a different file from the one named. Leave both
+			// alone rather than produce an empty or absolute path.
+			if (fixed === '' || absolutePathPattern.test(fixed)) {
 				return;
 			}
 
-			const report = {
+			const base = {
 				node: valueNode,
 				messageId: MESSAGE_ID_EXTRA,
 				data: {value},
 			};
 
-			if (canFix) {
-				report.fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
-			}
-
-			context.report(report);
+			// Npm force-includes `main` and `browser` by comparing the value as written, so the prefix is the form
+			// the rule matches and the bare one is not: the fix is a suggestion, exactly as the other direction is.
+			context.report(
+				canFix && !fieldsNpmComparesRaw.has(field)
+					? {...base, fix: fixer => fixer.replaceText(valueNode, JSON.stringify(fixed))}
+					: base,
+			);
 		}
 	};
 
@@ -115,8 +139,20 @@ const create = context => {
 			for (const field of pathFields) {
 				const member = findMember(root, field);
 
-				if (member) {
-					checkPathNode(member.value);
+				if (!member) {
+					continue;
+				}
+
+				checkPathNode(member.value, field);
+
+				// `browser` is the only one of these that also takes a replacement map, and its string values
+				// are the paths it swaps in, which the sibling path rules already report. A `false` value
+				// shims the module out instead of pointing anywhere. Collapsed the way `JSON.parse` builds the
+				// map, since a shadowed duplicate is not a path the manifest holds.
+				if (field === 'browser' && member.value.type === 'Object') {
+					for (const node of iterateStringValues(withoutShadowedMembers(member.value))) {
+						checkPathNode(node, field);
+					}
 				}
 			}
 
@@ -127,10 +163,11 @@ const create = context => {
 			}
 
 			if (binMember.value.type === 'String') {
-				checkPathNode(binMember.value);
+				checkPathNode(binMember.value, 'bin');
 			} else if (binMember.value.type === 'Object') {
-				for (const childMember of binMember.value.members) {
-					checkPathNode(childMember.value);
+				// Effective members, since a shadowed duplicate is not a path npm ever installs.
+				for (const childMember of iterateEffectiveMembers(binMember.value)) {
+					checkPathNode(childMember.value, 'bin');
 				}
 			}
 		},
@@ -147,6 +184,7 @@ const config = {
 			recommended: true,
 		},
 		fixable: 'code',
+		hasSuggestions: true,
 		schema: optionsSchema({
 			prefix: {
 				enum: ['always', 'never'],

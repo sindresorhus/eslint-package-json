@@ -4,11 +4,13 @@
 
 💼 This rule is enabled in the ✅ `recommended` [config](https://github.com/sindresorhus/eslint-package-json#configs).
 
-🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+🔧💡 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix) and manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions).
 
 <!-- end auto-generated rule header -->
 
-Enforce a consistent `./` prefix in the legacy `main`, `module`, `browser`, `types`, `typings`, and `bin` fields. Absolute paths, URLs, and globs are ignored; other paths with a `..` segment are reported. Mandatory prefixes in `exports` and `imports` are handled by [`valid-fields`](valid-fields.md).
+Enforce a consistent `./` prefix in the legacy `main`, `module`, `browser`, `types`, `typings`, and `bin` fields. Absolute paths, URLs, and globs are ignored; other paths with a `..` segment are reported. An empty value is left to [`no-empty-fields`](no-empty-fields.md), since there is nothing to prefix. Mandatory prefixes in `exports` and `imports` are handled by [`valid-fields`](valid-fields.md).
+
+For `main` and `browser`, the fix is a suggestion, since npm force-includes them as written, so the prefix can change what a `files` allowlist publishes.
 
 ## Options
 
