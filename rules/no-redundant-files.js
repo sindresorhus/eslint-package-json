@@ -2,7 +2,10 @@ import path from 'node:path';
 import {
 	getRootObject,
 	findMember,
+	isAlwaysIncludedFile,
 	getKey,
+	normalizeBinName,
+	normalizeBinPath,
 	removeElement,
 	hasGlob,
 } from './utils/index.js';
@@ -17,13 +20,6 @@ const messages = {
 	[MESSAGE_ID_INEFFECTIVE_NEGATION]: 'No earlier `files` pattern can include `{{value}}`, so this negation is ineffective.',
 };
 
-// Patterns for files npm always includes.
-const ALWAYS_INCLUDED_PATTERNS = [
-	/^package\.json$/u,
-	/^readme(?:\.[^/]*[^$/~])?$/u,
-	/^copying(?:\.[^/]*[^$/~])?$/u,
-	/^licen[cs]e(?:\.[^/]*[^$/~])?$/u,
-];
 const EXTGLOB_PATTERN = /[!*+?@]\(/u;
 const PARENT_PATH_PATTERN = /(?:^|[/\\])\.\.(?:[/\\]|$)/u;
 const NON_ASCII_PATTERN = /\P{ASCII}/u;
@@ -67,17 +63,7 @@ function isAlwaysIncluded(value, alwaysIncludedPaths) {
 	}
 
 	const normalizedPath = lowercaseAscii(normalizeFilePath(value));
-	return alwaysIncludedPaths.has(normalizedPath)
-		|| ALWAYS_INCLUDED_PATTERNS.some(pattern => pattern.test(normalizedPath));
-}
-
-/**
-Normalize a bin path like npm.
-*/
-function normalizeBinPath(value) {
-	const unixPath = value.replaceAll(/[:\\]/gu, '/');
-	const normalizedPath = path.posix.join('.', path.posix.join('/', unixPath));
-	return normalizedPath.startsWith('./') ? '' : normalizedPath;
+	return alwaysIncludedPaths.has(normalizedPath) || isAlwaysIncludedFile(normalizedPath);
 }
 
 /**
@@ -91,10 +77,56 @@ function addBinPath(paths, value) {
 }
 
 /**
-Normalize a bin command name like npm.
+Get the target of every `bin` entry that survives npm's normalization.
+
+Npm walks the object in key order, renames each key to its basename, and writes the target onto the renamed key. A
+rename therefore lands on a key npm has not read yet and replaces the value npm would have read from it, so
+`{"commands/cli": "a.js", "cli": "b.js"}` publishes `a.js`: the first key renames onto `cli` and overwrites the
+second one before npm reaches it. A key that normalizes to nothing (`""`, `.`, `..`) is dropped, and so is one that
+renames onto `__proto__`, which sets the prototype of npm's own object instead of a member of it.
 */
-function normalizeBinName(value) {
-	return path.posix.basename(normalizeBinPath(value));
+function * iterateNormalizedBinTargets(binObject) {
+	// The object npm walks, so a rename writes onto a key a later iteration then reads.
+	const bin = new Map();
+
+	for (const member of binObject.members) {
+		bin.set(getKey(member), member.value.type === 'String' ? member.value.value : undefined);
+	}
+
+	// The keys are read up front, because a rename writes onto a key npm has not read yet and a live iterator
+	// would walk into it.
+	const keys = bin.keys().toArray();
+
+	for (const key of keys) {
+		const value = bin.get(key);
+
+		if (typeof value !== 'string') {
+			bin.delete(key);
+			continue;
+		}
+
+		const commandName = normalizeBinName(key);
+
+		// A key that normalizes to nothing names no command, and one that renames *onto* `__proto__` sets the
+		// prototype of npm's own object rather than a member of it, so npm drops it. A key that already is
+		// `__proto__` is the other case: `JSON.parse` makes it an own data property, so npm keeps it.
+		if (!commandName || (commandName === '__proto__' && commandName !== key)) {
+			bin.delete(key);
+			continue;
+		}
+
+		const binTarget = normalizeBinPath(value);
+
+		if (!binTarget) {
+			bin.delete(key);
+			continue;
+		}
+
+		bin.delete(key);
+		bin.set(commandName, binTarget);
+	}
+
+	yield * bin.values();
 }
 
 /**
@@ -110,20 +142,9 @@ function getAlwaysIncludedPaths(root) {
 			addBinPath(paths, binMember.value.value);
 		}
 	} else if (binMember?.value.type === 'Object') {
-		const effectiveEntries = new Map(binMember.value.members.map(member => [getKey(member), member.value.type === 'String' ? member.value.value : undefined]));
-
-		for (const name of effectiveEntries.keys()) {
-			const normalizedName = normalizeBinName(name);
-			if (!normalizedName || normalizedName !== name) {
-				return paths;
-			}
-		}
-
-		for (const value of effectiveEntries.values()) {
-			if (value === undefined) {
-				continue;
-			}
-
+		// Npm pushes a strict rule for every `bin` value that survives normalization, so a key holding a path
+		// separator, a drive, or a colon still gets its target published.
+		for (const value of iterateNormalizedBinTargets(binMember.value)) {
 			addBinPath(paths, value);
 		}
 	}
@@ -203,6 +224,9 @@ const create = context => ({
 			return;
 		}
 
+		// Every fix below takes one entry out of the array and never the field itself. An absent `files` is
+		// npm's "publish everything", the opposite of the empty array, so the last entry has to go with the
+		// array left standing as `"files": []`.
 		const filesMember = findMember(root, 'files');
 
 		if (!filesMember || filesMember.value.type !== 'Array') {
@@ -225,6 +249,12 @@ const create = context => ({
 			const {value} = valueNode;
 
 			const leadingBangs = value.match(/^!+/u)?.[0] ?? '';
+			// Npm-packlist prepends one `!` to the entry and compiles the result with minimatch's `flipNegate`,
+			// which inverts an odd number of leading bangs and leaves an even one as an inclusion. So `!dist`
+			// drops `dist`, `!!dist` keeps it, and `!!!dist` drops it again. The two npm majors disagree here:
+			// npm 12 reads any leading bang as a negation. This rule follows npm 11, the same major
+			// `no-missing-files` follows, so `["!!dist"]` is an entry that publishes `dist` rather than a
+			// negation that publishes nothing.
 			const isNegated = leadingBangs.length % 2 === 1;
 			const pattern = value.slice(leadingBangs.length);
 			if (leadingBangs && !pattern) {

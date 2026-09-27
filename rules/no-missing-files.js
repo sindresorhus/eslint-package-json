@@ -4,30 +4,26 @@ import {
 	findMember,
 	getKey,
 	getRootObject,
-	hasGlob,
 	iterateEffectiveMembers,
 	withoutShadowedMembers,
 } from './utils/index.js';
 
-const MESSAGE_ID_EXPORT = 'missingExportTarget';
-const MESSAGE_ID_BIN = 'missingBinTarget';
+const MESSAGE_ID_TARGET = 'missingTarget';
 const MESSAGE_ID_FILES = 'missingFilesPattern';
 
 const messages = {
-	[MESSAGE_ID_EXPORT]: 'Export target `{{value}}` does not exist.',
-	[MESSAGE_ID_BIN]: '`bin` target `{{value}}` does not exist.',
+	[MESSAGE_ID_TARGET]: '`{{field}}` target `{{value}}` does not resolve to a file in the package.',
 	[MESSAGE_ID_FILES]: 'The `files` pattern `{{value}}` does not match any file or directory.',
 };
 
-const windowsAbsolutePathPattern = /^[a-z]:[/\\]/iu;
-const atExtglobPattern = /@\(/u;
-const absolutePathPattern = /^(?:\/|[a-z]:[/\\])/iu;
-const invalidExportTargetPattern = /(?:^|\/)(?:\.{1,2}|node_modules)(?:\/|$)|%2e|%2f|%5c|(?:^|\/)%6eode_modules(?:\/|$)/iu;
-const maximumPatternExpansions = 256;
-const alwaysActiveNodeConditionKeys = new Set(['default', 'module-sync', 'node', 'node-addons']);
-const nodeConditionKeys = new Set([...alwaysActiveNodeConditionKeys, 'import', 'require']);
-
-const isGlobPattern = value => hasGlob(value) || atExtglobPattern.test(value);
+const invalidExportTargetPattern = /(?:^|\/)(?:\.{1,2}|node_modules)(?:\/|$)/u;
+// Node reads an `exports` or `imports` target as a URL, decoding its escapes and dropping a `?query` or a `#fragment` before it looks for the file. This rule does not model that, so it takes such a target to resolve.
+const urlSyntaxPattern = /[#%?]/u;
+// Npm 12 hands every `files` entry to `glob`. Character classes, extglobs, and brace ranges are glob features this rule does not match, a `\` is an escape there, and a `..` segment leaves the package, so an entry holding any of them is skipped.
+const unsupportedFilesPattern = /[([\\]|\.\./u;
+const maximumBraceGroups = 256;
+// The conditions Node sets for every ES module consumer, so an array element keyed on one of them always yields a target and ends the walk. `require` is not among them: an ES module consumer skips it and falls through to the next element, and CommonJS consumers are out of scope.
+const alwaysActiveNodeConditionKeys = new Set(['default', 'module-sync', 'node', 'node-addons', 'import']);
 
 /**
 Check whether a relative path is safe to resolve inside the package directory.
@@ -68,16 +64,10 @@ const createPackageDirectory = rootPath => {
 };
 
 /**
-Check whether a literal relative path exists with the exact casing used in the path.
+Check whether a literal path relative to the package root exists with the exact casing used in the path. A trailing slash never names a file.
 */
-const hasExactPath = (packageDirectory, value, requiresFile) => {
-	const relativePath = value.slice(2);
-
-	if (!relativePath) {
-		return !requiresFile;
-	}
-
-	if (!isSafePackagePath(relativePath)) {
+const hasExactPath = (packageDirectory, relativePath, requiresFile) => {
+	if (requiresFile && (relativePath === '' || relativePath.endsWith('/'))) {
 		return false;
 	}
 
@@ -120,26 +110,6 @@ const hasExactPath = (packageDirectory, value, requiresFile) => {
 };
 
 /**
-Check whether a character matches a glob character class.
-*/
-const isCharacterInClass = (character, classValue) => {
-	const isNegated = classValue.startsWith('!') || classValue.startsWith('^');
-	const classCharacters = isNegated ? classValue.slice(1) : classValue;
-	let isMatched = false;
-
-	for (let index = 0; index < classCharacters.length; index++) {
-		if (classCharacters[index + 1] === '-' && classCharacters[index + 2] !== undefined) {
-			isMatched ||= character >= classCharacters[index] && character <= classCharacters[index + 2];
-			index += 2;
-		} else {
-			isMatched ||= character === classCharacters[index];
-		}
-	}
-
-	return isNegated ? !isMatched : isMatched;
-};
-
-/**
 Find the closing brace for a glob brace expression.
 */
 const findClosingBrace = (value, openingIndex) => {
@@ -161,19 +131,19 @@ const findClosingBrace = (value, openingIndex) => {
 };
 
 /**
-Split alternatives while preserving nested expressions.
+Split the alternatives of a brace group, keeping nested groups whole.
 */
-const splitAlternatives = (value, separator, openingCharacter, closingCharacter) => {
+const splitAlternatives = value => {
 	const alternatives = [];
 	let depth = 0;
 	let startIndex = 0;
 
 	for (let index = 0; index < value.length; index++) {
-		if (value[index] === openingCharacter) {
+		if (value[index] === '{') {
 			depth++;
-		} else if (value[index] === closingCharacter) {
+		} else if (value[index] === '}') {
 			depth--;
-		} else if (value[index] === separator && depth === 0) {
+		} else if (value[index] === ',' && depth === 0) {
 			alternatives.push(value.slice(startIndex, index));
 			startIndex = index + 1;
 		}
@@ -184,189 +154,49 @@ const splitAlternatives = (value, separator, openingCharacter, closingCharacter)
 };
 
 /**
-Find an expansion token outside a glob character class.
+Expand the brace groups of a `files` pattern, or return `undefined` when it holds more groups than are worth checking. An unclosed group and one with a single alternative, such as `{a}`, stay literal, as they do for npm.
 */
-const findExpansionToken = (value, token) => {
-	let isInCharacterClass = false;
-
-	for (let index = 0; index < value.length; index++) {
-		if (value[index] === '[') {
-			isInCharacterClass = true;
-		} else if (value[index] === ']') {
-			isInCharacterClass = false;
-		} else if (!isInCharacterClass && value.startsWith(token, index)) {
-			return index;
-		}
-	}
-
-	return -1;
-};
-
-/**
-Consume one bounded pattern-expansion step.
-*/
-const usePatternExpansionStep = expansionState => {
-	expansionState.stepCount++;
-
-	if (expansionState.stepCount > maximumPatternExpansions) {
-		expansionState.isInvalid = true;
-		return false;
-	}
-
-	return true;
-};
-
-/**
-Lazily expand brace alternatives that span path segments.
-*/
-function * iterateBracePatterns(pattern, expansionState) {
-	if (expansionState.isInvalid) {
-		return;
-	}
-
-	const openingIndex = findExpansionToken(pattern, '{');
-
-	if (openingIndex === -1) {
-		yield pattern;
-		return;
-	}
-
-	if (!usePatternExpansionStep(expansionState)) {
-		return;
-	}
-
-	const closingIndex = findClosingBrace(pattern, openingIndex);
-
-	if (closingIndex === -1) {
-		expansionState.isInvalid = true;
-		return;
-	}
-
-	const prefix = pattern.slice(0, openingIndex);
-	const content = pattern.slice(openingIndex + 1, closingIndex);
-	const suffix = pattern.slice(closingIndex + 1);
-	const alternatives = splitAlternatives(content, ',', '{', '}');
-
-	if (alternatives.length === 1) {
-		for (const suffixPattern of iterateBracePatterns(suffix, expansionState)) {
-			yield pattern.slice(0, closingIndex + 1) + suffixPattern;
-		}
-
-		return;
-	}
-
-	for (const alternative of alternatives) {
-		yield * iterateBracePatterns(prefix + alternative + suffix, expansionState);
-	}
-}
-
-/**
-Find the closing parenthesis for a glob extglob expression.
-*/
-const findClosingParenthesis = (value, openingIndex) => {
-	let depth = 0;
-
-	for (let index = openingIndex; index < value.length; index++) {
-		if (value[index] === '(') {
-			depth++;
-		} else if (value[index] === ')') {
-			depth--;
-
-			if (depth === 0) {
-				return index;
-			}
-		}
-	}
-
-	return -1;
-};
-
-/**
-Lazily expand simple `@()` extglobs.
-*/
-function * iterateAtExtglobPatterns(pattern, expansionState) {
-	if (expansionState.isInvalid) {
-		return;
-	}
-
-	const openingIndex = findExpansionToken(pattern, '@(');
-
-	if (openingIndex === -1) {
-		yield pattern;
-		return;
-	}
-
-	if (!usePatternExpansionStep(expansionState)) {
-		return;
-	}
-
-	const closingIndex = findClosingParenthesis(pattern, openingIndex + 1);
-
-	if (closingIndex === -1) {
-		expansionState.isInvalid = true;
-		return;
-	}
-
-	const prefix = pattern.slice(0, openingIndex);
-	const content = pattern.slice(openingIndex + 2, closingIndex);
-	const suffix = pattern.slice(closingIndex + 1);
-
-	for (const alternative of splitAlternatives(content, '|', '(', ')')) {
-		yield * iterateAtExtglobPatterns(prefix + alternative + suffix, expansionState);
-	}
-}
-
-/**
-Expand supported glob alternatives within the work limit.
-*/
-const expandGlobPatterns = pattern => {
-	const expansionState = {stepCount: 0, isInvalid: false};
+const expandBraces = pattern => {
 	const patterns = [];
+	const pending = [[pattern, 0]];
+	let groupCount = 0;
 
-	for (const bracePattern of iterateBracePatterns(pattern, expansionState)) {
-		for (const expandedPattern of iterateAtExtglobPatterns(bracePattern, expansionState)) {
-			if (patterns.length === maximumPatternExpansions) {
-				return undefined;
-			}
+	while (pending.length > 0) {
+		const [current, searchIndex] = pending.pop();
+		const openingIndex = current.indexOf('{', searchIndex);
+		const closingIndex = openingIndex === -1 ? -1 : findClosingBrace(current, openingIndex);
 
-			patterns.push(expandedPattern);
+		if (closingIndex === -1) {
+			patterns.push(current);
+			continue;
+		}
+
+		groupCount++;
+
+		if (groupCount > maximumBraceGroups) {
+			return undefined;
+		}
+
+		const alternatives = splitAlternatives(current.slice(openingIndex + 1, closingIndex));
+
+		if (alternatives.length === 1) {
+			pending.push([current, closingIndex + 1]);
+			continue;
+		}
+
+		for (const alternative of alternatives) {
+			pending.push([current.slice(0, openingIndex) + alternative + current.slice(closingIndex + 1), openingIndex]);
 		}
 	}
 
-	return expansionState.isInvalid ? undefined : patterns;
-};
-
-/**
-Check whether a glob pattern cannot expand to an absolute path.
-*/
-const isSafeGlobPattern = pattern => {
-	const expandedPatterns = expandGlobPatterns(pattern);
-
-	return Boolean(expandedPatterns?.length) && expandedPatterns.every(pattern => !absolutePathPattern.test(pattern));
-};
-
-/**
-Match one character-class segment of a glob pattern.
-*/
-const matchCharacterClass = ({valueSegment, patternSegment, valueIndex, patternIndex, match}) => {
-	const closingBracket = patternSegment.indexOf(']', patternIndex + 1);
-
-	if (closingBracket === -1) {
-		return valueIndex < valueSegment.length
-			&& valueSegment[valueIndex] === patternSegment[patternIndex]
-			&& match(valueIndex + 1, patternIndex + 1);
-	}
-
-	return valueIndex < valueSegment.length
-		&& isCharacterInClass(valueSegment[valueIndex], patternSegment.slice(patternIndex + 1, closingBracket))
-		&& match(valueIndex + 1, closingBracket + 1);
+	return patterns;
 };
 
 /**
 Match one path segment against one glob segment, with exact casing. `*` also matches dotfiles, as npm's `files` handling does.
 */
 const matchesSegment = (valueSegment, patternSegment) => {
-	if (!hasGlob(patternSegment)) {
+	if (!patternSegment.includes('*') && !patternSegment.includes('?')) {
 		return valueSegment === patternSegment;
 	}
 
@@ -387,33 +217,13 @@ const matchesSegment = (valueSegment, patternSegment) => {
 
 		if (patternIndex === patternSegment.length) {
 			result = valueIndex === valueSegment.length;
+		} else if (patternSegment[patternIndex] === '*') {
+			result = match(valueIndex, patternIndex + 1)
+				|| (valueIndex < valueSegment.length && match(valueIndex + 1, patternIndex));
 		} else {
-			switch (patternSegment[patternIndex]) {
-				case '*': {
-					result = match(valueIndex, patternIndex + 1)
-						|| (valueIndex < valueSegment.length && match(valueIndex + 1, patternIndex));
-					break;
-				}
-
-				case '?': {
-					result = valueIndex < valueSegment.length && match(valueIndex + 1, patternIndex + 1);
-					break;
-				}
-
-				case '[': {
-					result = matchCharacterClass({
-						valueSegment, patternSegment, valueIndex, patternIndex, match,
-					});
-
-					break;
-				}
-
-				default: {
-					result = valueIndex < valueSegment.length
-						&& valueSegment[valueIndex] === patternSegment[patternIndex]
-						&& match(valueIndex + 1, patternIndex + 1);
-				}
-			}
+			result = valueIndex < valueSegment.length
+				&& (patternSegment[patternIndex] === '?' || valueSegment[valueIndex] === patternSegment[patternIndex])
+				&& match(valueIndex + 1, patternIndex + 1);
 		}
 
 		cache[cacheKey] = result;
@@ -492,6 +302,9 @@ const hasMatchingEntry = (packageDirectory, directory, segments, index) => {
 		return false;
 	}
 
+	// Any entry satisfies the last segment, and so does one followed only by `**`, which npm 12 lets match nothing, so `index.js/**` publishes `index.js`. Every other segment has to be a directory to walk into.
+	const isLastSegment = segments.slice(index + 1).every(rest => rest === '**');
+
 	for (const entry of entries.values()) {
 		if (!matchesSegment(entry.name, segment)) {
 			continue;
@@ -499,7 +312,7 @@ const hasMatchingEntry = (packageDirectory, directory, segments, index) => {
 
 		const entryPath = path.join(directory, entry.name);
 
-		if (index === segments.length - 1) {
+		if (isLastSegment) {
 			if (isMatchingEntry(entryPath, entry, false)) {
 				return true;
 			}
@@ -516,12 +329,23 @@ const hasMatchingEntry = (packageDirectory, directory, segments, index) => {
 };
 
 /**
-Check whether a glob has an exact-case match in the package.
+Check whether a normalized `files` pattern has an exact-case match in the package. A pattern with more brace groups than are worth expanding is taken to match.
 */
-const hasMatchingGlob = (packageDirectory, pattern) => (expandGlobPatterns(pattern) ?? []).some(expandedPattern => {
-	const segments = expandedPattern.split('/').filter(segment => segment !== '' && segment !== '.');
-	return hasMatchingEntry(packageDirectory, packageDirectory.path, segments, 0);
-});
+const hasMatchingPattern = (packageDirectory, pattern) => {
+	const expandedPatterns = expandBraces(pattern);
+
+	if (!expandedPatterns) {
+		return true;
+	}
+
+	return expandedPatterns.some(expandedPattern => {
+		// Npm 12 hands the pattern to `glob`, which reads `a//b` and `a/./b` as `a/b`, and `**/**` as `**`. Collapsing the repeated `**` also keeps the walk from multiplying with each one. An expansion that reduces to no path, such as `.` or the empty alternative in `{,a}`, names no file.
+		const segments = expandedPattern.split('/')
+			.filter(segment => segment !== '' && segment !== '.')
+			.filter((segment, index, allSegments) => segment !== '**' || allSegments[index - 1] !== '**');
+		return segments.length > 0 && hasMatchingEntry(packageDirectory, packageDirectory.path, segments, 0);
+	});
+};
 
 /**
 Check whether an exports target matches a path using Node's `*` replacement semantics.
@@ -594,7 +418,7 @@ function * iterateExportFiles(packageDirectory, relativeDirectory) {
 				if (!invalidExportTargetPattern.test(relativePath)) {
 					directories.push(relativePath);
 				}
-			} else if (isFile || hasExactPath(packageDirectory, `./${relativePath}`, true)) {
+			} else if (isFile || hasExactPath(packageDirectory, relativePath, true)) {
 				yield relativePath;
 			}
 		}
@@ -602,18 +426,21 @@ function * iterateExportFiles(packageDirectory, relativeDirectory) {
 }
 
 /**
-Check whether an exports target has at least one exact-case file match.
+Check whether an exports target, relative to the package root, has at least one exact-case file match.
 */
-const hasMatchingExportTarget = (packageDirectory, value) => {
-	const pattern = value.slice(2);
-
+const hasMatchingExportTarget = (packageDirectory, pattern, isPatternAllowed) => {
 	if (!pattern.includes('*')) {
-		return hasExactPath(packageDirectory, value, true);
+		return hasExactPath(packageDirectory, pattern, true);
+	}
+
+	// A subpath key with no `*` has nothing to substitute, so the `*` in the target stays literal and the target is a plain file name. Npm refuses to pack any path holding a `*`, so even a file that is really there cannot ship, and looking it up would report a broken target as fine.
+	if (!isPatternAllowed) {
+		return false;
 	}
 
 	const scanDirectory = getExportScanDirectory(pattern);
 
-	if (scanDirectory && !hasExactPath(packageDirectory, `./${scanDirectory}`, false)) {
+	if (scanDirectory && !hasExactPath(packageDirectory, scanDirectory, false)) {
 		return false;
 	}
 
@@ -624,19 +451,6 @@ const hasMatchingExportTarget = (packageDirectory, value) => {
 	}
 
 	return false;
-};
-
-/**
-Check whether a relative path or glob has at least one exact-case match in the package.
-*/
-const hasMatchingPath = (packageDirectory, value) => {
-	if (!value.startsWith('./') || !isSafePackagePath(value.slice(2))) {
-		return false;
-	}
-
-	return isGlobPattern(value) || value.endsWith('/')
-		? hasMatchingGlob(packageDirectory, value.slice(2))
-		: hasExactPath(packageDirectory, value, false);
 };
 
 /**
@@ -660,20 +474,16 @@ const checkBinTarget = (context, packageDirectory, node) => {
 	const {value} = node;
 	const relativePath = value.startsWith('./') ? value.slice(2) : value;
 
-	if (
-		!relativePath
-		|| value.includes('://')
-		|| windowsAbsolutePathPattern.test(relativePath)
-		|| !isSafePackagePath(relativePath)
-	) {
+	// Npm reads a `\` or a `:` in a `bin` target as a path separator, which this rule does not model, so such a target is skipped along with a URL and a Windows drive path.
+	if (!relativePath || value.includes(':') || !isSafePackagePath(relativePath)) {
 		return;
 	}
 
-	if (!hasExactPath(packageDirectory, `./${relativePath}`, true)) {
+	if (!hasExactPath(packageDirectory, relativePath, true)) {
 		context.report({
 			node,
-			messageId: MESSAGE_ID_BIN,
-			data: {value},
+			messageId: MESSAGE_ID_TARGET,
+			data: {field: 'bin', value},
 		});
 	}
 };
@@ -695,9 +505,9 @@ const checkBin = (context, packageDirectory, root) => {
 };
 
 /**
-Create an export target checker that reports each missing target only once.
+Create an `exports` or `imports` target checker that reports each missing target only once.
 */
-const createExportChecker = (context, packageDirectory) => {
+const createTargetChecker = (context, packageDirectory, field) => {
 	const reportedTargets = new Set();
 
 	const reportMissingTarget = node => {
@@ -707,8 +517,8 @@ const createExportChecker = (context, packageDirectory) => {
 			reportedTargets.add(value);
 			context.report({
 				node,
-				messageId: MESSAGE_ID_EXPORT,
-				data: {value},
+				messageId: MESSAGE_ID_TARGET,
+				data: {field, value},
 			});
 		}
 	};
@@ -755,23 +565,27 @@ const createExportChecker = (context, packageDirectory) => {
 		return {hasTarget: true, resolves: false, isDecisive};
 	};
 
-	const check = (node, shouldReport = true, isPatternAllowed = false, isNodeCondition = false) => {
+	/**
+	Check whether a target is unusable rather than merely absent. Node treats these as a failed *resolution*, which an enclosing array falls through, so they must be told apart from a target that simply is not on disk.
+	*/
+	const isUnusableTarget = value => {
+		const relativePath = value.slice(2);
+
+		return !value.startsWith('./')
+			|| !isSafePackagePath(relativePath)
+			|| invalidExportTargetPattern.test(relativePath);
+	};
+
+	const check = (node, shouldReport = true, isPatternAllowed = false) => {
 		switch (node.type) {
 			case 'String': {
-				const relativePath = node.value.slice(2);
-
-				if (
-					!node.value.startsWith('./')
-					|| !relativePath
-					|| !isSafePackagePath(relativePath)
-					|| invalidExportTargetPattern.test(relativePath)
-					|| (node.value.includes('*') && !isPatternAllowed)
-				) {
-					// Node treats an unusable target as a failed *resolution*, so it falls through to the next element of an enclosing array rather than stopping here.
+				if (isUnusableTarget(node.value)) {
 					return {hasTarget: false, resolves: true, isDecisive: false};
 				}
 
-				const resolves = hasMatchingExportTarget(packageDirectory, node.value);
+				// A directory, including the bare `./` and anything ending in `/`, is refused by Node with `ERR_UNSUPPORTED_DIR_IMPORT` rather than falling through, so it is a decisive target that does not resolve.
+				const resolves = urlSyntaxPattern.test(node.value)
+					|| hasMatchingExportTarget(packageDirectory, node.value.slice(2), isPatternAllowed);
 
 				if (!resolves && shouldReport) {
 					reportMissingTarget(node);
@@ -785,9 +599,12 @@ const createExportChecker = (context, packageDirectory) => {
 				const hasNullDefault = defaultIndex !== -1 && node.members[defaultIndex].value.type === 'Null';
 				const results = node.members.map((member, index) => {
 					const key = getKey(member);
-					const childIsPatternAllowed = key.startsWith('.') ? key.includes('*') : isPatternAllowed;
+					// A key that starts with `.` is an `exports` subpath and one that starts with `#` is an
+					// `imports` specifier. Both substitute the matched part for the target's `*`, so either enables
+					// it when the key carries one; every other key is a condition name and inherits the answer.
+					const childIsPatternAllowed = key.startsWith('.') || key.startsWith('#') ? key.includes('*') : isPatternAllowed;
 					const shouldReportChild = shouldReport && (!hasNullDefault || index < defaultIndex);
-					return check(member.value, shouldReportChild, childIsPatternAllowed, isNodeCondition || key === 'node');
+					return check(member.value, shouldReportChild, childIsPatternAllowed);
 				});
 				const relevantResults = results.filter((result, index) => result.hasTarget && (!hasNullDefault || index < defaultIndex));
 				// Every other condition may match nothing, so an object yields a target unconditionally when `node` or `default` does or when a decisive branch precedes a `null` default. The tree is already free of shadowed duplicates, so at most one member holds the key.
@@ -798,23 +615,16 @@ const createExportChecker = (context, packageDirectory) => {
 						&& (!hasNullDefault || index < defaultIndex);
 				});
 				const hasDecisiveBranchBeforeNullDefault = hasNullDefault && results.some((result, index) => index < defaultIndex && result.isDecisive);
-				const hasDecisiveNodeCondition = isNodeCondition && node.members.some((member, index) =>
-					nodeConditionKeys.has(getKey(member))
-					&& results[index].isDecisive
-					&& (!hasNullDefault || index < defaultIndex),
-				);
 
 				return {
 					hasTarget: relevantResults.length > 0,
 					resolves: relevantResults.every(result => result.resolves),
-					isDecisive: decisiveIndex !== -1
-						|| hasDecisiveNodeCondition
-						|| hasDecisiveBranchBeforeNullDefault,
+					isDecisive: decisiveIndex !== -1 || hasDecisiveBranchBeforeNullDefault,
 				};
 			}
 
 			case 'Array': {
-				return checkArray(node, node.elements.map(element => check(element.value, false, isPatternAllowed, isNodeCondition)), shouldReport, isPatternAllowed);
+				return checkArray(node, node.elements.map(element => check(element.value, false, isPatternAllowed)), shouldReport, isPatternAllowed);
 			}
 
 			default: {
@@ -837,10 +647,25 @@ const create = context => ({
 
 		const packageDirectory = getPackageDirectory(context);
 		const exportsMember = findMember(root, 'exports');
+		const importsMember = findMember(root, 'imports');
 
+		// The question is which targets Node resolves, so the tree is walked as `JSON.parse` builds it: a
+		// shadowed duplicate neither satisfies a lookup nor deserves a missing-file report, since nothing ever
+		// resolves through it. An `imports` target is resolved exactly the way an `exports` target is, so the
+		// same checker answers both; only the top-level keys differ, and those are not looked at.
 		if (exportsMember) {
-			// The question is which targets Node resolves, so the tree is walked as `JSON.parse` builds it: a shadowed duplicate neither satisfies a lookup nor deserves a missing-file report, since nothing ever resolves through it.
-			createExportChecker(context, packageDirectory)(withoutShadowedMembers(exportsMember.value));
+			createTargetChecker(context, packageDirectory, 'exports')(withoutShadowedMembers(exportsMember.value));
+		}
+
+		if (importsMember) {
+			// A key that is not a `#` specifier names a dependency. Node resolves such a specifier against the
+			// installed packages and never looks at the target, so no local path is named there.
+			const imports = withoutShadowedMembers(importsMember.value);
+			const localImports = imports.type === 'Object'
+				? {...imports, members: imports.members.filter(member => getKey(member).startsWith('#'))}
+				: imports;
+
+			createTargetChecker(context, packageDirectory, 'imports')(localImports);
 		}
 
 		checkBin(context, packageDirectory, root);
@@ -859,23 +684,19 @@ const create = context => ({
 			}
 
 			const {value} = valueNode;
-			const relativePath = value.startsWith('./') ? value.slice(2) : value;
+			// Npm 12 strips one leading `./` or `/` and every trailing slash before it expands an entry, so `/dist/` is `dist`, and `./` names nothing.
+			const pattern = value.replace(/^\.?\//u, '').replace(/\/+$/u, '');
 
 			if (
 				value === ''
 				|| value.startsWith('!')
-				|| value.startsWith('/')
-				|| windowsAbsolutePathPattern.test(value)
-				|| windowsAbsolutePathPattern.test(relativePath)
-				|| !isSafePackagePath(relativePath)
-				|| (isGlobPattern(value) && !isSafeGlobPattern(relativePath))
+				|| pattern.startsWith('/')
+				|| unsupportedFilesPattern.test(pattern)
 			) {
 				continue;
 			}
 
-			const packagePath = value.startsWith('./') ? value : `./${value}`;
-
-			if (!hasMatchingPath(packageDirectory, packagePath)) {
+			if (!hasMatchingPattern(packageDirectory, pattern)) {
 				context.report({
 					node: valueNode,
 					messageId: MESSAGE_ID_FILES,
