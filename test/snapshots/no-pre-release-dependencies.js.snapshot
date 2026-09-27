@@ -13,6 +13,74 @@ Message:
 
 `;
 
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"1.0.0-01\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "1.0.0-01"}}
+
+`;
+
+exports[`invalid(10): {\"dependencies\": {\"foo\": \"1.0.0-01\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "1.0.0-01"}}
+    |                          ^^^^^^^^^^ Dependency \`foo\` targets a pre-release version \`1.0.0-01\`.
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"foo\": \"01.2.3-01\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "01.2.3-01"}}
+
+`;
+
+exports[`invalid(11): {\"dependencies\": {\"foo\": \"01.2.3-01\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "01.2.3-01"}}
+    |                          ^^^^^^^^^^^ Dependency \`foo\` targets a pre-release version \`01.2.3-01\`.
+
+`;
+
+exports[`invalid(12): {\"dependencies\": {\"foo\": \"npm:bar@1.0.0-01\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "npm:bar@1.0.0-01"}}
+
+`;
+
+exports[`invalid(12): {\"dependencies\": {\"foo\": \"npm:bar@1.0.0-01\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "npm:bar@1.0.0-01"}}
+    |                          ^^^^^^^^^^^^^^^^^^ Dependency \`foo\` targets a pre-release version \`npm:bar@1.0.0-01\`.
+
+`;
+
+exports[`invalid(13): {\"dependencies\": {\"foo\": \"2.0.0rc1\", \"bar\": \"2.0.0-rc1\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "2.0.0rc1", "bar": "2.0.0-rc1"}}
+
+`;
+
+exports[`invalid(13): {\"dependencies\": {\"foo\": \"2.0.0rc1\", \"bar\": \"2.0.0-rc1\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "2.0.0rc1", "bar": "2.0.0-rc1"}}
+    |                          ^^^^^^^^^^ Dependency \`foo\` targets a pre-release version \`2.0.0rc1\`.
+
+`;
+
+exports[`invalid(13): {\"dependencies\": {\"foo\": \"2.0.0rc1\", \"bar\": \"2.0.0-rc1\"}} 3`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "2.0.0rc1", "bar": "2.0.0-rc1"}}
+    |                                             ^^^^^^^^^^^ Dependency \`bar\` targets a pre-release version \`2.0.0-rc1\`.
+
+`;
+
 exports[`invalid(2): {\"dependencies\": {\"foo\": \"^1.0.0-beta.2\"}} 1`] = `
 
 [Input]
@@ -100,5 +168,35 @@ exports[`invalid(7): {\"dependencies\": {\"foo\": \">=1.0.0-alpha <2.0.0\"}} 2`]
 Message:
 > 1 | {"dependencies": {"foo": ">=1.0.0-alpha <2.0.0"}}
     |                          ^^^^^^^^^^^^^^^^^^^^^^ Dependency \`foo\` targets a pre-release version \`>=1.0.0-alpha <2.0.0\`.
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"npm:bar@1.0.0-beta\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "npm:bar@1.0.0-beta"}}
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"npm:bar@1.0.0-beta\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "npm:bar@1.0.0-beta"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^ Dependency \`foo\` targets a pre-release version \`npm:bar@1.0.0-beta\`.
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"npm:@scope/bar@2.0.0-rc.1\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "npm:@scope/bar@2.0.0-rc.1"}}
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"npm:@scope/bar@2.0.0-rc.1\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "npm:@scope/bar@2.0.0-rc.1"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^ Dependency \`foo\` targets a pre-release version \`npm:@scope/bar@2.0.0-rc.1\`.
 
 `;

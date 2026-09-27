@@ -468,13 +468,11 @@ at a stable version is not a pre-release range, even when a later bound in it ca
 is what `>=1.0.0 <2.0.0-0` is, the range `^1.0.0` normalizes to, where the `-0` upper bound excludes the next major's
 pre-releases rather than asking for one.
 
-`loose` reads the range the way `npm-package-arg` does when it resolves a dependency specifier, which accepts a
-leading zero in a numeric or pre-release identifier where strict SemVer does not.
+`loose` reads the range the way `npm-package-arg` does when it resolves a dependency specifier, which accepts a leading zero in a numeric or pre-release identifier where strict SemVer does not, and a pre-release without the hyphen before it (`2.0.0rc1`).
 */
 export function targetsPrerelease(range, {loose = false} = {}) {
-	// A pre-release identifier always contains a hyphen (`1.0.0-beta`), so a range without one cannot resolve to
-	// a pre-release. This skips the expensive `minVersion` for the overwhelming majority of ranges.
-	if (!range.includes('-')) {
+	// A strict pre-release identifier always contains a hyphen (`1.0.0-beta`), so a range without one cannot resolve to a pre-release. This skips the expensive `minVersion` for the overwhelming majority of ranges. The loose grammar makes the hyphen optional (`2.0.0rc1` is `2.0.0-rc1`), so it gets no shortcut.
+	if (!loose && !range.includes('-')) {
 		return false;
 	}
 

@@ -57,5 +57,7 @@ test.snapshot({
 		'{"dependencies": {"foo": "1.0.0-01"}}',
 		'{"dependencies": {"foo": "01.2.3-01"}}',
 		'{"dependencies": {"foo": "npm:bar@1.0.0-01"}}',
+		// The loose grammar also makes the hyphen before a pre-release optional, so `2.0.0rc1` is `2.0.0-rc1`.
+		'{"dependencies": {"foo": "2.0.0rc1", "bar": "2.0.0-rc1"}}',
 	],
 });
