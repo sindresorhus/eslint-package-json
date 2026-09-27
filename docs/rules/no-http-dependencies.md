@@ -9,7 +9,7 @@
 
 Remote `http(s)` tarball URLs as dependency specifiers are fragile: they bypass the npm registry, lack a version and integrity hash, and can change or disappear. Use a published registry version instead.
 
-Git URLs (`git+https://…`) are handled by [`no-git-dependencies`](./no-git-dependencies.md), and local paths by [`no-local-dependencies`](./no-local-dependencies.md).
+This rule only reports what npm downloads as a tarball. A hosted URL like `https://github.com/user/repo` is a git remote, handled by [`no-git-dependencies`](./no-git-dependencies.md), and local paths are handled by [`no-local-dependencies`](./no-local-dependencies.md).
 
 ## Examples
 

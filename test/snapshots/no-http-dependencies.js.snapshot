@@ -27,3 +27,78 @@ Message:
     |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ HTTP dependency \`foo\` should use a published version.
 
 `;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"HTTPS://example.com/foo.tgz\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "HTTPS://example.com/foo.tgz"}}
+
+`;
+
+exports[`invalid(3): {\"dependencies\": {\"foo\": \"HTTPS://example.com/foo.tgz\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "HTTPS://example.com/foo.tgz"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ HTTP dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"Http://example.com/foo.tgz\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "Http://example.com/foo.tgz"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"Http://example.com/foo.tgz\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "Http://example.com/foo.tgz"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ HTTP dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"https://example.com/foo.GIT\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "https://example.com/foo.GIT"}}
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"https://example.com/foo.GIT\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "https://example.com/foo.GIT"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ HTTP dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"https://example.com/foo.git\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "https://example.com/foo.git"}}
+
+`;
+
+exports[`invalid(6): {\"dependencies\": {\"foo\": \"https://example.com/foo.git\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "https://example.com/foo.git"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ HTTP dependency \`foo\` should use a published version.
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"foo\": \"https://example.com/foo.git#v1\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "https://example.com/foo.git#v1"}}
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"foo\": \"https://example.com/foo.git#v1\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "https://example.com/foo.git#v1"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ HTTP dependency \`foo\` should use a published version.
+
+`;

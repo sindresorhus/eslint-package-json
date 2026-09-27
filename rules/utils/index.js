@@ -595,7 +595,7 @@ export function installedSpecifier(specifier) {
 /**
 Check whether npm resolves a dependency specifier to a git remote. Shared by `no-git-dependencies`, which reports these, and `no-http-dependencies`, which leaves them alone so a git URL is never labelled an HTTP tarball.
 
-`npm-package-arg` decides from the host and the protocol, not from a `.git` suffix, so this catches the shapes no string pattern can: a hosted URL with no `git+` prefix and no `.git` suffix is a remote, an `ssh://` remote is one, and `https://example.com/foo.git` is a plain tarball npm downloads over HTTP.
+`npm-package-arg` decides from the host and the protocol, not from a `.git` suffix, so this catches the shapes no string pattern can: a hosted URL with no `git+` prefix and no `.git` suffix is a remote, as is a hosted `ssh://` one, while `https://example.com/foo.git` is a plain tarball npm downloads over HTTP. An unhosted `ssh://` URL needs the `git+` prefix: without it, `npm-package-arg` refuses the protocol, so it is not a remote.
 */
 export function isGitRemote(specifier) {
 	try {
@@ -658,7 +658,7 @@ export function isAlwaysIncludedFile(value) {
 }
 
 /**
-Check whether a dependency specifier references the local filesystem. Shared by `no-local-dependencies` and `no-git-dependencies`, which must not disagree about `file:../foo.git`: npm resolves it as a directory, so it is one or the other but never both.
+Check whether a dependency specifier references the local filesystem.
 */
 export function isLocalSpecifier(specifier) {
 	return localSpecifierPrefixes.some(prefix => specifier.startsWith(prefix))
@@ -753,11 +753,6 @@ export function getNewline(sourceCode) {
 
 	return newline;
 }
-
-/**
-A `.git` suffix, optionally followed by a `#ref`, marking a git repository URL. Shared by `no-git-dependencies` and `no-http-dependencies`.
-*/
-export const gitSuffixPattern = /\.git(?:#.+)?$/;
 
 /**
 Remove a set of an object's members, keeping the surrounding JSON valid and tidy.

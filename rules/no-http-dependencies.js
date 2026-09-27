@@ -1,4 +1,8 @@
-import {getRootObject, iterateDependencies, gitSuffixPattern} from './utils/index.js';
+import {
+	getRootObject,
+	isGitRemote,
+	iterateDependencies,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'no-http-dependencies';
 
@@ -6,12 +10,14 @@ const messages = {
 	[MESSAGE_ID]: 'HTTP dependency `{{name}}` should use a published version.',
 };
 
+const httpSchemePattern = /^https?:\/\//iu;
+
 /**
-Check if a dependency specifier is a remote HTTP(S) tarball URL. Git URLs (the `git+https://` prefix or a `.git` suffix) are handled by `no-git-dependencies`.
+Check if a dependency specifier is a remote HTTP(S) tarball URL. Git URLs are handled by `no-git-dependencies`, so asking npm is what keeps the two from claiming the same specifier, and it is also what tells a hosted remote from a tarball: `https://github.com/user/repo` and `https://example.com/foo.git` both look like a repository URL, but only the first one is one npm clones.
 */
 const isHttpSpecifier = specifier =>
-	(specifier.startsWith('http://') || specifier.startsWith('https://'))
-	&& !gitSuffixPattern.test(specifier);
+	httpSchemePattern.test(specifier)
+	&& !isGitRemote(specifier);
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
