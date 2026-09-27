@@ -1105,7 +1105,7 @@ The simple top-level fields whose value is a single path string.
 export const pathFields = ['main', 'module', 'browser', 'types', 'typings'];
 
 /**
-Yield the path values of a field that is either one path string or a list of them.
+Yield the path values of a field that is either one path string or a list of them. Only `man` takes that shape.
 */
 function * iterateOneOrManyPaths(field, member) {
 	if (member?.value.type === 'String') {
@@ -1119,20 +1119,26 @@ function * iterateOneOrManyPaths(field, member) {
 	}
 }
 
+/**
+Yield the `String` values of a flat map of paths. Effective members, since a shadowed duplicate is not a path the manifest holds.
+*/
+function * iterateMappedPaths(field, objectNode) {
+	for (const member of iterateEffectiveMembers(objectNode)) {
+		if (member.value.type === 'String') {
+			yield {node: member.value, field};
+		}
+	}
+}
+
 function * collectPathValueNodes(rootObject) {
 	for (const field of pathFields) {
 		const member = findMember(rootObject, field);
 
-		// One path or a list of them, the same shape `man` takes.
-		yield * iterateOneOrManyPaths(field, member);
-
-		// `browser` is the only one of these that also takes a replacement map, and its string values are the
-		// paths it swaps in. A `false` value shims the module out instead of pointing anywhere. Collapsed the
-		// way `JSON.parse` builds the map, so a shadowed duplicate is not scanned as a path.
-		if (member?.value.type === 'Object') {
-			for (const node of iterateStringValues(withoutShadowedMembers(member.value))) {
-				yield {node, field};
-			}
+		if (member?.value.type === 'String') {
+			yield {node: member.value, field};
+		} else if (field === 'browser' && member?.value.type === 'Object') {
+			// `browser` is the only one of these that also takes a replacement map. The map is flat, and a string value is what it swaps in; a `false` value shims the module out instead of pointing anywhere.
+			yield * iterateMappedPaths(field, member.value);
 		}
 	}
 
@@ -1142,17 +1148,10 @@ function * collectPathValueNodes(rootObject) {
 		yield {node: bin.value, field: 'bin'};
 	} else if (bin?.value.type === 'Object') {
 		// Effective members, since a shadowed duplicate is not a path npm ever installs.
-		for (const member of iterateEffectiveMembers(bin.value)) {
-			if (member.value.type === 'String') {
-				yield {node: member.value, field: 'bin'};
-			}
-		}
+		yield * iterateMappedPaths('bin', bin.value);
 	}
 
-	// Npm rewrites every `man` entry the way it rewrites a `bin` target, so an absolute or backslashed one
-	// becomes a relative path naming no file, and the man page is gone from the published manifest. Unlike
-	// `bin`, `man` is not force-included, so the path is the only thing that decides whether it ships. The field
-	// is one path or a list of them.
+	// Npm 12 rewrites every `man` entry the way it rewrites a `bin` target (`secureAndUnixifyPath` in `@npmcli/package-json`): it drops the leading `/` and turns `\` into `/`, so `/man/foo.1` and `man\foo.1` still name `man/foo.1`. Only a real system path like `/usr/share/man/man1/foo.1` names no file in the package, but the rules still report the leading `/` and the `\` in every `man` entry, since the manifest reads as a machine path either way. Unlike `bin`, `man` is not force-included, so the path is the only thing that decides whether it ships. The field is one path or a list of them.
 	yield * iterateOneOrManyPaths('man', findMember(rootObject, 'man'));
 
 	const files = findMember(rootObject, 'files');
