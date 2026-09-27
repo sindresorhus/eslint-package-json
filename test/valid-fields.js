@@ -209,6 +209,10 @@ test.snapshot({
 		'{"devEngines": {"runtime": {"name": "node", "version": ""}}}',
 		'{"engines": {"node": ""}}',
 		'{"engines": {"npm": "", "node": ">=18"}}',
+		// Npm skips a falsy `engines` value, so it restricts nothing.
+		'{"engines": {"node": null}}',
+		'{"engines": {"node": false}}',
+		'{"engines": {"node": 0}}',
 		// `os`
 		'{"name": "foo"}',
 		'{"os": ["darwin", "linux"]}',
@@ -805,12 +809,11 @@ test.snapshot({
 		'{"version": true}',
 		// A surrogate PAIR is well-formed and reaches the validator, which reports it as an invalid name rather than crashing.
 		'{"name": "\u{1F600}"}',
-		// Npm hands an `engines` value to `semver.satisfies`, which reads anything that is not a string
-		// range as a range nothing satisfies, so an install fails with EBADENGINE under `--engine-strict`.
+		// Npm hands a truthy `engines` value to `semver.satisfies`, which reads anything that is not a string range as a range nothing satisfies, so an install fails with EBADENGINE under `--engine-strict`.
 		'{"engines": {"node": 18}}',
-		'{"engines": {"node": null}}',
+		'{"engines": {"npm": 9}}',
 		'{"engines": {"node": true}}',
-		'{"engines": {"node": false}}',
+		'{"engines": {"npm": true}}',
 		'{"engines": {"npm": ["\u{3E}=9"]}}',
 		'{"engines": {"node": {}}}',
 		// A custom license reference is valid SPDX grammar, but npm rejects the whole expression for one,
