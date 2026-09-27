@@ -736,22 +736,6 @@ export function getIndentString(sourceCode) {
 	return indent;
 }
 
-const newlineCache = new WeakMap();
-
-/**
-Detect the LF or CRLF newline sequence used by the document, defaulting to `\n`.
-*/
-export function getNewline(sourceCode) {
-	let newline = newlineCache.get(sourceCode);
-
-	if (newline === undefined) {
-		newline = sourceCode.text.includes('\r\n') ? '\r\n' : '\n';
-		newlineCache.set(sourceCode, newline);
-	}
-
-	return newline;
-}
-
 /**
 Remove a set of an object's members, keeping the surrounding JSON valid and tidy.
 

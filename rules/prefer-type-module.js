@@ -2,7 +2,6 @@ import {
 	getRootObject,
 	findMember,
 	getIndentString,
-	getNewline,
 	lineIndentOf,
 } from './utils/index.js';
 
@@ -52,10 +51,10 @@ const create = context => {
 								}
 
 								const indent = lineIndentOf(sourceCode, root) + getIndentString(sourceCode);
-								return fixer.insertTextAfterRange([root.range[0], root.range[0] + 1], `${getNewline(sourceCode)}${indent}"type": "module"`);
+								return fixer.insertTextAfterRange([root.range[0], root.range[0] + 1], `\n${indent}"type": "module"`);
 							}
 
-							const separator = isMultiline ? getNewline(sourceCode) + lineIndentOf(sourceCode, lastMember) : ' ';
+							const separator = isMultiline ? '\n' + lineIndentOf(sourceCode, lastMember) : ' ';
 							return fixer.insertTextAfter(lastMember, `,${separator}"type": "module"`);
 						},
 					},
