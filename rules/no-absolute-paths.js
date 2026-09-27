@@ -1,4 +1,4 @@
-import {getRootObject, iteratePathValueNodes} from './utils/index.js';
+import {getRootObject, isAlwaysIncludedFile, iteratePathValueNodes} from './utils/index.js';
 
 const MESSAGE_ID = 'no-absolute-paths';
 const MESSAGE_ID_FILES_PATTERN = 'files-leading-slash';
@@ -33,17 +33,30 @@ const create = context => ({
 		}
 
 		for (const {node: valueNode, field} of iteratePathValueNodes(root)) {
+			// An `exports` or `imports` target is `valid-fields`' to report: it names the field, it says what the
+			// target has to start with, and it carries the rewrite. A second, vaguer report on the same node for
+			// the same string is noise.
+			if (field === 'exports' || field === 'imports') {
+				continue;
+			}
+
 			const {value} = valueNode;
 			// Only a `files` entry can be negated, and the `!` prefix is not part of the path.
 			const negation = field === 'files' ? value.match(/^!*/)[0] : '';
 			const pattern = value.slice(negation.length);
 
+			// A leading slash on a file npm includes anyway is not a spelling problem: the entry is removable
+			// altogether, which is what `no-redundant-files` reports. Rewriting the spelling would keep it.
+			if (field === 'files' && isAlwaysIncludedFile(pattern)) {
+				continue;
+			}
+
 			// A `files` entry is a pattern, not a path to resolve: npm strips a leading `/` and matches from the package root, so `/dist` and `dist` publish the same files. The slash still reads as an absolute path, so report it and offer the shorter form. A Windows drive is not stripped and falls through to the absolute-path report below.
 			if (field === 'files' && pattern.startsWith('/')) {
 				const stripped = pattern.replace(/^\/+/u, '');
 
-				// A pattern of nothing but slashes leaves no shorter form to suggest, so it falls through to the absolute-path report below.
-				if (stripped !== '') {
+				// A pattern of nothing but slashes leaves no shorter form to suggest, so it falls through to the absolute-path report below. Two or more leading slashes do too: npm 11 normalizes them away and npm 12 strips only the first, so the two majors do not agree on what `//dist` names, and no shorter spelling means the same thing on both.
+				if (stripped !== '' && pattern === `/${stripped}`) {
 					const expected = negation + stripped;
 
 					context.report({
@@ -60,7 +73,10 @@ const create = context => ({
 				}
 			}
 
-			if (isAbsolutePath(pattern)) {
+			// Npm strips one leading `./` from a `files` entry, so `.//dist` is the absolute `/dist` and publishes nothing.
+			const path = field === 'files' ? pattern.replace(/^\.\//u, '') : pattern;
+
+			if (isAbsolutePath(path)) {
 				context.report({
 					node: valueNode,
 					messageId: MESSAGE_ID,

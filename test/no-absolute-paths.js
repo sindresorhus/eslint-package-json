@@ -52,6 +52,7 @@ snapshotTest.snapshot({
 		'{"main": ["/abs/a.js"]}',
 		'{"main": {"x": "/abs/a.js"}}',
 		'{"browser": {"x": {"y": "/abs/z.js"}}}',
+		'{"files": ["./dist"]}',
 	],
 	invalid: [
 		'{"main": "/abs/index.js"}',
@@ -85,6 +86,8 @@ snapshotTest.snapshot({
 		// The object form of `browser` is a replacement map whose string values are paths too.
 		'{"browser": {"./server.js": "/Users/me/project/index.js"}}',
 		'{"browser": {"fs": false, "lodash": "C:/project/node_modules/lodash/index.js"}}',
+		// Npm strips one leading `./` from a `files` entry, so what is left here is the absolute `/dist`, which publishes nothing. Verified with `npm pack`.
+		'{"files": [".//dist"]}',
 	],
 });
 

@@ -11,7 +11,7 @@
 
 Paths in `package.json` must use forward slashes. Windows build tools sometimes emit backslashes (e.g. `".\\dist\\index.js"`), which resolve on Windows but break on Linux and macOS. Forward slashes work everywhere.
 
-This rule flags backslashes in path fields (`main`, `module`, `browser`, `types`, `typings`, `bin`, `files`, and `exports`/`imports` targets) and autofixes them to forward slashes.
+This rule flags backslashes in path fields (`main`, `module`, `browser`, `types`, `typings`, `bin`, `man`, `files`, and `exports`/`imports` targets) and autofixes them to forward slashes.
 
 ## Examples
 

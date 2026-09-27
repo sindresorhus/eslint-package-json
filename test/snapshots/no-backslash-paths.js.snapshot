@@ -87,3 +87,57 @@ Output:
   1 | {"types": "./index.d.ts"}
 
 `;
+
+exports[`invalid(6): {\"man\": \"npm\\\\npm.1\"} 1`] = `
+
+[Input]
+  1 | {"man": "npm\\\\npm.1"}
+
+`;
+
+exports[`invalid(6): {\"man\": \"npm\\\\npm.1\"} 2`] = `
+
+Message:
+> 1 | {"man": "npm\\\\npm.1"}
+    |         ^^^^^^^^^^^^ Path \`npm\\npm.1\` must use forward slashes, not backslashes.
+
+Output:
+  1 | {"man": "npm/npm.1"}
+
+`;
+
+exports[`invalid(7): {\"man\": [\"npm\\\\npm.1\", \"npm.1\"]} 1`] = `
+
+[Input]
+  1 | {"man": ["npm\\\\npm.1", "npm.1"]}
+
+`;
+
+exports[`invalid(7): {\"man\": [\"npm\\\\npm.1\", \"npm.1\"]} 2`] = `
+
+Message:
+> 1 | {"man": ["npm\\\\npm.1", "npm.1"]}
+    |          ^^^^^^^^^^^^ Path \`npm\\npm.1\` must use forward slashes, not backslashes.
+
+Output:
+  1 | {"man": ["npm/npm.1", "npm.1"]}
+
+`;
+
+exports[`invalid(8): {\"browser\": {\"./server.js\": \".\\\\dist\\\\browser.js\"}} 1`] = `
+
+[Input]
+  1 | {"browser": {"./server.js": ".\\\\dist\\\\browser.js"}}
+
+`;
+
+exports[`invalid(8): {\"browser\": {\"./server.js\": \".\\\\dist\\\\browser.js\"}} 2`] = `
+
+Message:
+> 1 | {"browser": {"./server.js": ".\\\\dist\\\\browser.js"}}
+    |                             ^^^^^^^^^^^^^^^^^^^^^ Path \`.\\dist\\browser.js\` must use forward slashes, not backslashes.
+
+Output:
+  1 | {"browser": {"./server.js": "./dist/browser.js"}}
+
+`;

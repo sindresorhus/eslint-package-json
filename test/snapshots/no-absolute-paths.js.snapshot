@@ -216,6 +216,21 @@ Message:
 
 `;
 
+exports[`invalid(21): {\"files\": [\".//dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": [".//dist"]}
+
+`;
+
+exports[`invalid(21): {\"files\": [\".//dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": [".//dist"]}
+    |            ^^^^^^^^^ Path \`.//dist\` must be relative, not absolute.
+
+`;
+
 exports[`invalid(3): {\"main\": \"C:/project/index.js\"} 1`] = `
 
 [Input]
