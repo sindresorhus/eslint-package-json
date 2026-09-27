@@ -118,18 +118,48 @@ Message:
 
 `;
 
-exports[`invalid(17): {\"exports\":\"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\",\"files\":[\"*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z\"]} 1`] = `
+exports[`invalid(17): {\"main\": \"./index.js\", \"files\": [\"dist\"]} 1`] = `
 
 [Input]
-  1 | {"exports":"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js","files":["*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z"]}
+  1 | {"main": "./index.js", "files": ["dist"]}
 
 `;
 
-exports[`invalid(17): {\"exports\":\"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\",\"files\":[\"*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z\"]} 2`] = `
+exports[`invalid(17): {\"main\": \"./index.js\", \"files\": [\"dist\"]} 2`] = `
 
 Message:
-> 1 | {"exports":"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js","files":["*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z"]}
-    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entry point \`./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\` is not covered by the \`files\` allowlist.
+> 1 | {"main": "./index.js", "files": ["dist"]}
+    |          ^^^^^^^^^^^^ Entry point \`./index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(18): {\"name\": \"p\", \"exports\": \"./dist/index.js\", \"files\": [\".\"]} 1`] = `
+
+[Input]
+  1 | {"name": "p", "exports": "./dist/index.js", "files": ["."]}
+
+`;
+
+exports[`invalid(18): {\"name\": \"p\", \"exports\": \"./dist/index.js\", \"files\": [\".\"]} 2`] = `
+
+Message:
+> 1 | {"name": "p", "exports": "./dist/index.js", "files": ["."]}
+    |                          ^^^^^^^^^^^^^^^^^ Entry point \`./dist/index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(19): {\"browser\": \"./lib/x.js\", \"files\": [\"dist\"]} 1`] = `
+
+[Input]
+  1 | {"browser": "./lib/x.js", "files": ["dist"]}
+
+`;
+
+exports[`invalid(19): {\"browser\": \"./lib/x.js\", \"files\": [\"dist\"]} 2`] = `
+
+Message:
+> 1 | {"browser": "./lib/x.js", "files": ["dist"]}
+    |             ^^^^^^^^^^^^ Entry point \`./lib/x.js\` is not covered by the \`files\` allowlist.
 
 `;
 
@@ -148,6 +178,164 @@ Message:
 
 `;
 
+exports[`invalid(20): {\"name\": \"p\", \"main\": \"./index.js\", \"exports\": \"./index.js\", \"files\": [\"dist\"]} 1`] = `
+
+[Input]
+  1 | {"name": "p", "main": "./index.js", "exports": "./index.js", "files": ["dist"]}
+
+`;
+
+exports[`invalid(20): {\"name\": \"p\", \"main\": \"./index.js\", \"exports\": \"./index.js\", \"files\": [\"dist\"]} 2`] = `
+
+Message:
+> 1 | {"name": "p", "main": "./index.js", "exports": "./index.js", "files": ["dist"]}
+    |                       ^^^^^^^^^^^^ Entry point \`./index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(20): {\"name\": \"p\", \"main\": \"./index.js\", \"exports\": \"./index.js\", \"files\": [\"dist\"]} 3`] = `
+
+Message:
+> 1 | {"name": "p", "main": "./index.js", "exports": "./index.js", "files": ["dist"]}
+    |                                                ^^^^^^^^^^^^ Entry point \`./index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(21): {\"exports\":\"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\",\"files\":[\"*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z\"]} 1`] = `
+
+[Input]
+  1 | {"exports":"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js","files":["*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z"]}
+
+`;
+
+exports[`invalid(21): {\"exports\":\"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\",\"files\":[\"*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z\"]} 2`] = `
+
+Message:
+> 1 | {"exports":"./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js","files":["*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*z"]}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Entry point \`./aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(22): {\"name\": \"p\", \"browser\": {\"a.js\": \"./lib/a.js\"}, \"files\": [\"dist\"]} 1`] = `
+
+[Input]
+  1 | {"name": "p", "browser": {"a.js": "./lib/a.js"}, "files": ["dist"]}
+
+`;
+
+exports[`invalid(22): {\"name\": \"p\", \"browser\": {\"a.js\": \"./lib/a.js\"}, \"files\": [\"dist\"]} 2`] = `
+
+Message:
+> 1 | {"name": "p", "browser": {"a.js": "./lib/a.js"}, "files": ["dist"]}
+    |                                   ^^^^^^^^^^^^ Entry point \`./lib/a.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(23): {\"name\": \"p\", \"browser\": {\"a.js\": \"./lib/a.js\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "browser": {"a.js": "./lib/a.js"}}
+
+`;
+
+exports[`invalid(23): {\"name\": \"p\", \"browser\": {\"a.js\": \"./lib/a.js\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "browser": {"a.js": "./lib/a.js"}}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Add a \`files\` allowlist so only intended files are published.
+
+`;
+
+exports[`invalid(24): {\"name\": \"p\", \"files\": [\"dist\"], \"exports\": {\"./readme\": \"./docs/README.md\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["dist"], "exports": {"./readme": "./docs/README.md"}}
+
+`;
+
+exports[`invalid(24): {\"name\": \"p\", \"files\": [\"dist\"], \"exports\": {\"./readme\": \"./docs/README.md\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["dist"], "exports": {"./readme": "./docs/README.md"}}
+    |                                                          ^^^^^^^^^^^^^^^^^^ Entry point \`./docs/README.md\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(25): {\"name\": \"p\", \"files\": [\"dist\"], \"exports\": \"./docs/LICENSE\"} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["dist"], "exports": "./docs/LICENSE"}
+
+`;
+
+exports[`invalid(25): {\"name\": \"p\", \"files\": [\"dist\"], \"exports\": \"./docs/LICENSE\"} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["dist"], "exports": "./docs/LICENSE"}
+    |                                             ^^^^^^^^^^^^^^^^ Entry point \`./docs/LICENSE\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(26): {\"name\": \"p\", \"files\": [\".\"], \"exports\": \"./index.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["."], "exports": "./index.js"}
+
+`;
+
+exports[`invalid(26): {\"name\": \"p\", \"files\": [\".\"], \"exports\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["."], "exports": "./index.js"}
+    |                                          ^^^^^^^^^^^^ Entry point \`./index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(27): {\"name\": \"p\", \"files\": [\"./.\"], \"exports\": \"./index.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["./."], "exports": "./index.js"}
+
+`;
+
+exports[`invalid(27): {\"name\": \"p\", \"files\": [\"./.\"], \"exports\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["./."], "exports": "./index.js"}
+    |                                            ^^^^^^^^^^^^ Entry point \`./index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(28): {\"name\": \"p\", \"exports\": \"./dist/b.js\", \"files\": [\"//dist\"]} 1`] = `
+
+[Input]
+  1 | {"name": "p", "exports": "./dist/b.js", "files": ["//dist"]}
+
+`;
+
+exports[`invalid(28): {\"name\": \"p\", \"exports\": \"./dist/b.js\", \"files\": [\"//dist\"]} 2`] = `
+
+Message:
+> 1 | {"name": "p", "exports": "./dist/b.js", "files": ["//dist"]}
+    |                          ^^^^^^^^^^^^^ Entry point \`./dist/b.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(29): {\"name\": \"p\", \"exports\": \"./dist/b.js\", \"files\": [\".//dist\"]} 1`] = `
+
+[Input]
+  1 | {"name": "p", "exports": "./dist/b.js", "files": [".//dist"]}
+
+`;
+
+exports[`invalid(29): {\"name\": \"p\", \"exports\": \"./dist/b.js\", \"files\": [\".//dist\"]} 2`] = `
+
+Message:
+> 1 | {"name": "p", "exports": "./dist/b.js", "files": [".//dist"]}
+    |                          ^^^^^^^^^^^^^ Entry point \`./dist/b.js\` is not covered by the \`files\` allowlist.
+
+`;
+
 exports[`invalid(3): {\"name\": \"p\", \"exports\": \"./dist/b.js\", \"files\": [\"other*\"]} 1`] = `
 
 [Input]
@@ -163,6 +351,156 @@ Message:
 
 `;
 
+exports[`invalid(30): {\"name\": \"p\", \"files\": [\"./\"], \"exports\": \"./index.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["./"], "exports": "./index.js"}
+
+`;
+
+exports[`invalid(30): {\"name\": \"p\", \"files\": [\"./\"], \"exports\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["./"], "exports": "./index.js"}
+    |                                           ^^^^^^^^^^^^ Entry point \`./index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(31): {\"name\": \"p\", \"files\": [\"/\"], \"exports\": \"./index.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["/"], "exports": "./index.js"}
+
+`;
+
+exports[`invalid(31): {\"name\": \"p\", \"files\": [\"/\"], \"exports\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["/"], "exports": "./index.js"}
+    |                                          ^^^^^^^^^^^^ Entry point \`./index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(32): {\"name\": \"p\", \"files\": [\"//\"], \"exports\": \"./index.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["//"], "exports": "./index.js"}
+
+`;
+
+exports[`invalid(32): {\"name\": \"p\", \"files\": [\"//\"], \"exports\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["//"], "exports": "./index.js"}
+    |                                           ^^^^^^^^^^^^ Entry point \`./index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(33): {\"name\": \"p\", \"files\": [\"./\"], \"exports\": {\"./a\": \"./dist/a.js\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["./"], "exports": {"./a": "./dist/a.js"}}
+
+`;
+
+exports[`invalid(33): {\"name\": \"p\", \"files\": [\"./\"], \"exports\": {\"./a\": \"./dist/a.js\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["./"], "exports": {"./a": "./dist/a.js"}}
+    |                                                   ^^^^^^^^^^^^^ Entry point \`./dist/a.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(34): {\"name\": \"p\", \"files\": [\"/\"], \"exports\": \"./dist/index.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["/"], "exports": "./dist/index.js"}
+
+`;
+
+exports[`invalid(34): {\"name\": \"p\", \"files\": [\"/\"], \"exports\": \"./dist/index.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["/"], "exports": "./dist/index.js"}
+    |                                          ^^^^^^^^^^^^^^^^^ Entry point \`./dist/index.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(35): {\"name\": \"p\", \"files\": [\".\"], \"exports\": {\"./*\": \"./*\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["."], "exports": {"./*": "./*"}}
+
+`;
+
+exports[`invalid(35): {\"name\": \"p\", \"files\": [\".\"], \"exports\": {\"./*\": \"./*\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["."], "exports": {"./*": "./*"}}
+    |                                                  ^^^^^ Entry point \`./*\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(36): {\"name\": \"p\", \"files\": [\"//dist\"], \"exports\": {\"./*\": \"./*\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["//dist"], "exports": {"./*": "./*"}}
+
+`;
+
+exports[`invalid(36): {\"name\": \"p\", \"files\": [\"//dist\"], \"exports\": {\"./*\": \"./*\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["//dist"], "exports": {"./*": "./*"}}
+    |                                                       ^^^^^ Entry point \`./*\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(37): {\"name\": \"p\", \"files\": [\"distribution\"], \"exports\": {\"./*\": \"./dist/*.js\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["distribution"], "exports": {"./*": "./dist/*.js"}}
+
+`;
+
+exports[`invalid(37): {\"name\": \"p\", \"files\": [\"distribution\"], \"exports\": {\"./*\": \"./dist/*.js\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["distribution"], "exports": {"./*": "./dist/*.js"}}
+    |                                                             ^^^^^^^^^^^^^ Entry point \`./dist/*.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(38): {\"name\": \"p\", \"files\": [\"dist/*.js\"], \"exports\": {\".\": \"./dist/index.js\", \"./styles/*\": \"./dist/*.css\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["dist/*.js"], "exports": {".": "./dist/index.js", "./styles/*": "./dist/*.css"}}
+
+`;
+
+exports[`invalid(38): {\"name\": \"p\", \"files\": [\"dist/*.js\"], \"exports\": {\".\": \"./dist/index.js\", \"./styles/*\": \"./dist/*.css\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["dist/*.js"], "exports": {".": "./dist/index.js", "./styles/*": "./dist/*.css"}}
+    |                                                                                         ^^^^^^^^^^^^^^ Entry point \`./dist/*.css\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(39): {\"name\": \"p\", \"files\": [\"index.js\", \"dist/*.d.ts\"], \"exports\": {\".\": \"./index.js\", \"./*\": \"./dist/*.js\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["index.js", "dist/*.d.ts"], "exports": {".": "./index.js", "./*": "./dist/*.js"}}
+
+`;
+
+exports[`invalid(39): {\"name\": \"p\", \"files\": [\"index.js\", \"dist/*.d.ts\"], \"exports\": {\".\": \"./index.js\", \"./*\": \"./dist/*.js\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["index.js", "dist/*.d.ts"], "exports": {".": "./index.js", "./*": "./dist/*.js"}}
+    |                                                                                           ^^^^^^^^^^^^^ Entry point \`./dist/*.js\` is not covered by the \`files\` allowlist.
+
+`;
+
 exports[`invalid(4): {\"exports\": \"./dist/foo.js\", \"files\": [\"*.js\"]} 1`] = `
 
 [Input]
@@ -175,6 +513,36 @@ exports[`invalid(4): {\"exports\": \"./dist/foo.js\", \"files\": [\"*.js\"]} 2`]
 Message:
 > 1 | {"exports": "./dist/foo.js", "files": ["*.js"]}
     |             ^^^^^^^^^^^^^^^ Entry point \`./dist/foo.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(40): {\"name\": \"p\", \"files\": [\"dist/index.d.ts\"], \"exports\": {\"./*\": \"./dist/*.js\"}} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["dist/index.d.ts"], "exports": {"./*": "./dist/*.js"}}
+
+`;
+
+exports[`invalid(40): {\"name\": \"p\", \"files\": [\"dist/index.d.ts\"], \"exports\": {\"./*\": \"./dist/*.js\"}} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["dist/index.d.ts"], "exports": {"./*": "./dist/*.js"}}
+    |                                                                ^^^^^^^^^^^^^ Entry point \`./dist/*.js\` is not covered by the \`files\` allowlist.
+
+`;
+
+exports[`invalid(41): {\"name\": \"p\", \"files\": [\"**/index.js\"], \"exports\": \"./myindex.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "p", "files": ["**/index.js"], "exports": "./myindex.js"}
+
+`;
+
+exports[`invalid(41): {\"name\": \"p\", \"files\": [\"**/index.js\"], \"exports\": \"./myindex.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "p", "files": ["**/index.js"], "exports": "./myindex.js"}
+    |                                                    ^^^^^^^^^^^^^^ Entry point \`./myindex.js\` is not covered by the \`files\` allowlist.
 
 `;
 
