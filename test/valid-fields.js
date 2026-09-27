@@ -414,6 +414,9 @@ test.snapshot({
 		// An empty `bugs` string or object is left to `no-empty-fields`.
 		'{"bugs": ""}',
 		'{"bugs": {}}',
+		// `libnpmpublish` throws `EUSAGE` for `provenance: true` on a first publish unless `access` is `public`, so it is not redundant on an unscoped package.
+		'{"name": "foo", "publishConfig": {"access": "public", "provenance": true}}',
+		'{"name": "foo", "publishConfig": {"access": "public"}}',
 	],
 	invalid: [
 		// A recognized protocol is required, not merely a hostname.
@@ -666,8 +669,7 @@ test.snapshot({
 		'{"publishConfig": {"access": "private"}}',
 		'{"publishConfig": {"access": true}}',
 		'{"publishConfig": {"provenance": "true"}}',
-		// `access` is redundant for an unscoped package, regardless of its value.
-		'{"name": "foo", "publishConfig": {"access": "public"}}',
+		// `libnpmpublish` throws `EUNSCOPED` for a restricted unscoped package.
 		'{"name": "foo", "publishConfig": {"access": "restricted"}}',
 		'{"publishConfig": {"tag": ""}}',
 		'{"publishConfig": {"tag": 42}}',
@@ -787,7 +789,7 @@ test.snapshot({
 		'{"publishConfig": {"tag": "v1.4"}}',
 		// A shadowed duplicate must go too. Removing only the effective `optional` would promote the earlier `true`, flipping the peer dependency to optional.
 		'{"peerDependencies": {"a": "^1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true, "optional": false}}}',
-		'{"name": "foo", "publishConfig": {"access": "restricted", "access": "public"}}',
+		'{"name": "foo", "publishConfig": {"access": "public", "access": "restricted"}}',
 		// `npm publish` throws `name field must be a string`, so a non-string name cannot be published at all.
 		'{"name": 42}',
 		'{"name": null}',

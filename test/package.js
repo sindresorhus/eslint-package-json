@@ -318,7 +318,7 @@ const trickyDocuments = [
 	'{"maintainers":["a"],"maintainers":["b"]}',
 	'{"overrides":{"a":"1.0.0"},"overrides":{"b":"1.0.0"}}',
 	'{"repository":"foo/bar","homepage":"https://old.example.com","homepage":"https://github.com/foo/bar#readme"}',
-	'{"name":"foo","publishConfig":{"access":"restricted","access":"public"}}',
+	'{"name":"foo","publishConfig":{"access":"public","access":"restricted"}}',
 	'{"peerDependencies":{"a":"^1.0.0"},"peerDependenciesMeta":{"a":{"optional":true,"optional":false}}}',
 	// A duplicated group member that a removal has to take with it, since `findMember` resolved the final one and
 	// leaving the earlier duplicate in place would resurrect the very report the removal was offered for.

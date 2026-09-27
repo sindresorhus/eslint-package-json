@@ -1,13 +1,13 @@
 import {
 	findMember,
-	removeMemberAndDuplicates,
+	removeEntryAndEmptyContainer,
 	isHttpUrl,
 	validRange,
 } from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const ACCESS_MESSAGE_ID = 'access';
-const REDUNDANT_ACCESS_MESSAGE_ID = 'redundantAccess';
+const UNSCOPED_RESTRICTED_MESSAGE_ID = 'unscopedRestricted';
 const PROVENANCE_MESSAGE_ID = 'provenance';
 const TAG_MESSAGE_ID = 'tag';
 const REGISTRY_MESSAGE_ID = 'registry';
@@ -16,7 +16,8 @@ const REMOVE_SUGGESTION_ID = 'remove';
 export const messages = {
 	[TYPE_MESSAGE_ID]: 'The `publishConfig` field must be an object.',
 	[ACCESS_MESSAGE_ID]: 'The `publishConfig.access` field must be "public" or "restricted".',
-	[REDUNDANT_ACCESS_MESSAGE_ID]: '`publishConfig.access` has no effect for an unscoped package.',
+	// `libnpmpublish` throws `EUNSCOPED` for this, so the field stops the publish.
+	[UNSCOPED_RESTRICTED_MESSAGE_ID]: '`publishConfig.access` cannot be "restricted" for an unscoped package; `npm publish` fails with `EUNSCOPED`.',
 	[PROVENANCE_MESSAGE_ID]: 'The `publishConfig.provenance` field must be a boolean.',
 	[TAG_MESSAGE_ID]: 'The `publishConfig.tag` field must be a non-empty string that is not a valid SemVer range.',
 	[REGISTRY_MESSAGE_ID]: 'The `publishConfig.registry` field must be a valid `http(s)` URL.',
@@ -51,16 +52,16 @@ export function * check(root, context) {
 				node: access.value,
 				messageId: ACCESS_MESSAGE_ID,
 			};
-		} else if (isUnscoped) {
-			// `access` is ignored by npm for unscoped packages (they are always public).
+		} else if (isUnscoped && access.value.value === 'restricted') {
+			// `libnpmpublish` throws `EUNSCOPED` for a restricted unscoped package, so the publish fails. A `public` one is left alone: it is not redundant, because `libnpmpublish` throws `EUSAGE` for `provenance: true` on a first publish unless `access` is `public`.
 			yield {
 				node: access.name,
-				messageId: REDUNDANT_ACCESS_MESSAGE_ID,
+				messageId: UNSCOPED_RESTRICTED_MESSAGE_ID,
 				suggest: [
 					{
 						messageId: REMOVE_SUGGESTION_ID,
 						* fix(fixer) {
-							yield * removeMemberAndDuplicates(fixer, context.sourceCode, access);
+							yield * removeEntryAndEmptyContainer(fixer, context.sourceCode, publishConfig, access);
 						},
 					},
 				],
@@ -79,7 +80,8 @@ export function * check(root, context) {
 
 	const tag = findMember(publishConfig.value, 'tag');
 
-	if (tag && (tag.value.type !== 'String' || tag.value.value === '' || validRange(tag.value.value) !== null)) {
+	// `validRange('')` is `'*'`, so an empty tag is rejected here too.
+	if (tag && (tag.value.type !== 'String' || validRange(tag.value.value) !== null)) {
 		yield {
 			node: tag.value,
 			messageId: TAG_MESSAGE_ID,
