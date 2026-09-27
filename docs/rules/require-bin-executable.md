@@ -9,6 +9,8 @@
 
 The `bin` field exposes executable commands. This rule requires every existing regular file it references to have the Unix owner execute bit, regardless of extension. Git uses this bit to record files as executable.
 
+npm sets the bit on install, so this only matters for running `./cli.js` from a fresh clone.
+
 Use `chmod u+x path/to/file` to set the permission. To also record the file as executable in Git's index, use `git update-index --chmod=+x path/to/file`; this does not change the working-tree mode checked by the rule. On filesystems without Unix permissions, the check is best-effort.
 
 The rule does nothing on Windows. It ignores missing, inaccessible, non-regular, virtual, and out-of-package targets, symlinks resolving outside the package, and `directories.bin`.
