@@ -7,7 +7,7 @@ const CONTRIBUTORS_TYPE_MESSAGE_ID = 'contributorsType';
 export const messages = {
 	[PERSON_TYPE_MESSAGE_ID]: 'A person must be a string or an object with a `name`.',
 	[NAME_MESSAGE_ID]: 'A person object must have a `name` string.',
-	[CONTRIBUTORS_TYPE_MESSAGE_ID]: 'The `contributors` field must be an array.',
+	[CONTRIBUTORS_TYPE_MESSAGE_ID]: 'The `{{field}}` field must be an array.',
 };
 
 export function * check(root) {
@@ -41,17 +41,24 @@ export function * check(root) {
 		yield * checkPerson(author.value);
 	}
 
-	const contributors = findMember(root, 'contributors');
+	// `contributors` and `maintainers` are both lists of people, and npm reads a `null` entry in either as
+	// a person, so it throws `Cannot read properties of null (reading 'name')` and the package cannot publish.
+	for (const field of ['contributors', 'maintainers']) {
+		const member = findMember(root, field);
 
-	if (contributors) {
-		if (contributors.value.type === 'Array') {
-			for (const element of contributors.value.elements) {
+		if (!member) {
+			continue;
+		}
+
+		if (member.value.type === 'Array') {
+			for (const element of member.value.elements) {
 				yield * checkPerson(element.value);
 			}
 		} else {
 			yield {
-				node: contributors.value,
+				node: member.value,
 				messageId: CONTRIBUTORS_TYPE_MESSAGE_ID,
+				data: {field},
 			};
 		}
 	}
