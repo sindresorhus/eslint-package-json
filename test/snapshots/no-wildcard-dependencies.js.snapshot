@@ -13,6 +13,26 @@ Message:
 
 `;
 
+exports[`invalid(10): {\"peerDependencies\": {\"react\": \"*\"}} 1`] = `
+
+[Input]
+Options:
+- dependencyTypes:
+    - 'peerDependencies'
+
+Code:
+  1 | {"peerDependencies": {"react": "*"}}
+
+`;
+
+exports[`invalid(10): {\"peerDependencies\": {\"react\": \"*\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"react": "*"}}
+    |                                ^^^ Dependency \`react\` must not use the wildcard range \`*\`; specify an explicit version range.
+
+`;
+
 exports[`invalid(2): {\"dependencies\": {\"foo\": \"\"}} 1`] = `
 
 [Input]
@@ -88,22 +108,47 @@ Message:
 
 `;
 
-exports[`invalid(7): {\"peerDependencies\": {\"react\": \"*\"}} 1`] = `
+exports[`invalid(7): {\"dependencies\": {\"foo\": \"npm:bar@*\"}} 1`] = `
 
 [Input]
-Options:
-- dependencyTypes:
-    - 'peerDependencies'
-
-Code:
-  1 | {"peerDependencies": {"react": "*"}}
+  1 | {"dependencies": {"foo": "npm:bar@*"}}
 
 `;
 
-exports[`invalid(7): {\"peerDependencies\": {\"react\": \"*\"}} 2`] = `
+exports[`invalid(7): {\"dependencies\": {\"foo\": \"npm:bar@*\"}} 2`] = `
 
 Message:
-> 1 | {"peerDependencies": {"react": "*"}}
-    |                                ^^^ Dependency \`react\` must not use the wildcard range \`*\`; specify an explicit version range.
+> 1 | {"dependencies": {"foo": "npm:bar@*"}}
+    |                          ^^^^^^^^^^^ Dependency \`foo\` must not use the wildcard range \`*\`; specify an explicit version range.
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"npm:bar@x\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "npm:bar@x"}}
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"npm:bar@x\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "npm:bar@x"}}
+    |                          ^^^^^^^^^^^ Dependency \`foo\` must not use the wildcard range \`x\`; specify an explicit version range.
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"npm:bar\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "npm:bar"}}
+
+`;
+
+exports[`invalid(9): {\"dependencies\": {\"foo\": \"npm:bar\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "npm:bar"}}
+    |                          ^^^^^^^^^ Dependency \`foo\` must not use the wildcard range \`*\`; specify an explicit version range.
 
 `;

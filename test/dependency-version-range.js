@@ -38,6 +38,9 @@ test.snapshot({
 			code: '{"dependencies": {"foo": "latest", "bar": "workspace:^"}}',
 			options: [{range: 'consistent'}],
 		},
+		// An `npm:` alias carrying a range is classified by that range, so a caret one is already the default.
+		'{"dependencies": {"foo": "npm:bar@^1.0.0"}}',
+		'{"dependencies": {"foo": "npm:@scope/bar@latest"}}',
 	],
 	invalid: [
 		// A tie between tilde and exact resolves by the fixed caret/tilde/exact preference.
@@ -47,6 +50,10 @@ test.snapshot({
 		},
 		'{"dependencies": {"foo": "1.0.0"}}',
 		'{"dependencies": {"foo": "~1.0.0"}}',
+		// An `npm:` alias carrying an exact version is one too, and the suggestion keeps the alias.
+		'{"dependencies": {"foo": "npm:bar@1.0.0"}}',
+		'{"dependencies": {"foo": "npm:@scope/bar@1.0.0"}}',
+		'{"dependencies": {"foo": "npm:bar@1.0.0 ", "bar": "^1.0.0"}}',
 		// A `v`-prefixed version normalizes to a clean `^1.0.0` suggestion, not `^v1.0.0`.
 		'{"dependencies": {"foo": "v1.0.0"}}',
 		{
@@ -69,5 +76,13 @@ test.snapshot({
 			code: '{"dependencies": {"a": "^1.0.0", "b": "^2.0.0", "c": "~3.0.0"}}',
 			options: [{range: 'consistent'}],
 		},
+		// An `=`-prefixed pin is exactly as restrictive as the bare form, which the default `caret` range
+		// reports. A real comparator is a range and stays as written.
+		'{"dependencies": {"a": "=1.2.3"}}',
+		'{"dependencies": {"a": "=v1.2.3"}}',
+		// A `+build` the author wrote is part of the version, so the rewritten range keeps it rather than
+		// dropping it the way `semver.valid` does.
+		'{"dependencies": {"a": "1.2.3+build.5"}}',
+		'{"dependencies": {"a": "v1.2.3+build.5"}}',
 	],
 });

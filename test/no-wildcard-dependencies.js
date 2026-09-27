@@ -13,6 +13,10 @@ test.snapshot({
 		'{"dependencies": {"foo": "workspace:*"}}',
 		'{"dependencies": {"foo": "file:../foo"}}',
 		'{"dependencies": {"foo": "github:user/repo"}}',
+		// An `npm:` alias carries a real range, so it is not a wildcard either.
+		'{"dependencies": {"foo": "npm:bar@^1.0.0"}}',
+		'{"dependencies": {"foo": "npm:bar@1.2.3"}}',
+		'{"dependencies": {"foo": "npm:@scope/bar@~1.2.0"}}',
 		// `*` in `peerDependencies` is allowed by default.
 		'{"peerDependencies": {"react": "*"}}',
 		// Non-string values are ignored.
@@ -30,6 +34,10 @@ test.snapshot({
 		'{"dependencies": {"foo": "X"}}',
 		'{"devDependencies": {"foo": "*"}}',
 		'{"optionalDependencies": {"foo": "*"}}',
+		// An `npm:` alias with no range installs whatever is newest, which is the wildcard case by another name.
+		'{"dependencies": {"foo": "npm:bar@*"}}',
+		'{"dependencies": {"foo": "npm:bar@x"}}',
+		'{"dependencies": {"foo": "npm:bar"}}',
 		// `peerDependencies` flagged only when opted in.
 		{
 			code: '{"peerDependencies": {"react": "*"}}',

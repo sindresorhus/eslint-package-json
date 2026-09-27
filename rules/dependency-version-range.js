@@ -1,10 +1,12 @@
 import {
 	dependencyTypes,
 	getRootObject,
+	installedSpecifier,
 	iterateDependencies,
 	optionsSchema,
 	stringArraySchema,
 	validVersion,
+	canonicalVersion,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'dependency-version-range';
@@ -28,11 +30,15 @@ const classify = specifier => {
 	let version = specifier;
 	let style = 'exact';
 
+	// An `=`-prefixed version pins exactly as hard as the bare form, so it classifies the same way
+	// `no-exact-peer-dependencies` reads it. `>=` and the other comparators are ranges, not pins.
 	if (specifier.startsWith('^')) {
 		style = 'caret';
 		version = specifier.slice(1);
 	} else if (specifier.startsWith('~')) {
 		style = 'tilde';
+		version = specifier.slice(1);
+	} else if (specifier.startsWith('=')) {
 		version = specifier.slice(1);
 	}
 
@@ -42,8 +48,9 @@ const classify = specifier => {
 		return undefined;
 	}
 
-	// Use the normalized version so a non-standard input like `v1.0.0` converts to a clean `^1.0.0` rather than `^v1.0.0`.
-	return {style, version: normalized};
+	// Use the canonical version so a non-standard input like `v1.0.0` converts to a clean `^1.0.0` rather than
+	// `^v1.0.0`, while a `+build` the author wrote survives the rewrite instead of being dropped by `semver.valid`.
+	return {style, version: canonicalVersion(version)};
 };
 
 const toSpecifier = (range, version) => {
@@ -108,22 +115,33 @@ const create = context => {
 					continue;
 				}
 
-				const classified = classify(member.value.value);
+				// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` is an exact pin just like
+				// `1.2.3` is. What precedes the installed range is the alias, found by searching for the range
+				// rather than by measuring the tail, since `npm-package-arg` trims the range it reports and a
+				// trailing space would otherwise land the prefix in the middle of the version.
+				const specifier = member.value.value;
+				const installedRange = installedSpecifier(specifier);
+				const classified = classify(installedRange);
 
 				if (classified) {
-					entries.push({member, name, classified});
+					entries.push({
+						member,
+						name,
+						classified,
+						prefix: specifier.slice(0, specifier.lastIndexOf(installedRange)),
+					});
 				}
 			}
 
 			// In `consistent` mode the target style is whichever is most common, so a single-style file is always allowed.
 			const target = range === 'consistent' ? dominantStyle(entries.map(entry => entry.classified)) : range;
 
-			for (const {member, name, classified} of entries) {
+			for (const {member, name, classified, prefix} of entries) {
 				if (classified.style === target) {
 					continue;
 				}
 
-				const replacement = toSpecifier(target, classified.version);
+				const replacement = prefix + toSpecifier(target, classified.version);
 
 				context.report({
 					node: member.value,
