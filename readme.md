@@ -95,7 +95,7 @@ export default defineConfig({
 | Name                                                                                                   | Description                                                                               | 💼 | 🔧 | 💡 |
 | :----------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- | :- | :- | :- |
 | [consistent-name-casing](docs/rules/consistent-name-casing.md)                                         | Enforce kebab-case for keys in `scripts` and `bin` objects.                               |    |    |    |
-| [consistent-path-prefix](docs/rules/consistent-path-prefix.md)                                         | Enforce consistent `./` prefix on local path fields.                                      | ✅  | 🔧 |    |
+| [consistent-path-prefix](docs/rules/consistent-path-prefix.md)                                         | Enforce consistent `./` prefix on local path fields.                                      | ✅  | 🔧 | 💡 |
 | [dependency-version-range](docs/rules/dependency-version-range.md)                                     | Enforce a consistent version range style for dependencies.                                | ✅  |    | 💡 |
 | [description-format](docs/rules/description-format.md)                                                 | Enforce formatting of the `description` field.                                            |    | 🔧 |    |
 | [no-absolute-paths](docs/rules/no-absolute-paths.md)                                                   | Disallow absolute paths in path fields.                                                   | ✅  |    | 💡 |
@@ -117,7 +117,7 @@ export default defineConfig({
 | [no-local-dependencies](docs/rules/no-local-dependencies.md)                                           | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
 | [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                           | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
 | [no-missing-files](docs/rules/no-missing-files.md)                                                     | Disallow missing files referenced by package metadata.                                    |    |    |    |
-| [no-nested-exports](docs/rules/no-nested-exports.md)                                                   | Disallow `exports` and `imports` in nested `package.json` files.                          | ✅  |    | 💡 |
+| [no-nested-exports](docs/rules/no-nested-exports.md)                                                   | Disallow `exports` in nested `package.json` files.                                        | ✅  |    | 💡 |
 | [no-orphan-script-hooks](docs/rules/no-orphan-script-hooks.md)                                         | Disallow `pre`/`post` script hooks without a corresponding script.                        | ✅  |    |    |
 | [no-orphan-types](docs/rules/no-orphan-types.md)                                                       | Disallow `@types/*` packages without a corresponding dependency.                          | ✅  |    | 💡 |
 | [no-overrides-in-published-package](docs/rules/no-overrides-in-published-package.md)                   | Disallow `overrides` in packages that can be published.                                   | ✅  |    | 💡 |
@@ -128,7 +128,7 @@ export default defineConfig({
 | [no-restricted-dependencies](docs/rules/no-restricted-dependencies.md)                                 | Disallow specific dependencies.                                                           |    |    |    |
 | [no-restricted-fields](docs/rules/no-restricted-fields.md)                                             | Disallow specific fields.                                                                 |    |    | 💡 |
 | [no-self-dependency](docs/rules/no-self-dependency.md)                                                 | Disallow a package depending on itself.                                                   | ✅  |    | 💡 |
-| [no-typo-fields](docs/rules/no-typo-fields.md)                                                         | Disallow misspelled package.json field names.                                             | ✅  | 🔧 |    |
+| [no-typo-fields](docs/rules/no-typo-fields.md)                                                         | Disallow misspelled package.json field names.                                             | ✅  |    | 💡 |
 | [no-wildcard-dependencies](docs/rules/no-wildcard-dependencies.md)                                     | Disallow wildcard version ranges for dependencies.                                        | ✅  |    |    |
 | [no-workspace-protocol-in-published-package](docs/rules/no-workspace-protocol-in-published-package.md) | Disallow `workspace:` dependency specifiers in packages that can be published.            | ✅  |    |    |
 | [peer-dependencies-as-dev-dependencies](docs/rules/peer-dependencies-as-dev-dependencies.md)           | Enforce peer dependencies to also be listed in `devDependencies` at a compatible version. | ✅  |    | 💡 |
