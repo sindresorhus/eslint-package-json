@@ -16,6 +16,208 @@ Output:
 
 `;
 
+exports[`invalid(10): {\"maintainers\": [{\"name\": \"A\", \"url\": \"http://x.com\"}]} 1`] = `
+
+[Input]
+  1 | {"maintainers": [{"name": "A", "url": "http://x.com"}]}
+
+`;
+
+exports[`invalid(10): {\"maintainers\": [{\"name\": \"A\", \"url\": \"http://x.com\"}]} 2`] = `
+
+Message:
+> 1 | {"maintainers": [{"name": "A", "url": "http://x.com"}]}
+    |                                       ^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"maintainers": [{"name": "A", "url": "https://x.com"}]}
+
+`;
+
+exports[`invalid(11): {\"author\": \"A <a@b.c> (http://x.com)\"} 1`] = `
+
+[Input]
+  1 | {"author": "A <a@b.c> (http://x.com)"}
+
+`;
+
+exports[`invalid(11): {\"author\": \"A <a@b.c> (http://x.com)\"} 2`] = `
+
+Message:
+> 1 | {"author": "A <a@b.c> (http://x.com)"}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"author": "A <a@b.c> (https://x.com)"}
+
+`;
+
+exports[`invalid(12): {\"author\": \"Sindre Sorhus (http://sindresorhus.com)\"} 1`] = `
+
+[Input]
+  1 | {"author": "Sindre Sorhus (http://sindresorhus.com)"}
+
+`;
+
+exports[`invalid(12): {\"author\": \"Sindre Sorhus (http://sindresorhus.com)\"} 2`] = `
+
+Message:
+> 1 | {"author": "Sindre Sorhus (http://sindresorhus.com)"}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://sindresorhus.com\`.
+
+Output:
+  1 | {"author": "Sindre Sorhus (https://sindresorhus.com)"}
+
+`;
+
+exports[`invalid(13): {\"contributors\": [\"A <a@b.c> (http://x.com)\"]} 1`] = `
+
+[Input]
+  1 | {"contributors": ["A <a@b.c> (http://x.com)"]}
+
+`;
+
+exports[`invalid(13): {\"contributors\": [\"A <a@b.c> (http://x.com)\"]} 2`] = `
+
+Message:
+> 1 | {"contributors": ["A <a@b.c> (http://x.com)"]}
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"contributors": ["A <a@b.c> (https://x.com)"]}
+
+`;
+
+exports[`invalid(14): {\"contributors\": [{\"name\": \"A\"}, \"B <b@c.d> (http://y.com)\"]} 1`] = `
+
+[Input]
+  1 | {"contributors": [{"name": "A"}, "B <b@c.d> (http://y.com)"]}
+
+`;
+
+exports[`invalid(14): {\"contributors\": [{\"name\": \"A\"}, \"B <b@c.d> (http://y.com)\"]} 2`] = `
+
+Message:
+> 1 | {"contributors": [{"name": "A"}, "B <b@c.d> (http://y.com)"]}
+    |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://y.com\`.
+
+Output:
+  1 | {"contributors": [{"name": "A"}, "B <b@c.d> (https://y.com)"]}
+
+`;
+
+exports[`invalid(15): {\"maintainers\": [\"A <a@b.c> (http://x.com)\", {\"name\": \"B\", \"url\": \"http://y.com\"}]} 1`] = `
+
+[Input]
+  1 | {"maintainers": ["A <a@b.c> (http://x.com)", {"name": "B", "url": "http://y.com"}]}
+
+`;
+
+exports[`invalid(15): {\"maintainers\": [\"A <a@b.c> (http://x.com)\", {\"name\": \"B\", \"url\": \"http://y.com\"}]} 2`] = `
+
+Message:
+> 1 | {"maintainers": ["A <a@b.c> (http://x.com)", {"name": "B", "url": "http://y.com"}]}
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"maintainers": ["A <a@b.c> (https://x.com)", {"name": "B", "url": "http://y.com"}]}
+
+`;
+
+exports[`invalid(15): {\"maintainers\": [\"A <a@b.c> (http://x.com)\", {\"name\": \"B\", \"url\": \"http://y.com\"}]} 3`] = `
+
+Message:
+> 1 | {"maintainers": ["A <a@b.c> (http://x.com)", {"name": "B", "url": "http://y.com"}]}
+    |                                                                   ^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://y.com\`.
+
+Output:
+  1 | {"maintainers": ["A <a@b.c> (http://x.com)", {"name": "B", "url": "https://y.com"}]}
+
+`;
+
+exports[`invalid(16): {\"author\": \"A <a@b.c> (http://x.com)\", \"homepage\": \"http://y.com\"} 1`] = `
+
+[Input]
+  1 | {"author": "A <a@b.c> (http://x.com)", "homepage": "http://y.com"}
+
+`;
+
+exports[`invalid(16): {\"author\": \"A <a@b.c> (http://x.com)\", \"homepage\": \"http://y.com\"} 2`] = `
+
+Message:
+> 1 | {"author": "A <a@b.c> (http://x.com)", "homepage": "http://y.com"}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"author": "A <a@b.c> (https://x.com)", "homepage": "http://y.com"}
+
+`;
+
+exports[`invalid(16): {\"author\": \"A <a@b.c> (http://x.com)\", \"homepage\": \"http://y.com\"} 3`] = `
+
+Message:
+> 1 | {"author": "A <a@b.c> (http://x.com)", "homepage": "http://y.com"}
+    |                                                    ^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://y.com\`.
+
+Output:
+  1 | {"author": "A <a@b.c> (http://x.com)", "homepage": "https://y.com"}
+
+`;
+
+exports[`invalid(17): {\"author\": \"Bob (http://a.com) extra\"} 1`] = `
+
+[Input]
+  1 | {"author": "Bob (http://a.com) extra"}
+
+`;
+
+exports[`invalid(17): {\"author\": \"Bob (http://a.com) extra\"} 2`] = `
+
+Message:
+> 1 | {"author": "Bob (http://a.com) extra"}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://a.com\`.
+
+Output:
+  1 | {"author": "Bob (https://a.com) extra"}
+
+`;
+
+exports[`invalid(18): {\"author\": \"Bob <a@b.c> (http://a.com) (https://b.com)\"} 1`] = `
+
+[Input]
+  1 | {"author": "Bob <a@b.c> (http://a.com) (https://b.com)"}
+
+`;
+
+exports[`invalid(18): {\"author\": \"Bob <a@b.c> (http://a.com) (https://b.com)\"} 2`] = `
+
+Message:
+> 1 | {"author": "Bob <a@b.c> (http://a.com) (https://b.com)"}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://a.com\`.
+
+Output:
+  1 | {"author": "Bob <a@b.c> (https://a.com) (https://b.com)"}
+
+`;
+
+exports[`invalid(19): {\"author\": \"Foo () (http://example.com)\"} 1`] = `
+
+[Input]
+  1 | {"author": "Foo () (http://example.com)"}
+
+`;
+
+exports[`invalid(19): {\"author\": \"Foo () (http://example.com)\"} 2`] = `
+
+Message:
+> 1 | {"author": "Foo () (http://example.com)"}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://example.com\`.
+
+Output:
+  1 | {"author": "Foo () (https://example.com)"}
+
+`;
+
 exports[`invalid(2): {\"bugs\": \"http://example.com/issues\"} 1`] = `
 
 [Input]
@@ -31,6 +233,132 @@ Message:
 
 Output:
   1 | {"bugs": "https://example.com/issues"}
+
+`;
+
+exports[`invalid(20): {\"author\": \"A ((http://x.com))\"} 1`] = `
+
+[Input]
+  1 | {"author": "A ((http://x.com))"}
+
+`;
+
+exports[`invalid(20): {\"author\": \"A ((http://x.com))\"} 2`] = `
+
+Message:
+> 1 | {"author": "A ((http://x.com))"}
+    |            ^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"author": "A ((https://x.com))"}
+
+`;
+
+exports[`invalid(21): {\"author\": \"Foo (a (http://x.com) b)\"} 1`] = `
+
+[Input]
+  1 | {"author": "Foo (a (http://x.com) b)"}
+
+`;
+
+exports[`invalid(21): {\"author\": \"Foo (a (http://x.com) b)\"} 2`] = `
+
+Message:
+> 1 | {"author": "Foo (a (http://x.com) b)"}
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"author": "Foo (a (https://x.com) b)"}
+
+`;
+
+exports[`invalid(22): {\"author\": \"A (http://x.com/$&)\"} 1`] = `
+
+[Input]
+  1 | {"author": "A (http://x.com/$&)"}
+
+`;
+
+exports[`invalid(22): {\"author\": \"A (http://x.com/$&)\"} 2`] = `
+
+Message:
+> 1 | {"author": "A (http://x.com/$&)"}
+    |            ^^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com/$&\`.
+
+Output:
+  1 | {"author": "A (https://x.com/$&)"}
+
+`;
+
+exports[`invalid(23): {\"homepage\": \"HTTP://example.com\"} 1`] = `
+
+[Input]
+  1 | {"homepage": "HTTP://example.com"}
+
+`;
+
+exports[`invalid(23): {\"homepage\": \"HTTP://example.com\"} 2`] = `
+
+Message:
+> 1 | {"homepage": "HTTP://example.com"}
+    |              ^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`HTTP://example.com\`.
+
+Output:
+  1 | {"homepage": "https://example.com"}
+
+`;
+
+exports[`invalid(24): {\"bugs\": {\"url\": \"HTTP://example.com\"}} 1`] = `
+
+[Input]
+  1 | {"bugs": {"url": "HTTP://example.com"}}
+
+`;
+
+exports[`invalid(24): {\"bugs\": {\"url\": \"HTTP://example.com\"}} 2`] = `
+
+Message:
+> 1 | {"bugs": {"url": "HTTP://example.com"}}
+    |                  ^^^^^^^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`HTTP://example.com\`.
+
+Output:
+  1 | {"bugs": {"url": "https://example.com"}}
+
+`;
+
+exports[`invalid(25): {\"author\": {\"name\": \"A\", \"web\": \"http://a.com\"}} 1`] = `
+
+[Input]
+  1 | {"author": {"name": "A", "web": "http://a.com"}}
+
+`;
+
+exports[`invalid(25): {\"author\": {\"name\": \"A\", \"web\": \"http://a.com\"}} 2`] = `
+
+Message:
+> 1 | {"author": {"name": "A", "web": "http://a.com"}}
+    |                                 ^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://a.com\`.
+
+Output:
+  1 | {"author": {"name": "A", "web": "https://a.com"}}
+
+`;
+
+exports[`invalid(26): {\"maintainers\": [{\"name\": \"A\", \"url\": \"\", \"web\": \"http://a.com\"}]} 1`] = `
+
+[Input]
+  1 | {"maintainers": [{"name": "A", "url": "", "web": "http://a.com"}]}
+
+`;
+
+exports[`invalid(26): {\"maintainers\": [{\"name\": \"A\", \"url\": \"\", \"web\": \"http://a.com\"}]} 2`] = `
+
+Message:
+> 1 | {"maintainers": [{"name": "A", "url": "", "web": "http://a.com"}]}
+    |                                                  ^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://a.com\`.
+
+Output:
+  1 | {"maintainers": [{"name": "A", "url": "", "web": "https://a.com"}]}
 
 `;
 
@@ -121,5 +449,41 @@ Message:
 
 Output:
   1 | {"funding": ["https://example.com/sponsor"]}
+
+`;
+
+exports[`invalid(8): {\"author\": {\"name\": \"A\", \"url\": \"http://x.com\"}} 1`] = `
+
+[Input]
+  1 | {"author": {"name": "A", "url": "http://x.com"}}
+
+`;
+
+exports[`invalid(8): {\"author\": {\"name\": \"A\", \"url\": \"http://x.com\"}} 2`] = `
+
+Message:
+> 1 | {"author": {"name": "A", "url": "http://x.com"}}
+    |                                 ^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"author": {"name": "A", "url": "https://x.com"}}
+
+`;
+
+exports[`invalid(9): {\"contributors\": [{\"name\": \"A\", \"url\": \"http://x.com\"}]} 1`] = `
+
+[Input]
+  1 | {"contributors": [{"name": "A", "url": "http://x.com"}]}
+
+`;
+
+exports[`invalid(9): {\"contributors\": [{\"name\": \"A\", \"url\": \"http://x.com\"}]} 2`] = `
+
+Message:
+> 1 | {"contributors": [{"name": "A", "url": "http://x.com"}]}
+    |                                        ^^^^^^^^^^^^^^ Use \`https://\` instead of \`http://\` for \`http://x.com\`.
+
+Output:
+  1 | {"contributors": [{"name": "A", "url": "https://x.com"}]}
 
 `;

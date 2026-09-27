@@ -11,7 +11,7 @@
 
 Metadata URLs should use `https://`. An `http://` URL is insecure and increasingly unsupported; npm's own documentation uses `https://` throughout.
 
-This rule flags `http://` URLs in `homepage`, `bugs`, `repository`, and `funding` (string, `url`, or array forms) and autofixes them to `https://`.
+This rule flags `http://` URLs in `homepage`, `bugs`, `repository`, `funding`, and the URL of `author`, `contributors`, and `maintainers` (the member npm reads, or the `(url)` part of a person string), and autofixes them to `https://`.
 
 ## Examples
 
