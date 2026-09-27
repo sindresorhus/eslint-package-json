@@ -7,9 +7,11 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-The `bin` field exposes executable commands to package consumers. JavaScript bin files must start with the shebang `#!/usr/bin/env node`, so Unix-like systems invoke them with Node.js. The shebang may pass arguments to Node.js, such as `#!/usr/bin/env node --max-old-space-size=6144`, or use `#!/usr/bin/env -S node …` so Linux splits those arguments too.
+The `bin` field exposes executable commands to package consumers. JavaScript bin files must start with the shebang `#!/usr/bin/env node`, so Unix-like systems invoke them with Node.js. To pass arguments to Node.js, use `#!/usr/bin/env -S node --max-old-space-size=6144`, since without `-S`, Linux passes the rest of the line to `env` as one argument.
 
 This rule checks existing `.js`, `.mjs`, and `.cjs` files referenced by `bin`. Missing, unreadable, non-regular, unsupported, virtual, and out-of-package targets are ignored, as are symlinks that resolve outside the package and `directories.bin`. It does not check executable permissions.
+
+A shebang longer than 255 bytes is reported, since Linux truncates it.
 
 ## Examples
 

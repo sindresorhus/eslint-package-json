@@ -88,6 +88,81 @@ Message:
 
 `;
 
+exports[`invalid(15): {\"bin\": \"arguments.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "arguments.js"}
+
+`;
+
+exports[`invalid(15): {\"bin\": \"arguments.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "arguments.js"}
+    |         ^^^^^^^^^^^^^^ The \`bin\` file must start with a \`#!/usr/bin/env node\` shebang.
+
+`;
+
+exports[`invalid(16): {\"bin\": \"tab-terminator.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "tab-terminator.js"}
+
+`;
+
+exports[`invalid(16): {\"bin\": \"tab-terminator.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "tab-terminator.js"}
+    |         ^^^^^^^^^^^^^^^^^^^ The \`bin\` file must start with a \`#!/usr/bin/env node\` shebang.
+
+`;
+
+exports[`invalid(17): {\"bin\": \"too-long.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "too-long.js"}
+
+`;
+
+exports[`invalid(17): {\"bin\": \"too-long.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "too-long.js"}
+    |         ^^^^^^^^^^^^^ The \`bin\` file must have a shebang of at most 255 bytes; Linux truncates a longer one.
+
+`;
+
+exports[`invalid(18): {\"bin\": {\"tool\": \"too-long.js\"}} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": {"tool": "too-long.js"}}
+
+`;
+
+exports[`invalid(18): {\"bin\": {\"tool\": \"too-long.js\"}} 2`] = `
+
+Message:
+> 1 | {"bin": {"tool": "too-long.js"}}
+    |                  ^^^^^^^^^^^^^ The \`bin\` file for \`tool\` must have a shebang of at most 255 bytes; Linux truncates a longer one.
+
+`;
+
+exports[`invalid(19): {\"bin\": \"trailing-space-eof.js\"} 1`] = `
+
+[Input 'test/fixtures/require-bin-shebang/package.json']
+  1 | {"bin": "trailing-space-eof.js"}
+
+`;
+
+exports[`invalid(19): {\"bin\": \"trailing-space-eof.js\"} 2`] = `
+
+Message:
+> 1 | {"bin": "trailing-space-eof.js"}
+    |         ^^^^^^^^^^^^^^^^^^^^^^^ The \`bin\` file must start with a \`#!/usr/bin/env node\` shebang.
+
+`;
+
 exports[`invalid(2): {\"bin\": \"wrong-shebang.js\"} 1`] = `
 
 [Input 'test/fixtures/require-bin-shebang/package.json']
