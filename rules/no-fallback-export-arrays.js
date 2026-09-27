@@ -3,7 +3,7 @@ import {getRootObject, findMember, tryDecodeUriComponent} from './utils/index.js
 const MESSAGE_ID = 'no-fallback-export-arrays';
 
 const messages = {
-	[MESSAGE_ID]: 'String-target arrays in `{{field}}` are not fallback lists in Node.js; a missing first file or package does not make Node.js try the next target.',
+	[MESSAGE_ID]: 'String-target arrays in `{{field}}` are not fallback lists in Node.js; it moves past a target only when the target itself is invalid, never because the file it names is missing.',
 };
 
 /**
@@ -34,6 +34,7 @@ function isInvalidPackageTarget(value, field) {
 		return isInvalidRelativePackageTarget(value);
 	}
 
+	// In `exports` a bare package target is an invalid package target, which the ESM resolution algorithm skips and moves on from, so an array headed by one does fall through. In `imports` it names a package.
 	return field === 'exports'
 		|| value.startsWith('../')
 		|| value.startsWith('/')
