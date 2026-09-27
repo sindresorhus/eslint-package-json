@@ -20,9 +20,7 @@ Message:
   5 | }
 
 Suggestion 1/1: Remove the \`preinstall\` script.:
-  1 | {
-  2 | 	"scripts": {}
-  3 | }
+  1 | {}
 
 `;
 
@@ -48,9 +46,7 @@ Message:
   5 | }
 
 Suggestion 1/1: Remove the \`install\` script.:
-  1 | {
-  2 | 	"scripts": {}
-  3 | }
+  1 | {}
 
 `;
 
@@ -110,8 +106,6 @@ Message:
   6 | }
 
 Suggestion 1/1: Remove the \`preinstall\` script.:
-  1 | {
-  2 | 	"scripts": {}
-  3 | }
+  1 | {}
 
 `;
