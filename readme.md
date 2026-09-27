@@ -107,7 +107,7 @@ export default defineConfig({
 | [no-duplicate-dependencies](docs/rules/no-duplicate-dependencies.md)                                   | Disallow a dependency listed in multiple dependency groups.                               | ✅  | 🔧 | 💡 |
 | [no-empty-fields](docs/rules/no-empty-fields.md)                                                       | Disallow empty fields.                                                                    | ✅  |    | 💡 |
 | [no-exact-peer-dependencies](docs/rules/no-exact-peer-dependencies.md)                                 | Disallow exact versions for peer dependencies.                                            |    |    | 💡 |
-| [no-exports-trailing-slash](docs/rules/no-exports-trailing-slash.md)                                   | Disallow trailing-slash folder mappings in `exports`/`imports`.                           | ✅  | 🔧 |    |
+| [no-exports-trailing-slash](docs/rules/no-exports-trailing-slash.md)                                   | Disallow trailing-slash folder mappings in `exports`/`imports`.                           | ✅  |    | 💡 |
 | [no-fallback-export-arrays](docs/rules/no-fallback-export-arrays.md)                                   | Discourage string-target fallback arrays in `exports`/`imports`.                          | ✅  |    |    |
 | [no-git-dependencies](docs/rules/no-git-dependencies.md)                                               | Disallow git URLs as dependency specifiers.                                               |    |    |    |
 | [no-http-dependencies](docs/rules/no-http-dependencies.md)                                             | Disallow HTTP URLs as dependency specifiers.                                              | ✅  |    |    |
