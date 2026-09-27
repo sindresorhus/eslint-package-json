@@ -12,7 +12,25 @@ Validate the structure and values of individual `package.json` fields when they 
 
 Each field is validated only when it exists; use [`require-fields`](require-fields.md) to enforce presence.
 
-Semantic checks include repository URLs and `exports`/`imports` targets. Condition ordering and type coverage belong to [`require-default-condition`](require-default-condition.md) and [`require-types-in-exports`](require-types-in-exports.md). Legacy entry-point fields (`main`, `module`, `browser`, `types`, and `typings`) are intentionally ignored.
+Semantic checks include repository URLs and `exports`/`imports` targets. Some checks that are not obvious:
+
+- `bugs`: a string must be a URL or an email address, and an object must hold a URL in `url` and an email address in `email`, since npm silently drops anything else.
+- `funding`: each URL needs an `http:` or `https:` host, since `npm fund` drops the whole field when one entry holds anything else.
+- `exports`/`imports` targets: `.`, `..`, and `node_modules` segments are rejected, even percent-encoded.
+- `imports`: a `#` key nested in a conditions object is reported, since Node reads it as a condition name.
+- `readme`: it must be a string, since npm calls `.trim()` on it when publishing.
+- `contributors` and `maintainers`: each entry must be a person, since a `null` entry makes npm throw.
+- `license`: a custom `LicenseRef` or `DocumentRef` is reported, since npm's validator rejects it.
+- `workspaces`: an object must hold its globs in a `packages` array.
+- `os` and `cpu`: `any` is only valid as the sole value, since npm otherwise compares it as a platform name.
+- `keywords`: a string is split on `/,\s+/` like npm does, and each part is checked.
+- `devEngines`: keys must be `runtime`, `packageManager`, `cpu`, `os`, or `libc`, and each entry may hold only `name`, `version`, and `onFail`, since npm refuses to install otherwise.
+- `engines`: a value must be a string, since `--engine-strict` fails on anything else.
+- `homepage`: a value without a scheme is reported, since npm publishes it as `http://`.
+- `private`: must be a boolean, since `"false"` is truthy and blocks publishing.
+- `packageManager`: must be a string.
+
+Condition ordering and type coverage belong to [`require-default-condition`](require-default-condition.md) and [`require-types-in-exports`](require-types-in-exports.md). Legacy entry-point fields (`main`, `module`, `browser`, `types`, and `typings`) are intentionally ignored.
 
 The following fields are validated:
 
@@ -20,6 +38,7 @@ The following fields are validated:
 - `version`
 - `private`
 - `description`
+- `readme`
 - `license`
 - `repository`
 - `homepage`
@@ -27,6 +46,7 @@ The following fields are validated:
 - `funding`
 - `author`
 - `contributors`
+- `maintainers`
 - `type`
 - `exports`
 - `imports`
@@ -49,6 +69,7 @@ The following fields are validated:
 - `peerDependencies`
 - `peerDependenciesMeta`
 - `bundledDependencies`
+- `bundleDependencies`
 - `overrides`
 
 ## Examples

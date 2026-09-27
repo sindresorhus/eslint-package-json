@@ -674,6 +674,7 @@ export const platformFieldMessages = field => ({
 	type: `The \`${field}\` field must be an array or a string.`,
 	elementType: `Each \`${field}\` value must be a string.`,
 	invalid: `\`{{value}}\` is not a recognized \`${field}\` value.`,
+	any: `\`any\` means no restriction only as the sole \`${field}\` value. Anywhere else npm compares it like a real value, which no platform matches.`,
 });
 
 /**
@@ -703,9 +704,18 @@ export function * checkPlatformArray(rootObject, field, validValues) {
 			continue;
 		}
 
-		const excluded = value.value.startsWith('!');
+		const name = value.value.startsWith('!') ? value.value.slice(1) : value.value;
 
-		if (!validValues.has(excluded ? value.value.slice(1) : value.value)) {
+		// Npm's `checkList` reads `any` as "no restriction" only when it is the whole list. Anywhere else it compares it as a platform name, so `["any", "!win32"]` matches no platform at all. A negated `!any` excludes a platform nothing is named, so it restricts nothing either way.
+		if (name === 'any') {
+			if (values.length > 1 && value.value === 'any') {
+				yield {node: value, messageId: 'any', data: {value: value.value}};
+			}
+
+			continue;
+		}
+
+		if (!validValues.has(name)) {
 			yield {node: value, messageId: 'invalid', data: {value: value.value}};
 		}
 	}
