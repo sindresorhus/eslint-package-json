@@ -3,7 +3,7 @@ import {
 	getRootObject,
 	findMember,
 	iterateDependencies,
-	removeMemberAndDuplicates,
+	removeEntryAndEmptyContainer,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-self-dependency';
@@ -51,7 +51,7 @@ const create = context => {
 
 			const packageName = nameMember.value.value;
 
-			for (const {member, name} of iterateDependencies(root, checkedDependencyTypes)) {
+			for (const {group, member, name} of iterateDependencies(root, checkedDependencyTypes)) {
 				if (
 					name !== packageName
 					|| member.value.type !== 'String'
@@ -68,7 +68,7 @@ const create = context => {
 						{
 							messageId: SUGGESTION_ID,
 							* fix(fixer) {
-								yield * removeMemberAndDuplicates(fixer, sourceCode, member);
+								yield * removeEntryAndEmptyContainer(fixer, sourceCode, group, member);
 							},
 						},
 					],

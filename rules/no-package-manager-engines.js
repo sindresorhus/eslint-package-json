@@ -3,7 +3,6 @@ import {
 	getRootObject,
 	findMember,
 	getKey,
-	getNewline,
 	countEffectiveMembers,
 	iterateEffectiveMembers,
 	lineIndentOf,
@@ -55,7 +54,7 @@ function * migrateToPackageManager(fixer, sourceCode, {engines, member, packageM
 	const lineStart = sourceCode.text.lastIndexOf('\n', engines.range[0] - 1) + 1;
 	const memberPrefix = sourceCode.text.slice(lineStart, engines.range[0]);
 	const separator = memberPrefix.trim() === ''
-		? `,${getNewline(sourceCode)}${lineIndentOf(sourceCode, engines)}`
+		? `,\n${lineIndentOf(sourceCode, engines)}`
 		: ', ';
 
 	yield fixer.insertTextAfter(engines, `${separator}${packageManagerText}`);

@@ -1,7 +1,7 @@
 import {
 	findMember,
 	getKey,
-	removeMember,
+	removeEntryAndEmptyContainer,
 	removeMemberAndDuplicates,
 } from '../utils/index.js';
 
@@ -41,7 +41,7 @@ export function * check(root, context) {
 					{
 						messageId: SUGGESTION_ID,
 						* fix(fixer) {
-							yield * removeMember(fixer, sourceCode, member);
+							yield * removeEntryAndEmptyContainer(fixer, sourceCode, meta, member);
 						},
 					},
 				],

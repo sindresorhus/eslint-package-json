@@ -36,5 +36,9 @@ test.snapshot({
 		'{"name": "foo", "dependencies": {"foo": "latest"}}',
 		'{"name": "foo", "dependencies": {"foo": "1.0.0"}}',
 		'{"name": "foo", "dependencies": {"foo": "npm:foo@^1.0.0"}}',
+		// A duplicated group member is the same story one level up: the entry is the only one there, so the
+		// group goes with it, and taking the whole run is what keeps the earlier duplicate from taking its place.
+		'{"name": "foo", "dependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^1.0.0"}}',
+		'{"name": "foo", "dependencies": {"bar": "^1.0.0", "foo": "^1.0.0"}, "dependencies": {"foo": "^1.0.0"}}',
 	],
 });

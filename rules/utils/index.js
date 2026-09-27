@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import semver from 'semver';
+import npa from 'npm-package-arg';
 import detectIndent from 'detect-indent';
 
 /**
@@ -15,6 +16,8 @@ export const dependencyTypes = [
 
 /**
 The canonical order for known top-level package.json fields.
+
+The fields npm itself deprecates or ignores (`jsnext:main`, `preferGlobal`, `engineStrict`, `licenses`, `modules`) and third-party tool keys such as `bun` are deliberately left out, so `sort-properties` keeps them with the unknown fields at the end rather than inventing a position for them.
 */
 export const fieldOrder = [
 	'name',
@@ -27,6 +30,8 @@ export const fieldOrder = [
 	'bugs',
 	'funding',
 	'author',
+	// A legacy plural npm still passes through, next to the singular it duplicates.
+	'authors',
 	'contributors',
 	'maintainers',
 	'type',
@@ -52,12 +57,19 @@ export const fieldOrder = [
 	'files',
 	'workspaces',
 	'keywords',
+	// The dependency groups sit in the same order `sort-dependencies` uses by default, so a manifest written
+	// the way this plugin documents is not rewritten by `sort-properties`. Npm's own `depTypes` is
+	// `dependencies`, `optionalDependencies`, `devDependencies`, `peerDependencies`, which differs on the
+	// first pair, but `sort-dependencies` exposes its list as an option and this is its default.
 	'dependencies',
 	'devDependencies',
+	'optionalDependencies',
 	'peerDependencies',
 	'peerDependenciesMeta',
-	'optionalDependencies',
+	// Npm silently renames `bundledDependencies` to `bundleDependencies` on every fix, so both spellings
+	// belong next to each other rather than at the end as unknown fields.
 	'bundledDependencies',
+	'bundleDependencies',
 	'overrides',
 ];
 
@@ -72,8 +84,14 @@ export const knownFields = new Set([
 	'licenses',
 	'modules',
 	'bundleDependencies',
-	// Common runtime/tool config keys that are edit-distance 1 from a real field.
+	// Common runtime/tool config keys and legacy plurals that are edit-distance 1 from a real field.
+	// `authors` is the historical plural of `author`: npm passes it through, and renaming it to `author`
+	// hands npm an array where `stringifyPerson` expects one person, which normalizes to `{}`.
+	// `licence` is the spelling npm reads a license from when `license` is absent, so it is a field and not
+	// a misspelling, however it looks beside `license`.
 	'bun',
+	'authors',
+	'licence',
 ]);
 
 /**
@@ -292,6 +310,37 @@ export function withoutShadowedMembers(node) {
 }
 
 /**
+Check whether a value node is falsy the way a JavaScript `||` reads it: `null`, `false`, `0`, or the empty string.
+
+Every other JSON value is truthy, an object and an array included, so a member holding one is a value the `||`
+takes rather than steps over. Rules that read a field the way npm's `person.url || person.web` or
+`!data.bin` do need this, since an AST node is truthy whatever value it holds.
+*/
+export function isFalsyValue(node) {
+	switch (node?.type) {
+		case 'Null': {
+			return true;
+		}
+
+		case 'Boolean': {
+			return !node.value;
+		}
+
+		case 'Number': {
+			return node.value === 0;
+		}
+
+		case 'String': {
+			return node.value === '';
+		}
+
+		default: {
+			return false;
+		}
+	}
+}
+
+/**
 Check whether the package is private, i.e. has `"private": true`.
 */
 export function isPrivatePackage(rootObject) {
@@ -400,6 +449,44 @@ export function validVersion(version) {
 }
 
 /**
+The version npm publishes for a value `semver` accepts: the surrounding whitespace and the whole leading run of
+`=` pins and `v` prefixes go, and the build metadata stays.
+
+`semver.clean` is what npm publishes a version through, and it strips exactly that run, so matching it is what
+makes a fix land in one round: stripping one `=` from `=v1.0.0` would leave `v1.0.0` and the rule would report
+it again. `semver.valid` and `semver.clean` both drop `+build`, so a rule that rewrites a specifier through
+either of them silently removes an identifier the author wrote. A value `semver.clean` rejects is returned as
+written, for the caller to report rather than rewrite.
+*/
+export function canonicalVersion(version) {
+	return semver.clean(version) === null ? version : version.trim().replace(/^[=v]+/iu, '').trim();
+}
+
+/**
+Whether a version range targets a pre-release, decided the way `semver.minVersion` decides it: a range that starts
+at a stable version is not a pre-release range, even when a later bound in it carries a pre-release identifier. That
+is what `>=1.0.0 <2.0.0-0` is, the range `^1.0.0` normalizes to, where the `-0` upper bound excludes the next major's
+pre-releases rather than asking for one.
+
+`loose` reads the range the way `npm-package-arg` does when it resolves a dependency specifier, which accepts a
+leading zero in a numeric or pre-release identifier where strict SemVer does not.
+*/
+export function targetsPrerelease(range, {loose = false} = {}) {
+	// A pre-release identifier always contains a hyphen (`1.0.0-beta`), so a range without one cannot resolve to
+	// a pre-release. This skips the expensive `minVersion` for the overwhelming majority of ranges.
+	if (!range.includes('-')) {
+		return false;
+	}
+
+	try {
+		const minimum = semver.minVersion(range, loose);
+		return minimum !== null && semver.prerelease(minimum) !== null;
+	} catch {
+		return false;
+	}
+}
+
+/**
 Decode a percent-encoded string, or `undefined` when it contains a malformed escape that `decodeURIComponent` rejects.
 */
 export function tryDecodeUriComponent(value) {
@@ -410,8 +497,13 @@ export function tryDecodeUriComponent(value) {
 	}
 }
 
-// The segments Node rejects anywhere after the initial `./` of a package target.
-const invalidPackageTargetSegments = new Set(['', '.', '..', 'node_modules']);
+/*
+The segments Node rejects anywhere after the initial `./` of a package target.
+
+An empty segment is deliberately not here: Node resolves `./a//b.js`, only warning about it with DEP0166. It
+warns rather than refusing, so calling it invalid would reject a target that works.
+*/
+const invalidPackageTargetSegments = new Set(['.', '..', 'node_modules']);
 
 /**
 Check whether a package target contains a path segment that Node rejects after the initial `./`.
@@ -469,16 +561,117 @@ export function isHttpUrl(string) {
 	return url.protocol === 'http:' || url.protocol === 'https:';
 }
 
+// A protocol scheme is case-insensitive (RFC 3986), and `npm-package-arg` reads `NPM:` as the same alias.
+const aliasPattern = /^npm:/iu;
+
 /**
-A `.git` suffix, optionally followed by a `#ref`, marking a git repository URL. Shared by `no-git-dependencies` and `no-http-dependencies`.
+The package an `npm:` alias installs, resolved the way `npm-package-arg` resolves it, or `undefined` when the
+specifier is not an alias or the alias is malformed.
+
+An alias names the package it installs and the range it installs it at, neither of which the alias string itself
+says: `npm:foo@*` installs `foo` at any version and `npm:foo@1.2.3` installs exactly one. `name` on the result is
+the package it installs and `fetchSpec` the range it installs that at, so a rule that reads either reads it here.
 */
-export const gitSuffixPattern = /\.git(?:#.+)?$/;
+export function resolveAlias(specifier) {
+	if (!aliasPattern.test(specifier)) {
+		return undefined;
+	}
+
+	try {
+		return npa.resolve('alias', specifier).subSpec;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+The specifier npm actually installs for a dependency entry, which is any alias's own range and everything else
+unchanged. An alias `npm-package-arg` cannot parse is returned as written for the caller to reject.
+*/
+export function installedSpecifier(specifier) {
+	return resolveAlias(specifier)?.fetchSpec ?? specifier;
+}
+
+/**
+Check whether npm resolves a dependency specifier to a git remote. Shared by `no-git-dependencies`, which reports these, and `no-http-dependencies`, which leaves them alone so a git URL is never labelled an HTTP tarball.
+
+`npm-package-arg` decides from the host and the protocol, not from a `.git` suffix, so this catches the shapes no string pattern can: a hosted URL with no `git+` prefix and no `.git` suffix is a remote, an `ssh://` remote is one, and `https://example.com/foo.git` is a plain tarball npm downloads over HTTP.
+*/
+export function isGitRemote(specifier) {
+	try {
+		return npa(specifier).type === 'git';
+	} catch {
+		// `npm-package-arg` throws on protocols it does not know, such as `workspace:` and `link:`.
+		return false;
+	}
+}
+
+// A single `.` subsumes `./foo` and `../foo` as well as `.` and `..`, so those two entries are gone.
+// `link:` and `portal:` are the Yarn local-directory protocols.
+const localSpecifierPrefixes = ['file:', 'link:', 'portal:', '.', '/', '~/'];
+const windowsDrivePattern = /^[a-z]:[/\\]/iu;
+
+/**
+Normalize a `bin` path the way npm does before it publishes the target, or `''` when the path names nothing.
+Npm turns every `\` and `:` into a path separator, so `scripts\cli.js` and `C:cli.js` are the files
+`scripts/cli.js` and `C/cli.js`, and an empty result is a path npm has nowhere to write.
+*/
+export function normalizeBinPath(value) {
+	const unixPath = value.replaceAll(/[:\\]/gu, '/');
+	const normalizedPath = path.posix.join('.', path.posix.join('/', unixPath));
+	return normalizedPath.startsWith('./') ? '' : normalizedPath;
+}
+
+/**
+Normalize a `bin` command name the way npm does, which is the basename of the normalized path.
+*/
+export function normalizeBinName(value) {
+	return path.posix.basename(normalizeBinPath(value));
+}
+
+// A bare specifier with no protocol is a directory npm copies into `node_modules` as soon as it is three path
+// segments long or ends in a slash, because `npm-package-arg` reads a one- or two-segment one as the hosted
+// `owner/repo` shorthand instead. The first segment may not hold a colon, which is what tells the two apart.
+const bareDirectoryPattern = /^[^/:]+\/(?:[^/]*\/)+[^/]*$/u;
+// A single segment with a trailing slash is a directory by that same rule, and it has no second slash for the
+// pattern above to find.
+const bareDirectorySlashPattern = /^[^/:]+\/$/u;
+
+// Files npm force-includes at the package root whatever `files` says, matched case-insensitively, so a casing
+// variant needs no `files` entry either. The family is root-only: a nested `docs/README.md` is not published,
+// because the `docs` directory itself stays excluded. `package.json` is the one exact name: npm lists it without
+// the suffix the others carry, so `package.json.bak` is an ordinary file a `files` entry does publish.
+const alwaysIncludedFilePattern = /^(?:package\.json|(?:readme|copying|licen[cs]e)(?:\.[^/]*[^$/~])?)$/u;
+
+/**
+Whether a `files` entry names a file npm includes whatever `files` says, so a `files` entry for it is redundant.
+
+Shared by the rules that report such an entry as redundant and the rule that would otherwise offer to rewrite the
+same entry's spelling, which would turn a removable entry into one that stays.
+*/
+export function isAlwaysIncludedFile(value) {
+	// The leading `./` and `/` npm strips from a `files` entry are not part of the name, and its rules match
+	// case-insensitively, so a casing variant of these names is included too.
+	const normalized = value.replace(/^(?:\.\/|\/)+/u, '').replaceAll(/[A-Z]/gu, character => character.toLowerCase());
+
+	return normalized !== '' && alwaysIncludedFilePattern.test(normalized);
+}
+
+/**
+Check whether a dependency specifier references the local filesystem. Shared by `no-local-dependencies` and `no-git-dependencies`, which must not disagree about `file:../foo.git`: npm resolves it as a directory, so it is one or the other but never both.
+*/
+export function isLocalSpecifier(specifier) {
+	return localSpecifierPrefixes.some(prefix => specifier.startsWith(prefix))
+		|| windowsDrivePattern.test(specifier)
+		|| bareDirectoryPattern.test(specifier)
+		|| bareDirectorySlashPattern.test(specifier);
+}
 
 /**
 The messages a rule must include to use `checkPlatformArray`.
 */
 export const platformFieldMessages = field => ({
-	type: `The \`${field}\` field must be an array.`,
+	type: `The \`${field}\` field must be an array or a string.`,
 	elementType: `Each \`${field}\` value must be a string.`,
 	invalid: `\`{{value}}\` is not a recognized \`${field}\` value.`,
 });
@@ -493,29 +686,33 @@ export function * checkPlatformArray(rootObject, field, validValues) {
 		return;
 	}
 
-	if (member.value.type !== 'Array') {
+	// Npm wraps a bare string into a one-element list before checking it, so the string shorthand is a form
+	// it supports. Read the value nodes so both forms go through the same loop.
+	const values = member.value.type === 'String'
+		? [member.value]
+		: (member.value.type === 'Array' ? member.value.elements.map(element => element.value) : undefined);
+
+	if (!values) {
 		yield {node: member.value, messageId: 'type'};
 		return;
 	}
 
-	for (const element of member.value.elements) {
-		if (element.value.type !== 'String') {
-			yield {node: element.value, messageId: 'elementType'};
+	for (const value of values) {
+		if (value.type !== 'String') {
+			yield {node: value, messageId: 'elementType'};
 			continue;
 		}
 
-		const {value} = element.value;
-		const excluded = value.startsWith('!');
+		const excluded = value.value.startsWith('!');
 
-		if (!validValues.has(excluded ? value.slice(1) : value)) {
-			yield {node: element.value, messageId: 'invalid', data: {value}};
+		if (!validValues.has(excluded ? value.value.slice(1) : value.value)) {
+			yield {node: value, messageId: 'invalid', data: {value: value.value}};
 		}
 	}
 }
 
 // Both of these scan the whole document, and fixes ask for them repeatedly, so the result is cached per `SourceCode` (one object per file per lint pass).
 const indentStringCache = new WeakMap();
-const newlineCache = new WeakMap();
 
 /**
 Detect the indentation string used by the document, defaulting to a tab.
@@ -531,6 +728,8 @@ export function getIndentString(sourceCode) {
 	return indent;
 }
 
+const newlineCache = new WeakMap();
+
 /**
 Detect the LF or CRLF newline sequence used by the document, defaulting to `\n`.
 */
@@ -544,6 +743,11 @@ export function getNewline(sourceCode) {
 
 	return newline;
 }
+
+/**
+A `.git` suffix, optionally followed by a `#ref`, marking a git repository URL. Shared by `no-git-dependencies` and `no-http-dependencies`.
+*/
+export const gitSuffixPattern = /\.git(?:#.+)?$/;
 
 /**
 Remove a set of an object's members, keeping the surrounding JSON valid and tidy.
@@ -660,6 +864,36 @@ export function * removeElement(fixer, sourceCode, element) {
 }
 
 /**
+Remove `entry` out of the container `containerMember` holds, and when it was the only entry there remove the
+container with it.
+
+An empty container is what `no-empty-fields` reports, so a removal that leaves one behind trades the rule's own
+report for another's, which is no better than not having removed it at all.
+
+Every caller reaches the container through `findMember`, so it is the final member for its key. Taking only
+that one would promote a shadowed duplicate back into its place, which is the very problem the removal was
+offered for.
+*/
+export function * removeEntryAndEmptyContainer(fixer, sourceCode, containerMember, entry) {
+	const container = containerMember.value;
+	const entryCount = container.type === 'Array'
+		? container.elements.length
+		: (container.type === 'Object' ? countEffectiveMembers(container) : 0);
+
+	if (entryCount === 1) {
+		yield * removeMemberAndDuplicates(fixer, sourceCode, containerMember);
+		return;
+	}
+
+	if (container.type === 'Array') {
+		yield * removeElement(fixer, sourceCode, entry);
+		return;
+	}
+
+	yield * removeMemberAndDuplicates(fixer, sourceCode, entry);
+}
+
+/**
 Get the printable nodes of an object or array: an object's members, or an array's element values, since `Element` nodes carry no range of their own.
 */
 function getEntryNodes(containerNode) {
@@ -669,26 +903,32 @@ function getEntryNodes(containerNode) {
 }
 
 /**
-Build the source text for an object or array with its entries reordered, preserving the file's existing indentation and newline.
+The whitespace after the last line break in `text`, or `undefined` when it holds no line break.
+
+`text` is the whitespace between a container's brackets and its entries, so what follows the last line break is only the indentation. A blank line an author wrote inside the container comes before that break and does not survive the rewrite.
+*/
+const indentAfterLastLineBreak = text => {
+	const index = text.lastIndexOf('\n');
+	return index === -1 ? undefined : text.slice(index + 1);
+};
+
+/**
+Build the source text for an object or array with its entries reordered, preserving the file's existing indentation.
 
 `orderedNodes` are member nodes for an object, or element value nodes for an array, in their new order.
 */
 export function buildReordered(sourceCode, containerNode, orderedNodes) {
 	const isArray = containerNode.type === 'Array';
 	const entryNodes = getEntryNodes(containerNode);
-	const newline = getNewline(sourceCode);
+	const newline = '\n';
 	const containerIndent = lineIndentOf(sourceCode, containerNode);
 
 	// The entry indentation is whatever follows the last newline before the first entry. A single-line container has none, so one indent level is added to the container's own.
 	const textBefore = sourceCode.text.slice(containerNode.range[0] + 1, entryNodes[0].range[0]);
-	const entryIndent = textBefore.includes('\n')
-		? textBefore.slice(textBefore.lastIndexOf('\n') + 1)
-		: containerIndent + getIndentString(sourceCode);
+	const entryIndent = indentAfterLastLineBreak(textBefore) ?? (containerIndent + getIndentString(sourceCode));
 
 	const textBeforeClosing = sourceCode.text.slice(entryNodes.at(-1).range[1], containerNode.range[1] - 1);
-	const closingIndent = textBeforeClosing.includes('\n')
-		? textBeforeClosing.slice(textBeforeClosing.lastIndexOf('\n') + 1)
-		: containerIndent;
+	const closingIndent = indentAfterLastLineBreak(textBeforeClosing) ?? containerIndent;
 
 	return (isArray ? '[' : '{')
 		+ newline
@@ -715,6 +955,8 @@ export function lineIndentOf(sourceCode, node) {
 	return sourceCode.lines[node.loc.start.line - 1].match(/^(\s*)/u)[1];
 }
 
+const privateOrder = fieldOrder.indexOf('private');
+
 /**
 Suggest setting the top-level `private` field to `true`, preserving the document's compact or multiline formatting.
 */
@@ -724,16 +966,22 @@ export function * setPrivate(fixer, sourceCode, rootObject, privateMember) {
 		return;
 	}
 
-	const newline = getNewline(sourceCode);
-	const lastMember = rootObject.members.at(-1);
+	const newline = '\n';
+	// `private` goes where a sorted document holds it, after the last known field that precedes it, so the member
+	// does not land at the end and leave `sort-properties` reporting the document the fix just produced.
+	// `prefer-side-effects-field` anchors the same way and for the same reason.
+	const anchor = rootObject.members.findLast(member => {
+		const order = fieldOrder.indexOf(getKey(member));
+		return order !== -1 && order < privateOrder;
+	}) ?? rootObject.members.at(-1);
 
-	if (lastMember) {
-		const hasMultilineMembers = sourceCode.text.slice(rootObject.range[0], lastMember.range[0]).includes('\n');
+	if (anchor) {
+		const hasMultilineMembers = sourceCode.text.slice(rootObject.range[0], anchor.range[0]).includes('\n');
 		const separator = hasMultilineMembers
-			? `,${newline}${lineIndentOf(sourceCode, lastMember)}`
+			? `,${newline}${lineIndentOf(sourceCode, anchor)}`
 			: ', ';
 
-		yield fixer.insertTextAfter(lastMember, `${separator}"private": true`);
+		yield fixer.insertTextAfter(anchor, `${separator}"private": true`);
 		return;
 	}
 
@@ -753,16 +1001,28 @@ Insert a new `key: value` member into a dependency-style group object, creating 
 export function * insertGroupMember(fixer, sourceCode, root, {
 	groupMember, groupName, key, value,
 }) {
-	const newline = getNewline(sourceCode);
+	const newline = '\n';
 	const entryText = `${JSON.stringify(key)}: ${value}`;
 
 	if (groupMember) {
 		const group = groupMember.value;
 
 		if (group.members.length === 0) {
+			// An empty group written on one line stays on one line, the way the non-empty branch below
+			// keeps a single-line group inline. Whatever whitespace the group already has goes in front of
+			// the entry, so `{}` gains no padding and `{ }` keeps the space it was written with.
+			const contents = sourceCode.text.slice(group.range[0] + 1, group.range[1] - 1);
+
+			if (!contents.includes('\n')) {
+				yield fixer.insertTextAfterRange([group.range[0] + 1, group.range[0] + 1], `${contents}${entryText}`);
+				return;
+			}
+
 			const outerIndent = lineIndentOf(sourceCode, groupMember);
 			const memberIndent = outerIndent + getIndentString(sourceCode);
-			yield fixer.insertTextAfterRange([group.range[0], group.range[0] + 1], `${newline}${memberIndent}${entryText}${newline}${outerIndent}`);
+			// The group holds nothing but whitespace, so the entry replaces that whitespace rather than going in
+			// front of it, or the closing indent the author wrote would end up alone on a line.
+			yield fixer.replaceTextRange([group.range[0] + 1, group.range[1] - 1], `${newline}${memberIndent}${entryText}${newline}${outerIndent}`);
 			return;
 		}
 
@@ -773,8 +1033,15 @@ export function * insertGroupMember(fixer, sourceCode, root, {
 		return;
 	}
 
-	const indent = getIndentString(sourceCode);
 	const groupKey = JSON.stringify(groupName);
+
+	// The root is written on one line, so the new group goes on that line too.
+	if (!sourceCode.getText(root).includes('\n')) {
+		yield fixer.insertTextAfter(root.members.at(-1), `, ${groupKey}: {${entryText}}`);
+		return;
+	}
+
+	const indent = getIndentString(sourceCode);
 
 	// `root` always has at least one member: the rule's own trigger (the peer/runtime dependency group) is itself a member of `root`.
 	yield fixer.insertTextAfter(root.members.at(-1), `,${newline}${indent}${groupKey}: {${newline}${indent}${indent}${entryText}${newline}${indent}}`);
@@ -787,14 +1054,8 @@ A node that shares its line with earlier content is inline, so `''` doubles as t
 */
 export function getIndentPrefix(sourceCode, node) {
 	const {text} = sourceCode;
-	const start = node.range[0];
-	let lineStart = start;
-
-	while (lineStart > 0 && text[lineStart - 1] !== '\n') {
-		lineStart--;
-	}
-
-	const linePrefix = text.slice(lineStart, start);
+	const lineStart = text.lastIndexOf('\n', node.range[0] - 1) + 1;
+	const linePrefix = text.slice(lineStart, node.range[0]);
 
 	return /^\s*$/.test(linePrefix) ? linePrefix : '';
 }
@@ -833,12 +1094,35 @@ The simple top-level fields whose value is a single path string.
 */
 export const pathFields = ['main', 'module', 'browser', 'types', 'typings'];
 
+/**
+Yield the path values of a field that is either one path string or a list of them.
+*/
+function * iterateOneOrManyPaths(field, member) {
+	if (member?.value.type === 'String') {
+		yield {node: member.value, field};
+	} else if (member?.value.type === 'Array') {
+		for (const element of member.value.elements) {
+			if (element.value.type === 'String') {
+				yield {node: element.value, field};
+			}
+		}
+	}
+}
+
 function * collectPathValueNodes(rootObject) {
 	for (const field of pathFields) {
 		const member = findMember(rootObject, field);
 
-		if (member?.value.type === 'String') {
-			yield {node: member.value, field};
+		// One path or a list of them, the same shape `man` takes.
+		yield * iterateOneOrManyPaths(field, member);
+
+		// `browser` is the only one of these that also takes a replacement map, and its string values are the
+		// paths it swaps in. A `false` value shims the module out instead of pointing anywhere. Collapsed the
+		// way `JSON.parse` builds the map, so a shadowed duplicate is not scanned as a path.
+		if (member?.value.type === 'Object') {
+			for (const node of iterateStringValues(withoutShadowedMembers(member.value))) {
+				yield {node, field};
+			}
 		}
 	}
 
@@ -847,12 +1131,19 @@ function * collectPathValueNodes(rootObject) {
 	if (bin?.value.type === 'String') {
 		yield {node: bin.value, field: 'bin'};
 	} else if (bin?.value.type === 'Object') {
-		for (const member of bin.value.members) {
+		// Effective members, since a shadowed duplicate is not a path npm ever installs.
+		for (const member of iterateEffectiveMembers(bin.value)) {
 			if (member.value.type === 'String') {
 				yield {node: member.value, field: 'bin'};
 			}
 		}
 	}
+
+	// Npm rewrites every `man` entry the way it rewrites a `bin` target, so an absolute or backslashed one
+	// becomes a relative path naming no file, and the man page is gone from the published manifest. Unlike
+	// `bin`, `man` is not force-included, so the path is the only thing that decides whether it ships. The field
+	// is one path or a list of them.
+	yield * iterateOneOrManyPaths('man', findMember(rootObject, 'man'));
 
 	const files = findMember(rootObject, 'files');
 
@@ -868,7 +1159,8 @@ function * collectPathValueNodes(rootObject) {
 		const member = findMember(rootObject, field);
 
 		if (member) {
-			for (const node of iterateStringValues(member.value)) {
+			// Collapsed the way `JSON.parse` builds the tree, so a shadowed duplicate is not scanned as a path.
+			for (const node of iterateStringValues(withoutShadowedMembers(member.value))) {
 				yield {node, field};
 			}
 		}
@@ -879,7 +1171,7 @@ function * collectPathValueNodes(rootObject) {
 const pathValueNodesCache = new WeakMap();
 
 /**
-Get every path-bearing `String` value node in a package.json as `{node, field}`: the simple path fields, `bin`, `files` entries, and `exports`/`imports` string targets.
+Get every path-bearing `String` value node in a package.json as `{node, field}`: the simple path fields, a `browser` replacement map's values, `bin`, `man`, `files` entries, and `exports`/`imports` string targets.
 
 The `field` says which top-level field the path came from, because the same text does not mean the same thing everywhere — a leading `/` is an absolute path in `main` but a package-root anchor in `files`.
 */

@@ -12,7 +12,25 @@ Message:
     |                                  ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
 
 Suggestion 1/1: Remove the self-dependency.:
-  1 | {"name": "foo", "dependencies": {}}
+  1 | {"name": "foo"}
+
+`;
+
+exports[`invalid(10): {\"name\": \"foo\", \"dependencies\": {\"bar\": \"^1.0.0\", \"foo\": \"^1.0.0\"}, \"dependencies\": {\"foo\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "dependencies": {"bar": "^1.0.0", "foo": "^1.0.0"}, "dependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(10): {\"name\": \"foo\", \"dependencies\": {\"bar\": \"^1.0.0\", \"foo\": \"^1.0.0\"}, \"dependencies\": {\"foo\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "dependencies": {"bar": "^1.0.0", "foo": "^1.0.0"}, "dependencies": {"foo": "^1.0.0"}}
+    |                                                                                      ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
+
+Suggestion 1/1: Remove the self-dependency.:
+  1 | {"name": "foo"}
 
 `;
 
@@ -30,7 +48,7 @@ Message:
     |                                      ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
 
 Suggestion 1/1: Remove the self-dependency.:
-  1 | {"name": "foo", "peerDependencies": {}}
+  1 | {"name": "foo"}
 
 `;
 
@@ -48,7 +66,7 @@ Message:
     |                                          ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
 
 Suggestion 1/1: Remove the self-dependency.:
-  1 | {"name": "foo", "optionalDependencies": {}}
+  1 | {"name": "foo"}
 
 `;
 
@@ -66,7 +84,7 @@ Message:
     |                                         ^^^^^^^^^^^^ A package cannot list itself (\`@scope/foo\`) as a dependency.
 
 Suggestion 1/1: Remove the self-dependency.:
-  1 | {"name": "@scope/foo", "dependencies": {}}
+  1 | {"name": "@scope/foo"}
 
 `;
 
@@ -84,7 +102,7 @@ Message:
     |                                                   ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
 
 Suggestion 1/1: Remove the self-dependency.:
-  1 | {"name": "foo", "dependencies": {}}
+  1 | {"name": "foo"}
 
 `;
 
@@ -102,7 +120,7 @@ Message:
     |                                  ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
 
 Suggestion 1/1: Remove the self-dependency.:
-  1 | {"name": "foo", "dependencies": {}}
+  1 | {"name": "foo"}
 
 `;
 
@@ -120,7 +138,7 @@ Message:
     |                                  ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
 
 Suggestion 1/1: Remove the self-dependency.:
-  1 | {"name": "foo", "dependencies": {}}
+  1 | {"name": "foo"}
 
 `;
 
@@ -138,6 +156,24 @@ Message:
     |                                  ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
 
 Suggestion 1/1: Remove the self-dependency.:
-  1 | {"name": "foo", "dependencies": {}}
+  1 | {"name": "foo"}
+
+`;
+
+exports[`invalid(9): {\"name\": \"foo\", \"dependencies\": {\"foo\": \"^1.0.0\"}, \"dependencies\": {\"foo\": \"^1.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "dependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^1.0.0"}}
+
+`;
+
+exports[`invalid(9): {\"name\": \"foo\", \"dependencies\": {\"foo\": \"^1.0.0\"}, \"dependencies\": {\"foo\": \"^1.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "dependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^1.0.0"}}
+    |                                                                     ^^^^^ A package cannot list itself (\`foo\`) as a dependency.
+
+Suggestion 1/1: Remove the self-dependency.:
+  1 | {"name": "foo"}
 
 `;

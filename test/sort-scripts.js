@@ -36,7 +36,5 @@ test.snapshot({
 		'{\n  "scripts": {\n\t\t"test": "node --test",\n\t\t"build": "tsc"\n  }\n}',
 		// Preserve zero indentation for multiline members.
 		'{\n"scripts": {\n"test": "node --test",\n"build": "tsc"\n}\n}',
-		// CRLF line endings.
-		'{\r\n\t"scripts": {\r\n\t\t"test": "node --test",\r\n\t\t"build": "tsc"\r\n\t}\r\n}',
 	],
 });

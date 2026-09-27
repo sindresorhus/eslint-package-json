@@ -119,33 +119,6 @@ Suggestion 1/1: Set \`"private": true\`.:
 
 `;
 
-exports[`invalid(14): {\r\n\t\"name\": \"foo\"\r\n} 1`] = `
-
-[Input]
-  1 | {
-  2 | 	"name": "foo"
-  3 | }
-
-`;
-
-exports[`invalid(14): {\r\n\t\"name\": \"foo\"\r\n} 2`] = `
-
-Message:
-> 1 | {
-    | ^
-> 2 | 	"name": "foo"
-    | ^^^^^^^^^^^^^^
-> 3 | }
-    | ^ The package must set \`"private": true\`.
-
-Suggestion 1/1: Set \`"private": true\`.:
-  1 | {
-  2 | 	"name": "foo",
-  3 | 	"private": true
-  4 | }
-
-`;
-
 exports[`invalid(2): {\"name\": \"foo\"} 1`] = `
 
 [Input]

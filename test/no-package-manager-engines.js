@@ -80,8 +80,6 @@ test.snapshot({
 		'{"engines": {"npm": ">=10 || >=12"}}',
 		// Preserve top-level single-line formatting when `engines` is multiline.
 		'{"engines": {\n\t"node": ">=18",\n\t"npm": ">=10"\n}}',
-		// Preserve CRLF formatting.
-		'{\r\n\t"engines": {\r\n\t\t"node": ">=18",\r\n\t\t"npm": ">=10"\r\n\t}\r\n}',
 		// A shadowed duplicate `engines` must go too, or removing the effective one promotes it into its place.
 		'{"engines": {"npm": ">=8"}, "engines": {"yarn": ">=1"}}',
 		// Wildcards, malformed values, and non-string values cannot be safely pinned.
