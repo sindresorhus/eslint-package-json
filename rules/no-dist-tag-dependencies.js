@@ -1,4 +1,5 @@
-import {getRootObject, iterateDependencies, validRange} from './utils/index.js';
+import npa from 'npm-package-arg';
+import {getRootObject, iterateDependencies, resolveAlias} from './utils/index.js';
 
 const MESSAGE_ID = 'no-dist-tag-dependencies';
 
@@ -7,15 +8,31 @@ const messages = {
 };
 
 /**
-Check whether a specifier is a bare dist-tag (e.g. `latest`, `next`, `beta`) rather than a version range, protocol, or shorthand.
+Whether npm reads a specifier as a dist-tag. Asking `npm-package-arg` settles every form at once, including the
+loose versions it accepts (`1.0.0-01`, `01.2.3`) and the path and protocol forms, which are not tags either. A
+protocol it refuses, such as `workspace:` or `link:`, is not a tag.
 */
 const isDistTag = specifier => {
-	if (specifier === '' || specifier.includes(':') || specifier.includes('/')) {
+	try {
+		return npa(`any@${specifier}`).type === 'tag';
+	} catch {
 		return false;
 	}
+};
 
-	// Version ranges (including `*`, `x`, `1.2.x`) parse as a valid range; tags do not.
-	return validRange(specifier) === null;
+/**
+Get the dist-tag a specifier resolves to, or `undefined` when it is not pinned to one.
+
+Version ranges (including `*`, `x` and `1.2.x`) parse as a range, and tags do not.
+*/
+const getDistTag = specifier => {
+	// An `npm:` alias carries its own specifier, which may itself be a scoped package name, so the tag is the
+	// one it aliases, not the whole alias. A specifier that is not an alias resolves to nothing, and is then
+	// read as itself.
+	const aliased = resolveAlias(specifier)?.fetchSpec;
+	const subject = aliased ?? specifier;
+
+	return isDistTag(subject) ? subject : undefined;
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -33,12 +50,13 @@ const create = context => ({
 			}
 
 			const specifier = member.value.value;
+			const tag = getDistTag(specifier);
 
-			if (isDistTag(specifier)) {
+			if (tag !== undefined) {
 				context.report({
 					node: member.value,
 					messageId: MESSAGE_ID,
-					data: {name, tag: specifier},
+					data: {name, tag},
 				});
 			}
 		}

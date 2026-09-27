@@ -42,3 +42,78 @@ Message:
     |                             ^^^^^^ Dependency \`foo\` uses the dist-tag \`beta\`; pin a version range for reproducible installs.
 
 `;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"npm:bar@next\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "npm:bar@next"}}
+
+`;
+
+exports[`invalid(4): {\"dependencies\": {\"foo\": \"npm:bar@next\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "npm:bar@next"}}
+    |                          ^^^^^^^^^^^^^^ Dependency \`foo\` uses the dist-tag \`next\`; pin a version range for reproducible installs.
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"npm:@scope/bar@latest\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "npm:@scope/bar@latest"}}
+
+`;
+
+exports[`invalid(5): {\"dependencies\": {\"foo\": \"npm:@scope/bar@latest\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "npm:@scope/bar@latest"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^ Dependency \`foo\` uses the dist-tag \`latest\`; pin a version range for reproducible installs.
+
+`;
+
+exports[`invalid(6): {\"devDependencies\": {\"foo\": \"npm:bar@canary\"}} 1`] = `
+
+[Input]
+  1 | {"devDependencies": {"foo": "npm:bar@canary"}}
+
+`;
+
+exports[`invalid(6): {\"devDependencies\": {\"foo\": \"npm:bar@canary\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"foo": "npm:bar@canary"}}
+    |                             ^^^^^^^^^^^^^^^^ Dependency \`foo\` uses the dist-tag \`canary\`; pin a version range for reproducible installs.
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"foo\": \"NPM:bar@next\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "NPM:bar@next"}}
+
+`;
+
+exports[`invalid(7): {\"dependencies\": {\"foo\": \"NPM:bar@next\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "NPM:bar@next"}}
+    |                          ^^^^^^^^^^^^^^ Dependency \`foo\` uses the dist-tag \`next\`; pin a version range for reproducible installs.
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"Npm:@scope/bar@latest\"}} 1`] = `
+
+[Input]
+  1 | {"dependencies": {"foo": "Npm:@scope/bar@latest"}}
+
+`;
+
+exports[`invalid(8): {\"dependencies\": {\"foo\": \"Npm:@scope/bar@latest\"}} 2`] = `
+
+Message:
+> 1 | {"dependencies": {"foo": "Npm:@scope/bar@latest"}}
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^ Dependency \`foo\` uses the dist-tag \`latest\`; pin a version range for reproducible installs.
+
+`;

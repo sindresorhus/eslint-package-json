@@ -9,7 +9,7 @@
 
 A dependency pinned to a dist-tag (`latest`, `next`, `beta`, `canary`, …) resolves to a different version over time, so installs are not reproducible and an unexpected release can land without a `package.json` change. Pin a version range instead.
 
-This rule flags bare dist-tag specifiers. Version ranges, wildcards (handled by [`no-wildcard-dependencies`](no-wildcard-dependencies.md)), `workspace:`/`file:`/`npm:`/git protocols, and `user/repo` shorthands are not flagged.
+This rule flags bare dist-tag specifiers. Version ranges, wildcards (handled by [`no-wildcard-dependencies`](no-wildcard-dependencies.md)), `workspace:`/`file:`/git protocols, relative paths, and `user/repo` shorthands are not flagged. An `npm:` alias is checked by what it aliases, so `npm:bar@next` is flagged.
 
 ## Examples
 
