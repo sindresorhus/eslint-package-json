@@ -1,6 +1,6 @@
 import {
 	findMember,
-	removeElement,
+	removeEntryAndEmptyContainer,
 } from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
@@ -17,7 +17,7 @@ const LOWERCASE_SUGGESTION_ID = 'lowercaseFix';
 export const messages = {
 	[TYPE_MESSAGE_ID]: 'The `keywords` field must be an array.',
 	[STRING_MESSAGE_ID]: 'Each keyword must be a string.',
-	[EMPTY_MESSAGE_ID]: 'Keyword must not be empty or only whitespace.',
+	[EMPTY_MESSAGE_ID]: 'Keyword must not be empty; npm drops one.',
 	[SEPARATOR_MESSAGE_ID]: 'Keyword `{{keyword}}` looks like several comma-separated keywords. Split it into separate entries.',
 	[WHITESPACE_MESSAGE_ID]: 'Keyword `{{keyword}}` has leading or trailing whitespace.',
 	[NAME_MESSAGE_ID]: 'Keyword `{{keyword}}` is redundant with the package name.',
@@ -36,7 +36,14 @@ export function * check(root, context) {
 		return;
 	}
 
-	if (keywords.value.type !== 'Array') {
+	// Npm splits a string on `/,\s+/` and keeps the parts, so the comma-joined shorthand is a form it supports
+	// and the same per-keyword checks read the parts it produces. An empty string leaves it with nothing.
+	const isString = keywords.value.type === 'String';
+	const elements = isString
+		? keywords.value.value.split(/,\s+/u).map(keyword => ({value: keywords.value, keyword}))
+		: (keywords.value.type === 'Array' ? keywords.value.elements : undefined);
+
+	if (!elements) {
 		yield {
 			node: keywords.value,
 			messageId: TYPE_MESSAGE_ID,
@@ -50,13 +57,18 @@ export function * check(root, context) {
 	const removeSuggestion = element => ({
 		messageId: REMOVE_SUGGESTION_ID,
 		* fix(fixer) {
-			yield * removeElement(fixer, sourceCode, element);
+			yield * removeEntryAndEmptyContainer(fixer, sourceCode, keywords, element);
 		},
 	});
 
-	const seen = new Set();
+	// A string has no element to remove and no single value to rewrite, so a joined list is reported without a
+	// suggestion: removing one keyword or lowercasing one would drop the rest along with it.
+	const withSuggestion = suggestion => (isString ? {} : {suggest: [suggestion]});
 
-	for (const element of keywords.value.elements) {
+	const seen = new Set();
+	const reported = new Set();
+
+	for (const element of elements) {
 		const valueNode = element.value;
 
 		if (valueNode.type !== 'String') {
@@ -67,13 +79,15 @@ export function * check(root, context) {
 			continue;
 		}
 
-		const keyword = valueNode.value;
+		const keyword = element.keyword ?? valueNode.value;
 
-		if (keyword.trim() === '') {
+		// Npm keeps every keyword it cannot read as an empty string, so a blank one is what it drops; one made of
+		// whitespace is published as written and belongs to the message below, which points at the padding.
+		if (keyword === '') {
 			yield {
 				node: valueNode,
 				messageId: EMPTY_MESSAGE_ID,
-				suggest: [removeSuggestion(element)],
+				...withSuggestion(removeSuggestion(element)),
 			};
 			continue;
 		}
@@ -102,32 +116,51 @@ export function * check(root, context) {
 				node: valueNode,
 				messageId: NAME_MESSAGE_ID,
 				data: {keyword},
-				suggest: [removeSuggestion(element)],
+				...withSuggestion(removeSuggestion(element)),
 			};
 			continue;
 		}
 
+		// The two reports below are the only ones a repeated keyword of a joined string can draw, and every part
+		// of such a string is the same node, so only the first of them carries information. The keyword is
+		// marked where the report is, not on entry, since whether it is a duplicate depends on where it came.
+		if (isString && reported.has(keyword)) {
+			continue;
+		}
+
 		if (keyword !== keyword.toLowerCase()) {
+			reported.add(keyword);
+
+			// A conversion that lands on a keyword the field already holds, in any casing, would create the
+			// duplicate reported below rather than remove one, so nothing is offered when another entry is in
+			// the way. Every part of a joined string shares one node, so it is the part that is compared rather
+			// than the value behind it.
+			const lowercase = keyword.toLowerCase();
+			const collides = elements.some(other =>
+				other !== element
+				&& other.value.type === 'String'
+				&& (other.keyword ?? other.value.value).toLowerCase() === lowercase);
+
 			yield {
 				node: valueNode,
 				messageId: LOWERCASE_MESSAGE_ID,
 				data: {keyword},
-				suggest: [
-					{
-						messageId: LOWERCASE_SUGGESTION_ID,
-						fix: fixer => fixer.replaceText(valueNode, JSON.stringify(keyword.toLowerCase())),
-					},
-				],
+				...(!collides && withSuggestion({
+					messageId: LOWERCASE_SUGGESTION_ID,
+					fix: fixer => fixer.replaceText(valueNode, JSON.stringify(lowercase)),
+				})),
 			};
 			continue;
 		}
 
 		if (seen.has(keyword)) {
+			reported.add(keyword);
+
 			yield {
 				node: valueNode,
 				messageId: DUPLICATE_MESSAGE_ID,
 				data: {keyword},
-				suggest: [removeSuggestion(element)],
+				...withSuggestion(removeSuggestion(element)),
 			};
 			continue;
 		}
