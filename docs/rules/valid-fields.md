@@ -26,7 +26,7 @@ Semantic checks include repository URLs and `exports`/`imports` targets. Some ch
 - `workspaces`: an object must hold its globs in a `packages` array.
 - `os` and `cpu`: `any` is only valid as the sole value, since npm otherwise compares it as a platform name.
 - `keywords`: a string is split on `/,\s+/` like npm does, and each part is checked.
-- `devEngines`: keys must be `runtime`, `packageManager`, `cpu`, `os`, or `libc`, and each entry may hold only `name`, `version`, and `onFail`, since npm refuses to install otherwise.
+- `devEngines`: keys must be `runtime`, `packageManager`, `cpu`, `os`, or `libc`, and each entry may hold only `name`, `version`, and `onFail`, since npm otherwise refuses to install or run scripts in the project.
 - `engines`: a truthy value must be a string, since `--engine-strict` fails on anything else.
 - `homepage`: a value without a scheme is reported, since npm publishes it as `http://`. Paths such as `.` or `/myapp` (Create React App) are left alone.
 - `private`: must be a boolean, since `"false"` is truthy and blocks publishing.
