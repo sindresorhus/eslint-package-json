@@ -20,7 +20,7 @@ Semantic checks include repository URLs and `exports`/`imports` targets. Some ch
 - `imports`: a `#` key nested in a conditions object is reported, since Node reads it as a condition name.
 - `readme`: it must be a string, since npm calls `.trim()` on it when publishing.
 - `contributors` and `maintainers`: each entry must be a person, since a `null` entry makes npm throw.
-- `license`: a custom `LicenseRef` or `DocumentRef` is reported, since npm's validator rejects it.
+- `license` and `licence`: a custom `LicenseRef` or `DocumentRef` is reported, since npm does not count it as valid. `licence` is checked when `license` is missing or falsy, since npm reads it then.
 - `workspaces`: an object must hold its globs in a `packages` array.
 - `os` and `cpu`: `any` is only valid as the sole value, since npm otherwise compares it as a platform name.
 - `keywords`: a string is split on `/,\s+/` like npm does, and each part is checked.
@@ -40,6 +40,7 @@ The following fields are validated:
 - `description`
 - `readme`
 - `license`
+- `licence`
 - `repository`
 - `homepage`
 - `bugs`

@@ -12,7 +12,6 @@ test.snapshot({
 		'{"name": "lodash.merge"}',
 		// No `name` field is out of scope for this rule.
 		'{"version": "1.0.0"}',
-		// Non-string `name` is out of scope.
 		// `version`
 		'{"version": "1.0.0"}',
 		'{"version": "1.0.0-beta.1"}',
@@ -646,7 +645,6 @@ test.snapshot({
 		'{"devEngines": {"runtime": {"name": "node", "version": 20}}}',
 		// Invalid version range.
 		'{"devEngines": {"runtime": {"name": "node", "version": "not-a-range"}}}',
-		// Empty version is `*` to semver, but almost certainly a forgotten constraint.
 		// Invalid onFail.
 		'{"devEngines": {"runtime": {"name": "node", "onFail": "explode"}}}',
 		// `os`
