@@ -18,8 +18,7 @@ test.snapshot({
 		String.raw`{"main": "C:\\foo\\index.js"}`,
 		// URLs are skipped.
 		'{"browser": "https://cdn.example.com/foo.js"}',
-		// The object form of `browser` is a replacement map whose string values are the paths it swaps in,
-		// which the sibling path rules report. A `false` value shims the module out instead.
+		// The object form of `browser` is a replacement map, and a bare value in it is a module request resolved from the package root (webpack's `AliasFieldPlugin`, browserify's `browser-resolve`), not a relative path, so the map is not checked. A `false` value shims the module out instead.
 		'{"browser": {"fs": false, "lodash": "./lodash/index.js"}}',
 		'{"browser": {"./a.js": "/abs/b.js"}}',
 		'{"browser": {"./a.js": "old.js", "./a.js": "./b.js"}}',
@@ -69,6 +68,14 @@ test.snapshot({
 			options: [{prefix: 'never'}],
 		},
 		'{"files": ["a.js"], "main": "", "types": "./a.d.ts"}',
+		'{"browser": {"request": "xhr"}}',
+		'{"browser": {"./server.js": "b.js"}}',
+		'{"browser": {"lodash": "lodash/index.js"}}',
+		'{"browser": {"./a.js": "./b.js", "./a.js": "old.js"}}',
+		{
+			code: '{"browser": {"./server.js": "./client.js"}}',
+			options: [{prefix: 'never'}],
+		},
 	],
 	invalid: [
 		// Missing ./ (default: always). Npm force-includes `main` and `browser` as written, so their prefix is
@@ -78,10 +85,6 @@ test.snapshot({
 		'{"types": "index.d.ts"}',
 		'{"typings": "index.d.ts"}',
 		'{"browser": "dist/browser.js"}',
-		'{"browser": {"./server.js": "b.js"}}',
-		'{"browser": {"lodash": "lodash/index.js"}}',
-		'{"browser": {"x": {"y": "y.js"}}}',
-		'{"browser": {"./a.js": "./b.js", "./a.js": "old.js"}}',
 		'{"bin": "cli.js"}',
 		'{"bin": {"mycli": "bin/cli.js"}}',
 		// Prefix=never: has ./ which should be removed.
@@ -108,8 +111,7 @@ test.snapshot({
 			code: '{"main": "../sibling/index.js"}',
 			options: [{prefix: 'never'}],
 		},
-		// The mirror of the rule's `always` mode: there the prefix is the form npm does not match, and in `never`
-		// mode the prefix is the one it does, so `main` and `browser` are reported without a fix either way.
+		// The mirror of the rule's `always` mode: npm compares `main` and `browser` as written, so removing the prefix changes what it publishes, and the fix is offered as a suggestion either way.
 		{
 			code: '{"main": "./index.js"}',
 			options: [{prefix: 'never'}],

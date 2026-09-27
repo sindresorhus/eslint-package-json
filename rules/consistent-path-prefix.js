@@ -3,22 +3,22 @@ import {
 	findMember,
 	hasGlob,
 	iterateEffectiveMembers,
-	iterateStringValues,
 	optionsSchema,
 	pathFields,
-	withoutShadowedMembers,
 } from './utils/index.js';
 
 const MESSAGE_ID_MISSING = 'missing';
 const MESSAGE_ID_EXTRA = 'extra';
 const MESSAGE_ID_OUTSIDE_PACKAGE = 'outsidePackage';
 const PREFIX_SUGGESTION_ID = 'addPrefix';
+const REMOVE_PREFIX_SUGGESTION_ID = 'removePrefix';
 
 const messages = {
 	[MESSAGE_ID_MISSING]: 'Path `{{value}}` should start with `./`.',
 	[MESSAGE_ID_EXTRA]: 'Path `{{value}}` should not start with `./`.',
 	[MESSAGE_ID_OUTSIDE_PACKAGE]: 'Path `{{value}}` has a `..` segment, which resolves inside the package at best and outside it at worst.',
 	[PREFIX_SUGGESTION_ID]: 'Add the `./` prefix.',
+	[REMOVE_PREFIX_SUGGESTION_ID]: 'Remove the `./` prefix.',
 };
 
 // Npm force-includes `main` and `browser` by pushing `!/${value}` for the value as written, so a `./` prefix on
@@ -118,12 +118,18 @@ const create = context => {
 				data: {value},
 			};
 
-			// Npm force-includes `main` and `browser` by comparing the value as written, so the prefix is the form
-			// the rule matches and the bare one is not: the fix is a suggestion, exactly as the other direction is.
+			if (!canFix) {
+				context.report(base);
+				return;
+			}
+
+			const fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
+
+			// Npm force-includes `main` and `browser` by comparing the value as written, so removing the prefix changes what npm publishes: the fix is a suggestion, exactly as the other direction is.
 			context.report(
-				canFix && !fieldsNpmComparesRaw.has(field)
-					? {...base, fix: fixer => fixer.replaceText(valueNode, JSON.stringify(fixed))}
-					: base,
+				fieldsNpmComparesRaw.has(field)
+					? {...base, suggest: [{messageId: REMOVE_PREFIX_SUGGESTION_ID, fix}]}
+					: {...base, fix},
 			);
 		}
 	};
@@ -143,17 +149,8 @@ const create = context => {
 					continue;
 				}
 
+				// The object form of `browser` is a replacement map, and `checkPathNode` skips it. A bare value in that map is a module request resolved from the package root, not a relative path, so a `./` prefix would point it at a local file that does not exist.
 				checkPathNode(member.value, field);
-
-				// `browser` is the only one of these that also takes a replacement map, and its string values
-				// are the paths it swaps in, which the sibling path rules already report. A `false` value
-				// shims the module out instead of pointing anywhere. Collapsed the way `JSON.parse` builds the
-				// map, since a shadowed duplicate is not a path the manifest holds.
-				if (field === 'browser' && member.value.type === 'Object') {
-					for (const node of iterateStringValues(withoutShadowedMembers(member.value))) {
-						checkPathNode(node, field);
-					}
-				}
 			}
 
 			const binMember = findMember(root, 'bin');

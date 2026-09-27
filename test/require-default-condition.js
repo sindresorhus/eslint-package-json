@@ -55,6 +55,20 @@ test.snapshot({
 		// A duplicated `default` resolves to its final entry, which is last, so the shadowed earlier one must not raise a false `defaultNotLast`.
 		'{"exports": {"import": "./index.mjs", "default": "./old.cjs", "default": "./new.cjs"}}',
 		'{"exports": {"default": "./a.js", "default": "./b.js"}}',
+		// Node's own resolver always runs under `import` or `require`, so a `node` branch that lists both is
+		// complete on its own and the enclosing `default` covers everything that never reaches it. This is
+		// the nested-conditions example from the Node.js documentation.
+		'{"exports": {"node": {"import": "./feature-node.mjs", "require": "./feature-node.cjs"}, "default": "./feature.mjs"}}',
+		'{"imports": {"#dep": {"node": {"import": "./dep.mjs", "require": "./dep.cjs"}, "default": "./dep.js"}}}',
+		'{"exports": {"node-addons": {"require": "./dep.cjs"}, "default": "./dep.js"}}',
+		// A covered `node` branch that has a `default` of its own has nothing left to report.
+		'{"exports": {"node": {"import": "./a.mjs", "require": "./a.cjs", "default": "./a.js"}, "default": "./a.js"}}',
+		// A fallback list is the fallback: an element that matches no condition resolves to nothing and Node
+		// moves on to the next one, so every element but the last needs no `default` of its own.
+		'{"exports": [{"import": "./a.mjs"}, {"require": "./a.cjs", "default": "./a.js"}]}',
+		'{"exports": {".": [{"import": "./a.mjs"}, {"require": "./a.cjs", "default": "./a.js"}]}}',
+		'{"exports": [[{"import": "./a.mjs"}], ["./b.js"]]}',
+		'{"imports": {"#dep": [{"import": "./dep.mjs"}, {"require": "./dep.cjs", "default": "./dep.js"}]}}',
 	],
 	invalid: [
 		// A subpath map nested inside an array is still a subpath map, not a conditions object.
@@ -90,5 +104,17 @@ test.snapshot({
 		'{"imports": {"#dep": {"default": "./dep.js", "node": "./node.js"}}}',
 		// The effective `default` (the final duplicate) keeps its first appearance's position, so with a condition after it the report is genuine and points at the surviving node.
 		'{"exports": {"default": "./a.js", "import": "./b.js", "default": "./c.js"}}',
+		// The same shape is not complete under a condition a bundler can select on its own, where neither
+		// `import` nor `require` need be in the condition set.
+		'{"exports": {"development": {"import": "./dep.mjs", "require": "./dep.cjs"}}}',
+		'{"exports": {"browser": {"import": "./dep.mjs", "require": "./dep.cjs"}}}',
+		// The exemption covers the named modes only. A conditions object nested inside one of them is
+		// still reachable by a bundler with neither mode, so it needs a `default` of its own.
+		'{"exports": {"node": {"require": {"types": "./a.d.cts", "require": "./a.cjs"}}, "default": "./a.js"}}',
+		// A `default` before another condition is still wrong inside a fallback list.
+		'{"exports": [{"default": "./a.js", "import": "./a.mjs"}, {"require": "./a.cjs"}]}',
+		// The last element of a fallback list has nothing left to fall through to, so it needs a `default` of
+		// its own.
+		'{"exports": [{"import": "./a.mjs"}, {"require": "./a.cjs", "types": "./a.d.cts"}]}',
 	],
 });

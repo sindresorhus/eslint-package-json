@@ -8,7 +8,7 @@
 
 <!-- end auto-generated rule header -->
 
-Enforce a consistent `./` prefix in the legacy `main`, `module`, `browser`, `types`, `typings`, and `bin` fields. Absolute paths, URLs, and globs are ignored; other paths with a `..` segment are reported. An empty value is left to [`no-empty-fields`](no-empty-fields.md), since there is nothing to prefix. Mandatory prefixes in `exports` and `imports` are handled by [`valid-fields`](valid-fields.md).
+Enforce a consistent `./` prefix in the legacy `main`, `module`, `browser`, `types`, `typings`, and `bin` fields. The object form of `browser` is not checked, since its bare values are module requests. Absolute paths, URLs, and globs are ignored; other paths with a `..` segment are reported. An empty value is left to [`no-empty-fields`](no-empty-fields.md). Mandatory prefixes in `exports` and `imports` are handled by [`valid-fields`](valid-fields.md).
 
 For `main` and `browser`, the fix is a suggestion, since npm force-includes them as written, so the prefix can change what a `files` allowlist publishes.
 

@@ -7,18 +7,61 @@ import {getTester} from './utils/test.js';
 const {test, ruleId, rule} = getTester(import.meta);
 
 // Writing a glob where a regular expression is expected is an easy mistake, and `RegExp` throwing raw would surface as an unattributed "Error while loading rule".
-nodeTest('an invalid `ignore` pattern explains itself', () => {
-	const linter = new Linter();
+const verifyWithIgnore = (ignore, linter = new Linter()) => linter.verify('{"scripts": {"prebuild": "x"}}', {
+	files: ['**/package.json'],
+	language: 'json/json',
+	plugins: {json, 'rule-to-test': {rules: {[ruleId]: rule}}},
+	rules: {[`rule-to-test/${ruleId}`]: ['error', {ignore}]},
+}, {filename: 'package.json'});
 
+nodeTest('an invalid `ignore` pattern explains itself', () => {
 	assert.throws(
-		() => linter.verify('{"scripts": {"prebuild": "x"}}', {
-			files: ['**/package.json'],
-			language: 'json/json',
-			plugins: {json, 'rule-to-test': {rules: {[ruleId]: rule}}},
-			rules: {[`rule-to-test/${ruleId}`]: ['error', {ignore: ['*build']}]},
-		}, {filename: 'package.json'}),
-		/takes regular expressions, not globs, and "\*build" is not a valid one/,
+		() => verifyWithIgnore(['*build']),
+		/takes regular expression sources, not globs, and "\*build" is not a valid one/,
 	);
+
+	// A source the non-unicode grammar accepts but the `u` flag the rule adds does not, so the message has to
+	// name the flag or it reads as a complaint about a pattern that is valid.
+	assert.throws(
+		() => verifyWithIgnore([String.raw`\p`]),
+		/not a valid one with the `u` flag this rule adds/u,
+	);
+});
+
+nodeTest('an `ignore` entry that cannot be named in a message is still refused', () => {
+	const linter = new Linter();
+	const code = '{"scripts": {"prebuild": "x"}}';
+	const verify = ignore => linter.verify(code, {
+		files: ['**/package.json'],
+		language: 'json/json',
+		plugins: {json, 'rule-to-test': {rules: {[ruleId]: rule}}},
+		rules: {[`rule-to-test/${ruleId}`]: ['error', {ignore}]},
+	}, {filename: 'package.json'});
+
+	// A `BigInt` and an object with a cycle are both values `JSON.stringify` refuses, so the message that names
+	// the offending entry has to be built without it.
+	const circular = {};
+	circular.self = circular;
+
+	assert.throws(() => verify([1n]), {message: /is not one/u}, 'a BigInt');
+	assert.throws(() => verify([circular]), {message: /is not one/u}, 'a cycle');
+});
+
+nodeTest('an `ignore` entry that is not a regular expression source is refused', () => {
+	// Every entry becomes a `RegExp` source, so an entry that is not a non-empty string is turned into a
+	// pattern the author never wrote. `''` in particular matches every script name, which turns the rule off.
+	const rejected = /takes regular expression sources, and .* is not one/u;
+
+	assert.throws(() => verifyWithIgnore([[]]), rejected, 'a nested array');
+	assert.throws(() => verifyWithIgnore([42]), rejected, 'a number');
+	assert.throws(() => verifyWithIgnore([{}]), rejected, 'an object');
+	assert.throws(() => verifyWithIgnore(['']), rejected, 'an empty pattern');
+
+	// V8 defers a source too large to compile until it is first matched, so a long one has to be matched here
+	// for the failure to name the option rather than surfacing from inside the visitor, once per linted file.
+	assert.throws(() => verifyWithIgnore([`^${'a'.repeat(33_000)}$`]), /takes regular expression sources/u, 'an oversized source');
+
+	assert.deepEqual(verifyWithIgnore(['pre.*']), []);
 });
 
 test.snapshot({
@@ -66,6 +109,11 @@ test.snapshot({
 		'{"scripts": {"prepare:safari": "npm run build"}}',
 		// Git hook script names are standalone commands, not `pre` hooks.
 		'{"scripts": {"precommit": "lint-staged", "pre-commit": "lint-staged", "prepush": "npm test", "pre-push": "npm test"}}',
+		// A sub-command of a standalone tool, namespaced with a hyphen as well as a colon, since `npm run
+		// prettier-check` looks for `preprettier-check` and never for a `pre` hook on `ttier-check`. Five
+		// published packages name a script this way.
+		'{"scripts": {"prettier-check": "prettier --check .", "prettier-fix": "prettier --write ."}}',
+		'{"scripts": {"postcss-x": "x", "prepare-foo": "y", "preview-1": "z"}}',
 		// Standalone names can be exempted explicitly.
 		{code: '{"scripts": {"preflight": "npm run check"}}', options: [{ignore: ['^preflight$']}]},
 		{code: '{"scripts": {"prebuild": "npm run build", "pretest": "npm test"}}', options: [{ignore: [/^pre/g]}]},
@@ -73,8 +121,16 @@ test.snapshot({
 		{code: '{"scripts": {"prestart": "npm run setup"}}', options: [{ignore: ['prestart']}]},
 		// `ignore` also silences the removed uninstall lifecycle, since it is checked before every report.
 		{code: '{"scripts": {"preuninstall": "cleanup"}}', options: [{ignore: ['^preuninstall$']}]},
+		// `postinstall-<name>` is a sub-command of the `postinstall` step, not a `post` hook.
+		'{"scripts": {"postinstall-link": "npm run link", "postinstall-fail-instructions": "echo failed"}}',
+		'{"scripts": {"preinstall-setup": "npm run setup"}}',
+		'{"scripts": {"postinstall:link": "npm run link"}}',
+		'{"scripts": {"prepare:": "x", "prettier:": "y", "prepare-": "z"}}',
 	],
 	invalid: [
+		// A name that is only the tool name, with no delimiter after it, is still a `pre` hook on the rest of it.
+		'{"scripts": {"prettiercheck": "x"}}',
+
 		`{
 	"scripts": {
 		"prebuild": "npm run clean"
@@ -95,5 +151,7 @@ test.snapshot({
 		'{"scripts": {"postuninstall": "cleanup"}}',
 		// Even with the target script present, since npm runs none of the three.
 		'{"scripts": {"preuninstall": "cleanup", "uninstall": "cleanup"}}',
+		'{"scripts": {"posttest-foo": "x"}}',
+		'{"scripts": {"postbuild-foo": "x"}}',
 	],
 });
