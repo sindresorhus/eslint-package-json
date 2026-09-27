@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-https -- The fixtures intentionally contain http:// URLs to exercise the rule. */
 import {getTester} from './utils/test.js';
 
 const {test} = getTester(import.meta);
@@ -42,6 +43,41 @@ test.snapshot({
 		'{"author": {"name": "Ada", "url": "https://example.com/a(b)"}}',
 		'{"author": {"name": "Ada", "email": "a<b>@example.com"}}',
 		'{"contributors": [{"name": "Alice (Bob)"}]}',
+		// Anything past the repository name names a ref, a file, or the issue tracker, none of which the bare `github:user/repo` shorthand carries.
+		'{"repository": {"type": "git", "url": "https://github.com/user/repo/tree/v1.2.3"}}',
+		'{"repository": {"type": "git", "url": "https://github.com/user/repo/blob/main/src/index.js"}}',
+		// A carried field whose value is not a string is dropped by the shorthand, and no other rule reports it.
+		'{"author": {"name": "Sindre Sorhus", "email": 123}}',
+		'{"author": {"name": "Sindre Sorhus", "url": {"href": "https://sindresorhus.com"}}}',
+		'{"contributors": [{"name": "Alice", "email": null}]}',
+		// A trailing slash after the repository name is still just the repository.
+		'{"repository": {"type": "git", "url": "https://github.com/user/repo/tree/"}}',
+		// `github.com` has to be the host, not a path segment on someone else's host, or the shorthand
+		// would repoint the package at a different repository.
+		'{"repository": {"type": "git", "url": "https://gitlab.com/@github.com/u/r"}}',
+		'{"repository": {"type": "git", "url": "https://example.com/@github.com/user/repo"}}',
+		'{"repository": {"type": "git", "url": "https://notgithub.com/u/r"}}',
+		'{"repository": {"type": "git", "url": "https://github.com.evil.com/u/r"}}',
+		// Npm strips exactly one trailing `.git`, so `github:user/repo.git` is the repository `user/repo`
+		// and a repository literally named `repo.git` has no shorthand that round-trips.
+		'{"repository": {"type": "git", "url": "https://github.com/user/repo.git.git"}}',
+		// `github:user/repo` always publishes as `git+https://github.com/user/repo.git`, so only a
+		// credential-free `https` URL is the same repository afterwards. An ssh or SCP URL would switch
+		// transport and userinfo would be deleted outright.
+		'{"repository": {"type": "git", "url": "git@github.com:user/repo.git"}}',
+		'{"repository": {"type": "git", "url": "git+ssh://git@github.com/user/repo.git"}}',
+		'{"repository": {"type": "git", "url": "ssh://git@github.com/user/repo.git"}}',
+		'{"repository": {"type": "git", "url": "https://tok:secret@github.com/user/repo.git"}}',
+		'{"repository": {"type": "git", "url": "https://tok@github.com/user/repo.git"}}',
+		'{"repository": {"type": "git", "url": "http://github.com/user/repo.git"}}',
+		// Npm re-reads a `bugs` string holding an `@` before a later `.` as `bugs.email`, so the
+		// shorthand would flip the key's meaning. This is npm's own test.
+		'{"bugs": {"url": "https://user@github.com/user/repo"}}',
+		'{"bugs": {"url": "https://a.b@c.d/x"}}',
+		'{"bugs": {"url": "mailto:user@example.com"}}',
+		// An empty `url` would become an empty field, which `no-empty-fields` then reports.
+		'{"bugs": {"url": ""}}',
+		'{"funding": {"url": ""}}',
 	],
 	invalid: [
 		'{"bugs": {"url": "https://github.com/user/repo/issues"}}',
@@ -59,5 +95,18 @@ test.snapshot({
 		"url": "https://github.com/user/repo/issues"
 	}
 }`,
+		// Npm resolves a trailing slash after the repository name, so the shorthand is exact.
+		'{"repository": {"type": "git", "url": "git+https://github.com/user/repo/"}}',
+		// A duplicated `name` key is one field, and the final value wins.
+		'{"author": {"name": "A", "name": "B"}}',
+		// `funding` is not re-read that way, so only `bugs` is guarded.
+		'{"funding": {"url": "https://user@github.com/user"}}',
+		// Only the lowercase suffix is the one npm strips, so `repo.GIT.git` is the repository `repo.GIT` and
+		// the shorthand that names it is exact.
+		'{"repository": {"type": "git", "url": "https://github.com/user/repo.GIT.git"}}',
+		// A suffix in any other case is not npm's to strip, so the repository keeps it and the shorthand has to
+		// carry it: `github:user/repo` would name a different repository.
+		'{"repository": {"type": "git", "url": "https://github.com/user/repo.GIT"}}',
+		'{"repository": {"type": "git", "url": "https://github.com/user/repo.Git"}}',
 	],
 });

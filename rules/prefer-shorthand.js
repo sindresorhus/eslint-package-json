@@ -29,8 +29,8 @@ const personDelimiterPattern = /[()<>]/u;
 Build the `"Name <email> (url)"` people form from an object, or `undefined` if it has no string `name`, carries fields the string form cannot represent, or holds a value that would not survive the round trip.
 */
 const personToShorthand = objectNode => {
-	// The string form only carries name, email, and url; any other field would be silently dropped.
-	if (objectNode.members.some(member => !personFields.has(getKey(member)))) {
+	// The string form only carries name, email, and url; any other field, or one of those carrying a non-string value, would be silently dropped. Nothing else in the plugin reports a non-string `email` or `url`, so dropping it here would be the only signal the author gets.
+	if (objectNode.members.some(member => !personFields.has(getKey(member)) || member.value.type !== 'String')) {
 		return undefined;
 	}
 
@@ -50,10 +50,27 @@ const personToShorthand = objectNode => {
 	return name + (email ? ` <${email}>` : '') + (url ? ` (${url})` : '');
 };
 
+// Npm re-reads a `bugs` string that holds an `@` before a later `.` as `bugs.email`, so the shorthand
+// would flip the key's meaning. This is npm's own test, copied so the two stay in step.
+const npmReadsBugsStringAsEmail = value => value.includes('@') && value.indexOf('@') < value.lastIndexOf('.');
+
 const repositoryFields = new Set(['type', 'url']);
 
-// `github.com` must be at the host position — right after `//` (optionally with userinfo) or `@` (SCP/SSH form) — so a path segment like `https://example.com/github.com/...` is not mistaken for a GitHub URL.
-const githubPattern = /(?:\/\/|@)github\.com[/:]([^/]+)\/([^/]+)/;
+// `github.com` must be the host, and the pattern is anchored at the start so a path segment on another
+// host is never mistaken for one: `https://gitlab.com/@github.com/u/r` and
+// `https://example.com/@github.com/user/repo` both contain the host as a path segment, and matching
+// either would repoint the package at a different repository. The host may carry a scheme, and userinfo
+// after the scheme, and the SCP form `git@github.com:user/repo` carries neither. The path must also end
+// at the repository name, because anything past it names a ref, a file, or the issue tracker, and the
+// bare shorthand carries none of that. A single trailing `.git` is the one thing npm strips from the URL
+// itself, so it is matched here rather than cut off afterwards; an inner `repo.git.git` keeps its first
+// `.git`.
+const githubPattern = /^(?:[a-z][\w+\-.]*:\/\/)?(?:[^/]*@)?github\.com[/:]([^/]+)\/([^/]+?)(?:\.(git))?\/?$/iu;
+
+// `github:user/repo` always publishes as a `git+https` remote, so the object form resolves to the same
+// repository afterwards only when it is a credential-free `https` URL. An `ssh` or SCP URL would switch
+// transport, and userinfo would be deleted from the published URL.
+const httpsRemotePattern = /^(?:git\+)?https:\/\/(?![^/@]*@)[^/]+\//iu;
 
 /**
 Build the `github:user/repo` shorthand from a repository object, or `undefined` when not a github URL.
@@ -82,15 +99,31 @@ const repositoryToShorthand = objectNode => {
 		return undefined;
 	}
 
+	if (!httpsRemotePattern.test(url)) {
+		return undefined;
+	}
+
 	const match = githubPattern.exec(url);
 
 	if (!match) {
 		return undefined;
 	}
 
-	const repository = match[2].replace(/\.git$/, '');
+	// Npm strips exactly one trailing `.git` and nothing else, so `github:u/repo.git` names the repository
+	// `repo` while `repo.GIT` keeps that spelling and the shorthand has to carry it. A name that is itself
+	// `repo.git` is the one shape with no shorthand that round-trips, because npm strips the last `.git` off
+	// the name the shorthand carries as well, and both then name `repo`.
+	const [, user, name, suffix] = match;
 
-	return `github:${match[1]}/${repository}`;
+	if (name.endsWith('.git')) {
+		return undefined;
+	}
+
+	// The pattern matches the suffix whatever its case and captures the spelling it matched, so the lowercase
+	// one is the only one npm strips and any other has to be written back out.
+	const keptSuffix = suffix === undefined || suffix === 'git' ? '' : `.${suffix}`;
+
+	return `github:${user}/${name}${keptSuffix}`;
 };
 
 /**
@@ -106,7 +139,8 @@ const collectShorthands = root => {
 		if (member?.value.type === 'Object' && countEffectiveMembers(member.value) === 1) {
 			const url = getStringValue(member.value, 'url');
 
-			if (url !== undefined) {
+			// An empty `url` would become an empty field that `no-empty-fields` then reports.
+			if (url && !(field === 'bugs' && npmReadsBugsStringAsEmail(url))) {
 				results.push({node: member.value, field, shorthand: url});
 			}
 		}

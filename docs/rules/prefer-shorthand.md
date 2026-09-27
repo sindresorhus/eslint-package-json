@@ -19,7 +19,9 @@ Several fields accept both an object form and a more concise string form. When t
 Each conversion only applies when the shorthand carries the exact same information as the object form — anything that would be lost is left as-is — so this rule is autofixable.
 
 > [!NOTE]
-> npm warns about shorthand `repository` values at publish time, but has shared no concrete plans or justification for removing support. Since shorthand remains supported and lossless here, this rule continues to prefer it. See [npm/cli#9778](https://github.com/npm/cli/issues/9778).
+> npm warns about shorthand `repository` values at publish time, but has shared no concrete plans or justification for removing support. Since shorthand remains supported and lossless here, this rule continues to prefer it.
+
+Since `github:user/repo` publishes as `git+https://github.com/user/repo.git`, only `https` URLs without credentials are converted. See [npm/cli#9778](https://github.com/npm/cli/issues/9778).
 
 ## Examples
 
