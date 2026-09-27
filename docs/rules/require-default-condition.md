@@ -9,6 +9,8 @@
 
 Conditions are resolved top to bottom. This rule requires each conditions object in `exports` and `imports` to end with a `default` fallback.
 
+A nested conditions object needs no `default` when a later `default` in an enclosing object covers it, as in `{"node": {"import": "./a.mjs"}, "default": "./a.js"}`, since Node moves on to the next key when the nested object matches nothing. Likewise, only the last element of a fallback array needs its own `default`.
+
 > [!NOTE]
 > Some packages deliberately omit `default` so that resolution fails for unsupported platforms. Disable the rule for those cases.
 

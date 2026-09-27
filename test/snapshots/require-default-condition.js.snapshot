@@ -44,29 +44,14 @@ Message:
 
 `;
 
-exports[`invalid(11): {\"exports\": {\"node\": {\"require\": {\"types\": \"./a.d.cts\", \"require\": \"./a.cjs\"}}, \"default\": \"./a.js\"}} 1`] = `
-
-[Input]
-  1 | {"exports": {"node": {"require": {"types": "./a.d.cts", "require": "./a.cjs"}}, "default": "./a.js"}}
-
-`;
-
-exports[`invalid(11): {\"exports\": {\"node\": {\"require\": {\"types\": \"./a.d.cts\", \"require\": \"./a.cjs\"}}, \"default\": \"./a.js\"}} 2`] = `
-
-Message:
-> 1 | {"exports": {"node": {"require": {"types": "./a.d.cts", "require": "./a.cjs"}}, "default": "./a.js"}}
-    |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A conditions object should include a \`default\` entry as a fallback.
-
-`;
-
-exports[`invalid(12): {\"exports\": [{\"default\": \"./a.js\", \"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\"}]} 1`] = `
+exports[`invalid(11): {\"exports\": [{\"default\": \"./a.js\", \"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\"}]} 1`] = `
 
 [Input]
   1 | {"exports": [{"default": "./a.js", "import": "./a.mjs"}, {"require": "./a.cjs"}]}
 
 `;
 
-exports[`invalid(12): {\"exports\": [{\"default\": \"./a.js\", \"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\"}]} 2`] = `
+exports[`invalid(11): {\"exports\": [{\"default\": \"./a.js\", \"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\"}]} 2`] = `
 
 Message:
 > 1 | {"exports": [{"default": "./a.js", "import": "./a.mjs"}, {"require": "./a.cjs"}]}
@@ -74,7 +59,7 @@ Message:
 
 `;
 
-exports[`invalid(12): {\"exports\": [{\"default\": \"./a.js\", \"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\"}]} 3`] = `
+exports[`invalid(11): {\"exports\": [{\"default\": \"./a.js\", \"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\"}]} 3`] = `
 
 Message:
 > 1 | {"exports": [{"default": "./a.js", "import": "./a.mjs"}, {"require": "./a.cjs"}]}
@@ -82,18 +67,56 @@ Message:
 
 `;
 
-exports[`invalid(13): {\"exports\": [{\"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\", \"types\": \"./a.d.cts\"}]} 1`] = `
+exports[`invalid(12): {\"exports\": [{\"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\", \"types\": \"./a.d.cts\"}]} 1`] = `
 
 [Input]
   1 | {"exports": [{"import": "./a.mjs"}, {"require": "./a.cjs", "types": "./a.d.cts"}]}
 
 `;
 
-exports[`invalid(13): {\"exports\": [{\"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\", \"types\": \"./a.d.cts\"}]} 2`] = `
+exports[`invalid(12): {\"exports\": [{\"import\": \"./a.mjs\"}, {\"require\": \"./a.cjs\", \"types\": \"./a.d.cts\"}]} 2`] = `
 
 Message:
 > 1 | {"exports": [{"import": "./a.mjs"}, {"require": "./a.cjs", "types": "./a.d.cts"}]}
     |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ A conditions object should include a \`default\` entry as a fallback.
+
+`;
+
+exports[`invalid(13): {\"exports\": {\"default\": \"./b.cjs\", \"development\": {\"import\": \"./a.mjs\"}}} 1`] = `
+
+[Input]
+  1 | {"exports": {"default": "./b.cjs", "development": {"import": "./a.mjs"}}}
+
+`;
+
+exports[`invalid(13): {\"exports\": {\"default\": \"./b.cjs\", \"development\": {\"import\": \"./a.mjs\"}}} 2`] = `
+
+Message:
+> 1 | {"exports": {"default": "./b.cjs", "development": {"import": "./a.mjs"}}}
+    |              ^^^^^^^^^^^^^^^^^^^^ The \`default\` condition must be the last entry in a conditions object.
+
+`;
+
+exports[`invalid(13): {\"exports\": {\"default\": \"./b.cjs\", \"development\": {\"import\": \"./a.mjs\"}}} 3`] = `
+
+Message:
+> 1 | {"exports": {"default": "./b.cjs", "development": {"import": "./a.mjs"}}}
+    |                                                   ^^^^^^^^^^^^^^^^^^^^^ A conditions object should include a \`default\` entry as a fallback.
+
+`;
+
+exports[`invalid(14): {\"exports\": {\".\": {\"import\": \"./a.mjs\"}, \"./b\": \"./b.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {".": {"import": "./a.mjs"}, "./b": "./b.js"}}
+
+`;
+
+exports[`invalid(14): {\"exports\": {\".\": {\"import\": \"./a.mjs\"}, \"./b\": \"./b.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {".": {"import": "./a.mjs"}, "./b": "./b.js"}}
+    |                   ^^^^^^^^^^^^^^^^^^^^^ A conditions object should include a \`default\` entry as a fallback.
 
 `;
 

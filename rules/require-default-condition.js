@@ -23,14 +23,17 @@ function isConditionsObject(objectNode, subpathPrefix) {
 /**
 Recursively yields condition objects that lack `default` or place it before another condition.
 */
-function * checkNode(node, subpathPrefix, isRoot = true) {
+function * checkNode(node, subpathPrefix, isRoot = true, isCovered = false) {
 	switch (node.type) {
 		case 'Object': {
-			if (!isRoot || isConditionsObject(node, subpathPrefix)) {
-				const defaultIndex = node.members.findIndex(member => getKey(member) === 'default');
+			const isConditions = !isRoot || isConditionsObject(node, subpathPrefix);
+			const defaultIndex = isConditions ? node.members.findIndex(member => getKey(member) === 'default') : -1;
 
+			if (isConditions) {
 				if (defaultIndex === -1) {
-					yield {node, messageId: MESSAGE_ID};
+					if (!isCovered) {
+						yield {node, messageId: MESSAGE_ID};
+					}
 				} else if (defaultIndex !== node.members.length - 1) {
 					yield {
 						node: node.members[defaultIndex],
@@ -39,16 +42,20 @@ function * checkNode(node, subpathPrefix, isRoot = true) {
 				}
 			}
 
-			for (const member of node.members) {
-				yield * checkNode(member.value, subpathPrefix, false);
+			for (const [index, member] of node.members.entries()) {
+				// A nested conditions object that matches nothing resolves to nothing, and Node moves on to the next sibling condition, so a `default` after it, here or in an enclosing conditions object, covers everything it does not.
+				yield * checkNode(member.value, subpathPrefix, false, isCovered || index < defaultIndex);
 			}
 
 			break;
 		}
 
 		case 'Array': {
-			for (const element of node.elements) {
-				yield * checkNode(element.value, subpathPrefix, false);
+			for (const [index, element] of node.elements.entries()) {
+				// A fallback list is the fallback. Node resolves an element that matches no condition to
+				// nothing and moves on to the next one, so an element that is not last needs no `default` of its
+				// own; the last one has nothing left to fall through to and still does.
+				yield * checkNode(element.value, subpathPrefix, false, isCovered || index < node.elements.length - 1);
 			}
 
 			break;
