@@ -9,7 +9,7 @@ exports[`invalid(1): {\"exports\": {\"./foo/\": \"./dist/foo/\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./foo/": "./dist/foo/"}}
-    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./foo/*\` instead.
+    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 Output:
   1 | {"exports": {"./foo/*": "./dist/foo/"}}
@@ -20,7 +20,7 @@ exports[`invalid(1): {\"exports\": {\"./foo/\": \"./dist/foo/\"}} 3`] = `
 
 Message:
 > 1 | {"exports": {"./foo/": "./dist/foo/"}}
-    |                        ^^^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./dist/foo/*\` instead.
+    |                        ^^^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/foo/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 Output:
   1 | {"exports": {"./foo/": "./dist/foo/*"}}
@@ -38,7 +38,188 @@ exports[`invalid(10): {\"exports\": {\".\": [\"./dist/\", \"./other.js\"]}} 2`] 
 
 Message:
 > 1 | {"exports": {".": ["./dist/", "./other.js"]}}
-    |                    ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./dist/*\` instead.
+    |                    ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(11): {\"exports\": {\"./foo/\": \"./dist/foo/index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./foo/": "./dist/foo/index.js"}}
+
+`;
+
+exports[`invalid(11): {\"exports\": {\"./foo/\": \"./dist/foo/index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./foo/": "./dist/foo/index.js"}}
+    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(12): {\"exports\": {\"./a/\": \"./dist/a/index.js\", \"./b/\": \"./dist/b/index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./a/": "./dist/a/index.js", "./b/": "./dist/b/index.js"}}
+
+`;
+
+exports[`invalid(12): {\"exports\": {\"./a/\": \"./dist/a/index.js\", \"./b/\": \"./dist/b/index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./dist/a/index.js", "./b/": "./dist/b/index.js"}}
+    |              ^^^^^^ Trailing-slash folder mapping \`./a/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(12): {\"exports\": {\"./a/\": \"./dist/a/index.js\", \"./b/\": \"./dist/b/index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./dist/a/index.js", "./b/": "./dist/b/index.js"}}
+    |                                           ^^^^^^ Trailing-slash folder mapping \`./b/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(13): {\"imports\": {\"#a/\": \"./a.js\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#a/": "./a.js"}}
+
+`;
+
+exports[`invalid(13): {\"imports\": {\"#a/\": \"./a.js\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#a/": "./a.js"}}
+    |              ^^^^^ Trailing-slash folder mapping \`#a/\` in \`imports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(14): {\"imports\": {\"#a/\": \"./dist/a/\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#a/": "./dist/a/"}}
+
+`;
+
+exports[`invalid(14): {\"imports\": {\"#a/\": \"./dist/a/\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#a/": "./dist/a/"}}
+    |              ^^^^^ Trailing-slash folder mapping \`#a/\` in \`imports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+Output:
+  1 | {"imports": {"#a/*": "./dist/a/"}}
+
+`;
+
+exports[`invalid(14): {\"imports\": {\"#a/\": \"./dist/a/\"}} 3`] = `
+
+Message:
+> 1 | {"imports": {"#a/": "./dist/a/"}}
+    |                     ^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/a/\` in \`imports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+Output:
+  1 | {"imports": {"#a/": "./dist/a/*"}}
+
+`;
+
+exports[`invalid(15): {\"exports\": \"./dist/\"} 1`] = `
+
+[Input]
+  1 | {"exports": "./dist/"}
+
+`;
+
+exports[`invalid(15): {\"exports\": \"./dist/\"} 2`] = `
+
+Message:
+> 1 | {"exports": "./dist/"}
+    |             ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(16): {\"exports\": {\"./lib/*\": \"./other/*\", \"./lib/\": \"./dist/lib/\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./lib/*": "./other/*", "./lib/": "./dist/lib/"}}
+
+`;
+
+exports[`invalid(16): {\"exports\": {\"./lib/*\": \"./other/*\", \"./lib/\": \"./dist/lib/\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./lib/*": "./other/*", "./lib/": "./dist/lib/"}}
+    |                                      ^^^^^^^^ Trailing-slash folder mapping \`./lib/\` in \`exports\` no longer resolves in Node.js, and \`./lib/*\` is taken, so the two have to be merged.
+
+`;
+
+exports[`invalid(16): {\"exports\": {\"./lib/*\": \"./other/*\", \"./lib/\": \"./dist/lib/\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./lib/*": "./other/*", "./lib/": "./dist/lib/"}}
+    |                                                ^^^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/lib/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(17): {\"exports\": {\"./lib/\": \"./dist/lib/\", \"./lib/*\": \"./other/*\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./lib/": "./dist/lib/", "./lib/*": "./other/*"}}
+
+`;
+
+exports[`invalid(17): {\"exports\": {\"./lib/\": \"./dist/lib/\", \"./lib/*\": \"./other/*\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./lib/": "./dist/lib/", "./lib/*": "./other/*"}}
+    |              ^^^^^^^^ Trailing-slash folder mapping \`./lib/\` in \`exports\` no longer resolves in Node.js, and \`./lib/*\` is taken, so the two have to be merged.
+
+`;
+
+exports[`invalid(17): {\"exports\": {\"./lib/\": \"./dist/lib/\", \"./lib/*\": \"./other/*\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./lib/": "./dist/lib/", "./lib/*": "./other/*"}}
+    |                        ^^^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/lib/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(18): {\"imports\": {\"#a/*\": \"./other/*\", \"#a/\": \"./dist/a/\"}} 1`] = `
+
+[Input]
+  1 | {"imports": {"#a/*": "./other/*", "#a/": "./dist/a/"}}
+
+`;
+
+exports[`invalid(18): {\"imports\": {\"#a/*\": \"./other/*\", \"#a/\": \"./dist/a/\"}} 2`] = `
+
+Message:
+> 1 | {"imports": {"#a/*": "./other/*", "#a/": "./dist/a/"}}
+    |                                   ^^^^^ Trailing-slash folder mapping \`#a/\` in \`imports\` no longer resolves in Node.js, and \`#a/*\` is taken, so the two have to be merged.
+
+`;
+
+exports[`invalid(18): {\"imports\": {\"#a/*\": \"./other/*\", \"#a/\": \"./dist/a/\"}} 3`] = `
+
+Message:
+> 1 | {"imports": {"#a/*": "./other/*", "#a/": "./dist/a/"}}
+    |                                          ^^^^^^^^^^^ Trailing-slash folder mapping \`./dist/a/\` in \`imports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(19): {\"exports\": {\"./foo/\": \"./dist/foo/index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./foo/": "./dist/foo/index.js"}}
+
+`;
+
+exports[`invalid(19): {\"exports\": {\"./foo/\": \"./dist/foo/index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./foo/": "./dist/foo/index.js"}}
+    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 `;
 
@@ -53,7 +234,7 @@ exports[`invalid(2): {\"exports\": {\"./foo/\": \"./dist/*/\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"./foo/": "./dist/*/"}}
-    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./foo/*\` instead.
+    |              ^^^^^^^^ Trailing-slash folder mapping \`./foo/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 `;
 
@@ -62,6 +243,168 @@ exports[`invalid(2): {\"exports\": {\"./foo/\": \"./dist/*/\"}} 3`] = `
 Message:
 > 1 | {"exports": {"./foo/": "./dist/*/"}}
     |                        ^^^^^^^^^^^ Trailing-slash mapping \`./dist/*/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
+
+`;
+
+exports[`invalid(20): {\"exports\": {\"./foo/*/\": \"./dist/foo/\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./foo/*/": "./dist/foo/"}}
+
+`;
+
+exports[`invalid(20): {\"exports\": {\"./foo/*/\": \"./dist/foo/\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./foo/*/": "./dist/foo/"}}
+    |              ^^^^^^^^^^ Trailing-slash mapping \`./foo/*/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
+
+`;
+
+exports[`invalid(20): {\"exports\": {\"./foo/*/\": \"./dist/foo/\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./foo/*/": "./dist/foo/"}}
+    |                          ^^^^^^^^^^^^^ Trailing-slash mapping \`./dist/foo/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
+
+`;
+
+exports[`invalid(21): {\"exports\": {\"./a/\": \"./dist/*/\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./a/": "./dist/*/"}}
+
+`;
+
+exports[`invalid(21): {\"exports\": {\"./a/\": \"./dist/*/\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./dist/*/"}}
+    |              ^^^^^^ Trailing-slash folder mapping \`./a/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(21): {\"exports\": {\"./a/\": \"./dist/*/\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./dist/*/"}}
+    |                      ^^^^^^^^^^^ Trailing-slash mapping \`./dist/*/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern without a trailing slash.
+
+`;
+
+exports[`invalid(22): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./a/": "./x/", "./a/": "./y/"}}
+
+`;
+
+exports[`invalid(22): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./x/", "./a/": "./y/"}}
+    |              ^^^^^^ Trailing-slash folder mapping \`./a/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(22): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./x/", "./a/": "./y/"}}
+    |                      ^^^^^^ Trailing-slash folder mapping \`./x/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(22): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/\"}} 4`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./x/", "./a/": "./y/"}}
+    |                              ^^^^^^ Trailing-slash folder mapping \`./a/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(22): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/\"}} 5`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./x/", "./a/": "./y/"}}
+    |                                      ^^^^^^ Trailing-slash folder mapping \`./y/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(23): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/*\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./a/": "./x/", "./a/": "./y/*"}}
+
+`;
+
+exports[`invalid(23): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/*\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./x/", "./a/": "./y/*"}}
+    |              ^^^^^^ Trailing-slash folder mapping \`./a/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(23): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/*\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./x/", "./a/": "./y/*"}}
+    |                      ^^^^^^ Trailing-slash folder mapping \`./x/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(23): {\"exports\": {\"./a/\": \"./x/\", \"./a/\": \"./y/*\"}} 4`] = `
+
+Message:
+> 1 | {"exports": {"./a/": "./x/", "./a/": "./y/*"}}
+    |                              ^^^^^^ Trailing-slash folder mapping \`./a/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(24): {\"exports\": {\"./a/\": [\"./b/\"]}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./a/": ["./b/"]}}
+
+`;
+
+exports[`invalid(24): {\"exports\": {\"./a/\": [\"./b/\"]}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./a/": ["./b/"]}}
+    |              ^^^^^^ Trailing-slash folder mapping \`./a/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(24): {\"exports\": {\"./a/\": [\"./b/\"]}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./a/": ["./b/"]}}
+    |                       ^^^^^^ Trailing-slash folder mapping \`./b/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(25): {\"exports\": {\"./a/\": {\"x\": \"./b/\"}}} 1`] = `
+
+[Input]
+  1 | {"exports": {"./a/": {"x": "./b/"}}}
+
+`;
+
+exports[`invalid(25): {\"exports\": {\"./a/\": {\"x\": \"./b/\"}}} 2`] = `
+
+Message:
+> 1 | {"exports": {"./a/": {"x": "./b/"}}}
+    |              ^^^^^^ Trailing-slash folder mapping \`./a/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
+
+`;
+
+exports[`invalid(25): {\"exports\": {\"./a/\": {\"x\": \"./b/\"}}} 3`] = `
+
+Message:
+> 1 | {"exports": {"./a/": {"x": "./b/"}}}
+    |                            ^^^^^^ Trailing-slash folder mapping \`./b/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 `;
 
@@ -122,7 +465,7 @@ exports[`invalid(5): {\"exports\": {\".\": \"./lib/\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {".": "./lib/"}}
-    |                   ^^^^^^^^ Trailing-slash folder mapping \`./lib/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./lib/*\` instead.
+    |                   ^^^^^^^^ Trailing-slash folder mapping \`./lib/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 `;
 
@@ -146,7 +489,7 @@ Message:
   2 | 			"exports": {
   3 | 				".": {
 > 4 | 					"import": "./dist/"
-    | 					          ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./dist/*\` instead.
+    | 					          ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
   5 | 				}
   6 | 			}
   7 | 		}
@@ -164,7 +507,7 @@ exports[`invalid(7): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 2`] = 
 
 Message:
 > 1 | {"imports": {"#internal/": "./src/internal/"}}
-    |              ^^^^^^^^^^^^ Trailing-slash folder mapping \`#internal/\` in \`imports\` no longer resolves in Node.js; use a subpath pattern like \`#internal/*\` instead.
+    |              ^^^^^^^^^^^^ Trailing-slash folder mapping \`#internal/\` in \`imports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 Output:
   1 | {"imports": {"#internal/*": "./src/internal/"}}
@@ -175,7 +518,7 @@ exports[`invalid(7): {\"imports\": {\"#internal/\": \"./src/internal/\"}} 3`] = 
 
 Message:
 > 1 | {"imports": {"#internal/": "./src/internal/"}}
-    |                            ^^^^^^^^^^^^^^^^^ Trailing-slash folder mapping \`./src/internal/\` in \`imports\` no longer resolves in Node.js; use a subpath pattern like \`./src/internal/*\` instead.
+    |                            ^^^^^^^^^^^^^^^^^ Trailing-slash folder mapping \`./src/internal/\` in \`imports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 Output:
   1 | {"imports": {"#internal/": "./src/internal/*"}}
@@ -193,7 +536,7 @@ exports[`invalid(8): {\"exports\": \"./dist/\"} 2`] = `
 
 Message:
 > 1 | {"exports": "./dist/"}
-    |             ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; use a subpath pattern like \`./dist/*\` instead.
+    |             ^^^^^^^^^ Trailing-slash folder mapping \`./dist/\` in \`exports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 `;
 
@@ -208,6 +551,6 @@ exports[`invalid(9): {\"imports\": {\"#dep\": \"./src/\"}} 2`] = `
 
 Message:
 > 1 | {"imports": {"#dep": "./src/"}}
-    |                      ^^^^^^^^ Trailing-slash folder mapping \`./src/\` in \`imports\` no longer resolves in Node.js; use a subpath pattern like \`./src/*\` instead.
+    |                      ^^^^^^^^ Trailing-slash folder mapping \`./src/\` in \`imports\` no longer resolves in Node.js; a subpath pattern needs \`*\` in the target and in the key beside it.
 
 `;
