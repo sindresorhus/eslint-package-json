@@ -6,6 +6,10 @@ Keep rules simple and high-signal. Target common, real `package.json` mistakes. 
 
 This plugin lints `package.json` via [`@eslint/json`](https://github.com/eslint/json). Rules visit the JSON AST (momoa), not JavaScript.
 
+Rules model the latest npm major (currently npm 12). Where majors differ, follow the latest one and verify claims against it, for example with `npm pack --dry-run`.
+
+Rules target ESM packages. Do not add checks, branches, or tests for CommonJS consumers or CommonJS-specific mistakes (such as a `require` condition's types or a CommonJS declaration's format).
+
 ## Rule anatomy
 
 Each rule is a plain ESLint rule: a module default-exporting `{create, meta}`. `create(context)` returns a standard ESLint visitor object.
@@ -96,27 +100,35 @@ Name boolean options in the positive `check*` form, never the negated `ignore*`/
 - `iterateEffectiveMembers(object)` / `countEffectiveMembers(object)` / `withoutShadowedMembers(node)` — the object as `JSON.parse` builds it, one member per key. See “Duplicate keys” below.
 - `iterateDependencies(root, types?)` — yields `{groupName, group, member, name}` across dependency groups.
 - `dependencyTypes` — the four standard dependency group names.
-- `removeMember`/`removeMemberAndDuplicates`/`removeShadowedDuplicates`/`removeMembers`/`removeElement` — comma-aware removal (generators yielding fixes). See “Duplicate keys” below for which to use.
+- `isPrivatePackage(root)` — whether the package has `"private": true`. `isFalsyValue(node)` — whether a value node is falsy the way npm's `||` and `!` read it (`null`, `false`, `0`, `""`).
+- `removeMember`/`removeMemberAndDuplicates`/`removeShadowedDuplicates`/`removeMembers`/`removeElement`/`removeEntryAndEmptyContainer` — comma-aware removal (generators yielding fixes). See “Duplicate keys” below for which to use.
 - `buildReordered(sourceCode, container, orderedNodes)` + `isSameOrder` — for sorting fixes on objects or arrays that preserve indentation. Pass an object's members, or an array's element values (`Element` nodes carry no range).
 - `compareStrings` — locale-independent alphabetical comparison. Always use it instead of `String#localeCompare`, whose locale-dependent result would make a fix disagree between a contributor and CI.
 - `iterateStringValues(node)` — every `String` value node in an `exports`/`imports` tree; `iteratePathValueNodes(root)` yields `{node, field}` across every path-bearing field, since the same text means different things per field (a leading `/` is absolute in `main`, redundant in a `files` pattern).
-- `getIndentString`/`getNewline` — detect the file's formatting.
+- `insertRootField(fixer, sourceCode, root, {key, value})` — add a top-level field where a sorted document holds it, so `sort-properties` does not report the result. Use it instead of appending. It ranks by the default `fieldOrder`, so a document sorted with a custom `sort-properties` `order` can get the field in a place that order reports. `getRootFieldAnchor(root, key)` is the member it inserts after.
+- `insertMember(fixer, sourceCode, object, {index, entry})` — insert a member into any object at a given index, keeping its layout (one-line, multiline, empty).
+- `insertGroupMember(fixer, sourceCode, root, {groupMember, groupName, key, value})` — add an entry to a dependency-style group where a sorted document holds it, creating the group with `insertRootField` when it is missing. `setPrivate(fixer, sourceCode, root, privateMember)` — set `"private": true`, adding the field when it is missing.
+- `getIndentString` — detect the file's indentation. `lineIndentOf(sourceCode, node)` — the indentation of the line a node starts on. `getIndentPrefix(sourceCode, node)` — the same, or `''` when the node shares its line with earlier content.
+- `validRange`/`validVersion` — memoized `semver.validRange`/`semver.valid`. Use them instead of calling `semver` per entry.
+- `canonicalVersion(version)` — the spelling of a version without its whitespace and leading `=`/`v`, keeping `+build`. `targetsPrerelease(range, {loose?})` — whether a range starts at a pre-release, the way `semver.minVersion` decides it.
+- `resolveAlias(specifier)` — the package and range an `npm:` alias installs, via `npm-package-arg`. `installedSpecifier(specifier)` — the specifier npm installs for a dependency entry (an alias's own range, anything else unchanged). `isGitRemote(specifier)` — whether npm resolves a specifier to a git remote.
 - `optionsSchema(properties)` + `stringArraySchema` — build a rule's options schema without boilerplate.
 
 Import from `'./utils/index.js'`.
 
-External: `semver`, `validate-npm-package-name`, `spdx-expression-parse`, `detect-indent`.
+External: `semver`, `validate-npm-package-name`, `spdx-expression-parse`, `detect-indent`, `hosted-git-info`, `npm-package-arg`.
 
 ### Duplicate keys
 
 `findMember` resolves a key to its *final* member, matching `JSON.parse`. Which remover a fix needs follows from that:
 
 - `removeMemberAndDuplicates` — the rule found the field with `findMember` and deletes it. Deleting only the final member promotes an earlier duplicate into its place, so the reported problem would survive its own fix.
-- `removeMember` — the rule iterates members and reports each one separately (`no-empty-fields`, `no-duplicate-dependencies`, the orphaned-entry report in `valid-fields/peer-dependencies-meta`), so each suggestion should remove only its own member. The distinction is per report, not per rule.
-- `removeShadowedDuplicates` — the fix rewrites the effective member instead of deleting it, by renaming its key or replacing it with a member under a different key (`no-manual-maintainers`, `no-package-manager-engines`). It drops the earlier duplicates and leaves the rewritten member alone.
-- `removeMembers` — removing several members, a contiguous run at a time. One at a time does not work: each removal also consumes an adjacent comma, so neighboring members produce overlapping ranges and ESLint rejects the report with `Fix objects must not be overlapped`.
+- `removeMember` — the rule iterates members and reports each one separately (`no-empty-fields`, `no-duplicate-dependencies`), so each suggestion should remove only its own member. The distinction is per report, not per rule.
+- `removeEntryAndEmptyContainer` — the rule found a container with `findMember` and deletes one entry of it (a dependency, a keyword, a `publishConfig` key). It removes the whole container when that entry is its only one, since an empty container is what `no-empty-fields` reports, and it removes the entry together with its duplicates. So it is only for an entry reached through the effective members, not for a per-entry report on raw `.members`.
+- `removeShadowedDuplicates` — the fix rewrites the effective member instead of deleting it, by renaming its key or replacing it with a member under a different key (`no-manual-maintainers`, `no-package-manager-engines`, the group rename in `types-in-dev-dependencies`). It drops the earlier duplicates and leaves the rewritten member alone.
+- `removeMembers` — removing several members, a contiguous run at a time. The member removers above are built on it, so call it directly only to remove members that are not one key and its duplicates. One at a time does not work: each removal also consumes an adjacent comma, so neighboring members produce overlapping ranges and ESLint rejects the report with `Fix objects must not be overlapped`.
 
-`test/package.js` enforces this: every suggestion must reduce the number of reports of its own `messageId`, so a fix that only unmasks a shadowed duplicate fails the suite.
+`test/package.js` enforces this on its tricky documents, which reach every rule with suggestions: every suggestion must reduce the number of reports of its own `messageId`, so a fix that only unmasks a shadowed duplicate fails the suite. A per-entry removal that also takes the effective duplicate still reduces that count, so the test does not catch the wrong remover in that direction.
 
 Duplicates matter for *reports* too, and the dividing line is what the rule is asking:
 
@@ -129,8 +141,12 @@ Provide an autofix only if it cannot change install/runtime behavior. If it coul
 
 - Build replacement strings with `JSON.stringify(value)` so quoting/escaping is correct.
 - Strict JSON has no trailing commas — handle comma tokens manually when adding/removing members or array elements (`removeMember` does this for object members).
-- Whole-object reordering fixes must preserve the file's real indentation and newline (read them from the source, or use `getIndentString`/`getNewline`).
+- Whole-object reordering fixes must preserve the file's real indentation (read it from the source, or use `getIndentString`), and they break lines with `\n`.
 - Strict JSON has no comments, so fixes never need to preserve them.
+
+## Line endings
+
+Treat every document as `LF`, and a fix normalizes to it: build a separator with `'\n'` and there is no `getNewline` helper. `CRLF` and a bare `CR` are not a concern — do not add code, branches, or tests to detect them, to pick a separator for them, or to preserve them. Write files with `LF` and read them as `LF`, and let npm and Node make of a `CRLF` file what they make of it.
 
 ## Rule naming
 
@@ -138,7 +154,7 @@ Provide an autofix only if it cannot change install/runtime behavior. If it coul
 - `prefer-` — suggest a better alternative (`prefer-provenance`).
 - `require-` — mandate presence (`require-fields`).
 - `consistent-` — enforce a single style (`consistent-path-prefix`).
-- `valid-` — validate a field's structure/value. Objective, option-less field checks live together in `valid-fields`; give a field its own `valid-` rule only when it needs options or encodes an opinion.
+- `valid-` — validate a field's structure/value. Option-less field checks live together in `valid-fields`, mostly what npm or Node reject or silently drop (the `keywords` conventions are the exception); give a field its own `valid-` rule only when it needs options or encodes a larger opinion.
 
 Name after the target, not the fix. Use backticks around rule and option names in commit messages.
 

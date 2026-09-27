@@ -55,7 +55,7 @@ const create = context => ({
 			if (field === 'files' && pattern.startsWith('/')) {
 				const stripped = pattern.replace(/^\/+/u, '');
 
-				// A pattern of nothing but slashes leaves no shorter form to suggest, so it falls through to the absolute-path report below. Two or more leading slashes do too: npm 11 normalizes them away and npm 12 strips only the first, so the two majors do not agree on what `//dist` names, and no shorter spelling means the same thing on both.
+				// A pattern of nothing but slashes leaves no shorter form to suggest, so it falls through to the absolute-path report below. Two or more leading slashes do too: npm strips only the first, so `//dist` publishes nothing, and no shorter spelling means the same thing.
 				if (stripped !== '' && pattern === `/${stripped}`) {
 					const expected = negation + stripped;
 
