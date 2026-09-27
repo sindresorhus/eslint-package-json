@@ -1,5 +1,6 @@
 import {
 	getRootObject,
+	countEffectiveMembers,
 	findMember,
 	getKey,
 	removeMember,
@@ -28,7 +29,9 @@ const hasSameSpecifier = (sourceCode, firstMember, secondMember) => {
 // A package cannot meaningfully be in more than one of these groups.
 // `peerDependencies` is intentionally excluded, since also listing a peer in
 // `devDependencies` is a common and valid pattern.
-const exclusiveGroups = ['dependencies', 'devDependencies', 'optionalDependencies'];
+//
+// The order is the precedence a consumer of the published package sees, and the first group to list a name keeps it, so a duplicate is reported against, and removed from, a later group. A consumer never installs `devDependencies` (Arborist loads them only for the project root), so they come last. Arborist loads `optionalDependencies` after `dependencies` and lets it win, so the optional entry is the one npm installs, which is why `fsevents` is kept there.
+const exclusiveGroups = ['optionalDependencies', 'dependencies', 'devDependencies'];
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
@@ -66,23 +69,39 @@ const create = context => {
 
 						// Within a group, the effective member removes the whole shadowed run. This keeps same-group fixes in one range and only does so when the effective value agrees with the duplicate it follows. Across groups the whole key goes, so removing the effective member is safe only when its successor asks for the same specifier.
 						const isSafeToFix = isEffectiveMember && hasSameSpecifier(sourceCode, member, successor);
+						// Across groups, removing a `devDependencies` entry changes an install: the project root loads `devDependencies` last and lets them win, so `npm install --omit=dev` skips a name listed in both, and keeping only the `dependencies` entry installs it. Removing a `dependencies` entry in favor of the `optionalDependencies` one installs the same thing, but whether the package is required or optional is the author's call. So every cross-group removal is a suggestion, and only a same-group one an automatic fix.
+						const isAutofix = isSafeToFix && isSameGroup;
 
-						// Across groups the whole key goes, so an earlier duplicate must not be promoted into its place.
-						const shouldRemoveDuplicates = !isSameGroup && isSafeToFix;
+						// Removing the name takes the whole run with it, so a group that held nothing else is
+						// left empty, which `no-empty-fields` then reports as a problem this fix created; the group
+						// itself goes instead. A same-group removal always leaves its effective entry, so only the
+						// cross-group one can empty a group.
+						const doesEmptyTheGroup = !isSameGroup && countEffectiveMembers(group.value) === 1;
 
 						const removal = {
 							* fix(fixer) {
-								if (isSameGroup && isSafeToFix) {
-									yield * removeShadowedDuplicates(fixer, sourceCode, effectiveMember);
+								if (isSameGroup) {
+									// Within a group the effective member takes the whole shadowed run with it, which
+									// resolves the report. A duplicate that only shadows another needs no more than
+									// the member the report names.
+									yield * (isSafeToFix
+										? removeShadowedDuplicates(fixer, sourceCode, effectiveMember)
+										: removeMember(fixer, sourceCode, member));
 									return;
 								}
 
-								if (shouldRemoveDuplicates) {
-									yield * removeMemberAndDuplicates(fixer, sourceCode, member);
+								// Across groups the whole name goes, and with it every member in the group that
+								// shares it, so the report is resolved whether the member it names is the effective
+								// one or only shadows another.
+								if (doesEmptyTheGroup) {
+									// The group member is the one `findMember` resolved, which is the final member
+									// for its key. Taking the whole run is what keeps a shadowed duplicate from
+									// being promoted into the group's place, which would bring this report back.
+									yield * removeMemberAndDuplicates(fixer, sourceCode, group);
 									return;
 								}
 
-								yield * removeMember(fixer, sourceCode, member);
+								yield * removeMemberAndDuplicates(fixer, sourceCode, member);
 							},
 						};
 
@@ -90,7 +109,7 @@ const create = context => {
 							node: member.name,
 							messageId: MESSAGE_ID,
 							data: {name, group: first.groupName},
-							...(isSafeToFix
+							...(isAutofix
 								? removal
 								: {suggest: [{messageId: SUGGESTION_ID, data: {name, group: groupName}, ...removal}]}),
 						});

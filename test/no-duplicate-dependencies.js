@@ -35,13 +35,19 @@ snapshotTest.snapshot({
 	],
 });
 
-test('autofix removes all duplicate keys in the later dependency group', () => {
+test('the `devDependencies` duplicate is the one that goes', () => {
 	const code = '{"dependencies": {"foo": "^1"}, "devDependencies": {"foo": "^2", "foo": "^1"}}';
 	const messages = linter.verify(code, config, {filename: 'package.json'});
-	const fix = messages.find(message => message.fix)?.fix;
 
-	assert.ok(fix);
-	assert.equal(applyFix(code, fix), '{"dependencies": {"foo": "^1"}, "devDependencies": {}}');
+	// The effective `devDependencies` entry matches `dependencies`, so the whole dev run goes. Both removals are suggestions, since a cross-group removal changes what the project root installs.
+	assert.deepEqual(
+		messages.map(message => applyFix(code, (message.suggestions ?? [message])[0].fix)),
+		[
+			'{"dependencies": {"foo": "^1"}}',
+			'{"dependencies": {"foo": "^1"}}',
+		],
+	);
+	assert.equal(messages[1].fix, undefined);
 });
 
 test('suggestions remove only the selected differing dependency', () => {
@@ -52,18 +58,94 @@ test('suggestions remove only the selected differing dependency', () => {
 		.map(suggestion => applyFix(code, suggestion.fix));
 
 	assert.deepEqual(outputs, [
-		'{"dependencies": {"foo": "^1"}, "devDependencies": {"foo": "^3"}}',
-		'{"dependencies": {"foo": "^1"}, "devDependencies": {"foo": "^2"}}',
+		'{"dependencies": {"foo": "^1"}}',
+		'{"dependencies": {"foo": "^1"}}',
 	]);
 });
 
-test('suggestion preserves a later differing dependency', () => {
-	const code = '{"dependencies": {"foo": "^1"}, "devDependencies": {"foo": "^1", "foo": "^2"}}';
-	const messages = linter.verify(code, config, {filename: 'package.json'});
-	const suggestion = messages.flatMap(message => message.suggestions ?? [])[0];
+test('every removal across groups takes the whole run of that name', () => {
+	// A report on a member that only shadows another one still names a name the other group already has, so removing just the member the report points at would leave its effective twin to be reported again.
+	const shadowed = '{"dependencies": {"foo": "^2"}, "devDependencies": {"foo": "^1", "foo": "^3"}}';
+	const shadowedMessages = linter.verify(shadowed, config, {filename: 'package.json'});
 
-	assert.ok(suggestion);
-	assert.equal(applyFix(code, suggestion.fix), '{"dependencies": {"foo": "^1"}, "devDependencies": {"foo": "^2"}}');
+	assert.deepEqual(
+		shadowedMessages.map(message => applyFix(
+			shadowed,
+			(message.suggestions ?? [message])[0].fix,
+		)),
+		[
+			'{"dependencies": {"foo": "^2"}}',
+			'{"dependencies": {"foo": "^2"}}',
+		],
+	);
+
+	// A group that holds another name keeps it, since only the run of this name goes.
+	const shared = '{"dependencies": {"foo": "^2"}, "devDependencies": {"bar": "^3", "foo": "^1", "foo": "^1"}}';
+	const sharedMessages = linter.verify(shared, config, {filename: 'package.json'});
+
+	assert.deepEqual(
+		sharedMessages.map(message => applyFix(
+			shared,
+			(message.suggestions ?? [message])[0].fix,
+		)),
+		[
+			'{"dependencies": {"foo": "^2"}, "devDependencies": {"bar": "^3"}}',
+			'{"dependencies": {"foo": "^2"}, "devDependencies": {"bar": "^3"}}',
+		],
+	);
+});
+
+test('a removal that takes the whole group takes the whole run of that group key', () => {
+	// A group left holding nothing is removed with the entry, and the group member it removes is the one `findMember` resolved, which is the final member for its key. Taking only that one would promote a shadowed duplicate back into its place, and the same report would come back on the next round.
+	const development = '{"dependencies": {"foo": "^1"}, "devDependencies": {"foo": "^1"}, "devDependencies": {"foo": "^1"}}';
+	const [developmentMessage] = linter.verify(development, config, {filename: 'package.json'});
+	const output = applyFix(development, developmentMessage.suggestions[0].fix);
+
+	assert.equal(output, '{"dependencies": {"foo": "^1"}}');
+	assert.equal(linter.verify(output, config, {filename: 'package.json'}).length, 0);
+
+	// The same shape where the entry goes from `dependencies` in favor of `optionalDependencies`.
+	const suggestion = '{"optionalDependencies": {"foo": "^1"}, "dependencies": {"foo": "^1"}, "dependencies": {"foo": "^1"}}';
+	const [message] = linter.verify(suggestion, config, {filename: 'package.json'});
+
+	assert.equal(message.fix, undefined);
+	assert.equal(applyFix(suggestion, message.suggestions[0].fix), '{"optionalDependencies": {"foo": "^1"}}');
+	assert.equal(linter.verify('{"optionalDependencies": {"foo": "^1"}}', config, {filename: 'package.json'}).length, 0);
+});
+
+test('the entry that stays is the one a consumer installs', () => {
+	// Every removal across groups is a suggestion, since the project root installs the name differently once either entry is gone.
+	const fixed = code => {
+		const [message] = linter.verify(code, config, {filename: 'package.json'});
+		assert.equal(message.fix, undefined);
+		return JSON.parse(applyFix(code, message.suggestions[0].fix));
+	};
+
+	// A consumer never installs `devDependencies`, so the `dependencies` entry stays and the dev one goes, the way `ajv-formats` and `wrap-ansi` list it.
+	assert.deepEqual(
+		fixed('{"dependencies": {"foo": "^1.0.0", "bar": "^1.0.0"}, "devDependencies": {"foo": "^1.0.0", "ava": "^1.0.0"}}'),
+		{dependencies: {foo: '^1.0.0', bar: '^1.0.0'}, devDependencies: {ava: '^1.0.0'}},
+	);
+
+	// An `optionalDependencies` entry reaches consumers too, so it stays over a dev one, the way `minipass-fetch` lists it.
+	assert.deepEqual(
+		fixed('{"optionalDependencies": {"foo": "^1.0.0", "x": "1"}, "devDependencies": {"foo": "^1.0.0", "ava": "^1.0.0"}}'),
+		{optionalDependencies: {foo: '^1.0.0', x: '1'}, devDependencies: {ava: '^1.0.0'}},
+	);
+
+	// Removing a `dependencies` entry in favor of the `optionalDependencies` one is a suggestion, which keeps the optional entry, as for `fsevents`.
+	const code = '{"dependencies": {"fsevents": "^2.0.0"}, "optionalDependencies": {"fsevents": "^2.0.0"}}';
+	const [message] = linter.verify(code, config, {filename: 'package.json'});
+
+	assert.equal(message.fix, undefined);
+	assert.deepEqual(JSON.parse(applyFix(code, message.suggestions[0].fix)), {optionalDependencies: {fsevents: '^2.0.0'}});
+
+	// A differing dev entry is only a suggestion, and it still removes the dev one.
+	const differing = '{"dependencies": {"foo": "^2.0.0"}, "devDependencies": {"foo": "^1.0.0"}}';
+	const [differingMessage] = linter.verify(differing, config, {filename: 'package.json'});
+
+	assert.equal(differingMessage.fix, undefined);
+	assert.deepEqual(JSON.parse(applyFix(differing, differingMessage.suggestions[0].fix)), {dependencies: {foo: '^2.0.0'}});
 });
 
 test('autofix retains same-group duplicates', () => {
@@ -101,23 +183,23 @@ test('suggestion preserves a different same-group dependency', () => {
 });
 
 test('compares effective dependency specifiers', () => {
-	const code = '{"dependencies": {"foo": "^2.0.0", "foo": "^1.0.0"}, "devDependencies": {"foo": "^2.0.0"}}';
+	const code = '{"dependencies": {"foo": "^2.0.0"}, "devDependencies": {"foo": "^2.0.0", "foo": "^1.0.0"}}';
 	const messages = linter.verify(code, config, {filename: 'package.json'});
 	const suggestions = messages.flatMap(message => message.suggestions ?? []);
 
 	assert.equal(messages.filter(message => message.fix).length, 0);
 	assert.equal(suggestions.length, 2);
+	// Both reports are on the same name in the same group, so both removals take the whole run of it and the group with it, since nothing else is left in it.
 	assert.deepEqual(suggestions.map(suggestion => applyFix(code, suggestion.fix)), [
-		'{"dependencies": {"foo": "^2.0.0"}, "devDependencies": {"foo": "^2.0.0"}}',
-		'{"dependencies": {"foo": "^2.0.0", "foo": "^1.0.0"}, "devDependencies": {}}',
+		'{"dependencies": {"foo": "^2.0.0"}}',
+		'{"dependencies": {"foo": "^2.0.0"}}',
 	]);
 });
 
 test('compares parsed dependency specifiers', () => {
-	const code = String.raw`{"dependencies": {"foo": "^1.0.0"}, "devDependencies": {"foo": "\u005e1.0.0"}}`;
-	const messages = linter.verify(code, config, {filename: 'package.json'});
-	const fix = messages.find(message => message.fix)?.fix;
+	// The two spellings parse to one range, so the shadowed duplicate is removed automatically.
+	const code = String.raw`{"dependencies": {"foo": "^1.0.0", "foo": "\u005e1.0.0"}}`;
+	const result = linter.verifyAndFix(code, config, {filename: 'package.json'});
 
-	assert.ok(fix);
-	assert.equal(applyFix(code, fix), '{"dependencies": {"foo": "^1.0.0"}, "devDependencies": {}}');
+	assert.equal(result.output, String.raw`{"dependencies": {"foo": "\u005e1.0.0"}}`);
 });

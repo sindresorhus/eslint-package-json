@@ -11,8 +11,8 @@ Message:
 > 1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {"a": "1.0.0"}}
     |                                                      ^^^ \`a\` is already listed in \`dependencies\`.
 
-Output:
-  1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {}}
+Suggestion 1/1: Remove the duplicate \`a\` from \`devDependencies\`.:
+  1 | {"dependencies": {"a": "1.0.0"}}
 
 `;
 
@@ -27,10 +27,10 @@ exports[`invalid(2): {\"dependencies\": {\"a\": \"1.0.0\"}, \"optionalDependenci
 
 Message:
 > 1 | {"dependencies": {"a": "1.0.0"}, "optionalDependencies": {"a": "1.0.0"}}
-    |                                                           ^^^ \`a\` is already listed in \`dependencies\`.
+    |                   ^^^ \`a\` is already listed in \`optionalDependencies\`.
 
-Output:
-  1 | {"dependencies": {"a": "1.0.0"}, "optionalDependencies": {}}
+Suggestion 1/1: Remove the duplicate \`a\` from \`dependencies\`.:
+  1 | {"optionalDependencies": {"a": "1.0.0"}}
 
 `;
 
@@ -48,7 +48,7 @@ Message:
     |                                                                    ^^^ \`b\` is already listed in \`dependencies\`.
 
 Suggestion 1/1: Remove the duplicate \`b\` from \`devDependencies\`.:
-  1 | {"dependencies": {"a": "1.0.0", "b": "1.0.0"}, "devDependencies": {}}
+  1 | {"dependencies": {"a": "1.0.0", "b": "1.0.0"}}
 
 `;
 
@@ -63,10 +63,10 @@ exports[`invalid(4): {\"dependencies\": {\"a\": \"1.0.0\"}, \"devDependencies\":
 
 Message:
 > 1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {"a": "1.0.0"}, "optionalDependencies": {"a": "1.0.0"}}
-    |                                                      ^^^ \`a\` is already listed in \`dependencies\`.
+    |                   ^^^ \`a\` is already listed in \`optionalDependencies\`.
 
-Output:
-  1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {}, "optionalDependencies": {"a": "1.0.0"}}
+Suggestion 1/1: Remove the duplicate \`a\` from \`dependencies\`.:
+  1 | {"devDependencies": {"a": "1.0.0"}, "optionalDependencies": {"a": "1.0.0"}}
 
 `;
 
@@ -74,10 +74,10 @@ exports[`invalid(4): {\"dependencies\": {\"a\": \"1.0.0\"}, \"devDependencies\":
 
 Message:
 > 1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {"a": "1.0.0"}, "optionalDependencies": {"a": "1.0.0"}}
-    |                                                                                              ^^^ \`a\` is already listed in \`dependencies\`.
+    |                                                      ^^^ \`a\` is already listed in \`optionalDependencies\`.
 
-Output:
-  1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {"a": "1.0.0"}, "optionalDependencies": {}}
+Suggestion 1/1: Remove the duplicate \`a\` from \`devDependencies\`.:
+  1 | {"dependencies": {"a": "1.0.0"}, "optionalDependencies": {"a": "1.0.0"}}
 
 `;
 
@@ -95,7 +95,7 @@ Message:
     |                                                       ^^^ \`a\` is already listed in \`dependencies\`.
 
 Suggestion 1/1: Remove the duplicate \`a\` from \`devDependencies\`.:
-  1 | {"dependencies": {"a": "^7.0.0"}, "devDependencies": {}}
+  1 | {"dependencies": {"a": "^7.0.0"}}
 
 `;
 
@@ -110,10 +110,10 @@ exports[`invalid(6): {\"dependencies\": {\"a\": \"^1.0.0\"}, \"optionalDependenc
 
 Message:
 > 1 | {"dependencies": {"a": "^1.0.0"}, "optionalDependencies": {"a": "~1.0.0"}}
-    |                                                            ^^^ \`a\` is already listed in \`dependencies\`.
+    |                   ^^^ \`a\` is already listed in \`optionalDependencies\`.
 
-Suggestion 1/1: Remove the duplicate \`a\` from \`optionalDependencies\`.:
-  1 | {"dependencies": {"a": "^1.0.0"}, "optionalDependencies": {}}
+Suggestion 1/1: Remove the duplicate \`a\` from \`dependencies\`.:
+  1 | {"optionalDependencies": {"a": "~1.0.0"}}
 
 `;
 
@@ -131,6 +131,6 @@ Message:
     |                                                      ^^^ \`a\` is already listed in \`dependencies\`.
 
 Suggestion 1/1: Remove the duplicate \`a\` from \`devDependencies\`.:
-  1 | {"dependencies": {"a": "1.0.0"}, "devDependencies": {}}
+  1 | {"dependencies": {"a": "1.0.0"}}
 
 `;

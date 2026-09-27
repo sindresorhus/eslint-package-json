@@ -10,9 +10,9 @@
 
 A package cannot meaningfully appear in more than one of `dependencies`, `devDependencies`, and `optionalDependencies` at the same time. Doing so is contradictory and usually a mistake left over from moving a dependency between groups.
 
-When both entries carry the same specifier the duplicate is pure redundancy, so it is removed automatically, keeping the one in the higher-priority group (`dependencies` over `devDependencies` over `optionalDependencies`).
+The suggestion removes the entry from the group a consumer does not install from: `optionalDependencies` wins over `dependencies`, which wins over `devDependencies`, so `fsevents` stays optional. It is a suggestion even when the specifiers match, since `npm install --omit=dev` in the project skips a name that is also in `devDependencies`. A duplicate within one group is autofixed when the specifiers match.
 
-When the specifiers differ, only a suggestion is offered. npm resolves the conflict to a single version, and not necessarily the one the group order implies — installing `{"dependencies": {"semver": "^7.0.0"}, "devDependencies": {"semver": "^6.0.0"}}` yields semver 6. Removing either entry therefore changes which version is installed, which is the author's call.
+When a `dependencies` and a `devDependencies` entry differ, the project and its consumers install different versions: with `{"dependencies": {"semver": "^7.0.0"}, "devDependencies": {"semver": "^6.0.0"}}`, the project gets semver 6 and a consumer gets semver 7. Which entry to remove is the author's call.
 
 `peerDependencies` is intentionally excluded, since also listing a peer dependency in `devDependencies` is a common and valid pattern.
 
@@ -35,9 +35,6 @@ When the specifiers differ, only a suggestion is offered. npm resolves the confl
 {
 	"dependencies": {
 		"foo": "^1.0.0"
-	},
-	"devDependencies": {
-		"bar": "^1.0.0"
 	}
 }
 ```
