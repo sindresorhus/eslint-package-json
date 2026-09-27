@@ -149,7 +149,7 @@ export default defineConfig({
 | [require-fields](docs/rules/require-fields.md)                                                         | Require specific fields to be present, always or only for published packages.             | ✅  |    |    |
 | [require-private](docs/rules/require-private.md)                                                       | Require the `private` field to be `true`.                                                 |    |    | 💡 |
 | [require-private-when-workspaces](docs/rules/require-private-when-workspaces.md)                       | Require `private` when `workspaces` is set.                                               | ✅  |    | 💡 |
-| [require-types-in-exports](docs/rules/require-types-in-exports.md)                                     | Require correctly ordered and module-compatible types in `exports`.                       | ✅  |    |    |
+| [require-types-in-exports](docs/rules/require-types-in-exports.md)                                     | Require correctly ordered types in `exports`.                                             | ✅  |    |    |
 | [restrict-fields-when-private](docs/rules/restrict-fields-when-private.md)                             | Disallow fields that have no effect when the package is private.                          |    |    | 💡 |
 | [sort-dependencies](docs/rules/sort-dependencies.md)                                                   | Enforce alphabetical ordering of dependencies.                                            | ✅  | 🔧 |    |
 | [sort-files](docs/rules/sort-files.md)                                                                 | Enforce a canonical order for entries in the `files` field.                               | ✅  | 🔧 |    |

@@ -31,63 +31,26 @@ test.snapshot({
 	}
 }`,
 		'{"exports": {"types": {"import": {"browser": "./browser.d.ts"}, "default": "./fallback.d.ts"}, "import": "./import.js"}}',
-		// A fallback condition can use a different nested runtime condition when its format matches.
-		'{"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.mts"}}, "import": {"node": "./node.js"}}}',
-		// Extra runtime condition layers must not force the declaration default before matching nested conditions.
-		`{
-	"type": "module",
-	"exports": {
-		"types": {"import": [], "default": {"browser": "./browser.d.mts", "default": "./fallback.d.cts"}},
-		"import": {"node": {"browser": "./browser.mjs", "default": "./fallback.cjs"}}
-	}
-}`,
-		// An unversioned nested type condition makes the default a non-type fallback.
-		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "types": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
 		// Non-empty declaration and runtime fallback arrays are covered.
 		'{"exports": {"types": ["./index.d.ts", "./fallback.d.ts"], "default": ["./index.js", "./fallback.js"]}}',
 		// Array validation stops after the first target.
-		'{"type": "module", "exports": {"types": ["./index.d.mts", "./fallback.d.cts"], "default": ["./index.mjs", "./fallback.cjs"]}}',
 		'{"exports": {"types": ["./index.d.ts", "./not-a-declaration.js"], "default": "./index.js"}}',
 		// A nested versioned type condition can be the only type branch.
 		'{"exports": {"types": {"import": {"types@>=5": "./import.d.ts"}}, "import": {"import": "./import.js"}}}',
-		// An unresolved nested unversioned type condition can fall through to a compatible default.
+		// An unresolved nested unversioned type condition can fall through to a default.
 		'{"type": "module", "exports": {"types": {"types": {"browser": "./browser.d.mts"}, "default": "./fallback.d.mts"}, "default": "./index.js"}}',
-		// A parent fallback covers runtime branches omitted by a nested type condition.
-		'{"type": "module", "exports": {"types": {"types": {"import": "./import.d.mts"}, "default": "./fallback.d.cts"}, "import": "./import.mjs", "require": "./require.cjs"}}',
-		`{
-	"type": "module",
-	"exports": {
-		"types": {
-			"types@>=5": {"import": "./import.d.mts"},
-			"types": {"import": "./fallback.d.mts", "require": "./fallback.d.cts"}
-		},
-		"import": "./import.mjs",
-		"require": "./require.cjs"
-	}
-}`,
 		// Nested declaration arrays also stop after the first target.
 		'{"type": "module", "exports": {"types": {"import": ["./index.d.mts", "./unreachable.js"]}, "import": "./index.mjs"}}',
 		// A non-runtime sibling does not invalidate a covered runtime branch.
 		'{"exports": {"types": {"import": [], "default": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": null}}}',
 		// A null array target makes later runtime targets unreachable to this static check.
 		'{"exports": {"types": "./index.d.ts", "default": [null, "./fallback.js"]}}',
-		// A type condition in a later array target does not describe the effective export.
-		'{"exports": [{"default": "./index.js"}, {"types": "./index.d.ts", "default": "./index.js"}]}',
 		'{"exports": {"types": [{"default": "./fallback.d.ts"}, {"types": null}], "default": "./index.js"}}',
 		// An empty type-target array falls through to the parent default.
 		'{"exports": {"types": {"import": [], "default": "./fallback.d.ts"}, "import": "./import.js"}}',
 		// A parent default can continue into a nested runtime condition.
 		'{"exports": {"types": {"import": [], "default": {"import": "./fallback.d.ts"}}, "import": "./import.js"}}',
-		// Each nested runtime branch has a matching declaration format.
-		'{"type": "module", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"types": "./index.d.cts", "default": "./index.cjs"}}}',
-		'{"type": "commonjs", "exports": {"types": "./index.d.ts", "default": "./index.js"}}',
-		// Unknown package types use the non-module default for `.js` and `.d.ts` files.
-		'{"type": "unknown", "exports": {"types": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"types": {"import": "./import.d.ts", "require": "./require.d.ts"}, "import": "./import.js", "require": "./require.js"}}',
-		'{"type": "module", "exports": {"types": {"import": "./import.d.mts", "require": "./require.d.cts"}, "import": "./import.mjs", "require": "./require.cjs"}}',
-		'{"exports": {"types": {"import": "./import.d.mts", "default": "./fallback.d.ts"}, "import": "./import.mjs", "require": "./require.cjs"}}',
-		// A `.d.ts` declaration follows the package module type.
-		'{"type": "module", "exports": {"types": "./index.d.ts", "default": "./index.js"}}',
 		// A nested type condition covers every runtime branch in that conditions object.
 		'{"exports": {".": {"types": "./index.d.ts", "import": "./index.js", "default": "./index.cjs"}}}',
 		// A declaration string covers every runtime leaf below its branch.
@@ -96,14 +59,76 @@ test.snapshot({
 		'{"exports": {"types": "./index.d.ts", "default": "./package.json"}}',
 		// TypeScript supports caret, tilde, and wildcard selectors.
 		'{"exports": {"types@^5 || ~4.7 || 3.x": "./index.d.ts", "default": "./index.js"}}',
-		// An active type condition takes precedence over an incompatible declaration-side default.
-		'{"type": "module", "exports": {"types": {"types": "./index.d.mts", "default": "./fallback.d.cts"}, "default": "./index.mjs"}}',
-		// Shared default wrappers preserve their nested condition structure when no earlier type condition matches.
-		'{"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}',
-		// Module-format validation stops when a nested type condition falls through to a declaration default.
-		'{"type": "module", "exports": {"types": {"import": {"types@>=5": "./index.d.mts", "default": "./index.d.cts"}}, "import": {"import": "./index.mjs"}}}',
-		'{"type": "module", "exports": {"types": {"import": [], "default": {"types@>=5": "./modern.d.mts", "default": "./legacy.d.cts"}}, "import": "./index.mjs"}}',
-		'{"type": "module", "exports": {"types": {"types": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "default": "./index.js"}}',
+		// Both TypeScript modes set `import`, so they find the declaration under `types` before they reach the `default` JavaScript.
+		'{"exports": {"types": {"import": "./index.d.mts"}, "default": {"import": "./index.mjs"}}}',
+		'{"exports": {"types": {"import": {"default": "./fallback.d.mts"}}, "default": {"import": {"default": "./fallback.mjs"}}}}',
+		'{"exports": {".": {"types": {"import": "./index.d.mts"}, "default": {"import": "./index.mjs"}}}}',
+		// TypeScript resolves with `types`, `node`, and `import` under `nodenext`, and with `types` and `import` under `bundler`. Each fixture below is typed in both modes by `tsc`, with the declarations in another directory than the JavaScript.
+		'{"exports": {"require": {"types": "./t/i.d.ts", "default": "./index.js"}, "import": {"types": "./t/esm.d.mts", "default": "./esm.mjs"}, "default": "./index.js"}}',
+		'{"type": "module", "exports": {"types": {"import": "./t/i.d.ts", "require": "./t/i.d.cts"}, "node": "./n.js", "default": "./i.js"}}',
+		'{"type": "module", "exports": {"types": {"require": "./i.d.cts", "default": "./i.d.ts"}, "default": {"require": "./i.cjs", "default": "./i.js"}}}',
+		// `bundler` never sets `node`, so it reaches the `default` target, which the same `types` covers.
+		`{
+	"exports": {
+		".": {
+			"import": {"types": "./dist/vue.d.mts", "node": "./index.mjs", "default": "./dist/vue.runtime.esm-bundler.js"},
+			"require": {"types": "./dist/vue.d.ts", "default": "./index.js"}
+		}
+	}
+}`,
+		// TypeScript never sets `bun`, `browser`, `react-native`, `source`, or `@zod/source`, so a condition ahead of `types` that only those reach does not hide it.
+		'{"exports": {"bun": "./dist/bun.mjs", "types": "./dist/generic.d.ts", "default": "./dist/generic.js"}}',
+		`{
+	"type": "module",
+	"exports": {
+		".": {
+			"import": {
+				"browser": {"types": "./dist/esm/browser/index.d.ts", "default": "./dist/esm/browser/index.min.js"},
+				"react-native": {"types": "./dist/esm/react-native/index.d.ts", "default": "./dist/esm/react-native/index.min.js"},
+				"node": {"types": "./dist/esm/node/index.d.ts", "default": "./dist/esm/node/index.min.js"},
+				"types": "./dist/esm/index.d.ts",
+				"default": "./dist/esm/index.min.js"
+			},
+			"require": {
+				"browser": {"types": "./dist/commonjs/browser/index.d.ts", "default": "./dist/commonjs/browser/index.min.js"},
+				"react-native": {"types": "./dist/commonjs/react-native/index.d.ts", "default": "./dist/commonjs/react-native/index.min.js"},
+				"node": {"types": "./dist/commonjs/node/index.d.ts", "default": "./dist/commonjs/node/index.min.js"},
+				"types": "./dist/commonjs/index.d.ts",
+				"default": "./dist/commonjs/index.min.js"
+			}
+		}
+	}
+}`,
+		`{
+	"type": "module",
+	"exports": {
+		".": {
+			"import": {"source": "./src/index.ts", "types": "./dist/esm/index.d.ts", "default": "./dist/esm/index.js"},
+			"require": {"source": "./src/index.ts", "types": "./dist/commonjs/index.d.ts", "default": "./dist/commonjs/index.js"}
+		}
+	}
+}`,
+		// A pattern target gets its extension from the specifier.
+		'{"exports": {".": {"types": "./dist/index.d.ts", "default": "./dist/index.js"}, "./types/*": {"types": "./types/*"}}}',
+		// TypeScript skips an array element that is not a relative path and takes the next one.
+		'{"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}',
+		// No TypeScript mode sets `browser`, so the JavaScript behind it is never loaded without types.
+		'{"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}',
+		'{"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}',
+		// TypeScript looks past JavaScript with no declaration next to it, so the next array element types the export.
+		'{"types": "./index.d.ts", "exports": [{"default": "./index.js"}, {"types": "./index.d.ts"}]}',
+		// CommonJS consumers are out of scope, so JavaScript that only `require` reaches needs no declaration.
+		'{"types": "./index.d.ts", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": "./index.cjs"}}',
+		'{"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"default": "./index.cjs"}}}',
+		'{"exports": {"types": {"import": "./import.d.ts"}, "import": "./import.js", "require": "./require.js"}}',
+		'{"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}',
+		'{"exports": {"types": {"import": "./index.d.mts"}, "default": {"require": "./index.cjs"}}}',
+		'{"exports": {"types": {"import": "./i.d.mts"}, "default": "./i.mjs"}}',
+		'{"exports": {"types": {"types": {"import": "./i.d.mts"}}, "default": "./i.mjs"}}',
+		'{"exports": {"./x": {"types": {"import": "./i.d.mts"}, "default": "./i.mjs"}}}',
+		'{"exports": {"types": {"import": "./types/i.d.mts"}, "require": "./i.cjs", "default": "./i.mjs"}}',
+		// No TypeScript mode sets `require`, so a `require` target ahead of `types` does not hide it.
+		'{"exports": {"require": "./i.cjs", "types": "./i.d.ts", "default": "./i.js"}}',
 	],
 	invalid: [
 		// A top-level declaration does not cover an exported runtime branch.
@@ -128,7 +153,7 @@ test.snapshot({
 		// A hyphen range with an unparseable bound is not TypeScript-compatible semver.
 		'{"exports": {"types@1 - abc": "./index.d.ts", "default": "./index.js"}}',
 		'{"exports": {"types": {"types@v5": "./index.d.ts"}, "default": "./index.js"}}',
-		// Type conditions must point to declaration files.
+		// Type conditions must point to declaration files. A `types` value that is not a path at all (`true`, `false`, `""`) is left to `valid-fields` and only reported as missing.
 		'{"exports": {"types": "./index.js", "default": "./index.js"}}',
 		'{"exports": {"types": "./index.ts", "default": "./index.mjs"}}',
 		'{"exports": {"types": "./index.D.TS", "default": "./index.js"}}',
@@ -136,7 +161,6 @@ test.snapshot({
 		'{"exports": {"types": true, "default": "./index.js"}}',
 		'{"exports": {"types": false, "default": "./index.js"}}',
 		'{"exports": {"types": "", "default": "./index.js"}}',
-		'{"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}',
 		'{"exports": {"types": {"import": "./index.d.ts", "browser": "./not-a-declaration.js"}, "import": "./index.js"}}',
 		// Nested type conditions receive the same ordering and value validation.
 		'{"exports": {"types": {"default": "./legacy.d.ts", "types@>=5": "./modern.d.ts"}, "default": "./index.js"}}',
@@ -145,8 +169,6 @@ test.snapshot({
 		'{"exports": {"types": [null, "./index.d.ts"], "default": ["./index.js", "./fallback.js"]}}',
 		// The same first-target boundary applies to nested declaration arrays.
 		'{"exports": {"types": {"import": [null, "./index.d.ts"], "default": "./fallback.d.ts"}, "import": "./index.js"}}',
-		// An ignored later declaration target cannot hide a module-format mismatch in the fallback.
-		'{"type": "module", "exports": {"types": {"import": [null, "./index.d.mts"], "default": "./fallback.d.cts"}, "import": "./index.js"}}',
 		// A nested default null target does not fall through to its parent declaration fallback.
 		'{"exports": {"types": {"import": {"default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}',
 		// An inactive nested condition does not provide coverage when its default is null.
@@ -154,50 +176,13 @@ test.snapshot({
 		'{"exports": {"types": {"import": {"browser": "./browser.d.ts", "default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}',
 		// An active named null target does not fall through to its parent declaration fallback.
 		'{"exports": {"types": {"import": {"node": null}, "default": "./fallback.d.ts"}, "import": {"node": "./index.js"}}}',
-		// Its unreachable parent fallback must not participate in module-format validation either.
-		'{"type": "module", "exports": {"types": {"import": {"node": null}, "default": "./fallback.d.cts"}, "import": {"node": "./index.mjs"}}}',
-		// Declaration module format must match the runtime target.
-		'{"type": "module", "exports": {"types": "./index.d.cts", "default": "./index.mjs"}}',
-		// One declaration paired with multiple runtime targets of the same format produces one diagnostic.
-		'{"type": "module", "exports": {"types": "./index.d.cts", "default": {"node": "./node.js", "browser": "./browser.js"}}}',
-		// Distinct declaration nodes receive separate diagnostics even when their paths match.
-		'{"type": "module", "exports": {"types@>=5": "./index.d.cts", "types": "./index.d.cts", "default": "./index.mjs"}}',
-		'{"type": "commonjs", "exports": {"types": "./index.d.mts", "default": "./index.cjs"}}',
-		'{"exports": {"types": "./index.d.ts", "default": "./index.mjs"}}',
 		// Every exported branch needs its own type condition.
 		'{"exports": {".": {"types": "./index.d.ts", "default": "./index.js"}, "./feature": "./feature.js"}}',
-		'{"types": "./index.d.ts", "exports": [{"default": "./index.js"}, {"types": "./index.d.ts"}]}',
-		'{"types": "./index.d.ts", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": "./index.cjs"}}',
-		'{"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"default": "./index.cjs"}}}',
-		'{"exports": {"types": {"import": "./import.d.ts"}, "import": "./import.js", "require": "./require.js"}}',
-		'{"type": "module", "exports": {"types": {"import": "./import.d.cts", "require": "./require.d.cts"}, "import": "./import.mjs", "require": "./require.cjs"}}',
-		`{
-	"exports": {
-		"types@>=5.2": {"import": "./import.d.ts"},
-		"types@>=4.7": {"require": "./require.d.ts"},
-		"import": "./import.js",
-		"require": "./require.js"
-	}
-}`,
-		// Format mismatches must also be checked when a nested type condition falls through to a parent default.
-		'{"type": "module", "exports": {"types": {"import": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "import": {"browser": "./browser.mjs", "node": "./node.js"}}}',
-		// A nested type default must be paired with a string runtime target.
-		'{"type": "module", "exports": {"types": {"import": {"default": "./index.d.cts"}}, "import": "./index.js"}}',
-		// An empty type-target array must also fall through for module-format checks.
-		'{"type": "module", "exports": {"types": {"import": [], "default": "./fallback.d.cts"}, "import": "./import.js"}}',
-		// Nested fallback conditions must also be checked for module-format mismatches.
-		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": "./fallback.d.cts"}}, "import": "./import.js"}}',
-		// A fallback condition can continue with a different nested runtime condition.
-		'{"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}',
 		// Empty versioned type targets are invalid even when an unversioned fallback exists.
 		'{"type": "module", "exports": {"types": {"types@>=5": [], "types": {"import": "./import.d.mts", "require": "./require.d.cts"}}, "import": "./import.mjs", "require": "./require.cjs"}}',
 		// Partial type coverage should only report the uncovered sibling.
-		'{"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}',
-		'{"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}',
-		// Nested fallback conditions must retain their parent runtime condition.
-		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": {"node": "./fallback.d.cts"}}}, "import": {"node": "./node.js"}}}',
-		// Fallback conditions can continue through an empty nested target.
-		'{"type": "module", "exports": {"types": {"import": [], "default": {"import": [], "default": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}',
+		'{"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "default": "./other.js"}}}',
+		'{"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "default": "./other.js"}}}',
 		// TypeScript rejects a whitespace-only alternative between disjunctions.
 		'{"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}',
 		// The unversioned fallback must not make a later versioned type condition unreachable.
@@ -212,15 +197,50 @@ test.snapshot({
 		'{"type": "module", "exports": {"types@>=5": {"import": null, "require": "./r.d.cts"}, "types": {"import": "./i.d.mts", "require": "./r.d.cts"}, "import": "./i.mjs", "require": "./r.cjs"}}',
 		// Generic target-type validation belongs to `valid-fields`.
 		'{"exports": {"types": 1, "default": "./index.js"}}',
-		// A terminal type condition prevents an incompatible declaration-side default from participating.
+		// A terminal type condition prevents a declaration-side default from participating.
 		'{"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}',
-		// Shared default wrappers still compare structurally matching nested targets.
-		'{"type": "module", "exports": {"types": {"default": {"import": "./import.d.cts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}',
-		// Shared default wrappers still require coverage for every nested runtime sibling.
-		'{"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}',
-		// Shared wrappers also compare their nested default targets.
-		'{"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.mts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}',
 		// When the *effective* `types` is the bad one, it is reported and the shadowed good one does not excuse it.
 		'{"exports": {".": {"types": "./a.d.ts", "types": "./a.js", "default": "./a.js"}}}',
+		// A `default` branch whose conditions the types object cannot answer is still uncovered.
+		'{"exports": {"types": {"browser": "./index.d.ts"}, "default": {"import": "./index.mjs"}}}',
+		// A `browser`, `module`, `worker` or `deno` condition is consulted by its own toolchain, not
+		// by a node resolution, so a declaration behind one does not cover a `default` string target.
+		// Checked with `tsc` under `nodenext`, which leaves these untyped for an importer.
+		'{"exports": {"types": {"browser": "./index.d.ts"}, "default": "./index.mjs"}}',
+		'{"exports": {"types": {"module": "./index.d.ts"}, "default": "./index.mjs"}}',
+		'{"exports": {"types": {"worker": "./index.d.ts"}, "default": "./index.mjs"}}',
+		'{"exports": {"types": {"deno": "./index.d.ts"}, "default": "./index.mjs"}}',
+		// `module-sync` and `node-addons` are real Node conditions that TypeScript never asks for, so
+		// a declaration behind either leaves an importer untyped just the same.
+		'{"exports": {"types": {"module-sync": "./index.d.ts"}, "default": "./index.mjs"}}',
+		'{"exports": {"types": {"node-addons": "./index.d.ts"}, "default": "./index.mjs"}}',
+		'{"exports": {"types": {"import": {"browser": "./index.d.ts"}}, "default": "./index.mjs"}}',
+		'{"exports": {"types": {"types@>=5": {"browser": "./index.d.ts"}}, "default": "./index.mjs"}}',
+		// A `null` under `import` answers an importing consumer with nothing, and the declaration behind
+		// `default` is never consulted.
+		'{"type": "module", "exports": {"types": {"import": null, "default": "./i.d.mts"}, "default": "./i.mjs"}}',
+		// A `types` object that answers only `require` leaves an importer of the `default` target untyped.
+		'{"exports": {"types": {"require": "./i.d.cts"}, "default": "./i.cjs"}}',
+		// The `null` answers an ESM importer with nothing, wherever it sits among the keys.
+		'{"exports": {"types": {"require": "./i.d.cts", "import": null}, "default": "./i.cjs"}}',
+		'{"exports": {"types": {"import": null, "require": "./i.d.cts"}, "default": "./i.cjs"}}',
+		// `bundler` resolution never sets the `node` condition, so a declaration behind it leaves an importer untyped there.
+		'{"type": "module", "exports": {"types": {"node": "./i.d.mts"}, "import": "./i.mjs"}}',
+		// An earlier `import` branch that matches nothing without `browser` falls through, so an importer still reaches the `default`.
+		'{"exports": {"types": {"require": "./types/i.d.cts"}, "import": {"browser": {"types": "./types/b.d.mts", "default": "./b.mjs"}}, "default": "./i.cjs"}}',
+		// A string target ahead of `types` answers first, so TypeScript takes a declaration sitting next to that JavaScript over the `types` one.
+		'{"type": "module", "exports": {"import": "./lib/index.js", "require": "./cjs/index.cjs", "types": "./lib/index.d.ts"}}',
+		// A pattern is still checked when it names an extension.
+		'{"exports": {".": {"types": "./dist/index.d.ts", "default": "./dist/index.js"}, "./types/*": {"types": "./types/*.js"}}}',
+		// TypeScript looks for a declaration next to any target that is not TypeScript, not only JavaScript, so a JSON fallback does not type the JavaScript ahead of it. Checked with `tsc` in both modes.
+		'{"types": "./a.d.ts", "exports": {"import": "./i.js", "default": "./data.json"}}',
+		'{"exports": {"types": {"import": "./i.css"}, "import": "./i.js"}}',
+		// TypeScript ignores `typesVersions` once `exports` is present, just like the top-level `types`. Checked with `tsc` in both modes.
+		'{"typesVersions": {"*": {"*": ["types/*.d.ts"]}}, "exports": {".": "./dist/index.js"}}',
+		// TypeScript looks past an array element that gives it no declaration, so the type conditions of the next element are checked too.
+		'{"exports": [{"default": "./index.js"}, {"types": "./index.js"}]}',
+		'{"exports": [{"default": "./i.js"}, {"default": "./i.js", "types": "./i.d.ts"}]}',
+		// `nodenext` sets `node`, so a `node` target ahead of `types` answers first there.
+		'{"exports": {"node": "./i.js", "types": "./i.d.ts", "default": "./i.js"}}',
 	],
 });

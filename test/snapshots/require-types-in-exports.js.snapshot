@@ -212,6 +212,14 @@ Message:
 
 `;
 
+exports[`invalid(18): {\"exports\": {\"types\": \"./index.js\", \"default\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types": "./index.js", "default": "./index.js"}}
+    |                                                ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
 exports[`invalid(19): {\"exports\": {\"types\": \"./index.ts\", \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
@@ -254,6 +262,14 @@ exports[`invalid(20): {\"exports\": {\"types\": \"./index.D.TS\", \"default\": \
 Message:
 > 1 | {"exports": {"types": "./index.D.TS", "default": "./index.js"}}
     |                       ^^^^^^^^^^^^^^ The \`types\` condition \`./index.D.TS\` must point at a declaration file ending in \`.d.ts\`, \`.d.mts\`, or \`.d.cts\`.
+
+`;
+
+exports[`invalid(20): {\"exports\": {\"types\": \"./index.D.TS\", \"default\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types": "./index.D.TS", "default": "./index.js"}}
+    |                                                  ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
 
 `;
 
@@ -325,29 +341,14 @@ Message:
 
 `;
 
-exports[`invalid(25): {\"exports\": {\"types\": [\"\", \"./index.d.ts\"], \"default\": \"./index.js\"}} 1`] = `
-
-[Input]
-  1 | {"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}
-
-`;
-
-exports[`invalid(25): {\"exports\": {\"types\": [\"\", \"./index.d.ts\"], \"default\": \"./index.js\"}} 2`] = `
-
-Message:
-> 1 | {"exports": {"types": ["", "./index.d.ts"], "default": "./index.js"}}
-    |                                                        ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
-
-`;
-
-exports[`invalid(26): {\"exports\": {\"types\": {\"import\": \"./index.d.ts\", \"browser\": \"./not-a-declaration.js\"}, \"import\": \"./index.js\"}} 1`] = `
+exports[`invalid(25): {\"exports\": {\"types\": {\"import\": \"./index.d.ts\", \"browser\": \"./not-a-declaration.js\"}, \"import\": \"./index.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"types": {"import": "./index.d.ts", "browser": "./not-a-declaration.js"}, "import": "./index.js"}}
 
 `;
 
-exports[`invalid(26): {\"exports\": {\"types\": {\"import\": \"./index.d.ts\", \"browser\": \"./not-a-declaration.js\"}, \"import\": \"./index.js\"}} 2`] = `
+exports[`invalid(25): {\"exports\": {\"types\": {\"import\": \"./index.d.ts\", \"browser\": \"./not-a-declaration.js\"}, \"import\": \"./index.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"types": {"import": "./index.d.ts", "browser": "./not-a-declaration.js"}, "import": "./index.js"}}
@@ -355,29 +356,29 @@ Message:
 
 `;
 
-exports[`invalid(27): {\"exports\": {\"types\": {\"default\": \"./legacy.d.ts\", \"types@>=5\": \"./modern.d.ts\"}, \"default\": \"./index.js\"}} 1`] = `
+exports[`invalid(26): {\"exports\": {\"types\": {\"default\": \"./legacy.d.ts\", \"types@>=5\": \"./modern.d.ts\"}, \"default\": \"./index.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"types": {"default": "./legacy.d.ts", "types@>=5": "./modern.d.ts"}, "default": "./index.js"}}
 
 `;
 
-exports[`invalid(27): {\"exports\": {\"types\": {\"default\": \"./legacy.d.ts\", \"types@>=5\": \"./modern.d.ts\"}, \"default\": \"./index.js\"}} 2`] = `
+exports[`invalid(26): {\"exports\": {\"types\": {\"default\": \"./legacy.d.ts\", \"types@>=5\": \"./modern.d.ts\"}, \"default\": \"./index.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"types": {"default": "./legacy.d.ts", "types@>=5": "./modern.d.ts"}, "default": "./index.js"}}
-    |                                                    ^^^^^^^^^^^ Versioned type conditions must come before \`types\`, and all type conditions must come before runtime conditions.
+    |                                                    ^^^^^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 
-exports[`invalid(28): {\"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.ts\"}, \"default\": \"./index.js\"}} 1`] = `
+exports[`invalid(27): {\"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.ts\"}, \"default\": \"./index.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"types": {"types": null, "default": "./fallback.d.ts"}, "default": "./index.js"}}
 
 `;
 
-exports[`invalid(28): {\"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.ts\"}, \"default\": \"./index.js\"}} 2`] = `
+exports[`invalid(27): {\"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.ts\"}, \"default\": \"./index.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"types": {"types": null, "default": "./fallback.d.ts"}, "default": "./index.js"}}
@@ -385,7 +386,7 @@ Message:
 
 `;
 
-exports[`invalid(28): {\"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.ts\"}, \"default\": \"./index.js\"}} 3`] = `
+exports[`invalid(27): {\"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.ts\"}, \"default\": \"./index.js\"}} 3`] = `
 
 Message:
 > 1 | {"exports": {"types": {"types": null, "default": "./fallback.d.ts"}, "default": "./index.js"}}
@@ -393,14 +394,14 @@ Message:
 
 `;
 
-exports[`invalid(29): {\"exports\": {\"types\": [null, \"./index.d.ts\"], \"default\": [\"./index.js\", \"./fallback.js\"]}} 1`] = `
+exports[`invalid(28): {\"exports\": {\"types\": [null, \"./index.d.ts\"], \"default\": [\"./index.js\", \"./fallback.js\"]}} 1`] = `
 
 [Input]
   1 | {"exports": {"types": [null, "./index.d.ts"], "default": ["./index.js", "./fallback.js"]}}
 
 `;
 
-exports[`invalid(29): {\"exports\": {\"types\": [null, \"./index.d.ts\"], \"default\": [\"./index.js\", \"./fallback.js\"]}} 2`] = `
+exports[`invalid(28): {\"exports\": {\"types\": [null, \"./index.d.ts\"], \"default\": [\"./index.js\", \"./fallback.js\"]}} 2`] = `
 
 Message:
 > 1 | {"exports": {"types": [null, "./index.d.ts"], "default": ["./index.js", "./fallback.js"]}}
@@ -408,11 +409,26 @@ Message:
 
 `;
 
-exports[`invalid(29): {\"exports\": {\"types\": [null, \"./index.d.ts\"], \"default\": [\"./index.js\", \"./fallback.js\"]}} 3`] = `
+exports[`invalid(28): {\"exports\": {\"types\": [null, \"./index.d.ts\"], \"default\": [\"./index.js\", \"./fallback.js\"]}} 3`] = `
 
 Message:
 > 1 | {"exports": {"types": [null, "./index.d.ts"], "default": ["./index.js", "./fallback.js"]}}
     |                                                           ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(29): {\"exports\": {\"types\": {\"import\": [null, \"./index.d.ts\"], \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": {"import": [null, "./index.d.ts"], "default": "./fallback.d.ts"}, "import": "./index.js"}}
+
+`;
+
+exports[`invalid(29): {\"exports\": {\"types\": {\"import\": [null, \"./index.d.ts\"], \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": {"import": [null, "./index.d.ts"], "default": "./fallback.d.ts"}, "import": "./index.js"}}
+    |                                                                                                   ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
 
 `;
 
@@ -439,44 +455,14 @@ Message:
 
 `;
 
-exports[`invalid(30): {\"exports\": {\"types\": {\"import\": [null, \"./index.d.ts\"], \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 1`] = `
-
-[Input]
-  1 | {"exports": {"types": {"import": [null, "./index.d.ts"], "default": "./fallback.d.ts"}, "import": "./index.js"}}
-
-`;
-
-exports[`invalid(30): {\"exports\": {\"types\": {\"import\": [null, \"./index.d.ts\"], \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 2`] = `
-
-Message:
-> 1 | {"exports": {"types": {"import": [null, "./index.d.ts"], "default": "./fallback.d.ts"}, "import": "./index.js"}}
-    |                                                                                                   ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
-
-`;
-
-exports[`invalid(31): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [null, \"./index.d.mts\"], \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 1`] = `
-
-[Input]
-  1 | {"type": "module", "exports": {"types": {"import": [null, "./index.d.mts"], "default": "./fallback.d.cts"}, "import": "./index.js"}}
-
-`;
-
-exports[`invalid(31): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [null, \"./index.d.mts\"], \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 2`] = `
-
-Message:
-> 1 | {"type": "module", "exports": {"types": {"import": [null, "./index.d.mts"], "default": "./fallback.d.cts"}, "import": "./index.js"}}
-    |                                                                                                                       ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
-
-`;
-
-exports[`invalid(32): {\"exports\": {\"types\": {\"import\": {\"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 1`] = `
+exports[`invalid(30): {\"exports\": {\"types\": {\"import\": {\"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"types": {"import": {"default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}
 
 `;
 
-exports[`invalid(32): {\"exports\": {\"types\": {\"import\": {\"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 2`] = `
+exports[`invalid(30): {\"exports\": {\"types\": {\"import\": {\"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"types": {"import": {"default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}
@@ -484,14 +470,14 @@ Message:
 
 `;
 
-exports[`invalid(33): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.ts\", \"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": {\"node\": \"./index.js\"}}} 1`] = `
+exports[`invalid(31): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.ts\", \"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": {\"node\": \"./index.js\"}}} 1`] = `
 
 [Input]
   1 | {"exports": {"types": {"import": {"browser": "./browser.d.ts", "default": null}, "default": "./fallback.d.ts"}, "import": {"node": "./index.js"}}}
 
 `;
 
-exports[`invalid(33): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.ts\", \"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": {\"node\": \"./index.js\"}}} 2`] = `
+exports[`invalid(31): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.ts\", \"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": {\"node\": \"./index.js\"}}} 2`] = `
 
 Message:
 > 1 | {"exports": {"types": {"import": {"browser": "./browser.d.ts", "default": null}, "default": "./fallback.d.ts"}, "import": {"node": "./index.js"}}}
@@ -499,14 +485,14 @@ Message:
 
 `;
 
-exports[`invalid(34): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.ts\", \"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 1`] = `
+exports[`invalid(32): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.ts\", \"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 1`] = `
 
 [Input]
   1 | {"exports": {"types": {"import": {"browser": "./browser.d.ts", "default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}
 
 `;
 
-exports[`invalid(34): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.ts\", \"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 2`] = `
+exports[`invalid(32): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.ts\", \"default\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": \"./index.js\"}} 2`] = `
 
 Message:
 > 1 | {"exports": {"types": {"import": {"browser": "./browser.d.ts", "default": null}, "default": "./fallback.d.ts"}, "import": "./index.js"}}
@@ -514,14 +500,14 @@ Message:
 
 `;
 
-exports[`invalid(35): {\"exports\": {\"types\": {\"import\": {\"node\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": {\"node\": \"./index.js\"}}} 1`] = `
+exports[`invalid(33): {\"exports\": {\"types\": {\"import\": {\"node\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": {\"node\": \"./index.js\"}}} 1`] = `
 
 [Input]
   1 | {"exports": {"types": {"import": {"node": null}, "default": "./fallback.d.ts"}, "import": {"node": "./index.js"}}}
 
 `;
 
-exports[`invalid(35): {\"exports\": {\"types\": {\"import\": {\"node\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": {\"node\": \"./index.js\"}}} 2`] = `
+exports[`invalid(33): {\"exports\": {\"types\": {\"import\": {\"node\": null}, \"default\": \"./fallback.d.ts\"}, \"import\": {\"node\": \"./index.js\"}}} 2`] = `
 
 Message:
 > 1 | {"exports": {"types": {"import": {"node": null}, "default": "./fallback.d.ts"}, "import": {"node": "./index.js"}}}
@@ -529,71 +515,101 @@ Message:
 
 `;
 
-exports[`invalid(36): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"node\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": {\"node\": \"./index.mjs\"}}} 1`] = `
+exports[`invalid(34): {\"exports\": {\".\": {\"types\": \"./index.d.ts\", \"default\": \"./index.js\"}, \"./feature\": \"./feature.js\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": {"node": null}, "default": "./fallback.d.cts"}, "import": {"node": "./index.mjs"}}}
+  1 | {"exports": {".": {"types": "./index.d.ts", "default": "./index.js"}, "./feature": "./feature.js"}}
 
 `;
 
-exports[`invalid(36): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"node\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": {\"node\": \"./index.mjs\"}}} 2`] = `
+exports[`invalid(34): {\"exports\": {\".\": {\"types\": \"./index.d.ts\", \"default\": \"./index.js\"}, \"./feature\": \"./feature.js\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": {"node": null}, "default": "./fallback.d.cts"}, "import": {"node": "./index.mjs"}}}
-    |                                                                                                                       ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
+> 1 | {"exports": {".": {"types": "./index.d.ts", "default": "./index.js"}, "./feature": "./feature.js"}}
+    |                                                                                    ^^^^^^^^^^^^^^ Exported JavaScript target \`./feature.js\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(37): {\"type\": \"module\", \"exports\": {\"types\": \"./index.d.cts\", \"default\": \"./index.mjs\"}} 1`] = `
+exports[`invalid(35): {\"type\": \"module\", \"exports\": {\"types\": {\"types@>=5\": [], \"types\": {\"import\": \"./import.d.mts\", \"require\": \"./require.d.cts\"}}, \"import\": \"./import.mjs\", \"require\": \"./require.cjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": "./index.d.cts", "default": "./index.mjs"}}
+  1 | {"type": "module", "exports": {"types": {"types@>=5": [], "types": {"import": "./import.d.mts", "require": "./require.d.cts"}}, "import": "./import.mjs", "require": "./require.cjs"}}
 
 `;
 
-exports[`invalid(37): {\"type\": \"module\", \"exports\": {\"types\": \"./index.d.cts\", \"default\": \"./index.mjs\"}} 2`] = `
+exports[`invalid(35): {\"type\": \"module\", \"exports\": {\"types\": {\"types@>=5\": [], \"types\": {\"import\": \"./import.d.mts\", \"require\": \"./require.d.cts\"}}, \"import\": \"./import.mjs\", \"require\": \"./require.cjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": "./index.d.cts", "default": "./index.mjs"}}
-    |                                         ^^^^^^^^^^^^^^^ Type declaration \`./index.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"type": "module", "exports": {"types": {"types@>=5": [], "types": {"import": "./import.d.mts", "require": "./require.d.cts"}}, "import": "./import.mjs", "require": "./require.cjs"}}
+    |                                                       ^^ The \`types\` condition must point to a declaration file.
 
 `;
 
-exports[`invalid(38): {\"type\": \"module\", \"exports\": {\"types\": \"./index.d.cts\", \"default\": {\"node\": \"./node.js\", \"browser\": \"./browser.js\"}}} 1`] = `
+exports[`invalid(36): {\"exports\": {\"types\": {\"import\": {\"node\": \"./node.d.ts\"}}, \"import\": {\"node\": \"./node.js\", \"default\": \"./other.js\"}}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": "./index.d.cts", "default": {"node": "./node.js", "browser": "./browser.js"}}}
+  1 | {"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "default": "./other.js"}}}
 
 `;
 
-exports[`invalid(38): {\"type\": \"module\", \"exports\": {\"types\": \"./index.d.cts\", \"default\": {\"node\": \"./node.js\", \"browser\": \"./browser.js\"}}} 2`] = `
+exports[`invalid(36): {\"exports\": {\"types\": {\"import\": {\"node\": \"./node.d.ts\"}}, \"import\": {\"node\": \"./node.js\", \"default\": \"./other.js\"}}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": "./index.d.cts", "default": {"node": "./node.js", "browser": "./browser.js"}}}
-    |                                         ^^^^^^^^^^^^^^^ Type declaration \`./index.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "default": "./other.js"}}}
+    |                                                                                                       ^^^^^^^^^^^^ Exported JavaScript target \`./other.js\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(39): {\"type\": \"module\", \"exports\": {\"types@>=5\": \"./index.d.cts\", \"types\": \"./index.d.cts\", \"default\": \"./index.mjs\"}} 1`] = `
+exports[`invalid(37): {\"exports\": {\"types@>=5\": {\"import\": {\"node\": \"./node.d.ts\"}}, \"import\": {\"node\": \"./node.js\", \"default\": \"./other.js\"}}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types@>=5": "./index.d.cts", "types": "./index.d.cts", "default": "./index.mjs"}}
+  1 | {"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "default": "./other.js"}}}
 
 `;
 
-exports[`invalid(39): {\"type\": \"module\", \"exports\": {\"types@>=5\": \"./index.d.cts\", \"types\": \"./index.d.cts\", \"default\": \"./index.mjs\"}} 2`] = `
+exports[`invalid(37): {\"exports\": {\"types@>=5\": {\"import\": {\"node\": \"./node.d.ts\"}}, \"import\": {\"node\": \"./node.js\", \"default\": \"./other.js\"}}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types@>=5": "./index.d.cts", "types": "./index.d.cts", "default": "./index.mjs"}}
-    |                                             ^^^^^^^^^^^^^^^ Type declaration \`./index.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "default": "./other.js"}}}
+    |                                                                                                           ^^^^^^^^^^^^ Exported JavaScript target \`./other.js\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(39): {\"type\": \"module\", \"exports\": {\"types@>=5\": \"./index.d.cts\", \"types\": \"./index.d.cts\", \"default\": \"./index.mjs\"}} 3`] = `
+exports[`invalid(38): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
+
+`;
+
+exports[`invalid(38): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types@>=5": "./index.d.cts", "types": "./index.d.cts", "default": "./index.mjs"}}
-    |                                                                       ^^^^^^^^^^^^^^^ Type declaration \`./index.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
+    |              ^^^^^^^^^^^^^^^^^^^^^^ Versioned type condition \`types@>=5 ||   || <4\` must use TypeScript-compatible semver syntax.
+
+`;
+
+exports[`invalid(38): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
+    |                                                                 ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(39): {\"exports\": {\"types\": \"./fallback.d.ts\", \"types@>=5\": \"./modern.d.ts\", \"default\": \"./index.js\"}} 1`] = `
+
+[Input]
+  1 | {"exports": {"types": "./fallback.d.ts", "types@>=5": "./modern.d.ts", "default": "./index.js"}}
+
+`;
+
+exports[`invalid(39): {\"exports\": {\"types\": \"./fallback.d.ts\", \"types@>=5\": \"./modern.d.ts\", \"default\": \"./index.js\"}} 2`] = `
+
+Message:
+> 1 | {"exports": {"types": "./fallback.d.ts", "types@>=5": "./modern.d.ts", "default": "./index.js"}}
+    |                                          ^^^^^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 
@@ -612,182 +628,185 @@ Message:
 
 `;
 
-exports[`invalid(40): {\"type\": \"commonjs\", \"exports\": {\"types\": \"./index.d.mts\", \"default\": \"./index.cjs\"}} 1`] = `
+exports[`invalid(40): {\"type\": \"module\", \"exports\": {\"types@invalid\": \"./invalid.cjs\", \"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "commonjs", "exports": {"types": "./index.d.mts", "default": "./index.cjs"}}
+  1 | {"type": "module", "exports": {"types@invalid": "./invalid.cjs", "types": "./index.d.mts", "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(40): {\"type\": \"commonjs\", \"exports\": {\"types\": \"./index.d.mts\", \"default\": \"./index.cjs\"}} 2`] = `
+exports[`invalid(40): {\"type\": \"module\", \"exports\": {\"types@invalid\": \"./invalid.cjs\", \"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "commonjs", "exports": {"types": "./index.d.mts", "default": "./index.cjs"}}
-    |                                           ^^^^^^^^^^^^^^^ Type declaration \`./index.d.mts\` uses ES module format but its JavaScript target uses CommonJS format.
+> 1 | {"type": "module", "exports": {"types@invalid": "./invalid.cjs", "types": "./index.d.mts", "default": "./index.mjs"}}
+    |                                ^^^^^^^^^^^^^^^ Versioned type condition \`types@invalid\` must use TypeScript-compatible semver syntax.
 
 `;
 
-exports[`invalid(41): {\"exports\": {\"types\": \"./index.d.ts\", \"default\": \"./index.mjs\"}} 1`] = `
+exports[`invalid(41): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 1`] = `
 
 [Input]
-  1 | {"exports": {"types": "./index.d.ts", "default": "./index.mjs"}}
+  1 | {"type": "module", "exports": {"types": {"import": {"types": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
 
 `;
 
-exports[`invalid(41): {\"exports\": {\"types\": \"./index.d.ts\", \"default\": \"./index.mjs\"}} 2`] = `
+exports[`invalid(41): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 2`] = `
 
 Message:
-> 1 | {"exports": {"types": "./index.d.ts", "default": "./index.mjs"}}
-    |                       ^^^^^^^^^^^^^^ Type declaration \`./index.d.ts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"type": "module", "exports": {"types": {"import": {"types": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
+    |                                                              ^^^^ The \`types\` condition must point to a declaration file.
 
 `;
 
-exports[`invalid(42): {\"exports\": {\".\": {\"types\": \"./index.d.ts\", \"default\": \"./index.js\"}, \"./feature\": \"./feature.js\"}} 1`] = `
+exports[`invalid(41): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"import": {"types": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
+    |                                                                                                               ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(42): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": [], \"default\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 1`] = `
 
 [Input]
-  1 | {"exports": {".": {"types": "./index.d.ts", "default": "./index.js"}, "./feature": "./feature.js"}}
+  1 | {"type": "module", "exports": {"types": {"import": {"types": [], "default": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
 
 `;
 
-exports[`invalid(42): {\"exports\": {\".\": {\"types\": \"./index.d.ts\", \"default\": \"./index.js\"}, \"./feature\": \"./feature.js\"}} 2`] = `
+exports[`invalid(42): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": [], \"default\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 2`] = `
 
 Message:
-> 1 | {"exports": {".": {"types": "./index.d.ts", "default": "./index.js"}, "./feature": "./feature.js"}}
-    |                                                                                    ^^^^^^^^^^^^^^ Exported JavaScript target \`./feature.js\` has no corresponding \`types\` condition.
+> 1 | {"type": "module", "exports": {"types": {"import": {"types": [], "default": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
+    |                                                              ^^ The \`types\` condition must point to a declaration file.
 
 `;
 
-exports[`invalid(43): {\"types\": \"./index.d.ts\", \"exports\": [{\"default\": \"./index.js\"}, {\"types\": \"./index.d.ts\"}]} 1`] = `
+exports[`invalid(42): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": [], \"default\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 3`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"import": {"types": [], "default": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
+    |                                                                                                                              ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(43): {\"type\": \"module\", \"exports\": {\"types@>=5\": {\"import\": null, \"require\": \"./r.d.cts\"}, \"types\": {\"import\": \"./i.d.mts\", \"require\": \"./r.d.cts\"}, \"import\": \"./i.mjs\", \"require\": \"./r.cjs\"}} 1`] = `
 
 [Input]
-  1 | {"types": "./index.d.ts", "exports": [{"default": "./index.js"}, {"types": "./index.d.ts"}]}
+  1 | {"type": "module", "exports": {"types@>=5": {"import": null, "require": "./r.d.cts"}, "types": {"import": "./i.d.mts", "require": "./r.d.cts"}, "import": "./i.mjs", "require": "./r.cjs"}}
 
 `;
 
-exports[`invalid(43): {\"types\": \"./index.d.ts\", \"exports\": [{\"default\": \"./index.js\"}, {\"types\": \"./index.d.ts\"}]} 2`] = `
+exports[`invalid(43): {\"type\": \"module\", \"exports\": {\"types@>=5\": {\"import\": null, \"require\": \"./r.d.cts\"}, \"types\": {\"import\": \"./i.d.mts\", \"require\": \"./r.d.cts\"}, \"import\": \"./i.mjs\", \"require\": \"./r.cjs\"}} 2`] = `
 
 Message:
-> 1 | {"types": "./index.d.ts", "exports": [{"default": "./index.js"}, {"types": "./index.d.ts"}]}
-    |                                                   ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+> 1 | {"type": "module", "exports": {"types@>=5": {"import": null, "require": "./r.d.cts"}, "types": {"import": "./i.d.mts", "require": "./r.d.cts"}, "import": "./i.mjs", "require": "./r.cjs"}}
+    |                                                                                                                                                           ^^^^^^^^^ Exported JavaScript target \`./i.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(44): {\"types\": \"./index.d.ts\", \"exports\": {\"import\": {\"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}, \"require\": \"./index.cjs\"}} 1`] = `
+exports[`invalid(44): {\"exports\": {\"types\": 1, \"default\": \"./index.js\"}} 1`] = `
 
 [Input]
-  1 | {"types": "./index.d.ts", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": "./index.cjs"}}
+  1 | {"exports": {"types": 1, "default": "./index.js"}}
 
 `;
 
-exports[`invalid(44): {\"types\": \"./index.d.ts\", \"exports\": {\"import\": {\"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}, \"require\": \"./index.cjs\"}} 2`] = `
+exports[`invalid(44): {\"exports\": {\"types\": 1, \"default\": \"./index.js\"}} 2`] = `
 
 Message:
-> 1 | {"types": "./index.d.ts", "exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": "./index.cjs"}}
-    |                                                                                                                  ^^^^^^^^^^^^^ Exported JavaScript target \`./index.cjs\` has no corresponding \`types\` condition.
+> 1 | {"exports": {"types": 1, "default": "./index.js"}}
+    |                                     ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(45): {\"exports\": {\"import\": {\"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}, \"require\": {\"default\": \"./index.cjs\"}}} 1`] = `
+exports[`invalid(45): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"default": "./index.cjs"}}}
+  1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(45): {\"exports\": {\"import\": {\"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}, \"require\": {\"default\": \"./index.cjs\"}}} 2`] = `
+exports[`invalid(45): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"exports": {"import": {"types": "./index.d.mts", "default": "./index.mjs"}, "require": {"default": "./index.cjs"}}}
-    |                                                                                                     ^^^^^^^^^^^^^ Exported JavaScript target \`./index.cjs\` has no corresponding \`types\` condition.
+> 1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
+    |                                                   ^^^^ The \`types\` condition must point to a declaration file.
 
 `;
 
-exports[`invalid(46): {\"exports\": {\"types\": {\"import\": \"./import.d.ts\"}, \"import\": \"./import.js\", \"require\": \"./require.js\"}} 1`] = `
+exports[`invalid(45): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 3`] = `
+
+Message:
+> 1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
+    |                                                                                                    ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(46): {\"exports\": {\".\": {\"types\": \"./a.d.ts\", \"types\": \"./a.js\", \"default\": \"./a.js\"}}} 1`] = `
 
 [Input]
-  1 | {"exports": {"types": {"import": "./import.d.ts"}, "import": "./import.js", "require": "./require.js"}}
+  1 | {"exports": {".": {"types": "./a.d.ts", "types": "./a.js", "default": "./a.js"}}}
 
 `;
 
-exports[`invalid(46): {\"exports\": {\"types\": {\"import\": \"./import.d.ts\"}, \"import\": \"./import.js\", \"require\": \"./require.js\"}} 2`] = `
+exports[`invalid(46): {\"exports\": {\".\": {\"types\": \"./a.d.ts\", \"types\": \"./a.js\", \"default\": \"./a.js\"}}} 2`] = `
 
 Message:
-> 1 | {"exports": {"types": {"import": "./import.d.ts"}, "import": "./import.js", "require": "./require.js"}}
-    |                                                                                        ^^^^^^^^^^^^^^ Exported JavaScript target \`./require.js\` has no corresponding \`types\` condition.
+> 1 | {"exports": {".": {"types": "./a.d.ts", "types": "./a.js", "default": "./a.js"}}}
+    |                                                  ^^^^^^^^ The \`types\` condition \`./a.js\` must point at a declaration file ending in \`.d.ts\`, \`.d.mts\`, or \`.d.cts\`.
 
 `;
 
-exports[`invalid(47): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": \"./import.d.cts\", \"require\": \"./require.d.cts\"}, \"import\": \"./import.mjs\", \"require\": \"./require.cjs\"}} 1`] = `
+exports[`invalid(46): {\"exports\": {\".\": {\"types\": \"./a.d.ts\", \"types\": \"./a.js\", \"default\": \"./a.js\"}}} 3`] = `
+
+Message:
+> 1 | {"exports": {".": {"types": "./a.d.ts", "types": "./a.js", "default": "./a.js"}}}
+    |                                                                       ^^^^^^^^ Exported JavaScript target \`./a.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(47): {\"exports\": {\"types\": {\"browser\": \"./index.d.ts\"}, \"default\": {\"import\": \"./index.mjs\"}}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": "./import.d.cts", "require": "./require.d.cts"}, "import": "./import.mjs", "require": "./require.cjs"}}
+  1 | {"exports": {"types": {"browser": "./index.d.ts"}, "default": {"import": "./index.mjs"}}}
 
 `;
 
-exports[`invalid(47): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": \"./import.d.cts\", \"require\": \"./require.d.cts\"}, \"import\": \"./import.mjs\", \"require\": \"./require.cjs\"}} 2`] = `
+exports[`invalid(47): {\"exports\": {\"types\": {\"browser\": \"./index.d.ts\"}, \"default\": {\"import\": \"./index.mjs\"}}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": "./import.d.cts", "require": "./require.d.cts"}, "import": "./import.mjs", "require": "./require.cjs"}}
-    |                                                    ^^^^^^^^^^^^^^^^ Type declaration \`./import.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"browser": "./index.d.ts"}, "default": {"import": "./index.mjs"}}}
+    |                                                                          ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(48): {\n\t\"exports\": {\n\t\t\"types@>=5.2\": {\"import\": \"./import.d.ts\"},\n\t\t\"types@>=4.7\": {\"require\": \"./require.d.ts\"},\n\t\t\"import\": \"./import.js\",\n\t\t\"require\": \"./require.js\"\n\t}\n} 1`] = `
+exports[`invalid(48): {\"exports\": {\"types\": {\"browser\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {
-  2 | 	"exports": {
-  3 | 		"types@>=5.2": {"import": "./import.d.ts"},
-  4 | 		"types@>=4.7": {"require": "./require.d.ts"},
-  5 | 		"import": "./import.js",
-  6 | 		"require": "./require.js"
-  7 | 	}
-  8 | }
+  1 | {"exports": {"types": {"browser": "./index.d.ts"}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(48): {\n\t\"exports\": {\n\t\t\"types@>=5.2\": {\"import\": \"./import.d.ts\"},\n\t\t\"types@>=4.7\": {\"require\": \"./require.d.ts\"},\n\t\t\"import\": \"./import.js\",\n\t\t\"require\": \"./require.js\"\n\t}\n} 2`] = `
+exports[`invalid(48): {\"exports\": {\"types\": {\"browser\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-  1 | {
-  2 | 	"exports": {
-  3 | 		"types@>=5.2": {"import": "./import.d.ts"},
-  4 | 		"types@>=4.7": {"require": "./require.d.ts"},
-> 5 | 		"import": "./import.js",
-    | 		          ^^^^^^^^^^^^^ Exported JavaScript target \`./import.js\` has no corresponding \`types\` condition.
-  6 | 		"require": "./require.js"
-  7 | 	}
-  8 | }
+> 1 | {"exports": {"types": {"browser": "./index.d.ts"}, "default": "./index.mjs"}}
+    |                                                               ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(48): {\n\t\"exports\": {\n\t\t\"types@>=5.2\": {\"import\": \"./import.d.ts\"},\n\t\t\"types@>=4.7\": {\"require\": \"./require.d.ts\"},\n\t\t\"import\": \"./import.js\",\n\t\t\"require\": \"./require.js\"\n\t}\n} 3`] = `
-
-Message:
-  1 | {
-  2 | 	"exports": {
-  3 | 		"types@>=5.2": {"import": "./import.d.ts"},
-  4 | 		"types@>=4.7": {"require": "./require.d.ts"},
-  5 | 		"import": "./import.js",
-> 6 | 		"require": "./require.js"
-    | 		           ^^^^^^^^^^^^^^ Exported JavaScript target \`./require.js\` has no corresponding \`types\` condition.
-  7 | 	}
-  8 | }
-
-`;
-
-exports[`invalid(49): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.mts\"}, \"default\": \"./fallback.d.cts\"}, \"import\": {\"browser\": \"./browser.mjs\", \"node\": \"./node.js\"}}} 1`] = `
+exports[`invalid(49): {\"exports\": {\"types\": {\"module\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "import": {"browser": "./browser.mjs", "node": "./node.js"}}}
+  1 | {"exports": {"types": {"module": "./index.d.ts"}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(49): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"browser\": \"./browser.d.mts\"}, \"default\": \"./fallback.d.cts\"}, \"import\": {\"browser\": \"./browser.mjs\", \"node\": \"./node.js\"}}} 2`] = `
+exports[`invalid(49): {\"exports\": {\"types\": {\"module\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": {"browser": "./browser.d.mts"}, "default": "./fallback.d.cts"}, "import": {"browser": "./browser.mjs", "node": "./node.js"}}}
-    |                                                                                               ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"module": "./index.d.ts"}, "default": "./index.mjs"}}
+    |                                                              ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
@@ -802,165 +821,157 @@ exports[`invalid(5): {\"exports\": {\"default\": \"./index.js\", \"types\": \"./
 
 Message:
 > 1 | {"exports": {"default": "./index.js", "types": "./index.d.ts"}}
-    |                                       ^^^^^^^ Versioned type conditions must come before \`types\`, and all type conditions must come before runtime conditions.
+    |                                       ^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 
-exports[`invalid(50): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"default\": \"./index.d.cts\"}}, \"import\": \"./index.js\"}} 1`] = `
+exports[`invalid(50): {\"exports\": {\"types\": {\"worker\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": {"default": "./index.d.cts"}}, "import": "./index.js"}}
+  1 | {"exports": {"types": {"worker": "./index.d.ts"}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(50): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"default\": \"./index.d.cts\"}}, \"import\": \"./index.js\"}} 2`] = `
+exports[`invalid(50): {\"exports\": {\"types\": {\"worker\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": {"default": "./index.d.cts"}}, "import": "./index.js"}}
-    |                                                                ^^^^^^^^^^^^^^^ Type declaration \`./index.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"worker": "./index.d.ts"}, "default": "./index.mjs"}}
+    |                                                              ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(51): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": \"./fallback.d.cts\"}, \"import\": \"./import.js\"}} 1`] = `
+exports[`invalid(51): {\"exports\": {\"types\": {\"deno\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": [], "default": "./fallback.d.cts"}, "import": "./import.js"}}
+  1 | {"exports": {"types": {"deno": "./index.d.ts"}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(51): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": \"./fallback.d.cts\"}, \"import\": \"./import.js\"}} 2`] = `
+exports[`invalid(51): {\"exports\": {\"types\": {\"deno\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": [], "default": "./fallback.d.cts"}, "import": "./import.js"}}
-    |                                                                   ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"deno": "./index.d.ts"}, "default": "./index.mjs"}}
+    |                                                            ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(52): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"import\": \"./fallback.d.cts\"}}, \"import\": \"./import.js\"}} 1`] = `
+exports[`invalid(52): {\"exports\": {\"types\": {\"module-sync\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": [], "default": {"import": "./fallback.d.cts"}}, "import": "./import.js"}}
+  1 | {"exports": {"types": {"module-sync": "./index.d.ts"}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(52): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"import\": \"./fallback.d.cts\"}}, \"import\": \"./import.js\"}} 2`] = `
+exports[`invalid(52): {\"exports\": {\"types\": {\"module-sync\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": [], "default": {"import": "./fallback.d.cts"}}, "import": "./import.js"}}
-    |                                                                              ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"module-sync": "./index.d.ts"}, "default": "./index.mjs"}}
+    |                                                                   ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(53): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"node\": \"./fallback.d.cts\"}}, \"import\": {\"node\": \"./node.js\"}}} 1`] = `
+exports[`invalid(53): {\"exports\": {\"types\": {\"node-addons\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}
+  1 | {"exports": {"types": {"node-addons": "./index.d.ts"}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(53): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"node\": \"./fallback.d.cts\"}}, \"import\": {\"node\": \"./node.js\"}}} 2`] = `
+exports[`invalid(53): {\"exports\": {\"types\": {\"node-addons\": \"./index.d.ts\"}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": [], "default": {"node": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}
-    |                                                                            ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"node-addons": "./index.d.ts"}, "default": "./index.mjs"}}
+    |                                                                   ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(54): {\"type\": \"module\", \"exports\": {\"types\": {\"types@>=5\": [], \"types\": {\"import\": \"./import.d.mts\", \"require\": \"./require.d.cts\"}}, \"import\": \"./import.mjs\", \"require\": \"./require.cjs\"}} 1`] = `
+exports[`invalid(54): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./index.d.ts\"}}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"types@>=5": [], "types": {"import": "./import.d.mts", "require": "./require.d.cts"}}, "import": "./import.mjs", "require": "./require.cjs"}}
+  1 | {"exports": {"types": {"import": {"browser": "./index.d.ts"}}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(54): {\"type\": \"module\", \"exports\": {\"types\": {\"types@>=5\": [], \"types\": {\"import\": \"./import.d.mts\", \"require\": \"./require.d.cts\"}}, \"import\": \"./import.mjs\", \"require\": \"./require.cjs\"}} 2`] = `
+exports[`invalid(54): {\"exports\": {\"types\": {\"import\": {\"browser\": \"./index.d.ts\"}}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"types@>=5": [], "types": {"import": "./import.d.mts", "require": "./require.d.cts"}}, "import": "./import.mjs", "require": "./require.cjs"}}
-    |                                                       ^^ The \`types\` condition must point to a declaration file.
+> 1 | {"exports": {"types": {"import": {"browser": "./index.d.ts"}}, "default": "./index.mjs"}}
+    |                                                                           ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(55): {\"exports\": {\"types\": {\"import\": {\"node\": \"./node.d.ts\"}}, \"import\": {\"node\": \"./node.js\", \"browser\": \"./browser.js\"}}} 1`] = `
+exports[`invalid(55): {\"exports\": {\"types\": {\"types@>=5\": {\"browser\": \"./index.d.ts\"}}, \"default\": \"./index.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}
+  1 | {"exports": {"types": {"types@>=5": {"browser": "./index.d.ts"}}, "default": "./index.mjs"}}
 
 `;
 
-exports[`invalid(55): {\"exports\": {\"types\": {\"import\": {\"node\": \"./node.d.ts\"}}, \"import\": {\"node\": \"./node.js\", \"browser\": \"./browser.js\"}}} 2`] = `
+exports[`invalid(55): {\"exports\": {\"types\": {\"types@>=5\": {\"browser\": \"./index.d.ts\"}}, \"default\": \"./index.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"exports": {"types": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}
-    |                                                                                                       ^^^^^^^^^^^^^^ Exported JavaScript target \`./browser.js\` has no corresponding \`types\` condition.
+> 1 | {"exports": {"types": {"types@>=5": {"browser": "./index.d.ts"}}, "default": "./index.mjs"}}
+    |                                                                              ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(56): {\"exports\": {\"types@>=5\": {\"import\": {\"node\": \"./node.d.ts\"}}, \"import\": {\"node\": \"./node.js\", \"browser\": \"./browser.js\"}}} 1`] = `
+exports[`invalid(56): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": null, \"default\": \"./i.d.mts\"}, \"default\": \"./i.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}
+  1 | {"type": "module", "exports": {"types": {"import": null, "default": "./i.d.mts"}, "default": "./i.mjs"}}
 
 `;
 
-exports[`invalid(56): {\"exports\": {\"types@>=5\": {\"import\": {\"node\": \"./node.d.ts\"}}, \"import\": {\"node\": \"./node.js\", \"browser\": \"./browser.js\"}}} 2`] = `
+exports[`invalid(56): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": null, \"default\": \"./i.d.mts\"}, \"default\": \"./i.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"exports": {"types@>=5": {"import": {"node": "./node.d.ts"}}, "import": {"node": "./node.js", "browser": "./browser.js"}}}
-    |                                                                                                           ^^^^^^^^^^^^^^ Exported JavaScript target \`./browser.js\` has no corresponding \`types\` condition.
+> 1 | {"type": "module", "exports": {"types": {"import": null, "default": "./i.d.mts"}, "default": "./i.mjs"}}
+    |                                                                                              ^^^^^^^^^ Exported JavaScript target \`./i.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(57): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"import\": {\"node\": \"./fallback.d.cts\"}}}, \"import\": {\"node\": \"./node.js\"}}} 1`] = `
+exports[`invalid(57): {\"exports\": {\"types\": {\"require\": \"./i.d.cts\"}, \"default\": \"./i.cjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": [], "default": {"import": {"node": "./fallback.d.cts"}}}, "import": {"node": "./node.js"}}}
+  1 | {"exports": {"types": {"require": "./i.d.cts"}, "default": "./i.cjs"}}
 
 `;
 
-exports[`invalid(57): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"import\": {\"node\": \"./fallback.d.cts\"}}}, \"import\": {\"node\": \"./node.js\"}}} 2`] = `
+exports[`invalid(57): {\"exports\": {\"types\": {\"require\": \"./i.d.cts\"}, \"default\": \"./i.cjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": [], "default": {"import": {"node": "./fallback.d.cts"}}}, "import": {"node": "./node.js"}}}
-    |                                                                                       ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"require": "./i.d.cts"}, "default": "./i.cjs"}}
+    |                                                            ^^^^^^^^^ Exported JavaScript target \`./i.cjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(58): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"import\": [], \"default\": \"./fallback.d.cts\"}}, \"import\": {\"node\": \"./node.js\"}}} 1`] = `
+exports[`invalid(58): {\"exports\": {\"types\": {\"require\": \"./i.d.cts\", \"import\": null}, \"default\": \"./i.cjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": [], "default": {"import": [], "default": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}
+  1 | {"exports": {"types": {"require": "./i.d.cts", "import": null}, "default": "./i.cjs"}}
 
 `;
 
-exports[`invalid(58): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": [], \"default\": {\"import\": [], \"default\": \"./fallback.d.cts\"}}, \"import\": {\"node\": \"./node.js\"}}} 2`] = `
+exports[`invalid(58): {\"exports\": {\"types\": {\"require\": \"./i.d.cts\", \"import\": null}, \"default\": \"./i.cjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": [], "default": {"import": [], "default": "./fallback.d.cts"}}, "import": {"node": "./node.js"}}}
-    |                                                                                             ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": {"types": {"require": "./i.d.cts", "import": null}, "default": "./i.cjs"}}
+    |                                                                            ^^^^^^^^^ Exported JavaScript target \`./i.cjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(59): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 1`] = `
+exports[`invalid(59): {\"exports\": {\"types\": {\"import\": null, \"require\": \"./i.d.cts\"}, \"default\": \"./i.cjs\"}} 1`] = `
 
 [Input]
-  1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
+  1 | {"exports": {"types": {"import": null, "require": "./i.d.cts"}, "default": "./i.cjs"}}
 
 `;
 
-exports[`invalid(59): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 2`] = `
+exports[`invalid(59): {\"exports\": {\"types\": {\"import\": null, \"require\": \"./i.d.cts\"}, \"default\": \"./i.cjs\"}} 2`] = `
 
 Message:
-> 1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
-    |              ^^^^^^^^^^^^^^^^^^^^^^ Versioned type condition \`types@>=5 ||   || <4\` must use TypeScript-compatible semver syntax.
-
-`;
-
-exports[`invalid(59): {\"exports\": {\"types@>=5 ||   || <4\": \"./index.d.ts\", \"default\": \"./index.js\"}} 3`] = `
-
-Message:
-> 1 | {"exports": {"types@>=5 ||   || <4": "./index.d.ts", "default": "./index.js"}}
-    |                                                                 ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+> 1 | {"exports": {"types": {"import": null, "require": "./i.d.cts"}, "default": "./i.cjs"}}
+    |                                                                            ^^^^^^^^^ Exported JavaScript target \`./i.cjs\` has no corresponding \`types\` condition.
 
 `;
 
@@ -975,181 +986,173 @@ exports[`invalid(6): {\"exports\": {\"default\": \"./index.mjs\", \"types@>=5\":
 
 Message:
 > 1 | {"exports": {"default": "./index.mjs", "types@>=5": "./index.d.mts"}}
-    |                                        ^^^^^^^^^^^ Versioned type conditions must come before \`types\`, and all type conditions must come before runtime conditions.
+    |                                        ^^^^^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 
-exports[`invalid(60): {\"exports\": {\"types\": \"./fallback.d.ts\", \"types@>=5\": \"./modern.d.ts\", \"default\": \"./index.js\"}} 1`] = `
+exports[`invalid(60): {\"type\": \"module\", \"exports\": {\"types\": {\"node\": \"./i.d.mts\"}, \"import\": \"./i.mjs\"}} 1`] = `
 
 [Input]
-  1 | {"exports": {"types": "./fallback.d.ts", "types@>=5": "./modern.d.ts", "default": "./index.js"}}
+  1 | {"type": "module", "exports": {"types": {"node": "./i.d.mts"}, "import": "./i.mjs"}}
 
 `;
 
-exports[`invalid(60): {\"exports\": {\"types\": \"./fallback.d.ts\", \"types@>=5\": \"./modern.d.ts\", \"default\": \"./index.js\"}} 2`] = `
+exports[`invalid(60): {\"type\": \"module\", \"exports\": {\"types\": {\"node\": \"./i.d.mts\"}, \"import\": \"./i.mjs\"}} 2`] = `
 
 Message:
-> 1 | {"exports": {"types": "./fallback.d.ts", "types@>=5": "./modern.d.ts", "default": "./index.js"}}
-    |                                          ^^^^^^^^^^^ Versioned type conditions must come before \`types\`, and all type conditions must come before runtime conditions.
+> 1 | {"type": "module", "exports": {"types": {"node": "./i.d.mts"}, "import": "./i.mjs"}}
+    |                                                                          ^^^^^^^^^ Exported JavaScript target \`./i.mjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(61): {\"type\": \"module\", \"exports\": {\"types@invalid\": \"./invalid.cjs\", \"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}} 1`] = `
+exports[`invalid(61): {\"exports\": {\"types\": {\"require\": \"./types/i.d.cts\"}, \"import\": {\"browser\": {\"types\": \"./types/b.d.mts\", \"default\": \"./b.mjs\"}}, \"default\": \"./i.cjs\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types@invalid": "./invalid.cjs", "types": "./index.d.mts", "default": "./index.mjs"}}
+  1 | {"exports": {"types": {"require": "./types/i.d.cts"}, "import": {"browser": {"types": "./types/b.d.mts", "default": "./b.mjs"}}, "default": "./i.cjs"}}
 
 `;
 
-exports[`invalid(61): {\"type\": \"module\", \"exports\": {\"types@invalid\": \"./invalid.cjs\", \"types\": \"./index.d.mts\", \"default\": \"./index.mjs\"}} 2`] = `
+exports[`invalid(61): {\"exports\": {\"types\": {\"require\": \"./types/i.d.cts\"}, \"import\": {\"browser\": {\"types\": \"./types/b.d.mts\", \"default\": \"./b.mjs\"}}, \"default\": \"./i.cjs\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types@invalid": "./invalid.cjs", "types": "./index.d.mts", "default": "./index.mjs"}}
-    |                                ^^^^^^^^^^^^^^^ Versioned type condition \`types@invalid\` must use TypeScript-compatible semver syntax.
+> 1 | {"exports": {"types": {"require": "./types/i.d.cts"}, "import": {"browser": {"types": "./types/b.d.mts", "default": "./b.mjs"}}, "default": "./i.cjs"}}
+    |                                                                                                                                             ^^^^^^^^^ Exported JavaScript target \`./i.cjs\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(62): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 1`] = `
+exports[`invalid(62): {\"type\": \"module\", \"exports\": {\"import\": \"./lib/index.js\", \"require\": \"./cjs/index.cjs\", \"types\": \"./lib/index.d.ts\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": {"types": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
+  1 | {"type": "module", "exports": {"import": "./lib/index.js", "require": "./cjs/index.cjs", "types": "./lib/index.d.ts"}}
 
 `;
 
-exports[`invalid(62): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 2`] = `
+exports[`invalid(62): {\"type\": \"module\", \"exports\": {\"import\": \"./lib/index.js\", \"require\": \"./cjs/index.cjs\", \"types\": \"./lib/index.d.ts\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": {"types": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
-    |                                                              ^^^^ The \`types\` condition must point to a declaration file.
+> 1 | {"type": "module", "exports": {"import": "./lib/index.js", "require": "./cjs/index.cjs", "types": "./lib/index.d.ts"}}
+    |                                                                                          ^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 
-exports[`invalid(62): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 3`] = `
-
-Message:
-> 1 | {"type": "module", "exports": {"types": {"import": {"types": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
-    |                                                                                                               ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
-
-`;
-
-exports[`invalid(63): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": [], \"default\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 1`] = `
+exports[`invalid(63): {\"exports\": {\".\": {\"types\": \"./dist/index.d.ts\", \"default\": \"./dist/index.js\"}, \"./types/*\": {\"types\": \"./types/*.js\"}}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"import": {"types": [], "default": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
+  1 | {"exports": {".": {"types": "./dist/index.d.ts", "default": "./dist/index.js"}, "./types/*": {"types": "./types/*.js"}}}
 
 `;
 
-exports[`invalid(63): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": [], \"default\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 2`] = `
+exports[`invalid(63): {\"exports\": {\".\": {\"types\": \"./dist/index.d.ts\", \"default\": \"./dist/index.js\"}, \"./types/*\": {\"types\": \"./types/*.js\"}}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"import": {"types": [], "default": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
-    |                                                              ^^ The \`types\` condition must point to a declaration file.
+> 1 | {"exports": {".": {"types": "./dist/index.d.ts", "default": "./dist/index.js"}, "./types/*": {"types": "./types/*.js"}}}
+    |                                                                                                        ^^^^^^^^^^^^^^ The \`types\` condition \`./types/*.js\` must point at a declaration file ending in \`.d.ts\`, \`.d.mts\`, or \`.d.cts\`.
 
 `;
 
-exports[`invalid(63): {\"type\": \"module\", \"exports\": {\"types\": {\"import\": {\"types\": [], \"default\": null}, \"default\": \"./fallback.d.cts\"}, \"import\": \"./index.js\"}} 3`] = `
-
-Message:
-> 1 | {"type": "module", "exports": {"types": {"import": {"types": [], "default": null}, "default": "./fallback.d.cts"}, "import": "./index.js"}}
-    |                                                                                                                              ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
-
-`;
-
-exports[`invalid(64): {\"type\": \"module\", \"exports\": {\"types@>=5\": {\"import\": null, \"require\": \"./r.d.cts\"}, \"types\": {\"import\": \"./i.d.mts\", \"require\": \"./r.d.cts\"}, \"import\": \"./i.mjs\", \"require\": \"./r.cjs\"}} 1`] = `
+exports[`invalid(64): {\"types\": \"./a.d.ts\", \"exports\": {\"import\": \"./i.js\", \"default\": \"./data.json\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types@>=5": {"import": null, "require": "./r.d.cts"}, "types": {"import": "./i.d.mts", "require": "./r.d.cts"}, "import": "./i.mjs", "require": "./r.cjs"}}
+  1 | {"types": "./a.d.ts", "exports": {"import": "./i.js", "default": "./data.json"}}
 
 `;
 
-exports[`invalid(64): {\"type\": \"module\", \"exports\": {\"types@>=5\": {\"import\": null, \"require\": \"./r.d.cts\"}, \"types\": {\"import\": \"./i.d.mts\", \"require\": \"./r.d.cts\"}, \"import\": \"./i.mjs\", \"require\": \"./r.cjs\"}} 2`] = `
+exports[`invalid(64): {\"types\": \"./a.d.ts\", \"exports\": {\"import\": \"./i.js\", \"default\": \"./data.json\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types@>=5": {"import": null, "require": "./r.d.cts"}, "types": {"import": "./i.d.mts", "require": "./r.d.cts"}, "import": "./i.mjs", "require": "./r.cjs"}}
-    |                                                                                                                                                           ^^^^^^^^^ Exported JavaScript target \`./i.mjs\` has no corresponding \`types\` condition.
+> 1 | {"types": "./a.d.ts", "exports": {"import": "./i.js", "default": "./data.json"}}
+    |                                             ^^^^^^^^ Exported JavaScript target \`./i.js\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(65): {\"exports\": {\"types\": 1, \"default\": \"./index.js\"}} 1`] = `
+exports[`invalid(65): {\"exports\": {\"types\": {\"import\": \"./i.css\"}, \"import\": \"./i.js\"}} 1`] = `
 
 [Input]
-  1 | {"exports": {"types": 1, "default": "./index.js"}}
+  1 | {"exports": {"types": {"import": "./i.css"}, "import": "./i.js"}}
 
 `;
 
-exports[`invalid(65): {\"exports\": {\"types\": 1, \"default\": \"./index.js\"}} 2`] = `
+exports[`invalid(65): {\"exports\": {\"types\": {\"import\": \"./i.css\"}, \"import\": \"./i.js\"}} 2`] = `
 
 Message:
-> 1 | {"exports": {"types": 1, "default": "./index.js"}}
-    |                                     ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
+> 1 | {"exports": {"types": {"import": "./i.css"}, "import": "./i.js"}}
+    |                                  ^^^^^^^^^ The \`types\` condition \`./i.css\` must point at a declaration file ending in \`.d.ts\`, \`.d.mts\`, or \`.d.cts\`.
 
 `;
 
-exports[`invalid(66): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 1`] = `
+exports[`invalid(65): {\"exports\": {\"types\": {\"import\": \"./i.css\"}, \"import\": \"./i.js\"}} 3`] = `
+
+Message:
+> 1 | {"exports": {"types": {"import": "./i.css"}, "import": "./i.js"}}
+    |                                                        ^^^^^^^^ Exported JavaScript target \`./i.js\` has no corresponding \`types\` condition.
+
+`;
+
+exports[`invalid(66): {\"typesVersions\": {\"*\": {\"*\": [\"types/*.d.ts\"]}}, \"exports\": {\".\": \"./dist/index.js\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
+  1 | {"typesVersions": {"*": {"*": ["types/*.d.ts"]}}, "exports": {".": "./dist/index.js"}}
 
 `;
 
-exports[`invalid(66): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 2`] = `
+exports[`invalid(66): {\"typesVersions\": {\"*\": {\"*\": [\"types/*.d.ts\"]}}, \"exports\": {\".\": \"./dist/index.js\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
-    |                                                   ^^^^ The \`types\` condition must point to a declaration file.
+> 1 | {"typesVersions": {"*": {"*": ["types/*.d.ts"]}}, "exports": {".": "./dist/index.js"}}
+    |                                                                    ^^^^^^^^^^^^^^^^^ Exported JavaScript target \`./dist/index.js\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(66): {\"type\": \"module\", \"exports\": {\"types\": {\"types\": null, \"default\": \"./fallback.d.cts\"}, \"default\": \"./index.mjs\"}} 3`] = `
-
-Message:
-> 1 | {"type": "module", "exports": {"types": {"types": null, "default": "./fallback.d.cts"}, "default": "./index.mjs"}}
-    |                                                                                                    ^^^^^^^^^^^^^ Exported JavaScript target \`./index.mjs\` has no corresponding \`types\` condition.
-
-`;
-
-exports[`invalid(67): {\"type\": \"module\", \"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.cts\", \"default\": \"./fallback.d.cts\"}}, \"default\": {\"import\": \"./import.mjs\", \"default\": \"./fallback.cjs\"}}} 1`] = `
+exports[`invalid(67): {\"exports\": [{\"default\": \"./index.js\"}, {\"types\": \"./index.js\"}]} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"default": {"import": "./import.d.cts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}
+  1 | {"exports": [{"default": "./index.js"}, {"types": "./index.js"}]}
 
 `;
 
-exports[`invalid(67): {\"type\": \"module\", \"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.cts\", \"default\": \"./fallback.d.cts\"}}, \"default\": {\"import\": \"./import.mjs\", \"default\": \"./fallback.cjs\"}}} 2`] = `
+exports[`invalid(67): {\"exports\": [{\"default\": \"./index.js\"}, {\"types\": \"./index.js\"}]} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"default": {"import": "./import.d.cts", "default": "./fallback.d.cts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}
-    |                                                                ^^^^^^^^^^^^^^^^ Type declaration \`./import.d.cts\` uses CommonJS format but its JavaScript target uses ES module format.
+> 1 | {"exports": [{"default": "./index.js"}, {"types": "./index.js"}]}
+    |                          ^^^^^^^^^^^^ Exported JavaScript target \`./index.js\` has no corresponding \`types\` condition.
 
 `;
 
-exports[`invalid(68): {\"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.ts\"}}, \"default\": {\"import\": \"./import.js\", \"require\": \"./require.js\"}}} 1`] = `
+exports[`invalid(67): {\"exports\": [{\"default\": \"./index.js\"}, {\"types\": \"./index.js\"}]} 3`] = `
+
+Message:
+> 1 | {"exports": [{"default": "./index.js"}, {"types": "./index.js"}]}
+    |                                                   ^^^^^^^^^^^^ The \`types\` condition \`./index.js\` must point at a declaration file ending in \`.d.ts\`, \`.d.mts\`, or \`.d.cts\`.
+
+`;
+
+exports[`invalid(68): {\"exports\": [{\"default\": \"./i.js\"}, {\"default\": \"./i.js\", \"types\": \"./i.d.ts\"}]} 1`] = `
 
 [Input]
-  1 | {"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}
+  1 | {"exports": [{"default": "./i.js"}, {"default": "./i.js", "types": "./i.d.ts"}]}
 
 `;
 
-exports[`invalid(68): {\"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.ts\"}}, \"default\": {\"import\": \"./import.js\", \"require\": \"./require.js\"}}} 2`] = `
+exports[`invalid(68): {\"exports\": [{\"default\": \"./i.js\"}, {\"default\": \"./i.js\", \"types\": \"./i.d.ts\"}]} 2`] = `
 
 Message:
-> 1 | {"exports": {"types": {"default": {"import": "./import.d.ts"}}, "default": {"import": "./import.js", "require": "./require.js"}}}
-    |                                                                                                                 ^^^^^^^^^^^^^^ Exported JavaScript target \`./require.js\` has no corresponding \`types\` condition.
+> 1 | {"exports": [{"default": "./i.js"}, {"default": "./i.js", "types": "./i.d.ts"}]}
+    |                                                           ^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 
-exports[`invalid(69): {\"type\": \"module\", \"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.mts\", \"default\": \"./fallback.d.mts\"}}, \"default\": {\"import\": \"./import.mjs\", \"default\": \"./fallback.cjs\"}}} 1`] = `
+exports[`invalid(69): {\"exports\": {\"node\": \"./i.js\", \"types\": \"./i.d.ts\", \"default\": \"./i.js\"}} 1`] = `
 
 [Input]
-  1 | {"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.mts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}
+  1 | {"exports": {"node": "./i.js", "types": "./i.d.ts", "default": "./i.js"}}
 
 `;
 
-exports[`invalid(69): {\"type\": \"module\", \"exports\": {\"types\": {\"default\": {\"import\": \"./import.d.mts\", \"default\": \"./fallback.d.mts\"}}, \"default\": {\"import\": \"./import.mjs\", \"default\": \"./fallback.cjs\"}}} 2`] = `
+exports[`invalid(69): {\"exports\": {\"node\": \"./i.js\", \"types\": \"./i.d.ts\", \"default\": \"./i.js\"}} 2`] = `
 
 Message:
-> 1 | {"type": "module", "exports": {"types": {"default": {"import": "./import.d.mts", "default": "./fallback.d.mts"}}, "default": {"import": "./import.mjs", "default": "./fallback.cjs"}}}
-    |                                                                                             ^^^^^^^^^^^^^^^^^^ Type declaration \`./fallback.d.mts\` uses ES module format but its JavaScript target uses CommonJS format.
+> 1 | {"exports": {"node": "./i.js", "types": "./i.d.ts", "default": "./i.js"}}
+    |                                ^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 
@@ -1164,22 +1167,7 @@ exports[`invalid(7): {\"exports\": {\"types@>=5\": \"./index.d.ts\", \"default\"
 
 Message:
 > 1 | {"exports": {"types@>=5": "./index.d.ts", "default": "./index.js", "types@>=4": "./index.d.ts"}}
-    |                                                                    ^^^^^^^^^^^ Versioned type conditions must come before \`types\`, and all type conditions must come before runtime conditions.
-
-`;
-
-exports[`invalid(70): {\"exports\": {\".\": {\"types\": \"./a.d.ts\", \"types\": \"./a.js\", \"default\": \"./a.js\"}}} 1`] = `
-
-[Input]
-  1 | {"exports": {".": {"types": "./a.d.ts", "types": "./a.js", "default": "./a.js"}}}
-
-`;
-
-exports[`invalid(70): {\"exports\": {\".\": {\"types\": \"./a.d.ts\", \"types\": \"./a.js\", \"default\": \"./a.js\"}}} 2`] = `
-
-Message:
-> 1 | {"exports": {".": {"types": "./a.d.ts", "types": "./a.js", "default": "./a.js"}}}
-    |                                                  ^^^^^^^^ The \`types\` condition \`./a.js\` must point at a declaration file ending in \`.d.ts\`, \`.d.mts\`, or \`.d.cts\`.
+    |                                                                    ^^^^^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 
@@ -1194,7 +1182,7 @@ exports[`invalid(8): {\"exports\": {\"import\": {\"default\": \"./index.js\", \"
 
 Message:
 > 1 | {"exports": {"import": {"default": "./index.js", "types": "./index.d.ts"}}}
-    |                                                  ^^^^^^^ Versioned type conditions must come before \`types\`, and all type conditions must come before runtime conditions.
+    |                                                  ^^^^^^^ Versioned type conditions must come before \`types\`, and type conditions must come before a \`default\` target and before an \`import\` or \`node\` target.
 
 `;
 

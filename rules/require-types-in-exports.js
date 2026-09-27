@@ -8,26 +8,34 @@ import {
 const MESSAGE_ID_MISSING = 'missing';
 const MESSAGE_ID_TYPES_FIRST = 'typesFirst';
 const MESSAGE_ID_TYPES_EXTENSION = 'typesExtension';
-const MESSAGE_ID_MODULE_FORMAT = 'moduleFormat';
 const MESSAGE_ID_TYPES_VALUE = 'typesValue';
 const MESSAGE_ID_TYPES_VERSION = 'typesVersion';
 
 const messages = {
 	[MESSAGE_ID_MISSING]: 'Exported JavaScript target `{{value}}` has no corresponding `types` condition.',
-	[MESSAGE_ID_TYPES_FIRST]: 'Versioned type conditions must come before `types`, and all type conditions must come before runtime conditions.',
+	[MESSAGE_ID_TYPES_FIRST]: 'Versioned type conditions must come before `types`, and type conditions must come before a `default` target and before an `import` or `node` target.',
 	[MESSAGE_ID_TYPES_EXTENSION]: 'The `types` condition `{{value}}` must point at a declaration file ending in `.d.ts`, `.d.mts`, or `.d.cts`.',
-	[MESSAGE_ID_MODULE_FORMAT]: 'Type declaration `{{types}}` uses {{actual}} format but its JavaScript target uses {{expected}} format.',
 	[MESSAGE_ID_TYPES_VALUE]: 'The `types` condition must point to a declaration file.',
 	[MESSAGE_ID_TYPES_VERSION]: 'Versioned type condition `{{key}}` must use TypeScript-compatible semver syntax.',
 };
 
 const declarationPathPattern = /\.d\.(?:ts|mts|cts)$/u;
 const javascriptPathPattern = /\.(?:c|m)?js$/u;
+// A TypeScript file or a declaration, which ends the same way (`.d.ts`, `.d.mts`, `.d.cts`).
+const typeScriptPathPattern = /\.(?:[cm]ts|tsx?)$/u;
 const typesVersionPartialPattern = /^(?:[*0Xx]|[1-9]\d*)(?:\.(?:[*0Xx]|[1-9]\d*)(?:\.(?:[*0Xx]|[1-9]\d*)(?:-(?<prerelease>[\d\-.A-Za-z]+))?(?:\+(?<build>[\d\-.A-Za-z]+))?)?)?$/u;
 const typesVersionPrereleasePattern = /^(?:0|[1-9]\d*|[-A-Za-z][\d\-A-Za-z]*)(?:\.(?:0|[1-9]\d*|[-A-Za-z][\d\-A-Za-z]*))*$/u;
 const typesVersionBuildPattern = /^[\d\-A-Za-z]+(?:\.[\d\-A-Za-z]+)*$/u;
 const typesVersionComparatorPattern = /^(?:<=|>=|[<=>^~])?([\d*+\-.A-Za-z]+)$/u;
 const typesVersionHyphenPattern = /^([\d*+\-.A-Za-z]+)\s+-\s+([\d*+\-.A-Za-z]+)$/u;
+
+/*
+The conditions TypeScript resolves `exports` with for an ES module consumer: `nodenext` for an importing file, and `bundler`, which never sets `node`. CommonJS consumers are out of scope. TypeScript sets no other condition, such as `browser`, `bun`, or `development`, unless `customConditions` asks for it, which this rule does not model.
+*/
+const typeScriptConditionSets = [
+	['types', 'node', 'import'],
+	['types', 'import'],
+];
 
 function isTypesConditionKey(key) {
 	return key === 'types' || key.startsWith('types@');
@@ -92,10 +100,6 @@ function isTypesCondition(key) {
 	return isValidTypesVersionRange(range);
 }
 
-function isRuntimeTarget(value) {
-	return javascriptPathPattern.test(value);
-}
-
 function getFirstTarget(node) {
 	while (node?.type === 'Array') {
 		node = node.elements[0]?.value;
@@ -104,57 +108,84 @@ function getFirstTarget(node) {
 	return node;
 }
 
-function canTypeTargetFallThrough(node) {
-	const effectiveNode = getFirstTarget(node);
-
-	if (!effectiveNode) {
-		return true;
-	}
-
-	if (effectiveNode.type !== 'Object') {
-		return false;
-	}
-
-	const typesMember = effectiveNode.members.find(member => getKey(member) === 'types');
-
-	if (typesMember && !canTypeTargetFallThrough(typesMember.value)) {
-		return false;
-	}
-
-	const defaultMember = effectiveNode.members.find(member => getKey(member) === 'default');
-	return !defaultMember || canTypeTargetFallThrough(defaultMember.value);
+function isMatchingCondition(key, conditions) {
+	// The rule cannot know the TypeScript version, so it assumes every well-formed `types@` range matches.
+	return key === 'default'
+		|| conditions.includes(key)
+		|| (key.startsWith('types@') && conditions.includes('types') && isTypesCondition(key));
 }
 
-function getTargetWithFallback(node, fallbackMember) {
-	if (
-		node.type !== 'Object'
-		|| !fallbackMember
-		|| node.members.some(member => getKey(member) === 'default')
-		|| !canTypeTargetFallThrough(node)
-	) {
-		return node;
-	}
+/**
+Resolve an `exports` target the way TypeScript and Node.js do: the first matching key of a conditions object wins, a target that resolves to nothing falls through to the next key, and an array takes its first element that resolves.
 
-	return {
-		...node,
-		members: [...node.members, fallbackMember],
-	};
+@returns {object | undefined} The `String` node the resolution settles on, the `Null` node that blocks it, or `undefined` when nothing matches.
+*/
+function resolve(node, conditions) {
+	switch (node.type) {
+		case 'String': {
+			// TypeScript skips a target that is not a relative path, and Node.js rejects it. While looking for types, TypeScript takes a TypeScript file or a declaration as it is, and for any other target, JavaScript, JSON or CSS alike, it looks for a declaration next to it and skips the target without one. This rule does not look for that declaration. A pattern target ending in `*` gets its extension from the specifier, so it is taken as written.
+			if (!node.value.startsWith('./') || (conditions.includes('types') && !typeScriptPathPattern.test(node.value) && !node.value.endsWith('*'))) {
+				return undefined;
+			}
+
+			return node;
+		}
+
+		case 'Null': {
+			return node;
+		}
+
+		case 'Array': {
+			for (const element of node.elements) {
+				const target = resolve(element.value, conditions);
+
+				if (target) {
+					return target;
+				}
+			}
+
+			return undefined;
+		}
+
+		case 'Object': {
+			for (const member of node.members) {
+				if (!isMatchingCondition(getKey(member), conditions)) {
+					continue;
+				}
+
+				const target = resolve(member.value, conditions);
+
+				if (target) {
+					return target;
+				}
+			}
+
+			return undefined;
+		}
+
+		default: {
+			return undefined;
+		}
+	}
 }
 
-function getNextFallbackMember(objectNode, member) {
-	const index = objectNode.members.indexOf(member);
-	return objectNode.members.slice(index + 1).find(candidate => isTypesCondition(getKey(candidate)) || getKey(candidate) === 'default');
-}
+/**
+Get the JavaScript that one TypeScript mode loads for a target, when that mode finds no declaration for it.
+*/
+function getUntypedTarget(node, conditions) {
+	const runtimeTarget = resolve(node, conditions.filter(condition => condition !== 'types'));
 
-function getFallbackTarget(objectNode, member) {
-	let nextMember = getNextFallbackMember(objectNode, member);
-
-	while (!getFirstTarget(member.value) && nextMember) {
-		member = nextMember;
-		nextMember = getNextFallbackMember(objectNode, member);
+	if (runtimeTarget?.type !== 'String' || !javascriptPathPattern.test(runtimeTarget.value)) {
+		return undefined;
 	}
 
-	return getTargetWithFallback(member.value, nextMember);
+	const typesTarget = resolve(node, conditions);
+
+	if (!typesTarget || typesTarget.type === 'Null') {
+		return runtimeTarget;
+	}
+
+	return undefined;
 }
 
 function * iterateStringLeaves(node) {
@@ -203,329 +234,16 @@ function hasMalformedTarget(node) {
 	return node.type === 'Object' && node.members.some(member => hasMalformedTarget(member.value));
 }
 
-function findRuntimeConditionMember(objectNode, key) {
-	const member = findMember(objectNode, key);
-
-	if (key !== 'default' || !member) {
-		return member;
-	}
-
-	const previousMembers = objectNode.members.slice(0, objectNode.members.indexOf(member));
-	return previousMembers.some(member => isTypesCondition(getKey(member))) ? undefined : member;
-}
-
-function hasObjectTypesCoverage(node, runtimeNode, runtimeKey) {
-	if (runtimeKey) {
-		const matchingMember = findRuntimeConditionMember(node, runtimeKey);
-
-		if (matchingMember) {
-			const hasMatchingTypes = hasTypesCoverage(matchingMember.value, runtimeNode);
-
-			if (hasMatchingTypes || !canTypeTargetFallThrough(matchingMember.value)) {
-				return hasMatchingTypes;
-			}
-		}
-	}
-
-	for (const member of node.members) {
-		const key = getKey(member);
-
-		if ((isTypesCondition(key) || key === 'default') && hasTypesCoverage(member.value, runtimeNode, runtimeKey)) {
-			return true;
-		}
-	}
-
-	if (runtimeNode.type !== 'Object') {
-		return false;
-	}
-
-	const runtimeMembers = runtimeNode.members.filter(member => !isTypesConditionKey(getKey(member)));
-	return runtimeMembers.length > 0 && runtimeMembers.every(member => hasTypesCoverage(node, member.value, getKey(member)));
-}
-
-function hasTypesCoverage(node, runtimeNode, runtimeKey) {
-	switch (node.type) {
-		case 'String': {
-			return node.value !== '';
-		}
-
-		case 'Object': {
-			return hasObjectTypesCoverage(node, runtimeNode, runtimeKey);
-		}
-
-		case 'Array': {
-			const firstTarget = getFirstTarget(node);
-			return Boolean(firstTarget && hasTypesCoverage(firstTarget, runtimeNode, runtimeKey));
-		}
-
-		default: {
-			return false;
-		}
-	}
-}
-
-function * iterateRuntimeStringLeaves(node) {
-	switch (node.type) {
-		case 'String': {
-			if (isRuntimeTarget(node.value)) {
-				yield node;
-			}
-
-			break;
-		}
-
-		case 'Object': {
-			for (const member of node.members) {
-				if (isTypesConditionKey(getKey(member))) {
-					continue;
-				}
-
-				yield * iterateRuntimeStringLeaves(member.value);
-			}
-
-			break;
-		}
-
-		case 'Array': {
-			const firstTarget = getFirstTarget(node);
-
-			if (firstTarget) {
-				yield * iterateRuntimeStringLeaves(firstTarget);
-			}
-
-			break;
-		}
-	// No default
-	}
-}
-
-function * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode, runtimeKey) {
-	if (runtimeKey && fallbackNode.type === 'Object') {
-		const matchingMember = findRuntimeConditionMember(fallbackNode, runtimeKey);
-
-		if (!matchingMember && runtimeNode.type === 'Object') {
-			yield * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeNode);
-			return;
-		}
-
-		if (matchingMember) {
-			yield * iterateUncoveredFallbackPairs(matchingMember.value, matchingNode, runtimeNode);
-
-			const hasMatchingTypes = hasTypesCoverage(matchingMember.value, runtimeNode);
-			const canFallThrough = canTypeTargetFallThrough(matchingMember.value);
-
-			if (hasMatchingTypes || !canFallThrough) {
-				return;
-			}
-		}
-
-		if (!matchingMember && fallbackNode.members.some(member => isTypesCondition(getKey(member)))) {
-			yield * iterateTypeRuntimePairsWithoutKey(fallbackNode, runtimeNode);
-			return;
-		}
-
-		const fallbackMember = fallbackNode.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
-
-		if (fallbackMember && fallbackMember !== matchingMember) {
-			yield * iterateUncoveredFallbackPairs(fallbackMember.value, matchingNode, runtimeNode, runtimeKey);
-			return;
-		}
-
-		if (matchingMember) {
-			return;
-		}
-	}
-
-	if (runtimeNode.type !== 'Object') {
-		yield * iterateTypeRuntimePairs(fallbackNode, runtimeNode, runtimeKey);
-		return;
-	}
-
-	for (const runtimeMember of runtimeNode.members) {
-		const key = getKey(runtimeMember);
-
-		if (isTypesConditionKey(key) || hasTypesCoverage(matchingNode, runtimeMember.value, key)) {
-			continue;
-		}
-
-		const hasMatchingFallback = fallbackNode.type === 'Object' && fallbackNode.members.some(member => getKey(member) === key);
-
-		if (!hasMatchingFallback && runtimeMember.value.type === 'Object') {
-			yield * iterateUncoveredFallbackPairs(fallbackNode, matchingNode, runtimeMember.value);
-		} else {
-			yield * iterateTypeRuntimePairs(fallbackNode, runtimeMember.value, key);
-		}
-	}
-}
-
-function * iterateTypeRuntimePairsWithoutKey(typeNode, runtimeNode) {
-	const typesMembers = typeNode.members.filter(member => isTypesCondition(getKey(member)));
-	const defaultMember = typeNode.members.find(member => getKey(member) === 'default');
-
-	for (const typesMember of typesMembers) {
-		yield * iterateTypeRuntimePairs(typesMember.value, runtimeNode);
-	}
-
-	if (typesMembers.length > 0) {
-		return;
-	}
-
-	if (runtimeNode.type === 'Object') {
-		for (const runtimeMember of runtimeNode.members) {
-			if (!isTypesConditionKey(getKey(runtimeMember))) {
-				yield * iterateTypeRuntimePairs(typeNode, runtimeMember.value, getKey(runtimeMember));
-			}
-		}
-	} else if (defaultMember) {
-		yield * iterateTypeRuntimePairs(defaultMember.value, runtimeNode);
-	}
-}
-
-function * iterateTypeRuntimePairs(typeNode, runtimeNode, runtimeKey) {
-	switch (typeNode.type) {
-		case 'String': {
-			for (const runtimeTarget of iterateRuntimeStringLeaves(runtimeNode)) {
-				yield [typeNode, runtimeTarget];
-			}
-
-			break;
-		}
-
-		case 'Object': {
-			const fallbackMember = typeNode.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
-
-			if (runtimeKey) {
-				const matchingMember = findRuntimeConditionMember(typeNode, runtimeKey);
-
-				if (matchingMember) {
-					const matchingTarget = getTargetWithFallback(matchingMember.value, fallbackMember === matchingMember ? undefined : fallbackMember);
-
-					for (const pair of iterateTypeRuntimePairs(matchingTarget, runtimeNode)) {
-						yield pair;
-					}
-
-					const hasMatchingTypes = hasTypesCoverage(matchingTarget, runtimeNode);
-					const canFallThrough = canTypeTargetFallThrough(matchingTarget);
-
-					if (matchingTarget !== matchingMember.value || hasMatchingTypes || !canFallThrough) {
-						return;
-					}
-
-					if (fallbackMember) {
-						yield * iterateUncoveredFallbackPairs(fallbackMember.value, matchingMember.value, runtimeNode, runtimeKey);
-					}
-
-					return;
-				}
-
-				if (fallbackMember) {
-					yield * iterateTypeRuntimePairs(fallbackMember.value, runtimeNode, runtimeKey);
-				}
-
-				return;
-			}
-
-			yield * iterateTypeRuntimePairsWithoutKey(typeNode, runtimeNode);
-
-			break;
-		}
-
-		case 'Array': {
-			const firstTarget = getFirstTarget(typeNode);
-
-			if (firstTarget) {
-				yield * iterateTypeRuntimePairs(firstTarget, runtimeNode, runtimeKey);
-			}
-
-			break;
-		}
-	// No default
-	}
-}
-
-function getPackageType(root) {
-	const type = findMember(root, 'type');
-
-	if (type?.value.type !== 'String') {
-		return 'commonjs';
-	}
-
-	if (type.value.value === 'module') {
-		return 'module';
-	}
-
-	if (type.value.value === 'commonjs') {
-		return 'commonjs';
-	}
-
-	return undefined;
-}
-
-function getRuntimeFormat(value, packageType) {
-	if (value.endsWith('.mjs')) {
-		return 'ES module';
-	}
-
-	if (value.endsWith('.cjs')) {
-		return 'CommonJS';
-	}
-
-	if (value.endsWith('.js')) {
-		return packageType === 'module' ? 'ES module' : 'CommonJS';
-	}
-
-	return undefined;
-}
-
-function getDeclarationFormat(value, packageType) {
-	if (value.endsWith('.d.mts')) {
-		return 'ES module';
-	}
-
-	if (value.endsWith('.d.cts')) {
-		return 'CommonJS';
-	}
-
-	if (value.endsWith('.d.ts')) {
-		return packageType === 'module' ? 'ES module' : 'CommonJS';
-	}
-
-	return undefined;
-}
-
-function getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reportedTypeTargets) {
-	const actual = getDeclarationFormat(typeTarget.value, packageType);
-
-	if (!actual) {
-		return;
-	}
-
-	const expected = getRuntimeFormat(runtimeTarget.value, packageType);
-
-	if (!expected || actual === expected) {
-		return;
-	}
-
-	if (reportedTypeTargets.has(typeTarget)) {
-		return;
-	}
-
-	reportedTypeTargets.add(typeTarget);
-	return {
-		node: typeTarget,
-		messageId: MESSAGE_ID_MODULE_FORMAT,
-		data: {
-			types: typeTarget.value,
-			actual,
-			expected,
-		},
-	};
+/**
+Whether a condition written before a type condition hands one of TypeScript's modes JavaScript without types of its own, so TypeScript takes a declaration sitting next to that JavaScript over the type condition.
+*/
+function isShadowingTypes(member) {
+	const key = getKey(member);
+	return typeScriptConditionSets.some(conditions => conditions.includes(key) && getUntypedTarget(member.value, conditions) !== undefined);
 }
 
 function * checkTypesMembers(objectNode) {
-	const typesMembers = [];
-
-	for (const member of objectNode.members) {
+	for (const [index, member] of objectNode.members.entries()) {
 		const key = getKey(member);
 
 		if (!isTypesConditionKey(key)) {
@@ -541,17 +259,12 @@ function * checkTypesMembers(objectNode) {
 			continue;
 		}
 
-		typesMembers.push(member);
-	}
-
-	for (const member of typesMembers) {
-		const index = objectNode.members.indexOf(member);
-		const key = getKey(member);
 		const previousMembers = objectNode.members.slice(0, index);
 		const effectiveTypeNode = getFirstTarget(member.value);
 		const typeTargets = effectiveTypeNode ? [...iterateStringLeaves(effectiveTypeNode)] : [];
 
-		if (previousMembers.some(member => !isTypesConditionKey(getKey(member)) || (key !== 'types' && getKey(member) === 'types'))) {
+		// `default` always matches, and so does `types` ahead of a `types@` key, so the type condition after either is dead.
+		if (previousMembers.some(previousMember => getKey(previousMember) === 'default' || (key !== 'types' && getKey(previousMember) === 'types') || isShadowingTypes(previousMember))) {
 			yield {
 				node: member.name,
 				messageId: MESSAGE_ID_TYPES_FIRST,
@@ -566,7 +279,8 @@ function * checkTypesMembers(objectNode) {
 		}
 
 		for (const leaf of typeTargets) {
-			if (leaf.value !== '' && !declarationPathPattern.test(leaf.value)) {
+			// A pattern target like `./types/*` gets its extension from the specifier.
+			if (leaf.value !== '' && !leaf.value.endsWith('*') && !declarationPathPattern.test(leaf.value)) {
 				yield {
 					node: leaf,
 					messageId: MESSAGE_ID_TYPES_EXTENSION,
@@ -575,156 +289,72 @@ function * checkTypesMembers(objectNode) {
 			}
 		}
 	}
-
-	return typesMembers;
 }
 
-function * checkNestedTypes(node) {
-	node = getFirstTarget(node);
+/**
+Get the elements of an array that TypeScript may reach: it takes the first element that resolves, so the elements after one that resolves in every mode are never consulted.
+*/
+function getReachableElements(arrayNode) {
+	const elements = [];
 
-	if (node?.type !== 'Object') {
+	for (const element of arrayNode.elements) {
+		elements.push(element.value);
+
+		if (typeScriptConditionSets.every(conditions => resolve(element.value, conditions))) {
+			break;
+		}
+	}
+
+	return elements;
+}
+
+function * iterateObjects(node) {
+	if (node.type === 'Array') {
+		for (const element of getReachableElements(node)) {
+			yield * iterateObjects(element);
+		}
+
 		return;
 	}
 
-	if (node.members.some(member => isTypesConditionKey(getKey(member)))) {
-		yield * checkTypesMembers(node);
+	if (node.type !== 'Object') {
+		return;
 	}
+
+	yield node;
 
 	for (const member of node.members) {
-		yield * checkNestedTypes(member.value);
+		yield * iterateObjects(member.value);
 	}
 }
 
-function * checkTypesObject(objectNode, packageType) {
-	const typesMembers = yield * checkTypesMembers(objectNode);
-
-	for (const member of typesMembers) {
-		yield * checkNestedTypes(member.value);
+function getSubpathTargets(exportsValue) {
+	if (exportsValue.type === 'Object' && exportsValue.members.some(member => getKey(member).startsWith('.'))) {
+		return exportsValue.members.map(member => member.value);
 	}
 
-	const reportedTypeTargets = new WeakSet();
+	return [exportsValue];
+}
 
-	for (const member of typesMembers) {
-		for (const [typeTarget, runtimeTarget] of iterateTypeRuntimePairs(member.value, objectNode)) {
-			const problem = getModuleFormatProblem(typeTarget, runtimeTarget, packageType, reportedTypeTargets);
+function * checkMissing(exportsValue) {
+	const untypedTargets = new Set();
 
-			if (problem) {
-				yield problem;
+	for (const target of getSubpathTargets(exportsValue)) {
+		for (const conditions of typeScriptConditionSets) {
+			const untypedTarget = getUntypedTarget(target, conditions);
+
+			if (untypedTarget) {
+				untypedTargets.add(untypedTarget);
 			}
 		}
 	}
-}
 
-function getNarrowedTypeNodes(nodes, runtimeKey) {
-	const narrowedNodes = [];
-
-	for (const node of nodes) {
-		if (node.type === 'Array') {
-			const firstTarget = getFirstTarget(node);
-
-			if (firstTarget) {
-				narrowedNodes.push(...getNarrowedTypeNodes([firstTarget], runtimeKey));
-			}
-
-			continue;
-		}
-
-		if (node.type !== 'Object') {
-			narrowedNodes.push(node);
-			continue;
-		}
-
-		const matchingMember = findRuntimeConditionMember(node, runtimeKey);
-		const fallbackMember = node.members.find(member => isTypesCondition(getKey(member)) || getKey(member) === 'default');
-
-		if (matchingMember) {
-			const matchingTarget = getTargetWithFallback(matchingMember.value, fallbackMember === matchingMember ? undefined : fallbackMember);
-			narrowedNodes.push(matchingTarget);
-
-			if (matchingTarget !== matchingMember.value || !canTypeTargetFallThrough(matchingTarget)) {
-				continue;
-			}
-		}
-
-		if (!fallbackMember || fallbackMember === matchingMember) {
-			continue;
-		}
-
-		const fallbackTarget = getFallbackTarget(node, fallbackMember);
-		const shouldNarrowFallback = fallbackTarget.type === 'Object' && fallbackTarget.members.some(member => getKey(member) === runtimeKey || isTypesCondition(getKey(member)));
-		narrowedNodes.push(...(shouldNarrowFallback ? getNarrowedTypeNodes([fallbackTarget], runtimeKey) : [fallbackTarget]));
-	}
-
-	return narrowedNodes;
-}
-
-function hasTypeScopeCoverage(scope) {
-	const unversionedGroup = scope.find(group => group.isUnversioned);
-	const hasGroupCoverage = group => group.nodes.some(node => hasUsableTypeTarget(node));
-	const hasUnversionedCoverage = Boolean(unversionedGroup && hasGroupCoverage(unversionedGroup));
-
-	return scope.every(group => hasGroupCoverage(group) || (!group.isUnversioned && hasUnversionedCoverage && group.nodes.every(node => canTypeTargetFallThrough(node))));
-}
-
-function hasUsableTypeTarget(node) {
-	return hasTypesCoverage(node, {type: 'String'});
-}
-
-function * checkNode(node, packageType, inheritedScopes = []) {
-	switch (node.type) {
-		case 'Object': {
-			const typesMembers = node.members.filter(member => isTypesCondition(getKey(member)));
-
-			if (node.members.some(member => isTypesConditionKey(getKey(member)))) {
-				yield * checkTypesObject(node, packageType);
-			}
-
-			for (const member of node.members) {
-				const key = getKey(member);
-
-				if (isTypesConditionKey(key)) {
-					continue;
-				}
-
-				const scopes = inheritedScopes.map(scope => scope.map(group => ({...group, nodes: getNarrowedTypeNodes(group.nodes, key)})));
-
-				if (typesMembers.length > 0) {
-					scopes.push(typesMembers.map(typesMember => ({
-						isUnversioned: getKey(typesMember) === 'types',
-						nodes: getNarrowedTypeNodes([typesMember.value], key),
-					})));
-				}
-
-				yield * checkNode(member.value, packageType, scopes);
-			}
-
-			break;
-		}
-
-		case 'Array': {
-			const firstTarget = getFirstTarget(node);
-
-			if (firstTarget) {
-				yield * checkNode(firstTarget, packageType, inheritedScopes);
-			}
-
-			break;
-		}
-
-		case 'String': {
-			if (inheritedScopes.some(scope => hasTypeScopeCoverage(scope)) || !isRuntimeTarget(node.value)) {
-				break;
-			}
-
-			yield {
-				node,
-				messageId: MESSAGE_ID_MISSING,
-				data: {value: node.value},
-			};
-
-			break;
-		}
-	// No default
+	for (const node of untypedTargets) {
+		yield {
+			node,
+			messageId: MESSAGE_ID_MISSING,
+			data: {value: node.value},
+		};
 	}
 }
 
@@ -734,8 +364,7 @@ function hasTypesCondition(node) {
 	}
 
 	if (node.type === 'Array') {
-		const firstTarget = getFirstTarget(node);
-		return Boolean(firstTarget && hasTypesCondition(firstTarget));
+		return getReachableElements(node).some(element => hasTypesCondition(element));
 	}
 
 	return false;
@@ -756,8 +385,9 @@ const create = context => ({
 			return;
 		}
 
-		const isTopLevelTypes = [findMember(root, 'types'), findMember(root, 'typings')]
-			.some(member => member?.value.type === 'String');
+		// TypeScript ignores all three once `exports` is present, so a package that declares types through any of them still needs a type condition.
+		const isTopLevelTypes = [findMember(root, 'types'), findMember(root, 'typings')].some(member => member?.value.type === 'String')
+			|| findMember(root, 'typesVersions')?.value.type === 'Object';
 
 		// This rule reasons about what TypeScript resolves, so it walks the tree as `JSON.parse` builds it. Traversing the raw members would let a shadowed duplicate supply a declaration that no consumer ever sees.
 		const exportsValue = withoutShadowedMembers(exportsMember.value);
@@ -766,7 +396,13 @@ const create = context => ({
 			return;
 		}
 
-		for (const problem of checkNode(exportsValue, getPackageType(root))) {
+		for (const object of iterateObjects(exportsValue)) {
+			for (const problem of checkTypesMembers(object)) {
+				context.report(problem);
+			}
+		}
+
+		for (const problem of checkMissing(exportsValue)) {
 			context.report(problem);
 		}
 	},
@@ -778,7 +414,7 @@ const config = {
 	meta: {
 		type: 'suggestion',
 		docs: {
-			description: 'Require correctly ordered and module-compatible types in `exports`.',
+			description: 'Require correctly ordered types in `exports`.',
 			recommended: true,
 		},
 		schema: [],
