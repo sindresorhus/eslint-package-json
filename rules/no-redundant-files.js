@@ -49,9 +49,11 @@ function normalizeFilePath(value) {
 
 /**
 Check whether a files pattern cannot be safely compared statically.
+
+Npm 12 hands the raw entry to `glob`, where a `\` escapes the next character, so `dist\sub` names `distsub` rather than `dist/sub`.
 */
 function isAmbiguousPattern(value) {
-	return NON_ASCII_PATTERN.test(value) || hasGlob(value) || EXTGLOB_PATTERN.test(value) || PARENT_PATH_PATTERN.test(value);
+	return NON_ASCII_PATTERN.test(value) || value.includes('\\') || hasGlob(value) || EXTGLOB_PATTERN.test(value) || PARENT_PATH_PATTERN.test(value);
 }
 
 /**
@@ -77,59 +79,6 @@ function addBinPath(paths, value) {
 }
 
 /**
-Get the target of every `bin` entry that survives npm's normalization.
-
-Npm walks the object in key order, renames each key to its basename, and writes the target onto the renamed key. A
-rename therefore lands on a key npm has not read yet and replaces the value npm would have read from it, so
-`{"commands/cli": "a.js", "cli": "b.js"}` publishes `a.js`: the first key renames onto `cli` and overwrites the
-second one before npm reaches it. A key that normalizes to nothing (`""`, `.`, `..`) is dropped, and so is one that
-renames onto `__proto__`, which sets the prototype of npm's own object instead of a member of it.
-*/
-function * iterateNormalizedBinTargets(binObject) {
-	// The object npm walks, so a rename writes onto a key a later iteration then reads.
-	const bin = new Map();
-
-	for (const member of binObject.members) {
-		bin.set(getKey(member), member.value.type === 'String' ? member.value.value : undefined);
-	}
-
-	// The keys are read up front, because a rename writes onto a key npm has not read yet and a live iterator
-	// would walk into it.
-	const keys = bin.keys().toArray();
-
-	for (const key of keys) {
-		const value = bin.get(key);
-
-		if (typeof value !== 'string') {
-			bin.delete(key);
-			continue;
-		}
-
-		const commandName = normalizeBinName(key);
-
-		// A key that normalizes to nothing names no command, and one that renames *onto* `__proto__` sets the
-		// prototype of npm's own object rather than a member of it, so npm drops it. A key that already is
-		// `__proto__` is the other case: `JSON.parse` makes it an own data property, so npm keeps it.
-		if (!commandName || (commandName === '__proto__' && commandName !== key)) {
-			bin.delete(key);
-			continue;
-		}
-
-		const binTarget = normalizeBinPath(value);
-
-		if (!binTarget) {
-			bin.delete(key);
-			continue;
-		}
-
-		bin.delete(key);
-		bin.set(commandName, binTarget);
-	}
-
-	yield * bin.values();
-}
-
-/**
 Get bin paths that npm always includes.
 */
 function getAlwaysIncludedPaths(root) {
@@ -142,9 +91,21 @@ function getAlwaysIncludedPaths(root) {
 			addBinPath(paths, binMember.value.value);
 		}
 	} else if (binMember?.value.type === 'Object') {
-		// Npm pushes a strict rule for every `bin` value that survives normalization, so a key holding a path
-		// separator, a drive, or a colon still gets its target published.
-		for (const value of iterateNormalizedBinTargets(binMember.value)) {
+		const effectiveEntries = new Map(binMember.value.members.map(member => [getKey(member), member.value.type === 'String' ? member.value.value : undefined]));
+
+		// Npm renames a key holding a path separator, a drive, or a colon to its basename, and the rename can overwrite another key or drop the entry. Such keys are rare, so the rule reads no `bin` target at all rather than model the renaming.
+		for (const name of effectiveEntries.keys()) {
+			const normalizedName = normalizeBinName(name);
+			if (!normalizedName || normalizedName !== name) {
+				return paths;
+			}
+		}
+
+		for (const value of effectiveEntries.values()) {
+			if (value === undefined) {
+				continue;
+			}
+
 			addBinPath(paths, value);
 		}
 	}
@@ -162,7 +123,7 @@ function isKnownToBeDisjoint(positivePattern, negatedPattern) {
 
 	const normalizedPositivePattern = normalizePath(positivePattern);
 	const normalizedNegatedPattern = normalizePath(negatedPattern);
-	// A pattern that normalizes away (`.`, `./`, `/`, ``) names the package root, which contains everything, so it is disjoint from nothing.
+	// Npm 12 skips a pattern that normalizes away (`.`, `./`, `/`, ``), so it publishes nothing. The rule does not model that and treats it as disjoint from nothing, so it never reports because of one.
 	if (!normalizedPositivePattern || !normalizedNegatedPattern) {
 		return false;
 	}
@@ -249,13 +210,8 @@ const create = context => ({
 			const {value} = valueNode;
 
 			const leadingBangs = value.match(/^!+/u)?.[0] ?? '';
-			// Npm-packlist prepends one `!` to the entry and compiles the result with minimatch's `flipNegate`,
-			// which inverts an odd number of leading bangs and leaves an even one as an inclusion. So `!dist`
-			// drops `dist`, `!!dist` keeps it, and `!!!dist` drops it again. The two npm majors disagree here:
-			// npm 12 reads any leading bang as a negation. This rule follows npm 11, the same major
-			// `no-missing-files` follows, so `["!!dist"]` is an entry that publishes `dist` rather than a
-			// negation that publishes nothing.
-			const isNegated = leadingBangs.length % 2 === 1;
+			// Npm 12 reads an entry with any number of leading bangs as a negation and strips them all, so `!!dist` drops `dist` just like `!dist`.
+			const isNegated = leadingBangs !== '';
 			const pattern = value.slice(leadingBangs.length);
 			if (leadingBangs && !pattern) {
 				continue;

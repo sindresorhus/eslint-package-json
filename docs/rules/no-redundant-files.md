@@ -8,9 +8,9 @@
 
 <!-- end auto-generated rule header -->
 
-npm always includes `package.json`, readme, license, copying, and `bin` files. This rule reports redundant always-included entries, duplicates, and ineffective negations.
+npm always includes `package.json`, readme, license, copying, and `bin` files. This rule reports redundant always-included entries, duplicates, and ineffective negations. When npm would rename a `bin` command (one holding a path separator, a drive, or a colon), no `bin` file counts as always included.
 
-`files` patterns are applied in order. A negation is reported when no earlier literal or universal pattern can cover it. Ambiguous glob overlap is ignored, and the rule does not inspect the filesystem.
+`files` patterns are applied in order. A negation is reported when no earlier literal or universal pattern can cover it. Ambiguous glob overlap is ignored, and the rule does not inspect the filesystem. An entry holding a `\` is not compared, since npm reads it as a glob escape. Any number of leading `!` makes a negation, so `!!dist` is `!dist`.
 
 npm expands `files` entries as package-rooted globs, so a negation only applies at the package root: `["dist", "!tests"]` cannot drop `dist/tests`, whatever the earlier pattern matched.
 

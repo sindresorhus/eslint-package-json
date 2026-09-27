@@ -959,6 +959,71 @@ Output:
 
 `;
 
+exports[`invalid(37): {\"files\": [\"dist\", \"!!dist\", \"!!dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["dist", "!!dist", "!!dist"]}
+
+`;
+
+exports[`invalid(37): {\"files\": [\"dist\", \"!!dist\", \"!!dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["dist", "!!dist", "!!dist"]}
+    |                              ^^^^^^^^ \`!!dist\` is a duplicate entry in \`files\`.
+
+Output:
+  1 | {"files": ["dist", "!!dist"]}
+
+`;
+
+exports[`invalid(38): {\"bin\": {\"__proto__\": \"cli.js\"}, \"files\": [\"cli.js\"]} 1`] = `
+
+[Input]
+  1 | {"bin": {"__proto__": "cli.js"}, "files": ["cli.js"]}
+
+`;
+
+exports[`invalid(38): {\"bin\": {\"__proto__\": \"cli.js\"}, \"files\": [\"cli.js\"]} 2`] = `
+
+Message:
+> 1 | {"bin": {"__proto__": "cli.js"}, "files": ["cli.js"]}
+    |                                            ^^^^^^^^ \`cli.js\` is always included by npm and is redundant in \`files\`.
+
+Output:
+  1 | {"bin": {"__proto__": "cli.js"}, "files": []}
+
+`;
+
+exports[`invalid(39): {\"name\": \"foo\", \"bin\": {\"a\": \"a.js\"}, \"files\": [\"a.js\", \"README.md\"]} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "bin": {"a": "a.js"}, "files": ["a.js", "README.md"]}
+
+`;
+
+exports[`invalid(39): {\"name\": \"foo\", \"bin\": {\"a\": \"a.js\"}, \"files\": [\"a.js\", \"README.md\"]} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "bin": {"a": "a.js"}, "files": ["a.js", "README.md"]}
+    |                                                 ^^^^^^ \`a.js\` is always included by npm and is redundant in \`files\`.
+
+Output:
+  1 | {"name": "foo", "bin": {"a": "a.js"}, "files": ["README.md"]}
+
+`;
+
+exports[`invalid(39): {\"name\": \"foo\", \"bin\": {\"a\": \"a.js\"}, \"files\": [\"a.js\", \"README.md\"]} 3`] = `
+
+Message:
+> 1 | {"name": "foo", "bin": {"a": "a.js"}, "files": ["a.js", "README.md"]}
+    |                                                         ^^^^^^^^^^^ \`README.md\` is always included by npm and is redundant in \`files\`.
+
+Output:
+  1 | {"name": "foo", "bin": {"a": "a.js"}, "files": ["a.js"]}
+
+`;
+
 exports[`invalid(4): {\n\t\"files\": [\n\t\t\"!tests\"\n\t]\n} 1`] = `
 
 [Input]
@@ -984,6 +1049,107 @@ Output:
   1 | {
   2 | 	"files": []
   3 | }
+
+`;
+
+exports[`invalid(40): {\"name\": \"foo\", \"files\": [\"/README.md\"]} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "files": ["/README.md"]}
+
+`;
+
+exports[`invalid(40): {\"name\": \"foo\", \"files\": [\"/README.md\"]} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "files": ["/README.md"]}
+    |                           ^^^^^^^^^^^^ \`/README.md\` is always included by npm and is redundant in \`files\`.
+
+Output:
+  1 | {"name": "foo", "files": []}
+
+`;
+
+exports[`invalid(41): {\"name\": \"foo\", \"files\": [\"a.js\", \"a.js\"]} 1`] = `
+
+[Input]
+  1 | {"name": "foo", "files": ["a.js", "a.js"]}
+
+`;
+
+exports[`invalid(41): {\"name\": \"foo\", \"files\": [\"a.js\", \"a.js\"]} 2`] = `
+
+Message:
+> 1 | {"name": "foo", "files": ["a.js", "a.js"]}
+    |                                   ^^^^^^ \`a.js\` is a duplicate entry in \`files\`.
+
+Output:
+  1 | {"name": "foo", "files": ["a.js"]}
+
+`;
+
+exports[`invalid(42): {\"files\": [\"!!dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["!!dist"]}
+
+`;
+
+exports[`invalid(42): {\"files\": [\"!!dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["!!dist"]}
+    |            ^^^^^^^^ No earlier \`files\` pattern can include \`dist\`, so this negation is ineffective.
+
+Output:
+  1 | {"files": []}
+
+`;
+
+exports[`invalid(43): {\"files\": [\"!!dist\", \"dist\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["!!dist", "dist"]}
+
+`;
+
+exports[`invalid(43): {\"files\": [\"!!dist\", \"dist\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["!!dist", "dist"]}
+    |            ^^^^^^^^ No earlier \`files\` pattern can include \`dist\`, so this negation is ineffective.
+
+Output:
+  1 | {"files": ["dist"]}
+
+`;
+
+exports[`invalid(44): {\"files\": [\"!!tests\", \"!tests\"]} 1`] = `
+
+[Input]
+  1 | {"files": ["!!tests", "!tests"]}
+
+`;
+
+exports[`invalid(44): {\"files\": [\"!!tests\", \"!tests\"]} 2`] = `
+
+Message:
+> 1 | {"files": ["!!tests", "!tests"]}
+    |            ^^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+
+Output:
+  1 | {"files": ["!tests"]}
+
+`;
+
+exports[`invalid(44): {\"files\": [\"!!tests\", \"!tests\"]} 3`] = `
+
+Message:
+> 1 | {"files": ["!!tests", "!tests"]}
+    |                       ^^^^^^^^ No earlier \`files\` pattern can include \`tests\`, so this negation is ineffective.
+
+Output:
+  1 | {"files": ["!!tests"]}
 
 `;
 
@@ -1124,7 +1290,7 @@ Message:
   1 | {
   2 | 	"files": [
 > 3 | 		"!!README.md"
-    | 		^^^^^^^^^^^^^ \`!!README.md\` is always included by npm and is redundant in \`files\`.
+    | 		^^^^^^^^^^^^^ \`README.md\` is always included by npm and is redundant in \`files\`.
   4 | 	]
   5 | }
 

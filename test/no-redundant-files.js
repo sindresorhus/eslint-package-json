@@ -1,14 +1,32 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Linter} from 'eslint';
+import json from '@eslint/json';
 import {getTester} from './utils/test.js';
 
-const {test} = getTester(import.meta);
+const {test: snapshotTest, rule} = getTester(import.meta);
+const linter = new Linter();
+const config = [{
+	files: ['**'],
+	language: 'json/json',
+	plugins: {json, 'rule-to-test': {rules: {'no-redundant-files': rule}}},
+	rules: {'rule-to-test/no-redundant-files': 'error'},
+}];
+const applyFix = (code, fix) => code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]);
 
-test.snapshot({
+snapshotTest.snapshot({
 	valid: [
+		// Npm lists `package.json` without the suffix the other three carry, so `package.json.bak` is an
+		// ordinary file a `files` entry does publish. Verified with `npm pack`.
+		'{"name": "p", "version": "1.0.0", "files": ["package.json.bak"]}',
+		'{"name": "p", "version": "1.0.0", "files": ["/package.json.bak"]}',
+		// Two entries that are neither of them redundant leave the array alone.
+		'{"name": "p", "version": "1.0.0", "files": ["dist", "lib"]}',
 		// A rooted negation can still be ambiguous beside a universal pattern.
 		'{"files": ["**", "!tests"]}',
 		// A repeated positive pattern is still useful when an intervening negation can affect it.
 		'{"files": ["dist", "!dist", "dist"]}',
-		// A root-like pattern is not analysable, so a negation beside it is left alone.
+		// Npm 12 skips a pattern that normalizes to the package root, so it publishes nothing. The rule does not model that and leaves a negation beside it alone.
 		`{
 	"files": [
 		".",
@@ -37,7 +55,7 @@ test.snapshot({
 		'{"files": ["src", "dist"]}',
 		// Globs are skipped for always-included check.
 		'{"files": ["README.*", "*.js"]}',
-		// A negation of the package root (`.`) contains everything, so disjointness can never be proven and no entry is called redundant.
+		// A negation of the package root (`.`) is not analysable, so disjointness is never assumed and no entry is called redundant.
 		'{"files": ["!.", "src", "!."]}',
 		// A negation after a covering directory is effective.
 		'{"files": ["dist", "!dist/tests"]}',
@@ -61,9 +79,9 @@ test.snapshot({
 		'{"files": ["dist/sub", "!dist//"]}',
 		'{"files": ["dist/sub", "!/dist"]}',
 		'{"files": ["dist/../tests", "!tests"]}',
-		// An even number of leading bangs is an inclusion.
-		'{"files": ["!!tests"]}',
-		'{"files": ["!!tests", "!tests"]}',
+		// Npm 12 reads any number of leading bangs as a negation, so the `!!!dist` between the two `dist`
+		// entries stops the second from repeating the first.
+		'{"files": ["dist", "!!!dist", "dist"]}',
 		// Repeated patterns can be useful after an opposite pattern changes their effect.
 		'{"files": ["dist", "!dist", "dist"]}',
 		'{"files": ["dist", "!dist", "dist", "!dist"]}',
@@ -82,11 +100,6 @@ test.snapshot({
 		'{"bin": "./cli.js", "files": ["cli.js", "!cli.js"]}',
 		'{"name": "/", "bin": "./cli.js", "files": ["cli.js"]}',
 		// Bin command names requiring normalization are ignored conservatively.
-		'{"bin": {"commands/cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
-		'{"bin": {"cli": "first.js", "commands/cli": "second.js"}, "files": ["second.js"]}',
-		'{"bin": {"commands:cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
-		'{"bin": {"commands/__proto__": "cli.js"}, "files": ["cli.js"]}',
-		'{"bin": {"": "cli.js"}, "files": ["cli.js"]}',
 		// A non-string `bin` target contributes no always-included path, so a listed file is not judged redundant.
 		'{"bin": {"cli": 123}, "files": ["cli.js"]}',
 		'{"name": "@scope/__proto__", "bin": "cli.js", "files": ["cli.js"]}',
@@ -131,6 +144,28 @@ test.snapshot({
 		"index.js"
 	]
 }`,
+		// A `bin` key that normalizes to nothing, or to `__proto__`, is dropped by npm, so its target is
+		// published only because `files` lists it and the entry is not redundant. Verified with `npm pack`.
+		'{"bin": {"": "cli.js"}, "files": ["cli.js"]}',
+		'{"bin": {"./": "cli.js"}, "files": ["cli.js"]}',
+		'{"bin": {".": "cli.js"}, "files": ["cli.js"]}',
+		'{"bin": {"..": "cli.js"}, "files": ["cli.js"]}',
+		'{"bin": {"a/..": "cli.js"}, "files": ["cli.js"]}',
+		'{"bin": {"commands/__proto__": "cli.js"}, "files": ["cli.js"]}',
+		'{"bin": {"a/__proto__": "cli.js"}, "files": ["cli.js"]}',
+		// A `bin` key that normalizes onto another one writes its target there before npm reads the other, so
+		// the first key wins and the second target is published only because `files` lists it.
+		'{"bin": {"commands/cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
+		'{"bin": {"commands:cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
+		// Npm renames a `bin` key holding a path separator, a drive, or a colon, so the rule reads no `bin` target at all rather than model the renaming.
+		'{"bin": {"cli": "first.js", "commands/cli": "second.js"}, "files": ["second.js"]}',
+		'{"name": "p", "bin": {"../x": "lib/cli.js"}, "files": ["lib/cli.js"]}',
+		'{"bin": {"a:b": "cli.js"}, "files": ["cli.js"]}',
+		'{"bin": {"a/.": "cli.js"}, "files": ["cli.js"]}',
+		// Npm 12 reads `!!dist` as a negation, so the third entry does not repeat the first.
+		'{"files": ["dist", "!!dist", "dist"]}',
+		// Npm 12 hands the raw entry to `glob`, where `\` escapes the next character, so `dist\sub` names `distsub` and the negation does drop `distsub/x.js`.
+		String.raw`{"files": ["dist\\sub", "!distsub/x.js"]}`,
 	],
 	invalid: [
 		// A negation carrying a slash is anchored to the package root, so it is comparable and provably disjoint here.
@@ -185,7 +220,8 @@ test.snapshot({
 		"!!!tests"
 	]
 }`,
-		// An even number of leading bangs produces an inclusion.
+		// Any number of leading bangs is a negation, and `README.md` is included whatever `files` says, so
+		// the negation cannot exclude it.
 		`{
 	"files": [
 		"!!README.md"
@@ -377,5 +413,48 @@ test.snapshot({
 		'{"files": ["tests", "!tests", "dist", "!tests"]}',
 		// Trailing slashes are stripped by npm before expanding negations, so this is rooted too.
 		'{"files": ["dist", "!tests/"]}',
+		// A repeated `!!` negation with no inclusion between them is redundant.
+		'{"files": ["dist", "!!dist", "!!dist"]}',
+		// `JSON.parse` makes a `__proto__` key an own data property, so npm keeps that one and publishes its
+		// target. A key that renames *onto* `__proto__` is the case npm drops. Verified with `npm pack`.
+		'{"bin": {"__proto__": "cli.js"}, "files": ["cli.js"]}',
+		// Removing the last entry leaves `"files": []` standing, since an absent `files` is npm's "publish everything", the opposite of an empty one.
+		'{"name": "foo", "bin": {"a": "a.js"}, "files": ["a.js", "README.md"]}',
+		'{"name": "foo", "files": ["/README.md"]}',
+		'{"name": "foo", "files": ["a.js", "a.js"]}',
+		// Npm 12 reads any number of leading bangs as a negation, so these negate nothing. Verified with `npm pack`.
+		'{"files": ["!!dist"]}',
+		'{"files": ["!!dist", "dist"]}',
+		'{"files": ["!!tests", "!tests"]}',
 	],
+});
+
+// An absent `files` field is npm's "publish everything", which is the opposite of the empty array, so
+// removing the field is never the right way to take an entry out of an allowlist.
+test('a fix never removes the `files` field itself', () => {
+	const cases = [
+		'{"name": "p", "version": "1.0.0", "files": ["README.md"]}',
+		'{"name": "p", "version": "1.0.0", "files": ["README.md", "README.md"]}',
+		'{"name": "p", "version": "1.0.0", "files": ["dist", "README.md"]}',
+		'{"name": "p", "version": "1.0.0", "files": ["dist", "!README.md"]}',
+		'{"name": "p", "version": "1.0.0", "files": ["dist", "dist"]}',
+	];
+
+	const outputs = cases.map(code => linter.verify(code, config, {filename: 'package.json'}).map(message => applyFix(code, message.fix)));
+
+	assert.ok(outputs.flat().length >= cases.length, 'every case above should have produced a fix');
+	assert.deepEqual(
+		outputs.flat().filter(output => !output.includes('"files"')),
+		[],
+		'a fix removed the `files` field, which turns an allowlist into the publish-everything default',
+	);
+});
+
+test('a `files` array is never narrowed to nothing', () => {
+	// The single-entry case is the one that inverts, since a lone `files` array and an absent field publish
+	// different sets.
+	const code = '{"name": "p", "version": "1.0.0", "files": ["README.md"]}';
+	const [message] = linter.verify(code, config, {filename: 'package.json'});
+
+	assert.equal(applyFix(code, message.fix), '{"name": "p", "version": "1.0.0", "files": []}');
 });
