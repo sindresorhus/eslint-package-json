@@ -11,7 +11,9 @@ export function * check(root) {
 		return;
 	}
 
-	// A string like `"true"` is a common footgun: it is truthy but npm does not treat it as `private === true`, so the package can still be published.
+	// A string like `"false"` is a common footgun, and npm's publish gate is truthiness, so it refuses to
+	// publish the package with `EPRIVATE` rather than publishing it. The value has to be the boolean the author
+	// meant, not a string that happens to be truthy or falsy.
 	if (member.value.type !== 'Boolean') {
 		yield {node: member.value, messageId: 'type'};
 	}
