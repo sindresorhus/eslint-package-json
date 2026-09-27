@@ -11,7 +11,7 @@ npm runs `pre<name>` and `post<name>` scripts before and after `name`, respectiv
 
 npm lifecycle scripts such as `prepare`, `prepack`, and `preversion` are exempt because npm runs them independently. `preenv`, `postenv`, `prerestart`, and `postrestart` are also exempt because npm supplies implicit `env` and `restart` scripts. The rule does not inspect the filesystem, so a `prestart` hook that relies on npm's implicit `server.js` start script must be exempted with `ignore`.
 
-Common standalone tool names such as `postcss`, `posthtml`, `prettier`, and `preview`, including namespaced variants, are ignored by default. Namespaced `prepare:*` scripts and Git hook scripts named `precommit`, `pre-commit`, `prepush`, or `pre-push` are also treated as standalone commands rather than `pre` hooks.
+Common standalone tool names such as `postcss`, `posthtml`, `prettier`, and `preview`, including their namespaced variants in either spelling (`prettier:check` and `prettier-check`), are ignored by default. Namespaced `prepare:*`, `preinstall-*`, and `postinstall-*` scripts and Git hook scripts named `precommit`, `pre-commit`, `prepush`, or `pre-push` are also treated as standalone commands rather than hooks.
 
 `preuninstall`, `uninstall`, and `postuninstall` get their own message. npm removed the uninstall lifecycle in v7, since it cannot tell whether a package is going away because the user removed it, removed something that depended on it, or removed one of several dependents, so these scripts [never run](https://docs.npmjs.com/cli/using-npm/scripts). Adding the missing `uninstall` script would not help; the script has to go.
 
@@ -24,7 +24,7 @@ No fix is provided because a hook-like name may be an intentionally standalone c
 Type: `Array<string | RegExp>`\
 Default: `[]`
 
-Regular expressions matching standalone script names to ignore. Strings are interpreted as regular expression source.
+Regular expressions matching standalone script names to ignore. Strings are interpreted as regular expression source with the `u` flag. A `RegExp` keeps its own flags.
 
 ```js
 'package-json/no-orphan-script-hooks': [

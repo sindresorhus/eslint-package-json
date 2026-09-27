@@ -19,7 +19,14 @@ const removedUninstallHooks = new Set(['preuninstall', 'uninstall', 'postuninsta
 
 const hookPrefixes = ['pre', 'post'];
 
-const standaloneScriptPattern = /^(?:postcss|posthtml|prepare|prettier|preview)(?::|$)/u;
+// `:` and `-` both namespace a sub-command: `npm run prepare:build` and `npm run prepare-build` are each run on
+// their own, and npm looks for `preprepare:build` or `preprepare-build` around them, never for a `pre` hook on a
+// script called `pare-build`.
+const standaloneScriptPattern = /^(?:postcss|posthtml|prepare|prettier|preview)(?:[-:]|$)/u;
+
+// `npm run install-<name>` would run `preinstall-<name>` and `postinstall-<name>` as its hooks, but a package names a script that way to mark it as a step of its `preinstall` or `postinstall` lifecycle script, which runs it on its own by name. So it is treated as standalone, like `prepare:*`. The `pure` prompt uses this for its symlink step and its failure message.
+const namespacedInstallScriptPattern = /^(?:pre|post)install[-:]/u;
+
 const standaloneGitHookNames = new Set(['precommit', 'pre-commit', 'prepush', 'pre-push']);
 
 // The npm CLI can run these scripts without a correspondingly named package script.
@@ -67,10 +74,31 @@ const toIgnorePattern = pattern => {
 		return new RegExp(pattern);
 	}
 
+	// Every other entry becomes `RegExp` source, so anything that is not a non-empty string is stringified into
+	// a pattern the author never wrote. `''` is the worst of those: it matches every script name, which turns
+	// the rule off without saying so.
+	if (typeof pattern !== 'string' || pattern === '') {
+		// `String` rather than `JSON.stringify`, which throws on a value it cannot serialize, such as a `BigInt`
+		// or an object with a cycle, and so would replace this message with a worse one.
+		throw new Error(`The \`ignore\` option of \`no-orphan-script-hooks\` takes regular expression sources, and ${String(pattern)} is not one.`);
+	}
+
 	try {
-		return new RegExp(pattern, 'u');
-	} catch {
-		throw new Error(`The \`ignore\` option of \`no-orphan-script-hooks\` takes regular expressions, not globs, and ${JSON.stringify(pattern)} is not a valid one.`);
+		// The `u` flag rejects a few sources the non-unicode grammar accepts, such as a lone `\\p` or a
+		// duplicated group name, so the message names the flag as well as the option.
+		const regexp = new RegExp(pattern, 'u');
+
+		// V8 defers a source too large to compile until it is first matched, so without this the failure
+		// would surface from inside the visitor, once per linted file, with the whole source in the message
+		// and nothing naming the option.
+		regexp.test('');
+
+		return regexp;
+	} catch (error) {
+		throw new Error(
+			`The \`ignore\` option of \`no-orphan-script-hooks\` takes regular expression sources, not globs, and ${JSON.stringify(pattern)} is not a valid one with the \`u\` flag this rule adds.`,
+			{cause: error},
+		);
 	}
 };
 
@@ -111,6 +139,7 @@ const create = context => {
 				if (
 					specialScriptNames.has(hook)
 					|| standaloneScriptPattern.test(hook)
+					|| namespacedInstallScriptPattern.test(hook)
 					|| standaloneGitHookNames.has(hook)
 					|| isIgnoredName(hook, ignoredPatterns)
 				) {
@@ -155,6 +184,8 @@ const config = {
 			recommended: true,
 		},
 		schema: optionsSchema({
+			// A JSON Schema cannot say "string or `RegExp`", and the `RegExp` form only a JavaScript config can
+			// express, so the entries are checked by the rule itself rather than here.
 			ignore: {
 				type: 'array',
 				uniqueItems: true,

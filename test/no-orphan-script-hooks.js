@@ -121,7 +121,7 @@ test.snapshot({
 		{code: '{"scripts": {"prestart": "npm run setup"}}', options: [{ignore: ['prestart']}]},
 		// `ignore` also silences the removed uninstall lifecycle, since it is checked before every report.
 		{code: '{"scripts": {"preuninstall": "cleanup"}}', options: [{ignore: ['^preuninstall$']}]},
-		// `postinstall-<name>` is a sub-command of the `postinstall` step, not a `post` hook.
+		// `postinstall-<name>` is treated as a step of the `postinstall` script, not as the `post` hook of a missing `install-<name>`.
 		'{"scripts": {"postinstall-link": "npm run link", "postinstall-fail-instructions": "echo failed"}}',
 		'{"scripts": {"preinstall-setup": "npm run setup"}}',
 		'{"scripts": {"postinstall:link": "npm run link"}}',
