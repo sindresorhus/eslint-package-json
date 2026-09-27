@@ -2,8 +2,7 @@ import {
 	getRootObject,
 	findMember,
 	getKey,
-	getIndentString,
-	getNewline,
+	lineIndentOf,
 	fieldOrder,
 } from './utils/index.js';
 
@@ -21,24 +20,26 @@ const sideEffectsOrder = fieldOrder.indexOf('sideEffects');
 
 const addSideEffects = (fixer, sourceCode, root, value) => {
 	const entry = `"sideEffects": ${JSON.stringify(value)}`;
-	const separator = root.loc.start.line === root.loc.end.line
-		? ' '
-		: getNewline(sourceCode) + getIndentString(sourceCode);
 
-	// Anchor on the canonical order of known fields only. Treating an unknown field as an anchor would insert `sideEffects` ahead of it, and `sort-properties` keeps every unknown field after the known ones, so an unknown field appearing before `exports` would otherwise pull `sideEffects` in front of `exports`.
-	const knownAfter = root.members.find(member => fieldOrder.indexOf(getKey(member)) > sideEffectsOrder);
-
-	if (knownAfter) {
-		return fixer.insertTextBefore(knownAfter, `${entry},${separator}`);
-	}
-
-	// `exports` is a precondition of this rule and sorts before `sideEffects`, so there is always a known field to place it after.
+	// Anchor on the canonical order of known fields only, and place the entry after the last one that precedes
+	// `sideEffects`, which is where a sorted document holds it. Anchoring on the first field that follows instead
+	// would insert `sideEffects` ahead of any earlier field that is merely written out of order, such as an
+	// `exports` behind an `engines`, and ahead of an unknown field, which `sort-properties` keeps last.
 	const knownBefore = root.members.findLast(member => {
 		const order = fieldOrder.indexOf(getKey(member));
 		return order !== -1 && order < sideEffectsOrder;
 	});
 
-	return fixer.insertTextAfter(knownBefore ?? root.members.at(-1), `,${separator}${entry}`);
+	// The new member is a sibling of the one it goes after, so it takes that member's own indentation rather
+	// than the one `detect-indent` infers for the file, which is the deepest increase in it rather than the
+	// level this line sits at. `prefer-type-module` and `require-private` anchor the same way.
+	const separator = root.loc.start.line === root.loc.end.line
+		? ' '
+		: '\n' + lineIndentOf(sourceCode, knownBefore);
+
+	// `exports` is a precondition of this rule and sorts before `sideEffects`, so there is always a known field to
+	// place it after.
+	return fixer.insertTextAfter(knownBefore, `,${separator}${entry}`);
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */

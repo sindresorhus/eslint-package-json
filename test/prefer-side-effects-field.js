@@ -29,8 +29,30 @@ test.snapshot({
 		'{"exports": "./index.js", "custom": true}',
 		// An unknown field before `exports` must not pull the added `sideEffects` in front of `exports`.
 		'{"custom": "x", "exports": "./index.js"}',
-		'{\r\n\t"exports": "./index.js",\r\n\t"engines": {"node": ">=18"}\r\n}',
 		// Private packages can still be bundled from a workspace.
 		'{"private": true, "exports": "./index.js"}',
+		// A field that canonically follows `sideEffects` but is written ahead of `exports` must not pull the
+		// added `sideEffects` in front of `exports` either.
+		'{"engines": {"node": ">=18"}, "exports": "./index.js"}',
+		`{
+  "engines": {"node": ">=18"},
+  "exports": "./index.js",
+  "files": ["dist"]
+}`,
+		// The added member is a sibling of the one it follows, so it takes that member's own indentation. The
+		// deepest increase in the file is not the level these members sit at.
+		`{
+  "name": "a",
+  "exports": {
+        "./x": "./x.js",
+        "./y": "./y.js"
+  }
+}`,
+		`{
+"name": "a",
+"exports": {
+"./x": "./x.js"
+}
+}`,
 	],
 });

@@ -19,6 +19,107 @@ Suggestion 2/2: Add \`"sideEffects": true\`.:
 
 `;
 
+exports[`invalid(10): {\n  \"name\": \"a\",\n  \"exports\": {\n        \"./x\": \"./x.js\",\n        \"./y\": \"./y.js\"\n  }\n} 1`] = `
+
+[Input]
+  1 | {
+  2 |   "name": "a",
+  3 |   "exports": {
+  4 |         "./x": "./x.js",
+  5 |         "./y": "./y.js"
+  6 |   }
+  7 | }
+
+`;
+
+exports[`invalid(10): {\n  \"name\": \"a\",\n  \"exports\": {\n        \"./x\": \"./x.js\",\n        \"./y\": \"./y.js\"\n  }\n} 2`] = `
+
+Message:
+> 1 | {
+    | ^
+> 2 |   "name": "a",
+    | ^^^^^^^^^^^^^^
+> 3 |   "exports": {
+    | ^^^^^^^^^^^^^^
+> 4 |         "./x": "./x.js",
+    | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 5 |         "./y": "./y.js"
+    | ^^^^^^^^^^^^^^^^^^^^^^^
+> 6 |   }
+    | ^^^
+> 7 | }
+    | ^ Declare a \`sideEffects\` field to describe import-time side effects.
+
+Suggestion 1/2: Add \`"sideEffects": false\`.:
+  1 | {
+  2 |   "name": "a",
+  3 |   "exports": {
+  4 |         "./x": "./x.js",
+  5 |         "./y": "./y.js"
+  6 |   },
+  7 |   "sideEffects": false
+  8 | }
+
+Suggestion 2/2: Add \`"sideEffects": true\`.:
+  1 | {
+  2 |   "name": "a",
+  3 |   "exports": {
+  4 |         "./x": "./x.js",
+  5 |         "./y": "./y.js"
+  6 |   },
+  7 |   "sideEffects": true
+  8 | }
+
+`;
+
+exports[`invalid(11): {\n\"name\": \"a\",\n\"exports\": {\n\"./x\": \"./x.js\"\n}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | "name": "a",
+  3 | "exports": {
+  4 | "./x": "./x.js"
+  5 | }
+  6 | }
+
+`;
+
+exports[`invalid(11): {\n\"name\": \"a\",\n\"exports\": {\n\"./x\": \"./x.js\"\n}\n} 2`] = `
+
+Message:
+> 1 | {
+    | ^
+> 2 | "name": "a",
+    | ^^^^^^^^^^^^
+> 3 | "exports": {
+    | ^^^^^^^^^^^^
+> 4 | "./x": "./x.js"
+    | ^^^^^^^^^^^^^^^
+> 5 | }
+    | ^
+> 6 | }
+    | ^ Declare a \`sideEffects\` field to describe import-time side effects.
+
+Suggestion 1/2: Add \`"sideEffects": false\`.:
+  1 | {
+  2 | "name": "a",
+  3 | "exports": {
+  4 | "./x": "./x.js"
+  5 | },
+  6 | "sideEffects": false
+  7 | }
+
+Suggestion 2/2: Add \`"sideEffects": true\`.:
+  1 | {
+  2 | "name": "a",
+  3 | "exports": {
+  4 | "./x": "./x.js"
+  5 | },
+  6 | "sideEffects": true
+  7 | }
+
+`;
+
 exports[`invalid(2): {\n  \"name\": \"my-package\",\n  \"exports\": {\n    \"default\": \"./index.js\"\n  },\n  \"engines\": {\"node\": \">=18\"}\n} 1`] = `
 
 [Input]
@@ -156,52 +257,14 @@ Suggestion 2/2: Add \`"sideEffects": true\`.:
 
 `;
 
-exports[`invalid(7): {\r\n\t\"exports\": \"./index.js\",\r\n\t\"engines\": {\"node\": \">=18\"}\r\n} 1`] = `
-
-[Input]
-  1 | {
-  2 | 	"exports": "./index.js",
-  3 | 	"engines": {"node": ">=18"}
-  4 | }
-
-`;
-
-exports[`invalid(7): {\r\n\t\"exports\": \"./index.js\",\r\n\t\"engines\": {\"node\": \">=18\"}\r\n} 2`] = `
-
-Message:
-> 1 | {
-    | ^
-> 2 | 	"exports": "./index.js",
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^
-> 3 | 	"engines": {"node": ">=18"}
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 4 | }
-    | ^ Declare a \`sideEffects\` field to describe import-time side effects.
-
-Suggestion 1/2: Add \`"sideEffects": false\`.:
-  1 | {
-  2 | 	"exports": "./index.js",
-  3 | 	"sideEffects": false,
-  4 | 	"engines": {"node": ">=18"}
-  5 | }
-
-Suggestion 2/2: Add \`"sideEffects": true\`.:
-  1 | {
-  2 | 	"exports": "./index.js",
-  3 | 	"sideEffects": true,
-  4 | 	"engines": {"node": ">=18"}
-  5 | }
-
-`;
-
-exports[`invalid(8): {\"private\": true, \"exports\": \"./index.js\"} 1`] = `
+exports[`invalid(7): {\"private\": true, \"exports\": \"./index.js\"} 1`] = `
 
 [Input]
   1 | {"private": true, "exports": "./index.js"}
 
 `;
 
-exports[`invalid(8): {\"private\": true, \"exports\": \"./index.js\"} 2`] = `
+exports[`invalid(7): {\"private\": true, \"exports\": \"./index.js\"} 2`] = `
 
 Message:
 > 1 | {"private": true, "exports": "./index.js"}
@@ -212,5 +275,69 @@ Suggestion 1/2: Add \`"sideEffects": false\`.:
 
 Suggestion 2/2: Add \`"sideEffects": true\`.:
   1 | {"private": true, "exports": "./index.js", "sideEffects": true}
+
+`;
+
+exports[`invalid(8): {\"engines\": {\"node\": \">=18\"}, \"exports\": \"./index.js\"} 1`] = `
+
+[Input]
+  1 | {"engines": {"node": ">=18"}, "exports": "./index.js"}
+
+`;
+
+exports[`invalid(8): {\"engines\": {\"node\": \">=18\"}, \"exports\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"engines": {"node": ">=18"}, "exports": "./index.js"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Declare a \`sideEffects\` field to describe import-time side effects.
+
+Suggestion 1/2: Add \`"sideEffects": false\`.:
+  1 | {"engines": {"node": ">=18"}, "exports": "./index.js", "sideEffects": false}
+
+Suggestion 2/2: Add \`"sideEffects": true\`.:
+  1 | {"engines": {"node": ">=18"}, "exports": "./index.js", "sideEffects": true}
+
+`;
+
+exports[`invalid(9): {\n  \"engines\": {\"node\": \">=18\"},\n  \"exports\": \"./index.js\",\n  \"files\": [\"dist\"]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 |   "engines": {"node": ">=18"},
+  3 |   "exports": "./index.js",
+  4 |   "files": ["dist"]
+  5 | }
+
+`;
+
+exports[`invalid(9): {\n  \"engines\": {\"node\": \">=18\"},\n  \"exports\": \"./index.js\",\n  \"files\": [\"dist\"]\n} 2`] = `
+
+Message:
+> 1 | {
+    | ^
+> 2 |   "engines": {"node": ">=18"},
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 3 |   "exports": "./index.js",
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 4 |   "files": ["dist"]
+    | ^^^^^^^^^^^^^^^^^^^
+> 5 | }
+    | ^ Declare a \`sideEffects\` field to describe import-time side effects.
+
+Suggestion 1/2: Add \`"sideEffects": false\`.:
+  1 | {
+  2 |   "engines": {"node": ">=18"},
+  3 |   "exports": "./index.js",
+  4 |   "sideEffects": false,
+  5 |   "files": ["dist"]
+  6 | }
+
+Suggestion 2/2: Add \`"sideEffects": true\`.:
+  1 | {
+  2 |   "engines": {"node": ">=18"},
+  3 |   "exports": "./index.js",
+  4 |   "sideEffects": true,
+  5 |   "files": ["dist"]
+  6 | }
 
 `;
