@@ -32,8 +32,10 @@ const create = context => {
 			}
 
 			const description = member.value.value;
+			// Leading padding is as invisible in the rendered description as trailing padding, so the first letter is judged without it, and the fix takes it away.
+			const sentenceStart = description.trimStart();
 
-			if (startWithUppercase && lowercaseLetterPattern.test(description)) {
+			if (startWithUppercase && lowercaseLetterPattern.test(sentenceStart)) {
 				const report = {
 					node: member.value,
 					messageId: MESSAGE_ID_UPPERCASE,
@@ -44,11 +46,11 @@ const create = context => {
 				// is worth respelling. Taking the code point rather than the code unit keeps a letter outside
 				// the BMP from being split into half a surrogate pair, and counting the mapping in code points
 				// rather than code units keeps a letter whose uppercase is one astral character fixable.
-				const first = String.fromCodePoint(description.codePointAt(0));
+				const first = String.fromCodePoint(sentenceStart.codePointAt(0));
 				const capitalized = first.toUpperCase();
 
 				if ([...capitalized].length === 1 && capitalized !== first) {
-					report.fix = fixer => fixer.replaceText(member.value, JSON.stringify(capitalized + description.slice(first.length)));
+					report.fix = fixer => fixer.replaceText(member.value, JSON.stringify(capitalized + sentenceStart.slice(first.length)));
 				}
 
 				context.report(report);

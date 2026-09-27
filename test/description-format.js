@@ -44,6 +44,8 @@ test.snapshot({
 		'{"description": "1 thing"}',
 		'{"description": "École"}',
 		'{"description": "\u{301}abc"}',
+		// Leading padding before an uppercase letter is left alone, like trailing padding without a period.
+		'{"description": " My thing"}',
 	],
 	invalid: [
 		// Lowercase first letter (default).
@@ -89,7 +91,7 @@ test.snapshot({
 		// A trailing space or newline is invisible in the rendered description, so the sentence is judged
 		// without it and the period goes where the sentence ends.
 		{
-			code: '{"description": "Does things\n"}',
+			code: String.raw`{"description": "Does things\n"}`,
 			options: [{endWithPeriod: true}],
 		},
 		{
@@ -113,8 +115,11 @@ test.snapshot({
 			options: [{endWithPeriod: true}],
 		},
 		{
-			code: '{"description": "\n"}',
+			code: String.raw`{"description": "\n"}`,
 			options: [{endWithPeriod: true}],
 		},
+		// Leading padding is invisible in the rendered description too, so the first letter is judged without it, and the fix takes the padding away.
+		'{"description": " my thing"}',
+		String.raw`{"description": "\n\tmy thing"}`,
 	],
 });

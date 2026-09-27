@@ -16,6 +16,185 @@ Output:
 
 `;
 
+exports[`invalid(10): {\"description\": \"école polytechnique\"} 1`] = `
+
+[Input]
+  1 | {"description": "école polytechnique"}
+
+`;
+
+exports[`invalid(10): {\"description\": \"école polytechnique\"} 2`] = `
+
+Message:
+> 1 | {"description": "école polytechnique"}
+    |                 ^^^^^^^^^^^^^^^^^^^^^ Description should start with an uppercase letter.
+
+Output:
+  1 | {"description": "École polytechnique"}
+
+`;
+
+exports[`invalid(11): {\"description\": \"ökonomie\"} 1`] = `
+
+[Input]
+  1 | {"description": "ökonomie"}
+
+`;
+
+exports[`invalid(11): {\"description\": \"ökonomie\"} 2`] = `
+
+Message:
+> 1 | {"description": "ökonomie"}
+    |                 ^^^^^^^^^^ Description should start with an uppercase letter.
+
+Output:
+  1 | {"description": "Ökonomie"}
+
+`;
+
+exports[`invalid(12): {\"description\": \"ελλάδα\"} 1`] = `
+
+[Input]
+  1 | {"description": "ελλάδα"}
+
+`;
+
+exports[`invalid(12): {\"description\": \"ελλάδα\"} 2`] = `
+
+Message:
+> 1 | {"description": "ελλάδα"}
+    |                 ^^^^^^^^ Description should start with an uppercase letter.
+
+Output:
+  1 | {"description": "Ελλάδα"}
+
+`;
+
+exports[`invalid(13): {\"description\": \"привет\"} 1`] = `
+
+[Input]
+  1 | {"description": "привет"}
+
+`;
+
+exports[`invalid(13): {\"description\": \"привет\"} 2`] = `
+
+Message:
+> 1 | {"description": "привет"}
+    |                 ^^^^^^^^ Description should start with an uppercase letter.
+
+Output:
+  1 | {"description": "Привет"}
+
+`;
+
+exports[`invalid(14): {\"description\": \"𐐨bc\"} 1`] = `
+
+[Input]
+  1 | {"description": "𐐨bc"}
+
+`;
+
+exports[`invalid(14): {\"description\": \"𐐨bc\"} 2`] = `
+
+Message:
+> 1 | {"description": "𐐨bc"}
+    |                 ^^^^^^ Description should start with an uppercase letter.
+
+Output:
+  1 | {"description": "𐐀bc"}
+
+`;
+
+exports[`invalid(15): {\"description\": \"𝔞bc\"} 1`] = `
+
+[Input]
+  1 | {"description": "𝔞bc"}
+
+`;
+
+exports[`invalid(15): {\"description\": \"𝔞bc\"} 2`] = `
+
+Message:
+> 1 | {"description": "𝔞bc"}
+    |                 ^^^^^^ Description should start with an uppercase letter.
+
+`;
+
+exports[`invalid(16): {\"description\": \"ßeta tool\"} 1`] = `
+
+[Input]
+  1 | {"description": "ßeta tool"}
+
+`;
+
+exports[`invalid(16): {\"description\": \"ßeta tool\"} 2`] = `
+
+Message:
+> 1 | {"description": "ßeta tool"}
+    |                 ^^^^^^^^^^^ Description should start with an uppercase letter.
+
+`;
+
+exports[`invalid(17): {\"description\": \"ﬁle format\"} 1`] = `
+
+[Input]
+  1 | {"description": "ﬁle format"}
+
+`;
+
+exports[`invalid(17): {\"description\": \"ﬁle format\"} 2`] = `
+
+Message:
+> 1 | {"description": "ﬁle format"}
+    |                 ^^^^^^^^^^^^ Description should start with an uppercase letter.
+
+`;
+
+exports[`invalid(18): {\"description\": \"Does things\\n\"} 1`] = `
+
+[Input]
+Options:
+- endWithPeriod: true
+
+Code:
+  1 | {"description": "Does things\\n"}
+
+`;
+
+exports[`invalid(18): {\"description\": \"Does things\\n\"} 2`] = `
+
+Message:
+> 1 | {"description": "Does things\\n"}
+    |                 ^^^^^^^^^^^^^^^ Description should end with a period.
+
+Output:
+  1 | {"description": "Does things."}
+
+`;
+
+exports[`invalid(19): {\"description\": \"Does things \"} 1`] = `
+
+[Input]
+Options:
+- endWithPeriod: true
+
+Code:
+  1 | {"description": "Does things "}
+
+`;
+
+exports[`invalid(19): {\"description\": \"Does things \"} 2`] = `
+
+Message:
+> 1 | {"description": "Does things "}
+    |                 ^^^^^^^^^^^^^^ Description should end with a period.
+
+Output:
+  1 | {"description": "Does things."}
+
+`;
+
 exports[`invalid(2): {\"description\": \"My package does things.\"} 1`] = `
 
 [Input]
@@ -31,6 +210,131 @@ Message:
 
 Output:
   1 | {"description": "My package does things"}
+
+`;
+
+exports[`invalid(20): {\"description\": \"Does things. \"} 1`] = `
+
+[Input]
+  1 | {"description": "Does things. "}
+
+`;
+
+exports[`invalid(20): {\"description\": \"Does things. \"} 2`] = `
+
+Message:
+> 1 | {"description": "Does things. "}
+    |                 ^^^^^^^^^^^^^^^ Description should not end with a period.
+
+Output:
+  1 | {"description": "Does things"}
+
+`;
+
+exports[`invalid(21): {\"description\": \"Does things.  ..\"} 1`] = `
+
+[Input]
+  1 | {"description": "Does things.  .."}
+
+`;
+
+exports[`invalid(21): {\"description\": \"Does things.  ..\"} 2`] = `
+
+Message:
+> 1 | {"description": "Does things.  .."}
+    |                 ^^^^^^^^^^^^^^^^^^ Description should not end with a period.
+
+Output:
+  1 | {"description": "Does things"}
+
+`;
+
+exports[`invalid(22): {\"description\": \"  .\"} 1`] = `
+
+[Input]
+  1 | {"description": "  ."}
+
+`;
+
+exports[`invalid(22): {\"description\": \"  .\"} 2`] = `
+
+Message:
+> 1 | {"description": "  ."}
+    |                 ^^^^^ Description should not end with a period.
+
+`;
+
+exports[`invalid(23): {\"description\": \"  \"} 1`] = `
+
+[Input]
+Options:
+- endWithPeriod: true
+
+Code:
+  1 | {"description": "  "}
+
+`;
+
+exports[`invalid(23): {\"description\": \"  \"} 2`] = `
+
+Message:
+> 1 | {"description": "  "}
+    |                 ^^^^ Description should end with a period.
+
+`;
+
+exports[`invalid(24): {\"description\": \"\\n\"} 1`] = `
+
+[Input]
+Options:
+- endWithPeriod: true
+
+Code:
+  1 | {"description": "\\n"}
+
+`;
+
+exports[`invalid(24): {\"description\": \"\\n\"} 2`] = `
+
+Message:
+> 1 | {"description": "\\n"}
+    |                 ^^^^ Description should end with a period.
+
+`;
+
+exports[`invalid(25): {\"description\": \" my thing\"} 1`] = `
+
+[Input]
+  1 | {"description": " my thing"}
+
+`;
+
+exports[`invalid(25): {\"description\": \" my thing\"} 2`] = `
+
+Message:
+> 1 | {"description": " my thing"}
+    |                 ^^^^^^^^^^^ Description should start with an uppercase letter.
+
+Output:
+  1 | {"description": "My thing"}
+
+`;
+
+exports[`invalid(26): {\"description\": \"\\n\\tmy thing\"} 1`] = `
+
+[Input]
+  1 | {"description": "\\n\\tmy thing"}
+
+`;
+
+exports[`invalid(26): {\"description\": \"\\n\\tmy thing\"} 2`] = `
+
+Message:
+> 1 | {"description": "\\n\\tmy thing"}
+    |                 ^^^^^^^^^^^^^^ Description should start with an uppercase letter.
+
+Output:
+  1 | {"description": "My thing"}
 
 `;
 
@@ -81,7 +385,37 @@ Output:
 
 `;
 
-exports[`invalid(5): {\"description\": \"My package does things\"} 1`] = `
+exports[`invalid(5): {\"description\": \".\"} 1`] = `
+
+[Input]
+  1 | {"description": "."}
+
+`;
+
+exports[`invalid(5): {\"description\": \".\"} 2`] = `
+
+Message:
+> 1 | {"description": "."}
+    |                 ^^^ Description should not end with a period.
+
+`;
+
+exports[`invalid(6): {\"description\": \"...\"} 1`] = `
+
+[Input]
+  1 | {"description": "..."}
+
+`;
+
+exports[`invalid(6): {\"description\": \"...\"} 2`] = `
+
+Message:
+> 1 | {"description": "..."}
+    |                 ^^^^^ Description should not end with a period.
+
+`;
+
+exports[`invalid(7): {\"description\": \"My package does things\"} 1`] = `
 
 [Input]
 Options:
@@ -92,7 +426,7 @@ Code:
 
 `;
 
-exports[`invalid(5): {\"description\": \"My package does things\"} 2`] = `
+exports[`invalid(7): {\"description\": \"My package does things\"} 2`] = `
 
 Message:
 > 1 | {"description": "My package does things"}
@@ -103,7 +437,7 @@ Output:
 
 `;
 
-exports[`invalid(6): {\"description\": \"my package does things\"} 1`] = `
+exports[`invalid(8): {\"description\": \"my package does things\"} 1`] = `
 
 [Input]
 Options:
@@ -114,7 +448,7 @@ Code:
 
 `;
 
-exports[`invalid(6): {\"description\": \"my package does things\"} 2`] = `
+exports[`invalid(8): {\"description\": \"my package does things\"} 2`] = `
 
 Message:
 > 1 | {"description": "my package does things"}
@@ -125,7 +459,7 @@ Output:
 
 `;
 
-exports[`invalid(6): {\"description\": \"my package does things\"} 3`] = `
+exports[`invalid(8): {\"description\": \"my package does things\"} 3`] = `
 
 Message:
 > 1 | {"description": "my package does things"}
@@ -136,7 +470,7 @@ Output:
 
 `;
 
-exports[`invalid(7): {\"description\": \"my package\"} 1`] = `
+exports[`invalid(9): {\"description\": \"my package\"} 1`] = `
 
 [Input]
 Options:
@@ -148,7 +482,7 @@ Code:
 
 `;
 
-exports[`invalid(7): {\"description\": \"my package\"} 2`] = `
+exports[`invalid(9): {\"description\": \"my package\"} 2`] = `
 
 Message:
 > 1 | {"description": "my package"}
