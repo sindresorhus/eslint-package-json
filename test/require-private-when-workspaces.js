@@ -8,6 +8,9 @@ test.snapshot({
 		// No `workspaces`, so no requirement.
 		'{"name": "foo"}',
 		'{"name": "foo", "private": false}',
+		// An empty list declares no workspace, so there is no monorepo root to keep unpublished.
+		'{"workspaces": []}',
+		'{"workspaces": {"packages": []}}',
 	],
 	invalid: [
 		// Preserve compact formatting when adding `private`.
@@ -36,5 +39,8 @@ test.snapshot({
 		"packages/*"
 	]
 }`,
+		// A shape npm rejects outright is a broken monorepo root either way, so it is still reported.
+		'{"workspaces": {"nohoist": []}}',
+		'{"workspaces": 1}',
 	],
 });

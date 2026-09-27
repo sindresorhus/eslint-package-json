@@ -11,6 +11,8 @@
 
 A package that declares `workspaces` is a monorepo root. Such a root is almost never meant to be published, so it should set `"private": true` to prevent an accidental `npm publish` of the workspace root.
 
+An empty `workspaces` (or `packages`) list is left alone.
+
 ## Examples
 
 ```json

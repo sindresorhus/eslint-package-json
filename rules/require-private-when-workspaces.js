@@ -13,6 +13,14 @@ const messages = {
 	[SUGGESTION_ID]: 'Set `"private": true`.',
 };
 
+/**
+Check whether a `workspaces` field is an empty list, either directly or as the `packages` of the object form. It declares no workspace, so the package is not a monorepo root. Any other shape is reported, since a shape npm does not accept is a broken manifest either way.
+*/
+const isEmptyWorkspaces = workspaces => {
+	const declaration = workspaces.value.type === 'Object' ? findMember(workspaces.value, 'packages')?.value : workspaces.value;
+	return declaration?.type === 'Array' && declaration.elements.length === 0;
+};
+
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
 	const {sourceCode} = context;
@@ -27,7 +35,7 @@ const create = context => {
 
 			const workspaces = findMember(root, 'workspaces');
 
-			if (!workspaces) {
+			if (!workspaces || isEmptyWorkspaces(workspaces)) {
 				return;
 			}
 
