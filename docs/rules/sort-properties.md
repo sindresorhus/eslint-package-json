@@ -17,7 +17,7 @@ Keys not in the canonical list are placed after the known keys, in their origina
 ### `order`
 
 Type: `string[]`\
-Default: `['name', 'version', 'private', 'description', 'license', 'repository', 'homepage', 'bugs', 'funding', 'author', 'contributors', 'maintainers', 'type', 'exports', 'imports', 'main', 'module', 'browser', 'types', 'typings', 'bin', 'man', 'directories', 'sideEffects', 'engines', 'devEngines', 'os', 'cpu', 'publishConfig', 'packageManager', 'scripts', 'config', 'files', 'workspaces', 'keywords', 'dependencies', 'devDependencies', 'peerDependencies', 'peerDependenciesMeta', 'optionalDependencies', 'bundledDependencies', 'overrides']`
+Default: `['name', 'version', 'private', 'description', 'license', 'repository', 'homepage', 'bugs', 'funding', 'author', 'authors', 'contributors', 'maintainers', 'type', 'exports', 'imports', 'main', 'module', 'browser', 'types', 'typings', 'bin', 'man', 'directories', 'sideEffects', 'engines', 'devEngines', 'os', 'cpu', 'publishConfig', 'packageManager', 'scripts', 'config', 'files', 'workspaces', 'keywords', 'dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies', 'peerDependenciesMeta', 'bundledDependencies', 'bundleDependencies', 'overrides']`
 
 Override the canonical key order with a custom list.
 

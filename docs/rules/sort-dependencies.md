@@ -10,7 +10,7 @@
 
 Alphabetically sorted dependency lists are easier to scan and produce cleaner diffs when adding or removing packages.
 
-npm agrees: it alphabetically re-sorts dependency groups itself whenever `npm install`/`npm uninstall` rewrites `package.json`, so an unsorted list only stays that way until the next install.
+npm agrees: it alphabetically re-sorts the keys of the dependency groups it owns whenever `npm install`/`npm uninstall` rewrites `package.json`, so an unsorted list only stays that way until the next install. npm does not sort `peerDependenciesMeta`, but this rule does. The order of the groups is up to [`sort-properties`](sort-properties.md).
 
 By default this rule checks `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`, and `peerDependenciesMeta`. Use [`sort-scripts`](sort-scripts.md) to sort the `scripts` field.
 
