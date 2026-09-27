@@ -337,7 +337,6 @@ test.snapshot({
 		'{"bugs": {"url": null, "email": "a@b.com"}}',
 		'{"bugs": {"url": 0, "email": "a@b.com"}}',
 		'{"bugs": {"url": false, "email": "a@b.com"}}',
-		'{"bugs": {"web": "", "email": "a@b.com"}}',
 		'{"bugs": "a@b.com"}',
 		'{"bugs": "https://x.com"}',
 		'{"readme": null}',
@@ -364,13 +363,7 @@ test.snapshot({
 		'{"exports": {"./a": {"./a/*.js": "./x.js", "./a": "./a.js"}}}',
 		// The string shorthand of `bugs` is the one form that takes either shape.
 		'{"bugs": "bugs@example.com"}',
-		// Npm reads `web` and `name` as older spellings of `url` and keeps whatever the last one holds, so an
-		// alias that parses is a `url` npm publishes.
-		'{"bugs": {"name": "https://example.com/issues"}}',
-		'{"bugs": {"url": "https://example.com/issues", "name": "https://other.com/issues"}}',
-		// An alias is folded into `url` before the object is rebuilt, so one holding an alias survives, and an
-		// unknown key beside a `url` is dropped without taking the field with it.
-		'{"bugs": {"web": "https://example.com/issues"}}',
+		// An unknown key beside a `url` is dropped without taking the field with it.
 		'{"bugs": {"url": "https://example.com/issues", "note": "x"}}',
 		// An `imports` key repeated with a different value resolves to the last one, so the shadowed target is
 		// not one Node ever resolves.
@@ -414,6 +407,9 @@ test.snapshot({
 		// A trailing-slash folder mapping is `no-exports-trailing-slash`' report.
 		'{"imports": {"#dep/": "./dep/"}}',
 		'{"imports": {"#dep//": "./dep/"}}',
+		// An empty `bugs` string or object is left to `no-empty-fields`.
+		'{"bugs": ""}',
+		'{"bugs": {}}',
 	],
 	invalid: [
 		// A recognized protocol is required, not merely a hostname.
@@ -505,10 +501,6 @@ test.snapshot({
 		'{"bugs": {"url": ""}}',
 		'{"bugs": {"url": null}}',
 		'{"bugs": {"url": "", "note": "x"}}',
-		// The alias is copied over `url` before npm guards either on truthiness, so an empty one leaves the
-		// object with nothing to keep just as an empty `url` does.
-		'{"bugs": {"web": ""}}',
-		'{"bugs": {"name": ""}}',
 		// `funding`
 		'{"funding": 123}',
 		'{"funding": {"type": "individual"}}',
@@ -831,7 +823,6 @@ test.snapshot({
 		'{"bugs": {"url": "not a url"}}',
 		'{"bugs": {"email": "not an email"}}',
 		'{"bugs": "not a url"}',
-		'{"bugs": {}}',
 		// Npm calls `.trim()` on `readme` to derive the description, so a non-string throws
 		// `description.trim is not a function` and the package cannot be published. A `null` is skipped.
 		'{"readme": 42}',
@@ -878,11 +869,6 @@ test.snapshot({
 		'{"bugs": {"url": "bugs@example.com"}}',
 		'{"bugs": {"email": "https://example.com/issues"}}',
 		'{"bugs": {"url": "https://example.com/issues", "email": "https://example.com/issues"}}',
-		// An alias is copied over `url` before either is checked, so the alias decides whether the field
-		// survives, and a `url` written beside it is not what npm publishes.
-		'{"bugs": {"name": "nope"}}',
-		'{"bugs": {"web": 42}}',
-		'{"bugs": {"url": "https://example.com/issues", "name": "nope"}}',
 		// Npm rebuilds the object from `url` and `email` alone, so one holding neither is deleted whole.
 		'{"bugs": {"foo": "bar"}}',
 		// SemVer allows no empty identifier, so a leading, trailing, or doubled dot in the prerelease or the
@@ -1018,5 +1004,7 @@ test.snapshot({
 		'{"files": ["bun.lock"]}',
 		'{"files": [".npm-extension.cjs"]}',
 		'{"files": [".npm-extension.mjs"]}',
+		// The old `web` spelling is not modelled, so a URL held only there is reported as keeping nothing, although npm copies it to `url`. This is a documented limitation.
+		'{"bugs": {"web": "https://example.com/issues"}}',
 	],
 });

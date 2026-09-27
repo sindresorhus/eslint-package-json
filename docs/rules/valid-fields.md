@@ -14,7 +14,7 @@ Each field is validated only when it exists; use [`require-fields`](require-fiel
 
 Semantic checks include repository URLs and `exports`/`imports` targets. Some checks that are not obvious:
 
-- `bugs`: a string must be a URL or an email address, and an object must hold a URL in `url` and an email address in `email`, since npm silently drops anything else.
+- `bugs`: a string must be a URL or an email address, and an object must hold a URL in `url` and an email address in `email`, since npm silently drops anything else. The old `web` and `name` aliases for `url` are not supported.
 - `funding`: each URL needs an `http:` or `https:` host, since `npm fund` drops the whole field when one entry holds anything else.
 - `exports`/`imports` targets: `.`, `..`, and `node_modules` segments are rejected, even percent-encoded.
 - `imports`: a `#` key nested in a conditions object is reported, since Node reads it as a condition name.
