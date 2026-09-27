@@ -4,7 +4,7 @@ import {
 	iterateDependencies,
 	optionsSchema,
 	stringArraySchema,
-	removeMemberAndDuplicates,
+	removeEntryAndEmptyContainer,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-core-module-dependencies';
@@ -15,7 +15,10 @@ const messages = {
 	[SUGGESTION_ID]: 'Remove the dependency.',
 };
 
-const builtins = new Set(builtinModules);
+// These core names are also maintained userland packages that code depends on on purpose: it imports them with a trailing slash to skip the built-in (`require('punycode/')` in `tr46`, `require('string_decoder/')` in `readable-stream`, `require('util/')` in `assert`), or bundlers install them as the browser polyfill for the built-in (the same-name entries of `node-libs-browser`). Removing one breaks the code that needs it.
+const userlandPackages = new Set(['assert', 'buffer', 'events', 'process', 'punycode', 'string_decoder', 'url', 'util']);
+
+const builtins = new Set(builtinModules.filter(name => !userlandPackages.has(name)));
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
@@ -30,7 +33,7 @@ const create = context => {
 				return;
 			}
 
-			for (const {member, name} of iterateDependencies(root)) {
+			for (const {group, member, name} of iterateDependencies(root)) {
 				if (builtins.has(name) && !ignore.includes(name)) {
 					context.report({
 						node: member.name,
@@ -40,7 +43,7 @@ const create = context => {
 							{
 								messageId: SUGGESTION_ID,
 								* fix(fixer) {
-									yield * removeMemberAndDuplicates(fixer, sourceCode, member);
+									yield * removeEntryAndEmptyContainer(fixer, sourceCode, group, member);
 								},
 							},
 						],

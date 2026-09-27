@@ -9,9 +9,11 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-A dependency whose name matches a Node.js built-in module (`path`, `fs`, `os`, `crypto`, `util`, `stream`, `querystring`, `punycode`, …) is almost always a mistake: you meant the built-in, or you've pulled in a stale, abandoned polyfill. Such names are also a typosquatting and dependency-confusion surface. Note that `require('path')` resolves to the built-in regardless, so the installed package is usually dead weight.
+A dependency whose name matches a Node.js built-in module (`path`, `fs`, `os`, `crypto`, `stream`, `querystring`, …) is almost always a mistake: you meant the built-in, or you've pulled in a stale, abandoned polyfill. Such names are also a typosquatting and dependency-confusion surface. Note that `require('path')` resolves to the built-in regardless, so the installed package is usually dead weight.
 
-This rule flags dependencies whose names are Node.js built-in modules, and offers a suggestion to remove them. Some built-in names (`buffer`, `events`, `process`) are also legitimate browser polyfills, so use the `ignore` option to allow the ones you intend.
+This rule flags dependencies whose names are Node.js built-in modules, and offers a suggestion to remove them. Use the `ignore` option to allow the ones you intend.
+
+Built-in names that are also maintained userland packages (`assert`, `buffer`, `events`, `process`, `punycode`, `string_decoder`, `url`, and `util`) are never reported, since code imports them with a trailing slash (`require('punycode/')`) or bundlers use them as browser polyfills.
 
 ## Options
 

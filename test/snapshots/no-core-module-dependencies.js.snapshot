@@ -12,7 +12,7 @@ Message:
     |                   ^^^^^^ Dependency \`path\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
 
 Suggestion 1/1: Remove the dependency.:
-  1 | {"dependencies": {}}
+  1 | {}
 
 `;
 
@@ -30,7 +30,7 @@ Message:
     |                   ^^^^ Dependency \`fs\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
 
 Suggestion 1/1: Remove the dependency.:
-  1 | {"dependencies": {}}
+  1 | {}
 
 `;
 
@@ -48,33 +48,33 @@ Message:
     |                      ^^^^^^^^ Dependency \`crypto\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
 
 Suggestion 1/1: Remove the dependency.:
-  1 | {"devDependencies": {}}
+  1 | {}
 
 `;
 
-exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"util\": \"^0.12.0\"}} 1`] = `
+exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"os\": \"^0.1.2\"}} 1`] = `
 
 [Input]
-  1 | {"dependencies": {"path": "^0.12.7", "util": "^0.12.0"}}
+  1 | {"dependencies": {"path": "^0.12.7", "os": "^0.1.2"}}
 
 `;
 
-exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"util\": \"^0.12.0\"}} 2`] = `
+exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"os\": \"^0.1.2\"}} 2`] = `
 
 Message:
-> 1 | {"dependencies": {"path": "^0.12.7", "util": "^0.12.0"}}
+> 1 | {"dependencies": {"path": "^0.12.7", "os": "^0.1.2"}}
     |                   ^^^^^^ Dependency \`path\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
 
 Suggestion 1/1: Remove the dependency.:
-  1 | {"dependencies": {"util": "^0.12.0"}}
+  1 | {"dependencies": {"os": "^0.1.2"}}
 
 `;
 
-exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"util\": \"^0.12.0\"}} 3`] = `
+exports[`invalid(4): {\"dependencies\": {\"path\": \"^0.12.7\", \"os\": \"^0.1.2\"}} 3`] = `
 
 Message:
-> 1 | {"dependencies": {"path": "^0.12.7", "util": "^0.12.0"}}
-    |                                      ^^^^^^ Dependency \`util\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
+> 1 | {"dependencies": {"path": "^0.12.7", "os": "^0.1.2"}}
+    |                                      ^^^^ Dependency \`os\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
 
 Suggestion 1/1: Remove the dependency.:
   1 | {"dependencies": {"path": "^0.12.7"}}
@@ -95,6 +95,6 @@ Message:
     |                                      ^^^^^^ Dependency \`path\` is a Node.js built-in module; this is usually accidental or a stale polyfill.
 
 Suggestion 1/1: Remove the dependency.:
-  1 | {"dependencies": {}}
+  1 | {}
 
 `;
