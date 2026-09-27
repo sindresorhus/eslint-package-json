@@ -28,7 +28,7 @@ Semantic checks include repository URLs and `exports`/`imports` targets. Some ch
 - `keywords`: a string is split on `/,\s+/` like npm does, and each part is checked.
 - `devEngines`: keys must be `runtime`, `packageManager`, `cpu`, `os`, or `libc`, and each entry may hold only `name`, `version`, and `onFail`, since npm refuses to install otherwise.
 - `engines`: a truthy value must be a string, since `--engine-strict` fails on anything else.
-- `homepage`: a value without a scheme is reported, since npm publishes it as `http://`.
+- `homepage`: a value without a scheme is reported, since npm publishes it as `http://`. Paths such as `.` or `/myapp` (Create React App) are left alone.
 - `private`: must be a boolean, since `"false"` is truthy and blocks publishing.
 - `packageManager`: must be a string.
 - `peerDependenciesMeta`: an entry without a `peerDependencies` entry is reported, unless it is `"optional": true`.

@@ -448,6 +448,10 @@ test.snapshot({
 		'{"author": {}}',
 		'{"keywords": {}}',
 		'{"license": "MITT", "license": ""}',
+		// Create React App reads a path-shaped `homepage` as where the app is served from, and no scheme the rule could add turns it into a working URL.
+		'{"homepage": "."}',
+		'{"homepage": "./"}',
+		'{"homepage": "/myapp"}',
 	],
 	invalid: [
 		// A recognized protocol is required, not merely a hostname.
