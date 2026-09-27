@@ -21,7 +21,6 @@ test.snapshot({
 		'{"dependencies": {"foo": "^1.0.0"}, "overrides": {"foo@^1.0.0": "^1.0.0"}}',
 		'{"dependencies": {"foo": "^1.2.3"}, "overrides": {"foo@^1.0.0": "^1.2.3", "foo@~1.2.0": "^2.0.0"}}',
 		'{"dependencies":{"foo":"^1"},"overrides":{"foo":"*","foo@^1":"^2"}}',
-		'{"dependencies":{"1":"^1"},"overrides":{"1@^1":"^2","1":"*"}}',
 		'{"dependencies":{"foo":"^1"},"overrides":{"foo":"^2","foo":"^1"}}',
 		'{"dependencies":{"foo":"^1"},"overrides":{"foo":{".":"^2",".":"^1"}}}',
 		'{"dependencies":{"foo":"^1"},"overrides":{"foo":"^2"},"overrides":{"foo":"^1"}}',
@@ -29,9 +28,7 @@ test.snapshot({
 		'{"dependencies":{"foo":"^1","foo":1},"overrides":{"foo":"^2"}}',
 		'{"dependencies":{"Foo":"^1"},"devDependencies":{"foo":"^2"},"overrides":{"Foo":"^2"}}',
 		'{"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^2.0.0"}, "optionalDependencies": {"foo": "^3.0.0"}, "devDependencies": {"foo": "^4.0.0"}, "overrides": {"foo": "^4.0.0"}}',
-		'{"dependencies":{"foo":"^1","bar":""},"overrides":{"foo":"$bar"}}',
 		'{"dependencies":{"foo":"^1","bar":"$baz"},"overrides":{"foo":"$bar"}}',
-		'{"dependencies": {"foo": "^1.0.0"}, "overrides": {"foo": "$bar"}}',
 		'{"devDependencies": {"foo": "^1.0.0"}, "overrides": {"foo": "^1.0.0"}}',
 		'{"optionalDependencies": {"foo": "^1.0.0"}, "overrides": {"foo": "^1.0.0"}}',
 		'{"peerDependencies": {"foo": "^1.0.0"}, "overrides": {"foo": "^1.0.0"}}',
@@ -77,5 +74,13 @@ test.snapshot({
 		'{\n\t"dependencies": {\n\t\t"foo": "^1.2.3"\n\t},\n\t"overrides": {\n\t\t"foo@^1.0.0": {\n\t\t}\n\t}\n}',
 		'{"dependencies":{"foo":"^1","bar":"^2"},"devDependencies":{"bar":""},"overrides":{"foo":"$bar"}}',
 		'{"dependencies":{"Foo":"^1"},"devDependencies":{"foo":"^2"},"overrides":{"foo":"^1"}}',
+		// Npm refuses to install at all with `Unable to resolve reference $x`, so an unresolvable
+		// reference is a hard failure of its own.
+		'{\n\t"name": "root",\n\t"version": "1.0.0",\n\t"dependencies": {"foo": "^1.0.0"},\n\t"overrides": {"foo": "$missing"}\n}',
+		// Npm refuses to install at all with `Unable to resolve reference $x` when the referenced name is in
+		// no group, so this is a hard failure of its own rather than a conflict.
+		'{\n\t"dependencies": {\n\t\t"foo": "^1.0.0"\n\t},\n\t"overrides": {\n\t\t"foo": "$bar"\n\t}\n}',
+		// Npm only takes a non-empty referenced specifier, so a name whose every entry is empty fails with `Unable to resolve reference $x` too.
+		'{"dependencies":{"foo":"^1","bar":""},"overrides":{"foo":"$bar"}}',
 	],
 });

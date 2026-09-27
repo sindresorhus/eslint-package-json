@@ -4,16 +4,19 @@ import {
 	findMember,
 	getIndentString,
 	getKey,
-	getNewline,
 	getRootObject,
-	isArrayIndexKey,
+	iterateEffectiveMembers,
 	lineIndentOf,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-invalid-direct-overrides';
+const MESSAGE_ID_UNRESOLVED_REFERENCE = 'unresolvedReference';
+const SUGGESTION_ID = 'useReference';
 
 const messages = {
 	[MESSAGE_ID]: 'Override for direct dependency `{{name}}` conflicts with its `{{specifier}}` specifier.',
+	[MESSAGE_ID_UNRESOLVED_REFERENCE]: 'Override for direct dependency `{{name}}` references `{{reference}}`, which does not resolve to a dependency specifier of this package.',
+	[SUGGESTION_ID]: 'Reference the direct dependency with `{{reference}}`.',
 };
 
 // This is the order npm uses when loading root dependencies. Later groups replace earlier ones with the same name.
@@ -25,37 +28,6 @@ const dependencyGroupPrecedence = [
 ];
 
 const getCaseInsensitiveKey = name => name.normalize('NFKD').toLowerCase();
-
-const getArrayIndex = key => isArrayIndexKey(key) ? Number(key) : undefined;
-
-// Overrides are parsed as a JavaScript object, so final duplicate keys win and array-index keys enumerate first.
-function * iterateOverrideMembers(members) {
-	const membersByKey = new Map();
-	const arrayIndexMembers = [];
-	const stringMembers = [];
-
-	for (const member of members) {
-		membersByKey.set(getKey(member), member);
-	}
-
-	for (const member of membersByKey.values()) {
-		const index = getArrayIndex(getKey(member));
-
-		if (index === undefined) {
-			stringMembers.push(member);
-		} else {
-			arrayIndexMembers.push({index, member});
-		}
-	}
-
-	arrayIndexMembers.sort((first, second) => first.index - second.index);
-
-	for (const {member} of arrayIndexMembers) {
-		yield member;
-	}
-
-	yield * stringMembers;
-}
 
 const getDirectDependencies = root => {
 	const dependencies = new Map();
@@ -82,6 +54,9 @@ const getDirectDependencies = root => {
 	return dependencies;
 };
 
+/**
+The specifier a `$name` reference resolves to, looked up the way npm does: the first non-empty one, `''` when there is none, which npm refuses with `Unable to resolve reference $name`, or `undefined` for a non-string one, which is `valid-fields`' business.
+*/
 const getReferencedSpecifier = (root, name) => {
 	for (const groupName of dependencyGroupPrecedence.toReversed()) {
 		const group = findMember(root, groupName);
@@ -99,6 +74,8 @@ const getReferencedSpecifier = (root, name) => {
 			return member.value.value;
 		}
 	}
+
+	return '';
 };
 
 const parseOverrideKey = name => {
@@ -198,7 +175,7 @@ function fixImplicitOverride(fixer, sourceCode, object, name) {
 		}
 
 		const memberIndent = lineIndentOf(sourceCode, object) + getIndentString(sourceCode);
-		const newline = getNewline(sourceCode);
+		const newline = '\n';
 		return fixer.insertTextAfterRange([object.range[0], object.range[0] + 1], `${newline}${memberIndent}${entry}`);
 	}
 
@@ -210,7 +187,7 @@ function fixImplicitOverride(fixer, sourceCode, object, name) {
 	}
 
 	const indent = leading.slice(lastNewline + 1);
-	return fixer.insertTextAfterRange([object.range[0], object.range[0] + 1], `${getNewline(sourceCode)}${indent}${entry},`);
+	return fixer.insertTextAfterRange([object.range[0], object.range[0] + 1], `\n${indent}${entry},`);
 }
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -235,7 +212,7 @@ const create = context => {
 
 			const matchedOverridePackageNames = new Set();
 
-			for (const member of iterateOverrideMembers(overrides.value.members)) {
+			for (const member of iterateEffectiveMembers(overrides.value)) {
 				const override = parseOverrideKey(getKey(member));
 
 				if (!override) {
@@ -264,15 +241,29 @@ const create = context => {
 				let overrideSpecifier = effectiveOverride.specifier;
 
 				if (overrideSpecifier.startsWith('$')) {
-					const referencedSpecifier = getReferencedSpecifier(root, overrideSpecifier.slice(1));
+					const reference = overrideSpecifier.slice(1);
+					const referencedSpecifier = getReferencedSpecifier(root, reference);
 
-					if (!referencedSpecifier) {
+					// A non-string referenced specifier is `valid-fields`' business.
+					if (referencedSpecifier === undefined) {
+						continue;
+					}
+
+					// Npm refuses to install at all with `Unable to resolve reference $x` when no group gives the name a non-empty specifier, so this is a hard failure of its own rather than a conflict to report.
+					if (referencedSpecifier === '') {
+						context.report({
+							node: effectiveOverride.node,
+							messageId: MESSAGE_ID_UNRESOLVED_REFERENCE,
+							data: {name: override.packageName, reference: '$' + reference},
+						});
+
 						continue;
 					}
 
 					overrideSpecifier = referencedSpecifier;
 				}
 
+				// Npm does not follow a chained `$a` whose value is itself `$b`; it reads that as a dist-tag.
 				if (overrideSpecifier === directSpecifier || overrideSpecifier.startsWith('$')) {
 					continue;
 				}
@@ -281,9 +272,16 @@ const create = context => {
 					node: effectiveOverride.node,
 					messageId: MESSAGE_ID,
 					data: {name: override.packageName, specifier: directSpecifier},
-					fix: fixer => effectiveOverride.node.type === 'Object'
-						? fixImplicitOverride(fixer, sourceCode, effectiveOverride.node, override.packageName)
-						: fixer.replaceText(effectiveOverride.node, getFixedOverride(override.packageName)),
+					// A suggestion, since the override often exists to force another version (such as a security fix) on every transitive copy of the package, and the reference drops that.
+					suggest: [
+						{
+							messageId: SUGGESTION_ID,
+							data: {reference: '$' + override.packageName},
+							fix: fixer => effectiveOverride.node.type === 'Object'
+								? fixImplicitOverride(fixer, sourceCode, effectiveOverride.node, override.packageName)
+								: fixer.replaceText(effectiveOverride.node, getFixedOverride(override.packageName)),
+						},
+					],
 				});
 			}
 		},
@@ -299,7 +297,7 @@ const config = {
 			description: 'Disallow npm overrides that conflict with direct dependencies.',
 			recommended: true,
 		},
-		fixable: 'code',
+		hasSuggestions: true,
 		schema: [],
 		messages,
 		languages: ['json/json'],

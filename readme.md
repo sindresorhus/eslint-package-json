@@ -113,7 +113,7 @@ export default defineConfig({
 | [no-http-dependencies](docs/rules/no-http-dependencies.md)                                             | Disallow HTTP URLs as dependency specifiers.                                              | ✅  |    |    |
 | [no-incompatible-peer-dependency-ranges](docs/rules/no-incompatible-peer-dependency-ranges.md)         | Disallow incompatible ranges for peer dependencies also listed as runtime dependencies.   | ✅  |    | 💡 |
 | [no-install-scripts](docs/rules/no-install-scripts.md)                                                 | Disallow `install` lifecycle scripts.                                                     | ✅  |    | 💡 |
-| [no-invalid-direct-overrides](docs/rules/no-invalid-direct-overrides.md)                               | Disallow npm overrides that conflict with direct dependencies.                            | ✅  | 🔧 |    |
+| [no-invalid-direct-overrides](docs/rules/no-invalid-direct-overrides.md)                               | Disallow npm overrides that conflict with direct dependencies.                            | ✅  |    | 💡 |
 | [no-local-dependencies](docs/rules/no-local-dependencies.md)                                           | Disallow local filesystem paths as dependency specifiers.                                 |    |    |    |
 | [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                           | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
 | [no-missing-files](docs/rules/no-missing-files.md)                                                     | Disallow missing files referenced by package metadata.                                    |    |    |    |
