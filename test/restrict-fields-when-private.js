@@ -19,14 +19,16 @@ test.snapshot({
 		},
 		// Default fields not present when private.
 		'{"private": true, "name": "foo"}',
+		// `npm pack` still honors `files` on a private package, so it is not a default field. Opt in with `fields`.
+		'{"name": "foo", "private": true, "files": ["dist"]}',
+		// `files` is no longer a default field, so only `publishConfig` beside it is reported.
+		'{"private": true, "files": []}',
 	],
 	invalid: [
 		// Private: true with publishConfig (default fields).
 		'{"name": "foo", "private": true, "publishConfig": {"access": "public"}}',
-		// Private: true with files (default fields).
-		'{"name": "foo", "private": true, "files": ["dist"]}',
-		// Private: true with both default fields.
-		'{"name": "foo", "private": true, "publishConfig": {}, "files": []}',
+		// Private: true with the one default field.
+		'{"name": "foo", "private": true, "publishConfig": {}}',
 		// Custom fields.
 		{
 			code: '{"name": "foo", "private": true, "funding": "https://example.com"}',

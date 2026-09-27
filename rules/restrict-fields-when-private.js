@@ -17,7 +17,8 @@ const messages = {
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
-	const {fields = ['publishConfig', 'files']} = context.options[0] ?? {};
+	// `files` is not a default: `npm pack` still honors it on a private package, so it decides what a Docker build or a CI artifact gets.
+	const {fields = ['publishConfig']} = context.options[0] ?? {};
 	const {sourceCode} = context;
 
 	return {

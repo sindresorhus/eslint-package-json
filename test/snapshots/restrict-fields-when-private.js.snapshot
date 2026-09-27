@@ -16,54 +16,25 @@ Suggestion 1/1: Remove the field.:
 
 `;
 
-exports[`invalid(2): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 1`] = `
+exports[`invalid(2): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {}} 1`] = `
 
 [Input]
-  1 | {"name": "foo", "private": true, "files": ["dist"]}
+  1 | {"name": "foo", "private": true, "publishConfig": {}}
 
 `;
 
-exports[`invalid(2): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 2`] = `
+exports[`invalid(2): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {}} 2`] = `
 
 Message:
-> 1 | {"name": "foo", "private": true, "files": ["dist"]}
-    |                                  ^^^^^^^ \`files\` has no effect when the package is private.
+> 1 | {"name": "foo", "private": true, "publishConfig": {}}
+    |                                  ^^^^^^^^^^^^^^^ \`publishConfig\` has no effect when the package is private.
 
 Suggestion 1/1: Remove the field.:
   1 | {"name": "foo", "private": true}
 
 `;
 
-exports[`invalid(3): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {}, \"files\": []} 1`] = `
-
-[Input]
-  1 | {"name": "foo", "private": true, "publishConfig": {}, "files": []}
-
-`;
-
-exports[`invalid(3): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {}, \"files\": []} 2`] = `
-
-Message:
-> 1 | {"name": "foo", "private": true, "publishConfig": {}, "files": []}
-    |                                  ^^^^^^^^^^^^^^^ \`publishConfig\` has no effect when the package is private.
-
-Suggestion 1/1: Remove the field.:
-  1 | {"name": "foo", "private": true, "files": []}
-
-`;
-
-exports[`invalid(3): {\"name\": \"foo\", \"private\": true, \"publishConfig\": {}, \"files\": []} 3`] = `
-
-Message:
-> 1 | {"name": "foo", "private": true, "publishConfig": {}, "files": []}
-    |                                                       ^^^^^^^ \`files\` has no effect when the package is private.
-
-Suggestion 1/1: Remove the field.:
-  1 | {"name": "foo", "private": true, "publishConfig": {}}
-
-`;
-
-exports[`invalid(4): {\"name\": \"foo\", \"private\": true, \"funding\": \"https://example.com\"} 1`] = `
+exports[`invalid(3): {\"name\": \"foo\", \"private\": true, \"funding\": \"https://example.com\"} 1`] = `
 
 [Input]
 Options:
@@ -75,7 +46,7 @@ Code:
 
 `;
 
-exports[`invalid(4): {\"name\": \"foo\", \"private\": true, \"funding\": \"https://example.com\"} 2`] = `
+exports[`invalid(3): {\"name\": \"foo\", \"private\": true, \"funding\": \"https://example.com\"} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "private": true, "funding": "https://example.com"}
@@ -86,7 +57,7 @@ Suggestion 1/1: Remove the field.:
 
 `;
 
-exports[`invalid(5): {\"publishConfig\": {}, \"private\": true, \"name\": \"foo\"} 1`] = `
+exports[`invalid(4): {\"publishConfig\": {}, \"private\": true, \"name\": \"foo\"} 1`] = `
 
 [Input]
 Options:
@@ -98,7 +69,7 @@ Code:
 
 `;
 
-exports[`invalid(5): {\"publishConfig\": {}, \"private\": true, \"name\": \"foo\"} 2`] = `
+exports[`invalid(4): {\"publishConfig\": {}, \"private\": true, \"name\": \"foo\"} 2`] = `
 
 Message:
 > 1 | {"publishConfig": {}, "private": true, "name": "foo"}
@@ -109,7 +80,7 @@ Suggestion 1/1: Remove the field.:
 
 `;
 
-exports[`invalid(6): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 1`] = `
+exports[`invalid(5): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 1`] = `
 
 [Input]
 Options:
@@ -121,7 +92,7 @@ Code:
 
 `;
 
-exports[`invalid(6): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 2`] = `
+exports[`invalid(5): {\"name\": \"foo\", \"private\": true, \"files\": [\"dist\"]} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "private": true, "files": ["dist"]}
@@ -132,7 +103,7 @@ Suggestion 1/1: Remove the field.:
 
 `;
 
-exports[`invalid(7): {\"name\": \"foo\", \"private\": true, \"files\": [\"a\"], \"files\": [\"b\"]} 1`] = `
+exports[`invalid(6): {\"name\": \"foo\", \"private\": true, \"files\": [\"a\"], \"files\": [\"b\"]} 1`] = `
 
 [Input]
 Options:
@@ -144,7 +115,7 @@ Code:
 
 `;
 
-exports[`invalid(7): {\"name\": \"foo\", \"private\": true, \"files\": [\"a\"], \"files\": [\"b\"]} 2`] = `
+exports[`invalid(6): {\"name\": \"foo\", \"private\": true, \"files\": [\"a\"], \"files\": [\"b\"]} 2`] = `
 
 Message:
 > 1 | {"name": "foo", "private": true, "files": ["a"], "files": ["b"]}
@@ -155,7 +126,7 @@ Suggestion 1/1: Remove the field.:
 
 `;
 
-exports[`invalid(8): {\n\t\"name\": \"foo\",\n\t\"private\": true,\n\t\"files\": [\"dist\"]\n} 1`] = `
+exports[`invalid(7): {\n\t\"name\": \"foo\",\n\t\"private\": true,\n\t\"files\": [\"dist\"]\n} 1`] = `
 
 [Input]
 Options:
@@ -171,7 +142,7 @@ Code:
 
 `;
 
-exports[`invalid(8): {\n\t\"name\": \"foo\",\n\t\"private\": true,\n\t\"files\": [\"dist\"]\n} 2`] = `
+exports[`invalid(7): {\n\t\"name\": \"foo\",\n\t\"private\": true,\n\t\"files\": [\"dist\"]\n} 2`] = `
 
 Message:
   1 | {
