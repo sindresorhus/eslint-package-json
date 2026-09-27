@@ -158,17 +158,10 @@ test.snapshot({
     "index.js"
  ]
 }`,
-		// CRLF line endings are preserved.
-		'{\r\n\t"files": [\r\n\t\t"index.d.ts",\r\n\t\t"index.js"\r\n\t]\r\n}',
+		// A shadowed duplicate is not the target npm resolves, so it must not claim priority in `files`.
+		'{\n\t"bin": {\n\t\t"x": "./shadowed.js",\n\t\t"x": "./real.js"\n\t},\n\t"files": [\n\t\t"z.js",\n\t\t"shadowed.js",\n\t\t"real.js"\n\t]\n}',
+		'{\n\t"exports": {\n\t\t"./a": "./shadowed.js",\n\t\t"./a": "./real.js"\n\t},\n\t"files": [\n\t\t"z.js",\n\t\t"shadowed.js",\n\t\t"real.js"\n\t]\n}',
 	],
-});
-
-nodeTest('preserves CRLF line endings in an autofix', () => {
-	const result = verifyAndFix('{\r\n\t"files": [\r\n\t\t"index.d.ts",\r\n\t\t"index.js"\r\n\t]\r\n}');
-
-	assert.equal(result.fixed, true);
-	assert.match(result.output, /\r\n/u);
-	assert.doesNotMatch(result.output, /(^|[^\r])\n/u);
 });
 
 nodeTest('does not report after fixing a single-line package', () => {

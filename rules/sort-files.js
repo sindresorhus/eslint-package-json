@@ -4,6 +4,7 @@ import {
 	getKey,
 	buildReordered,
 	isSameOrder,
+	iterateEffectiveMembers,
 	pathFields,
 	compareStrings,
 } from './utils/index.js';
@@ -53,13 +54,14 @@ function * iterateExportsTargets(node) {
 		return;
 	}
 
-	for (const member of node.members) {
+	// Effective members, so a subpath npm never resolves cannot pull its target to the front of `files`.
+	for (const member of iterateEffectiveMembers(node)) {
 		if (!isTypesCondition(member)) {
 			yield * iterateExportsTargets(member.value);
 		}
 	}
 
-	for (const member of node.members) {
+	for (const member of iterateEffectiveMembers(node)) {
 		if (isTypesCondition(member)) {
 			yield * iterateExportsTargets(member.value);
 		}
@@ -95,7 +97,8 @@ function * iterateEntryPointTargets(root) {
 		return;
 	}
 
-	for (const member of binMember.value.members) {
+	// Effective members, since npm publishes only the final value per `bin` key.
+	for (const member of iterateEffectiveMembers(binMember.value)) {
 		if (member.value.type === 'String') {
 			yield member.value.value;
 		}
