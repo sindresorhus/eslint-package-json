@@ -153,6 +153,90 @@ Suggestion 2/2: Use the \`optionalDependencies\` range \`^4.0.0\` in \`peerDepen
 
 `;
 
+exports[`invalid(16): {\"peerDependencies\": {\"foo\": \"^1.0.0\"}, \"optionalDependencies\": {\"foo\": \"^2.0.0\"}, \"dependencies\": {\"foo\": \"^1.5.0\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "^1.0.0"}, "optionalDependencies": {"foo": "^2.0.0"}, "dependencies": {"foo": "^1.5.0"}}
+
+`;
+
+exports[`invalid(16): {\"peerDependencies\": {\"foo\": \"^1.0.0\"}, \"optionalDependencies\": {\"foo\": \"^2.0.0\"}, \"dependencies\": {\"foo\": \"^1.5.0\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "^1.0.0"}, "optionalDependencies": {"foo": "^2.0.0"}, "dependencies": {"foo": "^1.5.0"}}
+    |                                                                         ^^^^^^^^ Dependency \`foo\` in \`optionalDependencies\` uses range \`^2.0.0\`, which does not overlap its peer dependency range \`^1.0.0\`.
+
+Suggestion 1/2: Use the peer dependency range \`^1.0.0\` in \`optionalDependencies\`.:
+  1 | {"peerDependencies": {"foo": "^1.0.0"}, "optionalDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^1.5.0"}}
+
+Suggestion 2/2: Use the \`optionalDependencies\` range \`^2.0.0\` in \`peerDependencies\`.:
+  1 | {"peerDependencies": {"foo": "^2.0.0"}, "optionalDependencies": {"foo": "^2.0.0"}, "dependencies": {"foo": "^1.5.0"}}
+
+`;
+
+exports[`invalid(17): {\"peerDependencies\": {\"foo\": \">=1.0.0 <2.0.0-0\"}, \"dependencies\": {\"foo\": \"^3.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": ">=1.0.0 <2.0.0-0"}, "dependencies": {"foo": "^3.0.0"}}
+
+`;
+
+exports[`invalid(17): {\"peerDependencies\": {\"foo\": \">=1.0.0 <2.0.0-0\"}, \"dependencies\": {\"foo\": \"^3.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": ">=1.0.0 <2.0.0-0"}, "dependencies": {"foo": "^3.0.0"}}
+    |                                                                           ^^^^^^^^ Dependency \`foo\` in \`dependencies\` uses range \`^3.0.0\`, which does not overlap its peer dependency range \`>=1.0.0 <2.0.0-0\`.
+
+Suggestion 1/2: Use the peer dependency range \`>=1.0.0 <2.0.0-0\` in \`dependencies\`.:
+  1 | {"peerDependencies": {"foo": ">=1.0.0 <2.0.0-0"}, "dependencies": {"foo": ">=1.0.0 <2.0.0-0"}}
+
+Suggestion 2/2: Use the \`dependencies\` range \`^3.0.0\` in \`peerDependencies\`.:
+  1 | {"peerDependencies": {"foo": "^3.0.0"}, "dependencies": {"foo": "^3.0.0"}}
+
+`;
+
+exports[`invalid(18): {\"peerDependencies\": {\"foo\": \"1.x\"}, \"dependencies\": {\"foo\": \"2.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "1.x"}, "dependencies": {"foo": "2.0.0"}}
+
+`;
+
+exports[`invalid(18): {\"peerDependencies\": {\"foo\": \"1.x\"}, \"dependencies\": {\"foo\": \"2.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "1.x"}, "dependencies": {"foo": "2.0.0"}}
+    |                                                              ^^^^^^^ Dependency \`foo\` in \`dependencies\` uses range \`2.0.0\`, which does not overlap its peer dependency range \`1.x\`.
+
+Suggestion 1/2: Use the peer dependency range \`1.x\` in \`dependencies\`.:
+  1 | {"peerDependencies": {"foo": "1.x"}, "dependencies": {"foo": "1.x"}}
+
+Suggestion 2/2: Use the \`dependencies\` range \`2.0.0\` in \`peerDependencies\`.:
+  1 | {"peerDependencies": {"foo": "2.0.0"}, "dependencies": {"foo": "2.0.0"}}
+
+`;
+
+exports[`invalid(19): {\"peerDependencies\": {\"foo\": \"^1.0.0\"}, \"dependencies\": {\"foo\": \">=3.0.0 <4.0.0-0\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": ">=3.0.0 <4.0.0-0"}}
+
+`;
+
+exports[`invalid(19): {\"peerDependencies\": {\"foo\": \"^1.0.0\"}, \"dependencies\": {\"foo\": \">=3.0.0 <4.0.0-0\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": ">=3.0.0 <4.0.0-0"}}
+    |                                                                 ^^^^^^^^^^^^^^^^^^ Dependency \`foo\` in \`dependencies\` uses range \`>=3.0.0 <4.0.0-0\`, which does not overlap its peer dependency range \`^1.0.0\`.
+
+Suggestion 1/2: Use the peer dependency range \`^1.0.0\` in \`dependencies\`.:
+  1 | {"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^1.0.0"}}
+
+Suggestion 2/2: Use the \`dependencies\` range \`>=3.0.0 <4.0.0-0\` in \`peerDependencies\`.:
+  1 | {"peerDependencies": {"foo": ">=3.0.0 <4.0.0-0"}, "dependencies": {"foo": ">=3.0.0 <4.0.0-0"}}
+
+`;
+
 exports[`invalid(2): {\"peerDependencies\": {\"foo\": \"^1.0.0 || ^3.0.0\"}, \"dependencies\": {\"foo\": \"^2.0.0\"}} 1`] = `
 
 [Input]
@@ -171,6 +255,27 @@ Suggestion 1/2: Use the peer dependency range \`^1.0.0 || ^3.0.0\` in \`dependen
 
 Suggestion 2/2: Use the \`dependencies\` range \`^2.0.0\` in \`peerDependencies\`.:
   1 | {"peerDependencies": {"foo": "^2.0.0"}, "dependencies": {"foo": "^2.0.0"}}
+
+`;
+
+exports[`invalid(20): {\"peerDependencies\": {\"foo\": \"^1.0.0\"}, \"optionalDependencies\": {\"foo\": \">=2.0.0 <3.0.0-0\"}} 1`] = `
+
+[Input]
+  1 | {"peerDependencies": {"foo": "^1.0.0"}, "optionalDependencies": {"foo": ">=2.0.0 <3.0.0-0"}}
+
+`;
+
+exports[`invalid(20): {\"peerDependencies\": {\"foo\": \"^1.0.0\"}, \"optionalDependencies\": {\"foo\": \">=2.0.0 <3.0.0-0\"}} 2`] = `
+
+Message:
+> 1 | {"peerDependencies": {"foo": "^1.0.0"}, "optionalDependencies": {"foo": ">=2.0.0 <3.0.0-0"}}
+    |                                                                         ^^^^^^^^^^^^^^^^^^ Dependency \`foo\` in \`optionalDependencies\` uses range \`>=2.0.0 <3.0.0-0\`, which does not overlap its peer dependency range \`^1.0.0\`.
+
+Suggestion 1/2: Use the peer dependency range \`^1.0.0\` in \`optionalDependencies\`.:
+  1 | {"peerDependencies": {"foo": "^1.0.0"}, "optionalDependencies": {"foo": "^1.0.0"}}
+
+Suggestion 2/2: Use the \`optionalDependencies\` range \`>=2.0.0 <3.0.0-0\` in \`peerDependencies\`.:
+  1 | {"peerDependencies": {"foo": ">=2.0.0 <3.0.0-0"}, "optionalDependencies": {"foo": ">=2.0.0 <3.0.0-0"}}
 
 `;
 

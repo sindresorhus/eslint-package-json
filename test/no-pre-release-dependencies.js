@@ -27,6 +27,12 @@ test.snapshot({
 			code: '{"dependencies": {"foo": "^1.0.0-alpha.1"}}',
 			options: [{ignore: ['foo']}],
 		},
+		// The `-0` upper bound excludes the next major's pre-releases instead of asking for one, so the range
+		// starts at a stable version and is not a pre-release range. It is what `^1.0.0` normalizes to.
+		'{"dependencies": {"foo": ">=1.0.0 <2.0.0-0"}}',
+		'{"dependencies": {"foo": "1.x"}}',
+		'{"dependencies": {"foo": "npm:bar@^1.0.0"}}',
+		'{"dependencies": {"foo": "npm:bar@1.2.3"}}',
 	],
 	invalid: [
 		// Pre-release exact version.
@@ -43,5 +49,13 @@ test.snapshot({
 		'{"dependencies": {"foo": "^1.0.0", "bar": "^2.0.0-next.1"}}',
 		// Compound range whose minimum is a pre-release.
 		'{"dependencies": {"foo": ">=1.0.0-alpha <2.0.0"}}',
+		// An `npm:` alias targets a pre-release when the range it carries does.
+		'{"dependencies": {"foo": "npm:bar@1.0.0-beta"}}',
+		'{"dependencies": {"foo": "npm:@scope/bar@2.0.0-rc.1"}}',
+		// `npm-package-arg` resolves a specifier with semver's loose grammar, so a leading zero in a
+		// pre-release identifier is a pre-release to npm.
+		'{"dependencies": {"foo": "1.0.0-01"}}',
+		'{"dependencies": {"foo": "01.2.3-01"}}',
+		'{"dependencies": {"foo": "npm:bar@1.0.0-01"}}',
 	],
 });

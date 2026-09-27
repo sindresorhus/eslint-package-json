@@ -1,9 +1,10 @@
-import semver from 'semver';
 import {
 	getRootObject,
+	installedSpecifier,
 	iterateDependencies,
 	optionsSchema,
 	stringArraySchema,
+	targetsPrerelease,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-pre-release-dependencies';
@@ -31,19 +32,10 @@ const create = context => {
 
 				const specifier = member.value.value;
 
-				// A pre-release identifier always contains a hyphen (`1.0.0-beta`), so anything without one cannot resolve to a pre-release. This skips the expensive `semver.minVersion` for the overwhelming majority of specifiers.
-				if (!specifier.includes('-')) {
-					continue;
-				}
-
-				let min;
-				try {
-					min = semver.minVersion(specifier);
-				} catch {
-					min = null;
-				}
-
-				if (!min || semver.prerelease(min) === null) {
+				// An `npm:` alias installs at the range it carries, so `npm:foo@1.0.0-beta` targets a pre-release
+				// even though the alias string itself is neither a version nor a range. `npm-package-arg` parses
+				// that range with semver's loose grammar, so `1.0.0-01` is a pre-release too.
+				if (!targetsPrerelease(installedSpecifier(specifier), {loose: true})) {
 					continue;
 				}
 

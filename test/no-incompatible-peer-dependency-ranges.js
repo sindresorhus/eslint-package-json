@@ -13,6 +13,10 @@ test.snapshot({
 		'{"peerDependencies": {"foo": "2"}, "dependencies": {"foo": ">1.2.3 <1.2.4 || 2"}}',
 		'{"peerDependencies": {"foo": "1.x"}, "optionalDependencies": {"foo": "1.2.3"}}',
 		'{"peerDependencies": {"foo": "*"}, "dependencies": {"foo": "^9.0.0"}}',
+		// Npm documents that an `optionalDependencies` entry overrides a `dependencies` entry of the same
+		// name, so the `dependencies` value is never installed and the two suggestions would rewrite a
+		// range nothing uses. `no-duplicate-dependencies` reports the duplication itself.
+		'{"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^2.0.0"}, "optionalDependencies": {"foo": "^1.5.0"}}',
 		// Ranges that explicitly mention prerelease versions are not compared.
 		'{"peerDependencies": {"foo": "^1.0.0-beta.1"}, "dependencies": {"foo": ">=1.0.0-beta.2 <1.0.0"}}',
 		'{"peerDependencies": {"foo": "^1.0.0-beta.1"}, "dependencies": {"foo": "^2.0.0"}}',
@@ -21,6 +25,9 @@ test.snapshot({
 		'{"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": ">=1.1.0-beta.1 <1.1.0"}}',
 		'{"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": ">=1.1.0-- <1.1.0"}}',
 		'{"peerDependencies": {"foo": ">1.2.3 <1.2.4-alpha"}, "dependencies": {"foo": ">=1.2.4-0"}}',
+		// A range whose minimum is a stable version is not a pre-release range, whatever a later bound in it
+		// says. `>=1.0.0 <2.0.0-0` is what `^1.0.0` normalizes to, so it is compared like a caret range.
+		'{"peerDependencies": {"foo": "^1.0.0-beta.1"}, "dependencies": {"foo": ">=1.0.0 <2.0.0-0"}}',
 		// `devDependencies` compatibility belongs to `peer-dependencies-as-dev-dependencies`.
 		'{"peerDependencies": {"foo": "^1.0.0"}, "devDependencies": {"foo": "^2.0.0"}}',
 		// Non-semver specifiers cannot be compared.
@@ -56,5 +63,13 @@ test.snapshot({
 		'{"peerDependencies": {"foo": "^2.0.0", "foo": "^1.0.0"}, "dependencies": {"foo": "^1.5.0", "foo": "^2.0.0"}}',
 		'{"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": "^1.5.0"}, "dependencies": {"foo": "^2.0.0"}}',
 		'{"peerDependencies": {"foo": "^1.0.0", "bar": "^3.0.0"}, "dependencies": {"foo": "^2.0.0"}, "optionalDependencies": {"bar": "^4.0.0"}}',
+		// The entry that actually installs is the `optionalDependencies` one, so that is the range compared.
+		'{"peerDependencies": {"foo": "^1.0.0"}, "optionalDependencies": {"foo": "^2.0.0"}, "dependencies": {"foo": "^1.5.0"}}',
+		// The `-0` upper bound excludes the next major's pre-releases rather than asking for one, so the range
+		// is the same one `^1.0.0` names and conflicts the same way.
+		'{"peerDependencies": {"foo": ">=1.0.0 <2.0.0-0"}, "dependencies": {"foo": "^3.0.0"}}',
+		'{"peerDependencies": {"foo": "1.x"}, "dependencies": {"foo": "2.0.0"}}',
+		'{"peerDependencies": {"foo": "^1.0.0"}, "dependencies": {"foo": ">=3.0.0 <4.0.0-0"}}',
+		'{"peerDependencies": {"foo": "^1.0.0"}, "optionalDependencies": {"foo": ">=2.0.0 <3.0.0-0"}}',
 	],
 });

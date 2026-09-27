@@ -12,7 +12,7 @@ When a package appears in both `peerDependencies` and a runtime dependency group
 
 This rule checks `dependencies` and `optionalDependencies`. Compatibility with `devDependencies` is handled by [`peer-dependencies-as-dev-dependencies`](./peer-dependencies-as-dev-dependencies.md), which also ensures each required peer is installed for local development.
 
-Only valid semver ranges are compared. Ranges that mention prerelease versions and non-semver specifiers such as dist-tags, `workspace:`, `file:`, git, and URLs are ignored.
+Only valid semver ranges are compared. A range whose lowest version is a prerelease is ignored, as are non-semver specifiers such as dist-tags, `workspace:`, `file:`, git remotes, and URLs. A prerelease in a later bound, as in `>=1.0.0 <2.0.0-0`, does not count.
 
 When possible, suggestions can copy either range to the other declaration. Choose whether the installed version requirement or public compatibility contract is authoritative.
 

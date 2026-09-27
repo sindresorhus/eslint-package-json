@@ -1,5 +1,10 @@
 import semver from 'semver';
-import {getRootObject, iterateDependencies, validRange} from './utils/index.js';
+import {
+	getRootObject,
+	iterateDependencies,
+	targetsPrerelease,
+	validRange,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'no-incompatible-peer-dependency-ranges';
 const USE_PEER_RANGE_SUGGESTION_ID = 'use-peer-range';
@@ -12,7 +17,6 @@ const messages = {
 };
 
 const runtimeDependencyTypes = ['dependencies', 'optionalDependencies'];
-const prereleaseVersionPattern = /(?:^|[\s|])[<=>^~]*\s*v?\d+\.\d+\.\d+-[-0-9A-Za-z]/u;
 
 const hasStableVersions = range => semver.toComparators(range).some(comparators => semver.minVersion(comparators.join(' ')) !== null);
 
@@ -37,10 +41,20 @@ const create = context => ({
 			if (
 				member.value.type === 'String'
 				&& validRange(member.value.value) !== null
-				&& !prereleaseVersionPattern.test(member.value.value)
+				&& !targetsPrerelease(member.value.value)
 			) {
 				peerDependencies.set(name, member);
 			}
+		}
+
+		// Npm documents that an `optionalDependencies` entry overrides a `dependencies` entry of the same
+		// name, so the `dependencies` value is never installed. Comparing it would report a conflict that
+		// cannot happen and offer to rewrite a range nothing uses; `no-duplicate-dependencies` reports the
+		// duplication itself.
+		const optionalNames = new Set();
+
+		for (const {name} of iterateDependencies(root, ['optionalDependencies'])) {
+			optionalNames.add(name);
 		}
 
 		for (const {groupName, member, name} of iterateDependencies(root, runtimeDependencyTypes)) {
@@ -49,6 +63,7 @@ const create = context => ({
 			if (
 				!peerMember
 				|| member.value.type !== 'String'
+				|| (groupName === 'dependencies' && optionalNames.has(name))
 			) {
 				continue;
 			}
@@ -58,7 +73,7 @@ const create = context => ({
 
 			if (
 				validRange(dependencyRange) === null
-				|| prereleaseVersionPattern.test(dependencyRange)
+				|| targetsPrerelease(dependencyRange)
 				|| hasStableRangeOverlap(peerRange, dependencyRange)
 			) {
 				continue;
