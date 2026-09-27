@@ -19,7 +19,13 @@ function isTypesCondition(key) {
 	return key === 'types' || key.startsWith('types@');
 }
 
-function * iterateRuntimeTargets(node) {
+// The conditions Node sets on its own. Every other key is one a consumer has to ask for with `--conditions`,
+// or one a bundler sets for a target of its own, so a root built only from those cannot be loaded by a plain
+// `require` or `import`. `types` is TypeScript's, and is excluded for the same reason as the rest.
+const nodeConditionKeys = new Set(['node', 'node-addons', 'import', 'require', 'module-sync', 'default']);
+
+// The no-runtime check counts only the targets reachable through `nodeConditionKeys`, while the `main` comparison counts a target under any condition, since `main` often names the `browser` target (svelte) or another condition's.
+function * iterateRuntimeTargets(node, {nodeConditionsOnly}) {
 	switch (node.type) {
 		case 'String': {
 			if (!node.value.endsWith('.d.ts') && !node.value.endsWith('.d.mts') && !node.value.endsWith('.d.cts')) {
@@ -32,11 +38,17 @@ function * iterateRuntimeTargets(node) {
 		case 'Object': {
 			// Only the effective member counts: a runtime target hiding under a shadowed duplicate is not part of the object Node resolves, so it must not make the root look usable.
 			for (const member of iterateEffectiveMembers(node)) {
-				if (isTypesCondition(getKey(member))) {
+				const key = getKey(member);
+				// A subpath key here is not a condition, so Node matches nothing through this branch.
+				if (isTypesCondition(key) || key.startsWith('.')) {
 					continue;
 				}
 
-				yield * iterateRuntimeTargets(member.value);
+				if (nodeConditionsOnly && !nodeConditionKeys.has(key)) {
+					continue;
+				}
+
+				yield * iterateRuntimeTargets(member.value, {nodeConditionsOnly});
 			}
 
 			break;
@@ -44,7 +56,7 @@ function * iterateRuntimeTargets(node) {
 
 		case 'Array': {
 			for (const element of node.elements) {
-				yield * iterateRuntimeTargets(element.value);
+				yield * iterateRuntimeTargets(element.value, {nodeConditionsOnly});
 			}
 
 			break;
@@ -111,9 +123,7 @@ const create = context => ({
 			rootValue = rootMember.value;
 		}
 
-		const runtimeTargets = [...iterateRuntimeTargets(rootValue)];
-
-		if (runtimeTargets.length === 0) {
+		if ([...iterateRuntimeTargets(rootValue, {nodeConditionsOnly: true})].length === 0) {
 			context.report({
 				node: rootValue,
 				messageId: MESSAGE_ID_NO_RUNTIME,
@@ -129,7 +139,9 @@ const create = context => ({
 
 		const mainCandidates = new Set(getMainCandidates(normalizeMainPath(main.value.value)));
 
-		if (runtimeTargets.some(target => !target.value.endsWith('/') && mainCandidates.has(normalizePath(target.value)))) {
+		const targets = [...iterateRuntimeTargets(rootValue, {nodeConditionsOnly: false})];
+
+		if (targets.some(target => !target.value.endsWith('/') && mainCandidates.has(normalizePath(target.value)))) {
 			return;
 		}
 
