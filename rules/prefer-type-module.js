@@ -1,8 +1,7 @@
 import {
 	getRootObject,
 	findMember,
-	getIndentString,
-	lineIndentOf,
+	insertRootField,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-type-module';
@@ -42,20 +41,7 @@ const create = context => {
 								return fixer.replaceText(type.value, '"module"');
 							}
 
-							const lastMember = root.members.at(-1);
-							const isMultiline = sourceCode.getText(root).includes('\n');
-
-							if (!lastMember) {
-								if (!isMultiline) {
-									return fixer.replaceText(root, '{"type": "module"}');
-								}
-
-								const indent = lineIndentOf(sourceCode, root) + getIndentString(sourceCode);
-								return fixer.insertTextAfterRange([root.range[0], root.range[0] + 1], `\n${indent}"type": "module"`);
-							}
-
-							const separator = isMultiline ? '\n' + lineIndentOf(sourceCode, lastMember) : ' ';
-							return fixer.insertTextAfter(lastMember, `,${separator}"type": "module"`);
+							return insertRootField(fixer, sourceCode, root, {key: 'type', value: '"module"'});
 						},
 					},
 				],

@@ -101,3 +101,73 @@ Suggestion 1/1: Set \`"type": "module"\`.:
   1 | {"type": "module"}
 
 `;
+
+exports[`invalid(6): {\n\t\"name\": \"a\",\n\t\"version\": \"1.0.0\",\n\t\"exports\": \"./index.js\",\n\t\"scripts\": {\n\t\t\"test\": \"ava\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"name": "a",
+  3 | 	"version": "1.0.0",
+  4 | 	"exports": "./index.js",
+  5 | 	"scripts": {
+  6 | 		"test": "ava"
+  7 | 	}
+  8 | }
+
+`;
+
+exports[`invalid(6): {\n\t\"name\": \"a\",\n\t\"version\": \"1.0.0\",\n\t\"exports\": \"./index.js\",\n\t\"scripts\": {\n\t\t\"test\": \"ava\"\n\t}\n} 2`] = `
+
+Message:
+> 1 | {
+    | ^
+> 2 | 	"name": "a",
+    | ^^^^^^^^^^^^^
+> 3 | 	"version": "1.0.0",
+    | ^^^^^^^^^^^^^^^^^^^^
+> 4 | 	"exports": "./index.js",
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 5 | 	"scripts": {
+    | ^^^^^^^^^^^^^
+> 6 | 		"test": "ava"
+    | ^^^^^^^^^^^^^^^
+> 7 | 	}
+    | ^^
+> 8 | }
+    | ^ The \`type\` field should be \`"module"\`.
+
+Suggestion 1/1: Set \`"type": "module"\`.:
+  1 | {
+  2 | 	"name": "a",
+  3 | 	"version": "1.0.0",
+  4 | 	"type": "module",
+  5 | 	"exports": "./index.js",
+  6 | 	"scripts": {
+  7 | 		"test": "ava"
+  8 | 	}
+  9 | }
+
+`;
+
+exports[`invalid(7): {\"name\": \"a\",\n\t\"exports\": \"./index.js\"} 1`] = `
+
+[Input]
+  1 | {"name": "a",
+  2 | 	"exports": "./index.js"}
+
+`;
+
+exports[`invalid(7): {\"name\": \"a\",\n\t\"exports\": \"./index.js\"} 2`] = `
+
+Message:
+> 1 | {"name": "a",
+    | ^^^^^^^^^^^^^
+> 2 | 	"exports": "./index.js"}
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^ The \`type\` field should be \`"module"\`.
+
+Suggestion 1/1: Set \`"type": "module"\`.:
+  1 | {"name": "a",
+  2 | 	"type": "module",
+  3 | 	"exports": "./index.js"}
+
+`;

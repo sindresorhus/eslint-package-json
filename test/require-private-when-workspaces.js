@@ -42,5 +42,7 @@ test.snapshot({
 		// A shape npm rejects outright is a broken monorepo root either way, so it is still reported.
 		'{"workspaces": {"nohoist": []}}',
 		'{"workspaces": 1}',
+		// A monorepo root often has no field that ranks before `private`, so it goes first rather than last.
+		'{\n\t"workspaces": [\n\t\t"packages/*"\n\t],\n\t"devDependencies": {\n\t\t"xo": "^1.0.0"\n\t}\n}',
 	],
 });

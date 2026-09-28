@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Linter} from 'eslint';
 import json from '@eslint/json';
+import plugin from '../index.js';
 import {getTester} from './utils/test.js';
 
 const {test: snapshotTest, rule} = getTester(import.meta);
@@ -12,7 +13,17 @@ const config = [{
 	plugins: {json, 'rule-to-test': {rules: {'types-in-dev-dependencies': rule}}},
 	rules: {'rule-to-test/types-in-dev-dependencies': 'error'},
 }];
+const sortConfig = [{
+	files: ['**'],
+	language: 'json/json',
+	plugins: {json, 'package-json': plugin},
+	rules: {'package-json/sort-properties': 'error', 'package-json/sort-dependencies': 'error'},
+}];
 const applyFix = (code, fix) => code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]);
+const applySuggestion = code => {
+	const [message] = linter.verify(code, config, {filename: 'package.json'});
+	return applyFix(code, message.suggestions[0].fix);
+};
 
 snapshotTest.snapshot({
 	valid: [
@@ -90,7 +101,36 @@ snapshotTest.snapshot({
 		// A duplicated `dependencies` member is the one `findMember` resolved that the group removal takes, and
 		// leaving the earlier duplicate behind would promote it straight back into the group's place.
 		'{"name": "x", "dependencies": {"@types/node": "^20.0.0"}, "dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^20.0.0"}}',
+		// The created group and the moved entry go where a sorted document holds them.
+		'{"name": "x", "dependencies": {"@types/node": "^20.0.0", "foo": "^1.0.0"}, "peerDependencies": {"bar": "^1.0.0"}}',
+		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"ava": "1", "xo": "1"}}',
 	],
+});
+
+test('the suggestion keeps a sorted document sorted', () => {
+	const inputs = [
+		'{"dependencies": {"@types/node": "^20.0.0"}}',
+		'{"name": "x", "dependencies": {"@types/node": "^20.0.0", "foo": "^1.0.0"}}',
+		'{"name": "x", "dependencies": {"@types/node": "^20.0.0", "foo": "^1.0.0"}, "peerDependencies": {"bar": "^1.0.0"}}',
+		'{"name": "x", "optionalDependencies": {"@types/node": "^20.0.0", "foo": "^1.0.0"}, "custom": true}',
+		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"ava": "1", "xo": "1"}}',
+		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {}}',
+		'{"name": "x", "name": "y", "dependencies": {"@types/node": "^20.0.0", "foo": "^1.0.0"}}',
+		'{\n\t"name": "x",\n\t"dependencies": {\n\t\t"@types/node": "^20.0.0",\n\t\t"foo": "^1.0.0"\n\t}\n}',
+		'{\n  "dependencies": {\n    "@types/node": "^20.0.0"\n  },\n  "devDependencies": {\n    "ava": "1",\n    "xo": "1"\n  }\n}',
+		'{\n    "dependencies": {\n        "@types/node": "^20.0.0",\n        "foo": "^1.0.0"\n    },\n    "peerDependencies": {\n        "bar": "^1.0.0"\n    }\n}',
+	];
+
+	const isReported = code => linter.verify(code, sortConfig, {filename: 'package.json'}).length > 0;
+
+	assert.deepEqual(inputs.filter(code => isReported(code)), []);
+	// A document that does not parse is reported too, so this also proves every output is valid JSON.
+	assert.deepEqual(inputs.map(code => applySuggestion(code)).filter(output => isReported(output)), []);
+
+	assert.equal(
+		applySuggestion('{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"ava": "1", "xo": "1"}}'),
+		'{"devDependencies": {"@types/node": "^20.0.0", "ava": "1", "xo": "1"}}',
+	);
 });
 
 test('a group removal takes the whole run of that group key', () => {

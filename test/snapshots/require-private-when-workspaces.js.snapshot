@@ -12,7 +12,7 @@ Message:
     |  ^^^^^^^^^^^^ A package with \`workspaces\` should set \`"private": true\` to avoid accidentally publishing the workspace root.
 
 Suggestion 1/1: Set \`"private": true\`.:
-  1 | {"workspaces": ["packages/*"], "private": true}
+  1 | {"private": true, "workspaces": ["packages/*"]}
 
 `;
 
@@ -140,7 +140,7 @@ Message:
     |  ^^^^^^^^^^^^ A package with \`workspaces\` should set \`"private": true\` to avoid accidentally publishing the workspace root.
 
 Suggestion 1/1: Set \`"private": true\`.:
-  1 | {"workspaces": {"nohoist": []}, "private": true}
+  1 | {"private": true, "workspaces": {"nohoist": []}}
 
 `;
 
@@ -158,6 +158,46 @@ Message:
     |  ^^^^^^^^^^^^ A package with \`workspaces\` should set \`"private": true\` to avoid accidentally publishing the workspace root.
 
 Suggestion 1/1: Set \`"private": true\`.:
-  1 | {"workspaces": 1, "private": true}
+  1 | {"private": true, "workspaces": 1}
+
+`;
+
+exports[`invalid(7): {\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t],\n\t\"devDependencies\": {\n\t\t\"xo\": \"^1.0.0\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"workspaces": [
+  3 | 		"packages/*"
+  4 | 	],
+  5 | 	"devDependencies": {
+  6 | 		"xo": "^1.0.0"
+  7 | 	}
+  8 | }
+
+`;
+
+exports[`invalid(7): {\n\t\"workspaces\": [\n\t\t\"packages/*\"\n\t],\n\t\"devDependencies\": {\n\t\t\"xo\": \"^1.0.0\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+> 2 | 	"workspaces": [
+    | 	^^^^^^^^^^^^ A package with \`workspaces\` should set \`"private": true\` to avoid accidentally publishing the workspace root.
+  3 | 		"packages/*"
+  4 | 	],
+  5 | 	"devDependencies": {
+  6 | 		"xo": "^1.0.0"
+  7 | 	}
+  8 | }
+
+Suggestion 1/1: Set \`"private": true\`.:
+  1 | {
+  2 | 	"private": true,
+  3 | 	"workspaces": [
+  4 | 		"packages/*"
+  5 | 	],
+  6 | 	"devDependencies": {
+  7 | 		"xo": "^1.0.0"
+  8 | 	}
+  9 | }
 
 `;

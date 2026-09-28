@@ -12,7 +12,7 @@ Message:
     |                       ^^^ Peer dependency \`a\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`a\` to \`devDependencies\` at \`^1.0.0\`.:
-  1 | {"peerDependencies": {"a": "^1.0.0"}, "peerDependenciesMeta": {"a": []}, "devDependencies": {"a": "^1.0.0"}}
+  1 | {"devDependencies": {"a": "^1.0.0"}, "peerDependencies": {"a": "^1.0.0"}, "peerDependenciesMeta": {"a": []}}
 
 `;
 
@@ -103,7 +103,7 @@ Message:
     |                       ^^^^^ Peer dependency \`foo\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`foo\` to \`devDependencies\` at \`^1.0.0\`.:
-  1 | {"peerDependencies": {"foo": "^1.0.0"}, "peerDependenciesMeta": {"foo": {"optional": false}}, "devDependencies": {"foo": "^1.0.0"}}
+  1 | {"devDependencies": {"foo": "^1.0.0"}, "peerDependencies": {"foo": "^1.0.0"}, "peerDependenciesMeta": {"foo": {"optional": false}}}
 
 `;
 
@@ -121,7 +121,7 @@ Message:
     |                       ^^^^^ Peer dependency \`foo\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`foo\` to \`devDependencies\` at \`^1.0.0\`.:
-  1 | {"peerDependencies": {"foo": "^1.0.0"}, "peerDependenciesMeta": {"foo": {"optional": true}, "foo": {"optional": false}}, "devDependencies": {"foo": "^1.0.0"}}
+  1 | {"devDependencies": {"foo": "^1.0.0"}, "peerDependencies": {"foo": "^1.0.0"}, "peerDependenciesMeta": {"foo": {"optional": true}, "foo": {"optional": false}}}
 
 `;
 
@@ -175,7 +175,7 @@ Message:
     |                                                        ^^^ Peer dependency \`a\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`a\` to \`devDependencies\` at \`^1.0.0\`.:
-  1 | {"name": "x", "version": "1.0.0", "peerDependencies": {"a": "^1.0.0"}, "devDependencies": {"a": "^1.0.0"}}
+  1 | {"name": "x", "version": "1.0.0", "devDependencies": {"a": "^1.0.0"}, "peerDependencies": {"a": "^1.0.0"}}
 
 `;
 
@@ -269,7 +269,122 @@ Message:
     |                       ^^^ Peer dependency \`a\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`a\` to \`devDependencies\` at \`^1.0.0\`.:
-  1 | {"peerDependencies": {"a": "^1.0.0"}, "peerDependenciesMeta": {"a": "x"}, "devDependencies": {"a": "^1.0.0"}}
+  1 | {"devDependencies": {"a": "^1.0.0"}, "peerDependencies": {"a": "^1.0.0"}, "peerDependenciesMeta": {"a": "x"}}
+
+`;
+
+exports[`invalid(20): {\"name\": \"a\", \"peerDependencies\": {\"react\": \"^18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"name": "a", "peerDependencies": {"react": "^18.0.0"}}
+
+`;
+
+exports[`invalid(20): {\"name\": \"a\", \"peerDependencies\": {\"react\": \"^18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"name": "a", "peerDependencies": {"react": "^18.0.0"}}
+    |                                    ^^^^^^^ Peer dependency \`react\` should also be listed in \`devDependencies\`.
+
+Suggestion 1/1: Add \`react\` to \`devDependencies\` at \`^18.0.0\`.:
+  1 | {"name": "a", "devDependencies": {"react": "^18.0.0"}, "peerDependencies": {"react": "^18.0.0"}}
+
+`;
+
+exports[`invalid(21): {\n  \"name\": \"a\",\n  \"peerDependencies\": {\n      \"react\": \"^18.0.0\"\n  }\n} 1`] = `
+
+[Input]
+  1 | {
+  2 |   "name": "a",
+  3 |   "peerDependencies": {
+  4 |       "react": "^18.0.0"
+  5 |   }
+  6 | }
+
+`;
+
+exports[`invalid(21): {\n  \"name\": \"a\",\n  \"peerDependencies\": {\n      \"react\": \"^18.0.0\"\n  }\n} 2`] = `
+
+Message:
+  1 | {
+  2 |   "name": "a",
+  3 |   "peerDependencies": {
+> 4 |       "react": "^18.0.0"
+    |       ^^^^^^^ Peer dependency \`react\` should also be listed in \`devDependencies\`.
+  5 |   }
+  6 | }
+
+Suggestion 1/1: Add \`react\` to \`devDependencies\` at \`^18.0.0\`.:
+  1 | {
+  2 |   "name": "a",
+  3 |   "devDependencies": {
+  4 |     "react": "^18.0.0"
+  5 |   },
+  6 |   "peerDependencies": {
+  7 |       "react": "^18.0.0"
+  8 |   }
+  9 | }
+
+`;
+
+exports[`invalid(22): {\"devDependencies\": {\"ava\": \"1\", \"xo\": \"1\"}, \"peerDependencies\": {\"react\": \"^18.0.0\"}} 1`] = `
+
+[Input]
+  1 | {"devDependencies": {"ava": "1", "xo": "1"}, "peerDependencies": {"react": "^18.0.0"}}
+
+`;
+
+exports[`invalid(22): {\"devDependencies\": {\"ava\": \"1\", \"xo\": \"1\"}, \"peerDependencies\": {\"react\": \"^18.0.0\"}} 2`] = `
+
+Message:
+> 1 | {"devDependencies": {"ava": "1", "xo": "1"}, "peerDependencies": {"react": "^18.0.0"}}
+    |                                                                   ^^^^^^^ Peer dependency \`react\` should also be listed in \`devDependencies\`.
+
+Suggestion 1/1: Add \`react\` to \`devDependencies\` at \`^18.0.0\`.:
+  1 | {"devDependencies": {"ava": "1", "react": "^18.0.0", "xo": "1"}, "peerDependencies": {"react": "^18.0.0"}}
+
+`;
+
+exports[`invalid(23): {\n\t\"devDependencies\": {\n\t\t\"ava\": \"1\",\n\t\t\"xo\": \"1\"\n\t},\n\t\"peerDependencies\": {\n\t\t\"react\": \"^18.0.0\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"devDependencies": {
+  3 | 		"ava": "1",
+  4 | 		"xo": "1"
+  5 | 	},
+  6 | 	"peerDependencies": {
+  7 | 		"react": "^18.0.0"
+  8 | 	}
+  9 | }
+
+`;
+
+exports[`invalid(23): {\n\t\"devDependencies\": {\n\t\t\"ava\": \"1\",\n\t\t\"xo\": \"1\"\n\t},\n\t\"peerDependencies\": {\n\t\t\"react\": \"^18.0.0\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"devDependencies": {
+  3 | 		"ava": "1",
+  4 | 		"xo": "1"
+  5 | 	},
+  6 | 	"peerDependencies": {
+> 7 | 		"react": "^18.0.0"
+    | 		^^^^^^^ Peer dependency \`react\` should also be listed in \`devDependencies\`.
+  8 | 	}
+  9 | }
+
+Suggestion 1/1: Add \`react\` to \`devDependencies\` at \`^18.0.0\`.:
+   1 | {
+   2 | 	"devDependencies": {
+   3 | 		"ava": "1",
+   4 | 		"react": "^18.0.0",
+   5 | 		"xo": "1"
+   6 | 	},
+   7 | 	"peerDependencies": {
+   8 | 		"react": "^18.0.0"
+   9 | 	}
+  10 | }
 
 `;
 
@@ -287,7 +402,7 @@ Message:
     |                       ^^^ Peer dependency \`a\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`a\` to \`devDependencies\` at \`^1.0.0\`.:
-  1 | {"peerDependencies": {"a": "^1.0.0"}, "peerDependenciesMeta": {"a": null}, "devDependencies": {"a": "^1.0.0"}}
+  1 | {"devDependencies": {"a": "^1.0.0"}, "peerDependencies": {"a": "^1.0.0"}, "peerDependenciesMeta": {"a": null}}
 
 `;
 
@@ -305,7 +420,7 @@ Message:
     |                       ^^^^^ Peer dependency \`foo\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`foo\` to \`devDependencies\` at \`^1.0.0\`.:
-  1 | {"peerDependencies": {"foo": "^1.0.0"}, "devDependencies": {"foo": "^1.0.0"}}
+  1 | {"devDependencies": {"foo": "^1.0.0"}, "peerDependencies": {"foo": "^1.0.0"}}
 
 `;
 
@@ -341,7 +456,7 @@ Message:
     |                       ^^^^^ Peer dependency \`foo\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`foo\` to \`devDependencies\` at \`^1.0.0\`.:
-  1 | {"peerDependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}, "devDependencies": {"foo": "^1.0.0"}}
+  1 | {"devDependencies": {"foo": "^1.0.0"}, "peerDependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}}
 
 `;
 
@@ -352,7 +467,7 @@ Message:
     |                                        ^^^^^ Peer dependency \`bar\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`bar\` to \`devDependencies\` at \`^2.0.0\`.:
-  1 | {"peerDependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}, "devDependencies": {"bar": "^2.0.0"}}
+  1 | {"devDependencies": {"bar": "^2.0.0"}, "peerDependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}}
 
 `;
 
@@ -370,7 +485,7 @@ Message:
     |                                        ^^^^^ Peer dependency \`bar\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`bar\` to \`devDependencies\` at \`^2.0.0\`.:
-  1 | {"peerDependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}, "devDependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}}
+  1 | {"peerDependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}, "devDependencies": {"bar": "^2.0.0", "foo": "^1.0.0"}}
 
 `;
 
@@ -388,7 +503,7 @@ Message:
     |                       ^^^^^^^ Peer dependency \`react\` should also be listed in \`devDependencies\`.
 
 Suggestion 1/1: Add \`react\` to \`devDependencies\` at \`^18.0.0\`.:
-  1 | {"peerDependencies": {"react": "^18.0.0"}, "devDependencies": {"react": "^18.0.0"}}
+  1 | {"devDependencies": {"react": "^18.0.0"}, "peerDependencies": {"react": "^18.0.0"}}
 
 `;
 

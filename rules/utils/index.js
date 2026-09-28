@@ -942,7 +942,64 @@ export function lineIndentOf(sourceCode, node) {
 	return sourceCode.lines[node.loc.start.line - 1].match(/^(\s*)/u)[1];
 }
 
-const privateOrder = fieldOrder.indexOf('private');
+/**
+Get the indentation an object's members sit at, or `undefined` when no member starts its own line, so a member added to it stays on the line of its neighbors. A compact `{"dependencies": {` whose only member's value spans lines counts as that layout.
+
+The indentation comes from the first member that starts its own line rather than from the member an insertion goes next to, since a document can put its first member on the opening line and the rest on lines of their own. A member takes its siblings' indentation rather than the one `detect-indent` infers for the file, which is the most common increase in it rather than the level this object's members sit at. An empty object written across lines gets one level deeper than its own line.
+*/
+function getMemberIndent(sourceCode, objectNode) {
+	const memberOnOwnLine = objectNode.members.find(member => sourceCode.getTokenBefore(member).loc.end.line < member.loc.start.line);
+
+	if (memberOnOwnLine) {
+		return lineIndentOf(sourceCode, memberOnOwnLine);
+	}
+
+	if (objectNode.members.length === 0 && objectNode.loc.start.line < objectNode.loc.end.line) {
+		return lineIndentOf(sourceCode, objectNode) + getIndentString(sourceCode);
+	}
+
+	return undefined;
+}
+
+/**
+Insert the member text `entry` into an object so it becomes the member at `index`, in the object's own layout.
+*/
+function insertMember(fixer, sourceCode, objectNode, {index, entry}) {
+	const {members} = objectNode;
+	const indent = getMemberIndent(sourceCode, objectNode);
+
+	if (members.length === 0) {
+		// The object holds nothing but whitespace, so the entry replaces that whitespace rather than going in front of it, or the closing indent the author wrote would end up alone on a line.
+		const contents = indent === undefined
+			? entry
+			: `\n${indent}${entry}\n${lineIndentOf(sourceCode, objectNode)}`;
+
+		return fixer.replaceTextRange([objectNode.range[0] + 1, objectNode.range[1] - 1], contents);
+	}
+
+	const separator = indent === undefined ? ' ' : `\n${indent}`;
+
+	if (index < members.length) {
+		return fixer.insertTextBefore(members[index], `${entry},${separator}`);
+	}
+
+	return fixer.insertTextAfter(members.at(-1), `,${separator}${entry}`);
+}
+
+/**
+Insert a new top-level `key: value` member where a sorted document holds it, so the fix does not leave `sort-properties` reporting the document it just produced. `value` must already be fully-formed JSON text (e.g. via `JSON.stringify`). An empty root, a root written on one line, and a root with its members on their own lines each keep their layout.
+
+The member goes after the last member `fieldOrder` ranks before `key`, or first when there is none. Anchoring on known fields only keeps an unknown field, which `sort-properties` keeps last, from pulling the member to the end. Anchoring on the first field that follows `key` instead would put the member ahead of any earlier field that is merely written out of order, such as an `exports` behind an `engines`.
+*/
+export function insertRootField(fixer, sourceCode, rootObject, {key, value}) {
+	const order = fieldOrder.indexOf(key);
+	const anchorIndex = rootObject.members.findLastIndex(member => {
+		const memberOrder = fieldOrder.indexOf(getKey(member));
+		return memberOrder !== -1 && memberOrder < order;
+	});
+
+	return insertMember(fixer, sourceCode, rootObject, {index: anchorIndex + 1, entry: `${JSON.stringify(key)}: ${value}`});
+}
 
 /**
 Suggest setting the top-level `private` field to `true`, preserving the document's compact or multiline formatting.
@@ -953,85 +1010,34 @@ export function * setPrivate(fixer, sourceCode, rootObject, privateMember) {
 		return;
 	}
 
-	const newline = '\n';
-	// `private` goes where a sorted document holds it, after the last known field that precedes it, so the member
-	// does not land at the end and leave `sort-properties` reporting the document the fix just produced.
-	// `prefer-side-effects-field` anchors the same way and for the same reason.
-	const anchor = rootObject.members.findLast(member => {
-		const order = fieldOrder.indexOf(getKey(member));
-		return order !== -1 && order < privateOrder;
-	}) ?? rootObject.members.at(-1);
-
-	if (anchor) {
-		const hasMultilineMembers = sourceCode.text.slice(rootObject.range[0], anchor.range[0]).includes('\n');
-		const separator = hasMultilineMembers
-			? `,${newline}${lineIndentOf(sourceCode, anchor)}`
-			: ', ';
-
-		yield fixer.insertTextAfter(anchor, `${separator}"private": true`);
-		return;
-	}
-
-	const contents = sourceCode.text.slice(rootObject.range[0] + 1, rootObject.range[1] - 1);
-
-	if (!contents.includes('\n')) {
-		yield fixer.replaceText(rootObject, '{"private": true}');
-		return;
-	}
-
-	yield fixer.replaceText(rootObject, `{${newline}${getIndentString(sourceCode)}"private": true${newline}}`);
+	yield insertRootField(fixer, sourceCode, rootObject, {key: 'private', value: 'true'});
 }
 
 /**
 Insert a new `key: value` member into a dependency-style group object, creating the group as a new top-level member if `groupMember` is absent. `value` must already be fully-formed JSON text (e.g. via `JSON.stringify`).
+
+Both the entry and a created group go where a sorted document holds them, so the fix does not leave `sort-dependencies` or `sort-properties` reporting what it just produced.
 */
 export function * insertGroupMember(fixer, sourceCode, root, {
 	groupMember, groupName, key, value,
 }) {
-	const newline = '\n';
-	const entryText = `${JSON.stringify(key)}: ${value}`;
+	const entry = `${JSON.stringify(key)}: ${value}`;
 
 	if (groupMember) {
 		const group = groupMember.value;
+		const index = group.members.findIndex(member => compareStrings(getKey(member), key) > 0);
 
-		if (group.members.length === 0) {
-			// An empty group written on one line stays on one line, the way the non-empty branch below
-			// keeps a single-line group inline. Whatever whitespace the group already has goes in front of
-			// the entry, so `{}` gains no padding and `{ }` keeps the space it was written with.
-			const contents = sourceCode.text.slice(group.range[0] + 1, group.range[1] - 1);
-
-			if (!contents.includes('\n')) {
-				yield fixer.insertTextAfterRange([group.range[0] + 1, group.range[0] + 1], `${contents}${entryText}`);
-				return;
-			}
-
-			const outerIndent = lineIndentOf(sourceCode, groupMember);
-			const memberIndent = outerIndent + getIndentString(sourceCode);
-			// The group holds nothing but whitespace, so the entry replaces that whitespace rather than going in
-			// front of it, or the closing indent the author wrote would end up alone on a line.
-			yield fixer.replaceTextRange([group.range[0] + 1, group.range[1] - 1], `${newline}${memberIndent}${entryText}${newline}${outerIndent}`);
-			return;
-		}
-
-		const prefix = getIndentPrefix(sourceCode, group.members[0]);
-		// A single-line group has no per-member indent, so keep the new member on the same line.
-		const separator = prefix === '' ? ' ' : newline + prefix;
-		yield fixer.insertTextAfter(group.members.at(-1), `,${separator}${entryText}`);
+		yield insertMember(fixer, sourceCode, group, {index: index === -1 ? group.members.length : index, entry});
 		return;
 	}
 
-	const groupKey = JSON.stringify(groupName);
+	// The created group nests its entry one level deeper than the root's members, and the root starts at the beginning of its line, so the root's member indentation is that level. `root` always has at least one member: the rule's own trigger (the peer/runtime dependency group) is itself a member of `root`.
+	const indent = getMemberIndent(sourceCode, root);
+	const group = indent === undefined
+		? `{${entry}}`
+		: `{\n${indent}${indent}${entry}\n${indent}}`;
 
-	// The root is written on one line, so the new group goes on that line too.
-	if (!sourceCode.getText(root).includes('\n')) {
-		yield fixer.insertTextAfter(root.members.at(-1), `, ${groupKey}: {${entryText}}`);
-		return;
-	}
-
-	const indent = getIndentString(sourceCode);
-
-	// `root` always has at least one member: the rule's own trigger (the peer/runtime dependency group) is itself a member of `root`.
-	yield fixer.insertTextAfter(root.members.at(-1), `,${newline}${indent}${groupKey}: {${newline}${indent}${indent}${entryText}${newline}${indent}}`);
+	yield insertRootField(fixer, sourceCode, root, {key: groupName, value: group});
 }
 
 /**
