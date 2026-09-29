@@ -4,8 +4,9 @@ import {
 	findMember,
 	getKey,
 	countEffectiveMembers,
+	getRootFieldAnchor,
+	insertRootField,
 	iterateEffectiveMembers,
-	lineIndentOf,
 	removeMemberAndDuplicates,
 	removeShadowedDuplicates,
 } from './utils/index.js';
@@ -42,23 +43,19 @@ const getMinimumVersion = value => {
 	return semver.minVersion(range)?.version;
 };
 
-function * migrateToPackageManager(fixer, sourceCode, {engines, member, packageManagerValue}) {
-	const packageManagerText = `"packageManager": ${JSON.stringify(packageManagerValue)}`;
+function * migrateToPackageManager(fixer, sourceCode, {root, engines, member, packageManagerValue}) {
+	const value = JSON.stringify(packageManagerValue);
+	const isSoleEngine = countEffectiveMembers(engines.value) === 1;
 
-	if (countEffectiveMembers(engines.value) === 1) {
-		yield fixer.replaceText(engines, packageManagerText);
+	// Inserting right after an `engines` that goes away would touch the removed range, so the sole engine turns into `packageManager` in place, which is where a sorted document holds it anyway.
+	if (isSoleEngine && getRootFieldAnchor(root, 'packageManager') === engines) {
+		yield fixer.replaceText(engines, `"packageManager": ${value}`);
 		yield * removeShadowedDuplicates(fixer, sourceCode, engines);
 		return;
 	}
 
-	const lineStart = sourceCode.text.lastIndexOf('\n', engines.range[0] - 1) + 1;
-	const memberPrefix = sourceCode.text.slice(lineStart, engines.range[0]);
-	const separator = memberPrefix.trim() === ''
-		? `,\n${lineIndentOf(sourceCode, engines)}`
-		: ', ';
-
-	yield fixer.insertTextAfter(engines, `${separator}${packageManagerText}`);
-	yield * removeMemberAndDuplicates(fixer, sourceCode, member);
+	yield insertRootField(fixer, sourceCode, root, {key: 'packageManager', value});
+	yield * removeMemberAndDuplicates(fixer, sourceCode, isSoleEngine ? engines : member);
 }
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -117,6 +114,7 @@ const create = context => ({
 						data: {packageManager: packageManagerValue},
 						* fix(fixer) {
 							yield * migrateToPackageManager(fixer, sourceCode, {
+								root,
 								engines,
 								member,
 								packageManagerValue,

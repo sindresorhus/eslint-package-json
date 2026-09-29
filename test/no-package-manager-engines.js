@@ -1,8 +1,25 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Linter} from 'eslint';
+import json from '@eslint/json';
+import plugin from '../index.js';
 import {getTester} from './utils/test.js';
 
-const {test} = getTester(import.meta);
+const {test: snapshotTest} = getTester(import.meta);
+const linter = new Linter();
+const lint = (code, rules) => linter.verify(code, [{
+	files: ['**'],
+	language: 'json/json',
+	plugins: {json, 'package-json': plugin},
+	rules,
+}], {filename: 'package.json'});
+const applyMigration = code => {
+	const [message] = lint(code, {'package-json/no-package-manager-engines': 'error'});
+	const {fix} = message.suggestions.find(suggestion => suggestion.messageId === 'migrate');
+	return code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]);
+};
 
-test.snapshot({
+snapshotTest.snapshot({
 	valid: [
 		// Only `node` is allowed.
 		'{"engines": {"node": ">=18"}}',
@@ -88,4 +105,41 @@ test.snapshot({
 		'{"engines": {"npm": "latest"}}',
 		'{"engines": {"npm": true}}',
 	],
+});
+
+test('the migration keeps a sorted document sorted', () => {
+	const sortRules = {'package-json/sort-properties': 'error'};
+	const inputs = [
+		'{"name": "a", "engines": {"node": ">=20", "pnpm": ">=9.0.0"}, "os": ["linux"], "scripts": {}}',
+		'{"name": "a", "engines": {"pnpm": ">=9.0.0"}, "os": ["linux"], "scripts": {}}',
+		'{"name": "a", "engines": {"pnpm": ">=9.0.0"}, "devEngines": {"runtime": {"name": "node"}}, "publishConfig": {"access": "public"}}',
+		'{"name": "a", "engines": {"npm": ">=10"}, "scripts": {}}',
+		'{"name": "a", "engines": {"node": ">=20", "npm": ">=10"}}',
+		'{"engines": {"npm": ">=10"}}',
+		'{"engines": {"npm": ">=8"}, "engines": {"yarn": ">=1"}, "cpu": ["x64"]}',
+		'{\n\t"name": "a",\n\t"engines": {\n\t\t"node": ">=20",\n\t\t"pnpm": ">=9.0.0"\n\t},\n\t"os": [\n\t\t"linux"\n\t],\n\t"scripts": {}\n}',
+		'{\n\t"name": "a",\n\t"engines": {\n\t\t"pnpm": ">=9.0.0"\n\t},\n\t"publishConfig": {}\n}',
+	];
+
+	const isReported = code => lint(code, sortRules).length > 0;
+
+	assert.deepEqual(inputs.filter(code => isReported(code)), []);
+	// A document that does not parse is reported too, so this also proves every output is valid JSON.
+	assert.deepEqual(inputs.map(code => applyMigration(code)).filter(output => isReported(output)), []);
+});
+
+test('the migration puts `packageManager` after the fields a sorted document holds before it', () => {
+	assert.equal(
+		applyMigration('{"name": "a", "engines": {"node": ">=20", "pnpm": ">=9.0.0"}, "os": ["linux"], "scripts": {}}'),
+		'{"name": "a", "engines": {"node": ">=20"}, "os": ["linux"], "packageManager": "pnpm@9.0.0", "scripts": {}}',
+	);
+	assert.equal(
+		applyMigration('{"name": "a", "engines": {"pnpm": ">=9.0.0"}, "os": ["linux"], "scripts": {}}'),
+		'{"name": "a", "os": ["linux"], "packageManager": "pnpm@9.0.0", "scripts": {}}',
+	);
+	assert.equal(applyMigration('{"engines": {"npm": ">=10"}}'), '{"packageManager": "npm@10.0.0"}');
+	assert.equal(
+		applyMigration('{\n\t"name": "a",\n\t"engines": {\n\t\t"pnpm": ">=9.0.0"\n\t},\n\t"publishConfig": {}\n}'),
+		'{\n\t"name": "a",\n\t"publishConfig": {},\n\t"packageManager": "pnpm@9.0.0"\n}',
+	);
 });

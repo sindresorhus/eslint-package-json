@@ -980,17 +980,26 @@ export function insertMember(fixer, sourceCode, objectNode, {index, entry}) {
 }
 
 /**
-Insert a new top-level `key: value` member where a sorted document holds it, so the fix does not leave `sort-properties` reporting the document it just produced. `value` must already be fully-formed JSON text (e.g. via `JSON.stringify`). An empty root, a root written on one line, and a root with its members on their own lines each keep their layout.
-
-The member goes after the last member `fieldOrder` ranks before `key`, or first when there is none. Anchoring on known fields only keeps an unknown field, which `sort-properties` keeps last, from pulling the member to the end. Anchoring on the first field that follows `key` instead would put the member ahead of any earlier field that is merely written out of order, such as an `exports` behind an `engines`.
+Get the top-level member that `insertRootField` puts a new `key` right after: the last member `fieldOrder` ranks before `key`, or `undefined` when there is none and the new member goes first.
 */
-export function insertRootField(fixer, sourceCode, rootObject, {key, value}) {
+export function getRootFieldAnchor(rootObject, key) {
 	const order = fieldOrder.indexOf(key);
-	const anchorIndex = rootObject.members.findLastIndex(member => {
+
+	return rootObject.members.findLast(member => {
 		const memberOrder = fieldOrder.indexOf(getKey(member));
 		return memberOrder !== -1 && memberOrder < order;
 	});
+}
 
+/**
+Insert a new top-level `key: value` member where a sorted document holds it, so the fix does not leave `sort-properties` reporting the document it just produced. `value` must already be fully-formed JSON text (e.g. via `JSON.stringify`). An empty root, a root written on one line, and a root with its members on their own lines each keep their layout.
+
+The member goes after the last member `fieldOrder` ranks before `key`, or first when there is none. Anchoring on known fields only keeps an unknown field, which `sort-properties` keeps last, from pulling the member to the end. Anchoring on the first field that follows `key` instead would put the member ahead of any earlier field that is merely written out of order, such as an `exports` behind an `engines`.
+
+The rank is always the default `fieldOrder`, so a document sorted with a custom `sort-properties` `order` can get the member in a place that order reports.
+*/
+export function insertRootField(fixer, sourceCode, rootObject, {key, value}) {
+	const anchorIndex = rootObject.members.indexOf(getRootFieldAnchor(rootObject, key));
 	return insertMember(fixer, sourceCode, rootObject, {index: anchorIndex + 1, entry: `${JSON.stringify(key)}: ${value}`});
 }
 
