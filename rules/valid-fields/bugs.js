@@ -33,9 +33,8 @@ export function * check(root) {
 
 	const {value} = bugs;
 
-	// An empty string or object is left to `no-empty-fields`. Npm replaces a falsy `bugs` with the issues URL of a hosted `repository`, and deletes an empty object.
 	if (value.type === 'String') {
-		if (value.value !== '' && !isUrlOrEmail(value.value)) {
+		if (!isUrlOrEmail(value.value)) {
 			yield {
 				node: value,
 				messageId: STRING_FORMAT_MESSAGE_ID,
@@ -50,10 +49,6 @@ export function * check(root) {
 			node: value,
 			messageId: TYPE_MESSAGE_ID,
 		};
-		return;
-	}
-
-	if (value.members.length === 0) {
 		return;
 	}
 

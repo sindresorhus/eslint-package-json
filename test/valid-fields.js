@@ -422,6 +422,32 @@ test.snapshot({
 		// Npm resolves an optional peer declared only in `peerDependenciesMeta` from the tree and links it, so the entry is not orphaned (`debug` declares `supports-color` this way).
 		'{"peerDependenciesMeta": {"supports-color": {"optional": true}}}',
 		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true}, "b": {"optional": true}}}',
+		// A top-level field that is empty is `no-empty-fields`' report, whatever else is wrong with its type, so it is not repeated here.
+		'{"name": ""}',
+		'{"version": ""}',
+		'{"license": ""}',
+		'{"repository": []}',
+		'{"homepage": ""}',
+		'{"sideEffects": {}}',
+		'{"scripts": []}',
+		'{"name": {}}',
+		'{"name": []}',
+		'{"version": {}}',
+		'{"version": []}',
+		'{"readme": {}}',
+		'{"workspaces": {}}',
+		'{"funding": ""}',
+		'{"licence": ""}',
+		'{"exports": ""}',
+		'{"man": ""}',
+		'{"os": []}',
+		'{"cpu": ""}',
+		'{"packageManager": ""}',
+		'{"repository": {}}',
+		'{"funding": {}}',
+		'{"author": {}}',
+		'{"keywords": {}}',
+		'{"license": "MITT", "license": ""}',
 	],
 	invalid: [
 		// A recognized protocol is required, not merely a hostname.
@@ -435,13 +461,11 @@ test.snapshot({
 		'{"name": "foo bar"}',
 		'{"name": "node_modules"}',
 		'{"name": "@scope/"}',
-		'{"name": ""}',
 		'{"name": "excited!"}',
 		// `version`
 		'{"version": "1.0"}',
 		'{"version": "^1.0.0"}',
 		'{"version": "latest"}',
-		'{"version": ""}',
 		'{"version": "v1.0.0.0"}',
 		// `semver.clean` is case-sensitive, so an uppercase `V` is not a prefix npm strips. It cleans to `null`
 		// and the publish is refused, which is not the same claim as "not canonical".
@@ -464,7 +488,6 @@ test.snapshot({
 		// `license`
 		'{"license": "MITT"}',
 		'{"license": "Foo Bar"}',
-		'{"license": ""}',
 		// `SEE LICENSE IN` without a filename.
 		'{"license": "SEE LICENSE IN "}',
 		'{"license": {"type": "MIT", "url": "https://example.com"}}',
@@ -482,7 +505,6 @@ test.snapshot({
 		'{"repository": "mailto:owner@example.com"}',
 		// Neither a string nor an object.
 		'{"repository": 123}',
-		'{"repository": []}',
 		'{"repository": null}',
 		// `homepage`
 		'{"homepage": "git@github.com:user/repo.git"}',
@@ -502,7 +524,6 @@ test.snapshot({
 		'{"homepage": "mailto:a@b.com"}',
 		'{"homepage": "not a url"}',
 		'{"homepage": 42}',
-		'{"homepage": ""}',
 		// `bugs`
 		'{"bugs": 123}',
 		'{"bugs": ["https://example.com"]}',
@@ -623,7 +644,6 @@ test.snapshot({
 		'{"sideEffects": "true"}',
 		'{"sideEffects": "./src/polyfill.js"}',
 		'{"sideEffects": 0}',
-		'{"sideEffects": {}}',
 		'{"sideEffects": ["./src/polyfill.js", 1]}',
 		'{"sideEffects": ["./src/polyfill.js", null]}',
 		// `engines`
@@ -688,7 +708,6 @@ test.snapshot({
 		// An unrecognized package manager name.
 		'{"packageManager": "deno@1.0.0"}',
 		// `scripts`
-		'{"scripts": []}',
 		'{"scripts": "build"}',
 		'{"scripts": {"build": 1}}',
 		'{"scripts": {"build": "tsc", "test": false}}',
@@ -796,8 +815,6 @@ test.snapshot({
 		// `npm publish` throws `name field must be a string`, so a non-string name cannot be published at all.
 		'{"name": 42}',
 		'{"name": null}',
-		'{"name": {}}',
-		'{"name": []}',
 		// A lone surrogate is a legal JSON string escape but cannot be percent-encoded, so the name validator throws on it. The rule must report, not crash.
 		String.raw`{"name": "\ud800"}`,
 		String.raw`{"name": "@scope/\udc00"}`,
@@ -805,8 +822,6 @@ test.snapshot({
 		// published at all. A `null` is coerced to `""`, which is just as unpublishable.
 		'{"version": 1}',
 		'{"version": null}',
-		'{"version": {}}',
-		'{"version": []}',
 		'{"version": true}',
 		// A surrogate PAIR is well-formed and reaches the validator, which reports it as an invalid name rather than crashing.
 		'{"name": "\u{1F600}"}',
@@ -835,7 +850,6 @@ test.snapshot({
 		// Npm calls `.trim()` on `readme` to derive the description, so a non-string throws
 		// `description.trim is not a function` and the package cannot be published. A `null` is skipped.
 		'{"readme": 42}',
-		'{"readme": {}}',
 		'{"readme": ["# x"]}',
 		'{"readme": true}',
 		// Npm reads a `null` entry in a person list as a person, so it throws
@@ -859,7 +873,6 @@ test.snapshot({
 		// anything else fails to install with `EWORKSPACESCONFIG`. Verified with `npm install` on both majors.
 		'{"workspaces": {"nohoist": ["**/x"]}}',
 		'{"workspaces": {"packages": "pkgs/*"}}',
-		'{"workspaces": {}}',
 		'{"workspaces": {"packages": [1]}}',
 		'{"os": "nope"}',
 		// `npm fund` drops a funding entry whose URL does not parse or is not `http:`/`https:`, so these are funding
@@ -867,7 +880,6 @@ test.snapshot({
 		'{"funding": "github:sindresorhus"}',
 		'{"funding": "example.com"}',
 		'{"funding": "mailto:user@example.com"}',
-		'{"funding": ""}',
 		'{"funding": "https://"}',
 		'{"funding": {"url": "not a url"}}',
 		'{"funding": [{"url": "ftp://example.com"}, "https://example.com"]}',
@@ -1019,5 +1031,7 @@ test.snapshot({
 		'{"bundleDependencies": {"bar": true}}',
 		// The entry npm reads is orphaned, and removing it takes the shadowed duplicate too, which would otherwise take its place.
 		'{"peerDependencies": {"b": "1"}, "peerDependenciesMeta": {"a": {"optional": true}, "a": {}, "b": {"optional": true}}}',
+		// Only the value `no-empty-fields` reports is skipped: the effective duplicate here is not empty.
+		'{"license": "", "license": "MITT"}',
 	],
 });

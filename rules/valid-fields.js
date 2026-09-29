@@ -1,4 +1,4 @@
-import {getRootObject} from './utils/index.js';
+import {getKey, getRootObject} from './utils/index.js';
 import * as name from './valid-fields/name.js';
 import * as version from './valid-fields/version.js';
 import * as private_ from './valid-fields/private.js';
@@ -88,6 +88,13 @@ const namespaceReport = (field, report) => {
 	return namespaced;
 };
 
+/**
+Whether a value is one `no-empty-fields` reports: an empty string, object, or array.
+*/
+const isEmptyValue = node => (node.type === 'String' && node.value === '')
+	|| (node.type === 'Object' && node.members.length === 0)
+	|| (node.type === 'Array' && node.elements.length === 0);
+
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({
 	Document(node) {
@@ -97,9 +104,16 @@ const create = context => ({
 			return;
 		}
 
+		// An empty top-level field is `no-empty-fields`' report whatever else is wrong with it, so a report on that value is dropped here rather than repeated. An empty `keywords` string is the exception: its own check reports it as the one empty keyword npm splits it into.
+		const emptyValues = new Set(root.members
+			.filter(member => isEmptyValue(member.value) && !(getKey(member) === 'keywords' && member.value.type === 'String'))
+			.map(member => member.value));
+
 		for (const [field, validator] of Object.entries(fields)) {
 			for (const report of validator.check(root, context)) {
-				context.report(namespaceReport(field, report));
+				if (!emptyValues.has(report.node)) {
+					context.report(namespaceReport(field, report));
+				}
 			}
 		}
 	},

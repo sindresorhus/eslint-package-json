@@ -23,8 +23,7 @@ export function * check(root) {
 		return;
 	}
 
-	// An empty string is left to `no-empty-fields`.
-	if (type.value.value === '' || validTypes.has(type.value.value)) {
+	if (validTypes.has(type.value.value)) {
 		return;
 	}
 

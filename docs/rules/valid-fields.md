@@ -12,6 +12,8 @@ Validate the structure and values of individual `package.json` fields when they 
 
 Each field is validated only when it exists; use [`require-fields`](require-fields.md) to enforce presence.
 
+An empty top-level field (`""`, `{}`, or `[]`) is left to [`no-empty-fields`](no-empty-fields.md), except an empty `keywords` string, which npm reads as one empty keyword.
+
 Semantic checks include repository URLs and `exports`/`imports` targets. Some checks that are not obvious:
 
 - `bugs`: a string must be a URL or an email address, and an object must hold a URL in `url` and an email address in `email`, since npm silently drops anything else. The old `web` and `name` aliases for `url` are not supported.

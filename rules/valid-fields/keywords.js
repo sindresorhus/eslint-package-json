@@ -81,8 +81,7 @@ export function * check(root, context) {
 
 		const keyword = element.keyword ?? valueNode.value;
 
-		// Npm keeps every keyword it cannot read as an empty string, so a blank one is what it drops; one made of
-		// whitespace is published as written and belongs to the message below, which points at the padding.
+		// Npm drops every keyword that is not a non-empty string, so an empty one never reaches the registry. One made of whitespace is published as written and belongs to the message below, which points at the padding.
 		if (keyword === '') {
 			yield {
 				node: valueNode,
