@@ -8,9 +8,11 @@ import {
 } from './utils/index.js';
 
 const MESSAGE_ID = 'sort-scripts';
+const SUGGESTION_ID = 'sort';
 
 const messages = {
 	[MESSAGE_ID]: 'Script names should be sorted alphabetically.',
+	[SUGGESTION_ID]: 'Sort the scripts alphabetically.',
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -44,13 +46,19 @@ const create = context => {
 				return;
 			}
 
+			// A suggestion rather than a fix: npm-run-all's `run-s "build:*"` runs the matching scripts in the order they are written, so sorting them can change the order they run in.
 			context.report({
 				node: scripts,
 				messageId: MESSAGE_ID,
-				fix: fixer => fixer.replaceText(
-					scripts,
-					buildReordered(sourceCode, scripts, sortedMembers),
-				),
+				suggest: [
+					{
+						messageId: SUGGESTION_ID,
+						fix: fixer => fixer.replaceText(
+							scripts,
+							buildReordered(sourceCode, scripts, sortedMembers),
+						),
+					},
+				],
 			});
 		},
 	};
@@ -65,7 +73,7 @@ const config = {
 			description: 'Enforce alphabetical ordering of scripts.',
 			recommended: false,
 		},
-		fixable: 'code',
+		hasSuggestions: true,
 		schema: [],
 		messages,
 		languages: ['json/json'],

@@ -36,5 +36,7 @@ test.snapshot({
 		'{\n  "scripts": {\n\t\t"test": "node --test",\n\t\t"build": "tsc"\n  }\n}',
 		// Preserve zero indentation for multiline members.
 		'{\n"scripts": {\n"test": "node --test",\n"build": "tsc"\n}\n}',
+		// The `run-s "build:*"` of npm-run-all runs the matching scripts in the order they are written, so sorting is only a suggestion.
+		'{"scripts": {"build": "run-s build:*", "build:clean": "del dist", "build:bundle": "rollup -c"}}',
 	],
 });
