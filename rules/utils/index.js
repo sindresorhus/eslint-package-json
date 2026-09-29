@@ -30,7 +30,7 @@ export const fieldOrder = [
 	'bugs',
 	'funding',
 	'author',
-	// A legacy plural npm still passes through, next to the singular it duplicates.
+	// A legacy plural npm still passes through, next to the singular it duplicates. It is a field and not a typo of `author`: renaming it hands npm an array where `stringifyPerson` expects one person, which normalizes to `{}`.
 	'authors',
 	'contributors',
 	'maintainers',
@@ -57,10 +57,7 @@ export const fieldOrder = [
 	'files',
 	'workspaces',
 	'keywords',
-	// The dependency groups sit in the same order `sort-dependencies` uses by default, so a manifest written
-	// the way this plugin documents is not rewritten by `sort-properties`. Npm's own `depTypes` is
-	// `dependencies`, `optionalDependencies`, `devDependencies`, `peerDependencies`, which differs on the
-	// first pair, but `sort-dependencies` exposes its list as an option and this is its default.
+	// The dependency groups follow `dependencyTypes`, the plugin's canonical order for them, with `peerDependenciesMeta` after the group it describes. Npm's own `depTypes` is `dependencies`, `optionalDependencies`, `devDependencies`, `peerDependencies`, which swaps the middle two.
 	'dependencies',
 	'devDependencies',
 	'optionalDependencies',
@@ -83,14 +80,10 @@ export const knownFields = new Set([
 	'engineStrict',
 	'licenses',
 	'modules',
-	'bundleDependencies',
-	// Common runtime/tool config keys and legacy plurals that are edit-distance 1 from a real field.
-	// `authors` is the historical plural of `author`: npm passes it through, and renaming it to `author`
-	// hands npm an array where `stringifyPerson` expects one person, which normalizes to `{}`.
+	// Common runtime/tool config keys and alternate spellings that are edit-distance 1 from a real field.
 	// `licence` is the spelling npm reads a license from when `license` is absent, so it is a field and not
 	// a misspelling, however it looks beside `license`.
 	'bun',
-	'authors',
 	'licence',
 ]);
 
