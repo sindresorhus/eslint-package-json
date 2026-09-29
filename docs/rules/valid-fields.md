@@ -29,6 +29,7 @@ Semantic checks include repository URLs and `exports`/`imports` targets. Some ch
 - `homepage`: a value without a scheme is reported, since npm publishes it as `http://`.
 - `private`: must be a boolean, since `"false"` is truthy and blocks publishing.
 - `packageManager`: must be a string.
+- `peerDependenciesMeta`: an entry without a `peerDependencies` entry is reported, unless it is `"optional": true`.
 
 Condition ordering and type coverage belong to [`require-default-condition`](require-default-condition.md) and [`require-types-in-exports`](require-types-in-exports.md). Legacy entry-point fields (`main`, `module`, `browser`, `types`, and `typings`) are intentionally ignored.
 

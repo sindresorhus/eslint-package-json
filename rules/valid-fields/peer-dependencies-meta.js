@@ -1,6 +1,7 @@
 import {
 	findMember,
 	getKey,
+	iterateEffectiveMembers,
 	removeEntryAndEmptyContainer,
 	removeMemberAndDuplicates,
 } from '../utils/index.js';
@@ -29,10 +30,13 @@ export function * check(root, context) {
 		? peerDependencies.value.members.map(member => getKey(member))
 		: []);
 
-	for (const member of meta.value.members) {
+	// Effective members, since whether an entry is orphaned depends on the value npm reads, and a shadowed duplicate is not one. Removing an effective entry then has to take its duplicates too, or one would be promoted into its place.
+	for (const member of iterateEffectiveMembers(meta.value)) {
 		const name = getKey(member);
+		const optional = member.value.type === 'Object' ? findMember(member.value, 'optional') : undefined;
 
-		if (!peers.has(name)) {
+		// An optional peer declared only here is how a package declares a peer it can use but does not require (`@types/react` beside `react`, `supports-color` in `debug`): pnpm and Yarn honor it, and npm's `linked` install strategy resolves it from the tree and links it, so it is not orphaned.
+		if (!peers.has(name) && !(optional?.value.type === 'Boolean' && optional.value.value)) {
 			yield {
 				node: member.name,
 				messageId: MESSAGE_ID,
@@ -47,12 +51,6 @@ export function * check(root, context) {
 				],
 			};
 		}
-
-		if (member.value.type !== 'Object') {
-			continue;
-		}
-
-		const optional = findMember(member.value, 'optional');
 
 		if (optional?.value.type === 'Boolean' && optional.value.value === false) {
 			yield {

@@ -403,6 +403,8 @@ test.snapshot({
 		'{"os": ["openharmony"], "cpu": ["arm64"]}',
 		'{"os": ["linux"], "cpu": ["mips64el"]}',
 		'{"os": ["cygwin", "haiku"]}',
+		// Only the entry npm reads counts, and here it is an optional peer. The shadowed duplicate is not orphaned on its own.
+		'{"peerDependencies": {"b": "1"}, "peerDependenciesMeta": {"a": {"optional": false}, "a": {"optional": true}, "b": {"optional": true}}}',
 		// The napi-rs WebAssembly packages (`@tailwindcss/oxide-wasm32-wasi`, `@unrs/resolver-binding-wasm32-wasi`) publish this.
 		'{"cpu": ["wasm32"]}',
 		// A negated `!any` excludes a platform nothing is named, so it restricts nothing.
@@ -417,6 +419,9 @@ test.snapshot({
 		// `libnpmpublish` throws `EUSAGE` for `provenance: true` on a first publish unless `access` is `public`, so it is not redundant on an unscoped package.
 		'{"name": "foo", "publishConfig": {"access": "public", "provenance": true}}',
 		'{"name": "foo", "publishConfig": {"access": "public"}}',
+		// Npm resolves an optional peer declared only in `peerDependenciesMeta` from the tree and links it, so the entry is not orphaned (`debug` declares `supports-color` this way).
+		'{"peerDependenciesMeta": {"supports-color": {"optional": true}}}',
+		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true}, "b": {"optional": true}}}',
 	],
 	invalid: [
 		// A recognized protocol is required, not merely a hostname.
@@ -737,10 +742,8 @@ test.snapshot({
 		'{"dependencies": {"foo": {"version": "1.0.0"}}}',
 		'{"peerDependencies": {"foo": true}}',
 		// `peerDependenciesMeta`
-		'{"peerDependenciesMeta": {"a": {"optional": true}}}',
 		// The redundant value is still reported alongside the orphaned entry.
 		'{"peerDependenciesMeta": {"a": {"optional": false}}}',
-		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": true}, "b": {"optional": true}}}',
 		'{"peerDependencies": {"a": "1.0.0"}, "peerDependenciesMeta": {"a": {"optional": false}}}',
 		`{
 	"peerDependencies": {
@@ -1014,5 +1017,7 @@ test.snapshot({
 		'{"bugs": {"web": "https://example.com/issues"}}',
 		'{"dependencies": {"foo": "1"}, "bundleDependencies": ["bar"], "bundledDependencies": ["foo"]}',
 		'{"bundleDependencies": {"bar": true}}',
+		// The entry npm reads is orphaned, and removing it takes the shadowed duplicate too, which would otherwise take its place.
+		'{"peerDependencies": {"b": "1"}, "peerDependenciesMeta": {"a": {"optional": true}, "a": {}, "b": {"optional": true}}}',
 	],
 });
