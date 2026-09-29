@@ -8,7 +8,7 @@
 
 <!-- end auto-generated rule header -->
 
-Validate the structure and values of individual `package.json` fields when they are present. Each check is objective correctness with no options and nothing to opt out of, so they live together in one rule. Fields that need options or encode an opinion have their own dedicated rules instead.
+Validate the structure and values of individual `package.json` fields when they are present. Most checks catch what npm or Node reject or silently drop; a few, like the `keywords` style checks, are conventions. None take options, so they live together in one rule. Checks that need options have their own dedicated rules instead.
 
 Each field is validated only when it exists; use [`require-fields`](require-fields.md) to enforce presence.
 
