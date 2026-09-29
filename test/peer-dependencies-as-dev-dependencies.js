@@ -47,6 +47,9 @@ snapshotTest.snapshot({
 		'{"peerDependencies": {"foo": "^1.0.0"}, "peerDependenciesMeta": {"foo": {"optional": true}}}',
 		// A duplicated peer key resolves to its final range, which matches the devDependency; the shadowed earlier range must not raise a spurious mismatch.
 		'{"peerDependencies": {"foo": "^1.0.0", "foo": "^2.0.0"}, "devDependencies": {"foo": "^2.0.0"}}',
+		// A peer that is also a runtime dependency is installed for development anyway, and adding it to `devDependencies` would make `no-duplicate-dependencies` report it.
+		'{"name": "a", "dependencies": {"react": "^18.0.0"}, "peerDependencies": {"react": "^18.0.0"}}',
+		'{"name": "a", "optionalDependencies": {"react": "^18.0.0"}, "peerDependencies": {"react": "^18.0.0"}}',
 	],
 	invalid: [
 		// A non-object `peerDependenciesMeta` entry must not break the optional-peer lookup.

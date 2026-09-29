@@ -8,7 +8,7 @@
 
 <!-- end auto-generated rule header -->
 
-Every package listed in `peerDependencies` should also appear in `devDependencies`. Peer dependencies are not automatically installed, so without a matching `devDependencies` entry the package won't be available during local development and testing.
+Every package listed in `peerDependencies` should also appear in `devDependencies`. npm installs a missing peer at whatever version resolves that day, so a `devDependencies` entry pins the version you test against, and keeps it installed with `legacy-peer-deps` or package managers that skip peers, such as Yarn. A peer that is also in `dependencies` or `optionalDependencies` is exempt.
 
 When a peer dependency is also in `devDependencies`, the development version range should overlap the peer range, so that you develop and test against a version you actually claim to support.
 

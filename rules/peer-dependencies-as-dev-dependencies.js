@@ -20,6 +20,8 @@ const messages = {
 	[ALIGN_SUGGESTION_ID]: 'Set the `devDependencies` range to `{{range}}`.',
 };
 
+const runtimeDependencyTypes = ['dependencies', 'optionalDependencies'];
+
 /**
 Get the names marked `optional: true` in a `peerDependenciesMeta` object.
 */
@@ -82,6 +84,11 @@ const create = context => {
 				if (!devMember) {
 					// An optional peer is not expected to be installed for development, so its absence from `devDependencies` is fine.
 					if (optionalPeers.has(name)) {
+						continue;
+					}
+
+					// A peer that is also a runtime dependency is installed for development anyway, and a `devDependencies` entry for it would be a duplicate.
+					if (runtimeDependencyTypes.some(groupName => findMember(findMember(root, groupName)?.value, name))) {
 						continue;
 					}
 
