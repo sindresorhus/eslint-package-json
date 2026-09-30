@@ -341,7 +341,7 @@ const trickyDocuments = [
 	String.raw`{"files":["dist\\a.js"]}`,
 	'{\n    "dependencies": {\n        "b": "^1.0.0",\n        "a": "^1.0.0"\n    }\n}',
 	'{\n  "files": [\n    "b.js",\n    "a.js"\n  ]\n}',
-	// A blank line inside a container is not indentation. A rewrite that took the text after the last line break as the entry indent would write one blank line before every entry.
+	// A blank line inside a container is not indentation. A rewrite that took all the whitespace before the first entry as the entry indent would write one blank line before every entry.
 	'{\n\t"dependencies": {\n\n\t\t"b": "^1.0.0",\n\t\t"a": "^1.0.0"\n\t}\n}',
 	'{\n\n\n\t"dependencies": {\n\t\t"b": "^1.0.0",\n\t\t"a": "^1.0.0"\n\t}\n}',
 ];
@@ -386,7 +386,7 @@ test('every autofix and suggestion keeps the document valid JSON', () => {
 	}
 });
 
-// A container is rewritten whole, so its interior indentation is re-derived rather than copied. Returning the text after the last line break as that indentation would carry a blank line the author wrote into every entry.
+// A container is rewritten whole, so its interior indentation is re-derived rather than copied. Taking all the whitespace before the first entry as that indentation would carry a blank line the author wrote into every entry.
 test('a sort fix does not turn one blank line into one per entry', () => {
 	const linter = new Linter();
 	const config = [plugin.configs.all];
