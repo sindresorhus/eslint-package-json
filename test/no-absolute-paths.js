@@ -33,14 +33,12 @@ snapshotTest.snapshot({
 		'{"exports": {".": {"import": "/abs/index.mjs", "import": "./index.mjs"}}}',
 		// A `browser` replacement map holds paths as its string values; a `false` shim is not a path.
 		'{"browser": {"fs": false, "lodash": "./index.js"}}',
-		// An `exports` or `imports` target is `valid-fields`' to report: it names the field, says what the
-		// target has to start with, and carries the rewrite, so a path rule stays out of it.
+		// An `exports` or `imports` target is `valid-fields`' to report: it names the field, says what the target has to start with, and carries the rewrite, so a path rule stays out of it.
 		'{"exports": {".": "/abs/index.js"}}',
 		'{"exports": {"import": "/abs/index.mjs"}}',
 		'{"exports": ["./index.js", "/abs/fallback.js"]}',
 		'{"imports": {"#a": "/abs/index.js"}}',
-		// A leading slash on a file npm includes anyway is not a spelling problem: the entry is removable,
-		// which is what `no-redundant-files` reports, so rewriting the spelling would only keep it.
+		// A leading slash on a file npm includes anyway is not a spelling problem: the entry is removable, which is what `no-redundant-files` reports, so rewriting the spelling would only keep it.
 		'{"files": ["/LICENSE"]}',
 		'{"files": ["/package.json"]}',
 		'{"files": ["./Readme.MD"]}',
@@ -65,8 +63,7 @@ snapshotTest.snapshot({
 		'{"man": "/Users/me/npm.1"}',
 		'{"man": ["/Users/me/npm.1"]}',
 		'{"man": ["C:/tools/npm.1", "./npm.1"]}',
-		// A `files` pattern is already relative to the package root, so the slash is redundant. A file npm
-		// includes anyway is not reported here at all, since the entry is removable rather than misspelled.
+		// A `files` pattern is already relative to the package root, so the slash is redundant. A file npm includes anyway is not reported here at all, since the entry is removable rather than misspelled.
 		'{"files": ["/dist"]}',
 		'{"files": ["/CHANGELOG.md"]}',
 		'{"files": ["/docs/README.md"]}',
@@ -92,8 +89,7 @@ snapshotTest.snapshot({
 });
 
 test('a `browser` replacement map is scanned the way `JSON.parse` builds it', () => {
-	// The earlier duplicate is shadowed, so no tool ever reads `/abs/old.js` and it is not a path in the
-	// manifest at all. `bin` and `exports` are already read this way.
+	// The earlier duplicate is shadowed, so no tool ever reads `/abs/old.js` and it is not a path in the manifest at all. `bin` and `exports` are already read this way.
 	const shadowed = '{"browser": {"./a.js": "/abs/old.js", "./a.js": "./b.js"}}';
 	assert.deepEqual(linter.verify(shadowed, config, {filename: 'package.json'}), [], shadowed);
 

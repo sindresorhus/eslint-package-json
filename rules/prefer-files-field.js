@@ -47,10 +47,7 @@ function isPackagePath(value, isBareSpecifierPossible) {
 }
 
 /**
-Yield the entry points a field's object form names. Both `bin` and a `browser` replacement map hold
-`name -> path` members, and npm leaves those paths out of the tarball when `files` misses them. A
-non-string value names no file, and a shadowed duplicate is not an entry point because npm publishes only
-the final value per key.
+Yield the entry points a field's object form names. Both `bin` and a `browser` replacement map hold `name -> path` members, and npm leaves those paths out of the tarball when `files` misses them. A non-string value names no file, and a shadowed duplicate is not an entry point because npm publishes only the final value per key.
 */
 function * iterateObjectEntryPoints(member, field) {
 	for (const child of iterateEffectiveMembers(member.value)) {
@@ -185,9 +182,7 @@ function isCovered(target, patterns) {
 			continue;
 		}
 
-		// Richer minimatch syntax is treated as unknown coverage because this JSON-only check cannot
-		// prove it: character classes, and the extglobs `@(a|b)`, `+(a|b)`, `*(a|b)`, `?(a|b)` and the
-		// negated `!(a|b)`.
+		// Richer minimatch syntax is treated as unknown coverage because this JSON-only check cannot prove it: character classes, and the extglobs `@(a|b)`, `+(a|b)`, `*(a|b)`, `?(a|b)` and the negated `!(a|b)`.
 		if (/[?[\]{}]|[!*+@]\(/u.test(normalizedPattern)) {
 			return true;
 		}
@@ -253,12 +248,7 @@ const create = context => ({
 				continue;
 			}
 
-			// `main` and a string `browser` are force-included through a strict `!/<value>` rule built from
-			// the literal value, and npm normalizes neither, so a `./` or `../` prefix names a different path
-			// and npm publishes nothing. A leading `/` is left out too: an absolute entry point is
-			// `no-absolute-paths`' business, and a `files` allowlist cannot cover it either way.
-			// A `browser` replacement map is the exception: npm builds the same strict rule from the raw
-			// field value, so the object stringifies to `[object Object]` and includes none of its values.
+			// `main` and a string `browser` are force-included through a strict `!/<value>` rule built from the literal value, and npm normalizes neither, so a `./` or `../` prefix names a different path and npm publishes nothing. A leading `/` is left out too: an absolute entry point is `no-absolute-paths`' business, and a `files` allowlist cannot cover it either way. A `browser` replacement map is the exception: npm builds the same strict rule from the raw field value, so the object stringifies to `[object Object]` and includes none of its values.
 			if (entryPoint.field === 'browser' && findMember(root, 'browser')?.value.type !== 'String') {
 				continue;
 			}
@@ -267,8 +257,7 @@ const create = context => ({
 				continue;
 			}
 
-			// `bin` is the exception: npm normalizes each target before packing, so a `./` prefix is
-			// stripped and the file is still included. Compare it in the same form as the lookup.
+			// `bin` is the exception: npm normalizes each target before packing, so a `./` prefix is stripped and the file is still included. Compare it in the same form as the lookup.
 			automaticallyIncluded.add(entryPoint.field === 'bin' ? normalizePath(entryPoint.value) : entryPoint.value);
 		}
 

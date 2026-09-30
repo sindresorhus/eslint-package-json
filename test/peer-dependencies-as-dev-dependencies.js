@@ -91,8 +91,7 @@ snapshotTest.snapshot({
 		'{"peerDependencies": {"a": "^1.0.0"}, "devDependencies": {}, "name": "x"}',
 		// A `devDependencies` group that has to be created goes on one line when the root is on one line.
 		'{"name": "x", "version": "1.0.0", "peerDependencies": {"a": "^1.0.0"}}',
-		// An empty group written across lines keeps the closing indent the author wrote, so the entry goes in
-		// front of it rather than after it.
+		// An empty group written across lines keeps the closing indent the author wrote, so the entry goes in front of it rather than after it.
 		`{
 	"peerDependencies": {
 		"a": "^1.0.0"

@@ -1,7 +1,6 @@
 import {findMember, isHttpUrl} from '../utils/index.js';
 
-// A URL scheme is `ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )` and is case-insensitive (RFC 3986 §3.1), so
-// `FTP://` and `git+ssh://` both name a scheme npm parses as it stands.
+// A URL scheme is `ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )` and is case-insensitive (RFC 3986 §3.1), so `FTP://` and `git+ssh://` both name a scheme npm parses as it stands.
 const schemePattern = /^[a-z][\d+\-.a-z]*:/iu;
 
 const MESSAGE_ID = 'valid-homepage';
@@ -40,9 +39,7 @@ export function * check(root) {
 		return;
 	}
 
-	// Npm prefixes a scheme it cannot parse with `http://`, which is a working URL for a bare host and nonsense for
-	// anything else, so a value with no scheme at all is told apart from one that merely is not `http(s)`. A
-	// protocol-relative `//host` has no scheme either but is nonsense after the prefix, which makes `http:////host`.
+	// Npm prefixes a scheme it cannot parse with `http://`, which is a working URL for a bare host and nonsense for anything else, so a value with no scheme at all is told apart from one that merely is not `http(s)`. A protocol-relative `//host` has no scheme either but is nonsense after the prefix, which makes `http:////host`.
 	const isSchemeless = !schemePattern.test(value.value) && !value.value.startsWith('//');
 
 	if (isSchemeless && URL.canParse(`http://${value.value}`)) {

@@ -71,17 +71,12 @@ const findCorrection = key => {
 		return typos.get(key);
 	}
 
-	// Restrict the edit-distance heuristic to longer names. A single-character slip on a short
-	// field (`os`, `bin`, `man`) collides with too many legitimate custom keys (e.g. `min` is one
-	// edit from `main`), so only compare names of four or more characters. Explicit short typos
-	// belong in the `typos` map above.
+	// Restrict the edit-distance heuristic to longer names. A single-character slip on a short field (`os`, `bin`, `man`) collides with too many legitimate custom keys (e.g. `min` is one edit from `main`), so only compare names of four or more characters. Explicit short typos belong in the `typos` map above.
 	if (key.length < 4) {
 		return undefined;
 	}
 
-	// A field name is a word. Punctuation only reaches this heuristic by accident, and a trailing `#` is how a
-	// manifest marks a field for removal in a later major, so "correcting" it would turn an inert marker into
-	// a live field npm then tries to resolve.
+	// A field name is a word. Punctuation only reaches this heuristic by accident, and a trailing `#` is how a manifest marks a field for removal in a later major, so "correcting" it would turn an inert marker into a live field npm then tries to resolve.
 	if (!/^[\w-]+$/u.test(key)) {
 		return undefined;
 	}
@@ -112,10 +107,7 @@ const create = context => ({
 				continue;
 			}
 
-			// The rename is a suggestion rather than an autofix because it can change what npm reads: renaming
-			// `dependancies` to `dependencies` or `script` to `scripts` is the only thing that makes the value
-			// live, so a silent `--fix` would add a dependency or a script the author never wrote. It is also
-			// only offered when it would not collide with an existing field.
+			// The rename is a suggestion rather than an autofix because it can change what npm reads: renaming `dependancies` to `dependencies` or `script` to `scripts` is the only thing that makes the value live, so a silent `--fix` would add a dependency or a script the author never wrote. It is also only offered when it would not collide with an existing field.
 			const suggest = findMember(root, correct)
 				? []
 				: [{

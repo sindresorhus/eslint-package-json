@@ -599,9 +599,7 @@ const createTargetChecker = (context, packageDirectory, field) => {
 				const hasNullDefault = defaultIndex !== -1 && node.members[defaultIndex].value.type === 'Null';
 				const results = node.members.map((member, index) => {
 					const key = getKey(member);
-					// A key that starts with `.` is an `exports` subpath and one that starts with `#` is an
-					// `imports` specifier. Both substitute the matched part for the target's `*`, so either enables
-					// it when the key carries one; every other key is a condition name and inherits the answer.
+					// A key that starts with `.` is an `exports` subpath and one that starts with `#` is an `imports` specifier. Both substitute the matched part for the target's `*`, so either enables it when the key carries one; every other key is a condition name and inherits the answer.
 					const childIsPatternAllowed = key.startsWith('.') || key.startsWith('#') ? key.includes('*') : isPatternAllowed;
 					const shouldReportChild = shouldReport && (!hasNullDefault || index < defaultIndex);
 					return check(member.value, shouldReportChild, childIsPatternAllowed);
@@ -649,17 +647,13 @@ const create = context => ({
 		const exportsMember = findMember(root, 'exports');
 		const importsMember = findMember(root, 'imports');
 
-		// The question is which targets Node resolves, so the tree is walked as `JSON.parse` builds it: a
-		// shadowed duplicate neither satisfies a lookup nor deserves a missing-file report, since nothing ever
-		// resolves through it. An `imports` target is resolved exactly the way an `exports` target is, so the
-		// same checker answers both; only the top-level keys differ, and those are not looked at.
+		// The question is which targets Node resolves, so the tree is walked as `JSON.parse` builds it: a shadowed duplicate neither satisfies a lookup nor deserves a missing-file report, since nothing ever resolves through it. An `imports` target is resolved exactly the way an `exports` target is, so the same checker answers both; only the top-level keys differ, and those are not looked at.
 		if (exportsMember) {
 			createTargetChecker(context, packageDirectory, 'exports')(withoutShadowedMembers(exportsMember.value));
 		}
 
 		if (importsMember) {
-			// A key that is not a `#` specifier names a dependency. Node resolves such a specifier against the
-			// installed packages and never looks at the target, so no local path is named there.
+			// A key that is not a `#` specifier names a dependency. Node resolves such a specifier against the installed packages and never looks at the target, so no local path is named there.
 			const imports = withoutShadowedMembers(importsMember.value);
 			const localImports = imports.type === 'Object'
 				? {...imports, members: imports.members.filter(member => getKey(member).startsWith('#'))}

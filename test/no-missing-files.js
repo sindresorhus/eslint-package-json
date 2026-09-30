@@ -132,9 +132,7 @@ snapshotTest.snapshot({
 		'{"exports": "./%2e%2e/missing.js"}',
 		'{"exports": "./%6eode_modules/missing.js"}',
 		String.raw`{"exports": ".\\rules\\index.js"}`,
-		// The first element may match nothing at run time, so a later one can still apply.
-		// `default` decides an element only when its own value does, and a nested conditions object may still match nothing.
-		// `default` yields `null`, so Node falls through to the next element and never reaches the sibling condition.
+		// The first element may match nothing at run time, so a later one can still apply. `default` decides an element only when its own value does, and a nested conditions object may still match nothing. `default` yields `null`, so Node falls through to the next element and never reaches the sibling condition.
 		'{"exports": {".": [{"default": null, "import": "./missing.js"}, "./index.js"]}}',
 		// A `node` condition after `default: null` is also unreachable.
 		'{"exports": {".": [{"default": null, "node": "./missing.js"}, "./index.js"]}}',
@@ -164,12 +162,9 @@ snapshotTest.snapshot({
 		'{"name": "package-json", "exports": {"./frag": "./index.js#top"}}',
 		'{"name": "package-json", "imports": {"#q": "./index.js?v=1"}}',
 		'{"name": "package-json", "imports": {"#q": "./index.js#top"}}',
-		// A `*` written in the target is the one the subpath key substitutes, so it is a pattern and not a
-		// file name.
+		// A `*` written in the target is the one the subpath key substitutes, so it is a pattern and not a file name.
 		'{"name": "package-json", "exports": {"./rules/*": "./rules/*.js"}}',
-		// A case that reads this repository's own tree, since the rule resolves `files` against the directory the
-		// manifest is linted from. The patterns below name paths that ship with the plugin itself, except a glob
-		// over `*.md` at the root, which is stable whatever the dev dependencies are.
+		// A case that reads this repository's own tree, since the rule resolves `files` against the directory the manifest is linted from. The patterns below name paths that ship with the plugin itself, except a glob over `*.md` at the root, which is stable whatever the dev dependencies are.
 		'{"files": ["*.md"]}',
 		'{"files": ["rules/**/index.js"]}',
 		'{"files": ["{rules,docs/rules}/*.md"]}',
@@ -206,8 +201,7 @@ snapshotTest.snapshot({
 		// A bare specifier is a file inside a dependency, not in this package, so it names no local path.
 		'{"imports": {"#dep": "some-pkg/sub"}}',
 		'{"imports": {"#ok": "./index.js"}}',
-		// An `imports` key without a leading `#` names a dependency. Node resolves such a specifier against
-		// the installed packages and never looks at the target, so no local path is named there.
+		// An `imports` key without a leading `#` names a dependency. Node resolves such a specifier against the installed packages and never looks at the target, so no local path is named there.
 		'{"imports": {"dep": "./missing.js"}}',
 		'{"imports": {"dep": {"node": "./missing.js"}}}',
 		'{"imports": {"dep": ["./missing.js", "./index.js"]}}',
@@ -221,8 +215,7 @@ snapshotTest.snapshot({
 		'{"exports": {".": [{"require": "./missing.cjs"}, "./index.js"]}}',
 	],
 	invalid: [
-		// A conditions object inside an array is walked however few of its conditions Node sets, so a target
-		// under `browser` alone is still one a consumer has to ask for, and still has to exist.
+		// A conditions object inside an array is walked however few of its conditions Node sets, so a target under `browser` alone is still one a consumer has to ask for, and still has to exist.
 		'{"exports": {".": [{"browser": "./missing.js"}]}}',
 		'{"exports": {".": [{"browser": "./missing.js"}, {"./x": "./y.js"}]}}',
 		// Node stops at the first element that yields a target, so a missing file there is not recovered by a later element.
@@ -273,13 +266,10 @@ snapshotTest.snapshot({
 		'{"name": "package-json", "bin": "missing-cli.js"}',
 		'{"bin": {"first": "./missing-first.js", "second": "missing-second.js"}}',
 		'{"bin": "rules"}',
-		// A trailing slash on a `bin` target asks for a directory. `index.js` is a file, so `index.js/`
-		// names nothing and the linked CLI fails to stat and chmod with ENOTDIR.
+		// A trailing slash on a `bin` target asks for a directory. `index.js` is a file, so `index.js/` names nothing and the linked CLI fails to stat and chmod with ENOTDIR.
 		'{"name": "package-json", "bin": "./index.js/"}',
 		'{"name": "package-json", "bin": "index.js//"}',
-		// A target that names a directory, the bare `./` or anything ending in `/`, is refused by Node
-		// with `ERR_UNSUPPORTED_DIR_IMPORT`. That refusal is decisive: an enclosing array does not fall
-		// through to a later element, so the first one has to be reported even when the second is fine.
+		// A target that names a directory, the bare `./` or anything ending in `/`, is refused by Node with `ERR_UNSUPPORTED_DIR_IMPORT`. That refusal is decisive: an enclosing array does not fall through to a later element, so the first one has to be reported even when the second is fine.
 		'{"exports": "./"}',
 		'{"exports": ["./", "./index.js"]}',
 		'{"exports": "./index.js/"}',
@@ -290,8 +280,7 @@ snapshotTest.snapshot({
 		'{"bin": {"cli": "./index.js/"}}',
 		// A directory under a subpath key is a target like any other, and Node refuses to import it.
 		'{"exports": {".": "./rules"}}',
-		// With no `*` in the subpath key there is nothing to substitute, so a `*` in the target stays
-		// literal and the target is a plain file name that does not exist.
+		// With no `*` in the subpath key there is nothing to substitute, so a `*` in the target stays literal and the target is a plain file name that does not exist.
 		'{"exports": {"./feature": "./missing/*.js"}}',
 		'{"exports": "./rules/*.js"}',
 		'{"exports": {"./feature": "./rules/*.js"}}',
@@ -303,8 +292,7 @@ snapshotTest.snapshot({
 		'{"bin": {"cli": "./rules"}}',
 		'{"exports": {"./a": "./rules"}}',
 		'{"exports": "./missing/"}',
-		// An `imports` target is resolved exactly like an `exports` target, so a missing one breaks the
-		// `#` specifier at runtime.
+		// An `imports` target is resolved exactly like an `exports` target, so a missing one breaks the `#` specifier at runtime.
 		'{"imports": {"#missing": "./missing.js"}}',
 		'{"imports": {"#missing": {"node": "./missing.js", "default": "./index.js"}}}',
 		'{"imports": {"#missing": ["./missing.js", "./index.js"]}}',
@@ -409,8 +397,7 @@ test('resolves targets against a real package directory', t => {
 		[{exports: {'./star': './empty/*.js'}}, 1, 'a subpath key with no `*`, where the literal `*` file name is absent'],
 		[{exports: {'./sub/*': './dist/*.*.d.ts'}}, 1, 'an exports pattern repeating `*` with no consistent substitution'],
 		[{exports: './.'}, 0, 'an exports target of `./.` resolving to the package directory'],
-		// An `imports` specifier substitutes its matched part for the target's `*` exactly like an `exports`
-		// subpath does, so a `*` in the specifier is what makes the target's one a pattern.
+		// An `imports` specifier substitutes its matched part for the target's `*` exactly like an `exports` subpath does, so a `*` in the specifier is what makes the target's one a pattern.
 		[{imports: {'#internal/*': './lib/*'}}, 0, 'an imports specifier whose `*` matches files under `lib`'],
 		[{imports: {'#a/*.js': './dist/*.js'}}, 0, 'an imports specifier with a pattern that has matches'],
 		[{imports: {'#a/*': './nope/*.js'}}, 1, 'an imports pattern whose directory is absent'],
@@ -418,8 +405,7 @@ test('resolves targets against a real package directory', t => {
 		// Node decodes a target as a URL, which this rule does not model, so a target holding a `%` is skipped.
 		[{exports: {'./a': './uni/h%C3%A9zz.js'}}, 0, 'a percent-encoded exports target, which is skipped'],
 		[{exports: {'./a': './%2e%2e/index.js'}}, 0, 'a decoded `..` segment, which is skipped'],
-		// Npm decodes neither a `bin` target nor a `files` pattern, so an escape in one is part of the name and
-		// the decoded name on disk is a different file.
+		// Npm decodes neither a `bin` target nor a `files` pattern, so an escape in one is part of the name and the decoded name on disk is a different file.
 		[{bin: 'uni/c%2Ed.js'}, 1, 'a `bin` target whose escape npm does not decode'],
 		[{files: ['uni/c%2Ed.js']}, 1, 'a `files` pattern whose escape npm does not decode'],
 		[{bin: './.'}, 1, 'a bin target of `./.` resolving to a directory, not a file'],

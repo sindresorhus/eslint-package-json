@@ -50,9 +50,7 @@ export function * check(root) {
 
 		const range = member.value.value;
 
-		// `validRange('')` is `'*'`, so an empty or blank range is one semver accepts and every version
-		// satisfies. It says nothing, which is not the same as malformed, so it is left alone here exactly as
-		// an empty `devEngines` version is.
+		// `validRange('')` is `'*'`, so an empty or blank range is one semver accepts and every version satisfies. It says nothing, which is not the same as malformed, so it is left alone here exactly as an empty `devEngines` version is.
 		if (validRange(range) !== null) {
 			continue;
 		}

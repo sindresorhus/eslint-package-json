@@ -54,8 +54,7 @@ snapshotTest.snapshot({
 });
 
 test('a `browser` replacement map is scanned the way `JSON.parse` builds it', () => {
-	// The earlier duplicate is shadowed, so rewriting the value `JSON.parse` throws away would edit a path no
-	// tool ever reads and leave the effective one untouched.
+	// The earlier duplicate is shadowed, so rewriting the value `JSON.parse` throws away would edit a path no tool ever reads and leave the effective one untouched.
 	const shadowed = String.raw`{"browser": {"./a.js": "old\\b.js", "./a.js": "./b.js"}}`;
 	assert.deepEqual(linter.verify(shadowed, config, {filename: 'package.json'}), [], shadowed);
 

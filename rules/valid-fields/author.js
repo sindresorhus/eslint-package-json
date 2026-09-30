@@ -41,8 +41,7 @@ export function * check(root) {
 		yield * checkPerson(author.value);
 	}
 
-	// `contributors` and `maintainers` are both lists of people, and npm reads a `null` entry in either as
-	// a person, so it throws `Cannot read properties of null (reading 'name')` and the package cannot publish.
+	// `contributors` and `maintainers` are both lists of people, and npm reads a `null` entry in either as a person, so it throws `Cannot read properties of null (reading 'name')` and the package cannot publish.
 	for (const field of ['contributors', 'maintainers']) {
 		const member = findMember(root, field);
 

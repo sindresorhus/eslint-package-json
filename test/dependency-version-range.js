@@ -76,12 +76,10 @@ test.snapshot({
 			code: '{"dependencies": {"a": "^1.0.0", "b": "^2.0.0", "c": "~3.0.0"}}',
 			options: [{range: 'consistent'}],
 		},
-		// An `=`-prefixed pin is exactly as restrictive as the bare form, which the default `caret` range
-		// reports. A real comparator is a range and stays as written.
+		// An `=`-prefixed pin is exactly as restrictive as the bare form, which the default `caret` range reports. A real comparator is a range and stays as written.
 		'{"dependencies": {"a": "=1.2.3"}}',
 		'{"dependencies": {"a": "=v1.2.3"}}',
-		// A `+build` the author wrote is part of the version, so the rewritten range keeps it rather than
-		// dropping it the way `semver.valid` does.
+		// A `+build` the author wrote is part of the version, so the rewritten range keeps it rather than dropping it the way `semver.valid` does.
 		'{"dependencies": {"a": "1.2.3+build.5"}}',
 		'{"dependencies": {"a": "v1.2.3+build.5"}}',
 	],

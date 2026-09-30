@@ -85,8 +85,7 @@ function * checkExportsNode(node) {
 				messageId: MESSAGE_ID_RELATIVE_PATH,
 				data: {value},
 			};
-			// The leading slashes are dropped rather than carried across, so a leading `/` becomes `./` and the
-			// result names the same file without the double slash Node only warns about (DEP0166).
+			// The leading slashes are dropped rather than carried across, so a leading `/` becomes `./` and the result names the same file without the double slash Node only warns about (DEP0166).
 			const fixedValue = './' + value.replace(/^\/+/u, '');
 
 			// Only offer the prefix when it produces a valid package target. It is a suggestion, not an autofix, because it changes what the target resolves to: a leading `/` may be a real absolute path on the author's machine, and a bare target may have meant a package.
@@ -162,8 +161,7 @@ export function * check(root) {
 		return;
 	}
 
-	// Collapsed the way `JSON.parse` builds the tree, so a shadowed duplicate is not checked as a target npm
-	// never resolves. The surviving members are the original nodes, so reports still point at real ranges.
+	// Collapsed the way `JSON.parse` builds the tree, so a shadowed duplicate is not checked as a target npm never resolves. The surviving members are the original nodes, so reports still point at real ranges.
 	const value = withoutShadowedMembers(exportsMember.value);
 
 	if (!['String', 'Object', 'Array'].includes(value.type)) {
@@ -175,9 +173,7 @@ export function * check(root) {
 	}
 
 	// Node raises "cannot contain some keys starting with '.' and some not" from
-	// `isConditionalExportsMainSugar`, which it runs once, on the top-level object. A nested object is walked
-	// for `default` or a matching condition, so a key starting with `.` beside one that does not is a
-	// condition no consumer asks for, and the target beside it still resolves.
+	// `isConditionalExportsMainSugar`, which it runs once, on the top-level object. A nested object is walked for `default` or a matching condition, so a key starting with `.` beside one that does not is a condition no consumer asks for, and the target beside it still resolves.
 	if (value.type === 'Object') {
 		yield * checkKeyConsistency(value, '.');
 	}
@@ -187,12 +183,7 @@ export function * check(root) {
 		...checkExportsNode(value),
 	];
 
-	// A top-level condition map has no subpath key of its own, so `checkPatternTarget` stands in for one and
-	// reports every target under it. A subpath key nested inside that map is then checked against its own key,
-	// which repeats the report for any target the two agree about. The same target under two different subpath
-	// keys is a real difference, so the key the message names is part of what makes a report its own. That
-	// leaves one target the map has no subpath key for reported twice under the synthetic `.` and its own key,
-	// which is a small price for not having to know which shape the map is.
+	// A top-level condition map has no subpath key of its own, so `checkPatternTarget` stands in for one and reports every target under it. A subpath key nested inside that map is then checked against its own key, which repeats the report for any target the two agree about. The same target under two different subpath keys is a real difference, so the key the message names is part of what makes a report its own. That leaves one target the map has no subpath key for reported twice under the synthetic `.` and its own key, which is a small price for not having to know which shape the map is.
 	const reported = new Set();
 
 	for (const report of reports) {

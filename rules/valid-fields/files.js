@@ -12,9 +12,7 @@ export const messages = {
 	[IGNORED_MESSAGE_ID]: '`{{value}}` is always ignored by npm and cannot be published.',
 };
 
-// The paths npm force-excludes from every tarball, so listing them in `files` is pointless. These
-// are npm's `strict` rules, not its default ignores, so an explicit `files` entry cannot override
-// them. The list follows npm 12, whose `npm-packlist` strict rules also cover `npm-shrinkwrap.json`, `bun.lock`, and the `.npm-extension` entry point, which `npm pack` confirms.
+// The paths npm force-excludes from every tarball, so listing them in `files` is pointless. These are npm's `strict` rules, not its default ignores, so an explicit `files` entry cannot override them. The list follows npm 12, whose `npm-packlist` strict rules also cover `npm-shrinkwrap.json`, `bun.lock`, and the `.npm-extension` entry point, which `npm pack` confirms.
 const alwaysIgnored = new Set([
 	'node_modules',
 	'package-lock.json',
@@ -27,12 +25,7 @@ const alwaysIgnored = new Set([
 	'.npm-extension.cjs',
 ]);
 
-// Npm excludes these two with a `**/`-prefixed default rule, so they are ignored at any depth rather than
-// only at the package root. Unlike the set above, a nested `node_modules` or lockfile is publishable, which
-// `npm pack` confirms. The list is deliberately narrow: npm excludes more of its defaults at any depth
-// (`.svn`, `.hg`, `CVS`, `.gitignore`, `.npmignore`, `.DS_Store`, `npm-debug.log`, `*.orig`) and a `files`
-// entry rarely names one, so those are left alone rather than growing the set here. Nothing reports a `files`
-// entry npm silently drops; `no-missing-files` reports one that matches no file at all.
+// Npm excludes these two with a `**/`-prefixed default rule, so they are ignored at any depth rather than only at the package root. Unlike the set above, a nested `node_modules` or lockfile is publishable, which `npm pack` confirms. The list is deliberately narrow: npm excludes more of its defaults at any depth (`.svn`, `.hg`, `CVS`, `.gitignore`, `.npmignore`, `.DS_Store`, `npm-debug.log`, `*.orig`) and a `files` entry rarely names one, so those are left alone rather than growing the set here. Nothing reports a `files` entry npm silently drops; `no-missing-files` reports one that matches no file at all.
 const alwaysIgnoredAnywhere = new Set([
 	'.git',
 	'.npmrc',
@@ -77,10 +70,7 @@ export function * check(root, context) {
 			continue;
 		}
 
-		// Compare the leading path segment so `node_modules/foo` is caught too, and every segment for the
-		// any-depth set, so `sub/.npmrc` is caught as well. npm strips a leading `./` or `/` from an
-		// entry, so both name the same file. Npm's matcher runs with `nocase`, so a casing variant is
-		// excluded just as the name spelled its own way is.
+		// Compare the leading path segment so `node_modules/foo` is caught too, and every segment for the any-depth set, so `sub/.npmrc` is caught as well. npm strips a leading `./` or `/` from an entry, so both name the same file. Npm's matcher runs with `nocase`, so a casing variant is excluded just as the name spelled its own way is.
 		const segments = value.replace(/^\.?\//u, '').split('/').map(segment => segment.toLowerCase());
 
 		if (alwaysIgnored.has(segments[0]) || segments.some(segment => alwaysIgnoredAnywhere.has(segment))) {

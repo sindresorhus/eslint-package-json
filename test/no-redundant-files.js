@@ -16,8 +16,7 @@ const applyFix = (code, fix) => code.slice(0, fix.range[0]) + fix.text + code.sl
 
 snapshotTest.snapshot({
 	valid: [
-		// Npm lists `package.json` without the suffix the other three carry, so `package.json.bak` is an
-		// ordinary file a `files` entry does publish. Verified with `npm pack`.
+		// Npm lists `package.json` without the suffix the other three carry, so `package.json.bak` is an ordinary file a `files` entry does publish. Verified with `npm pack`.
 		'{"name": "p", "version": "1.0.0", "files": ["package.json.bak"]}',
 		'{"name": "p", "version": "1.0.0", "files": ["/package.json.bak"]}',
 		// Two entries that are neither of them redundant leave the array alone.
@@ -79,8 +78,7 @@ snapshotTest.snapshot({
 		'{"files": ["dist/sub", "!dist//"]}',
 		'{"files": ["dist/sub", "!/dist"]}',
 		'{"files": ["dist/../tests", "!tests"]}',
-		// Npm 12 reads any number of leading bangs as a negation, so the `!!!dist` between the two `dist`
-		// entries stops the second from repeating the first.
+		// Npm 12 reads any number of leading bangs as a negation, so the `!!!dist` between the two `dist` entries stops the second from repeating the first.
 		'{"files": ["dist", "!!!dist", "dist"]}',
 		// Repeated patterns can be useful after an opposite pattern changes their effect.
 		'{"files": ["dist", "!dist", "dist"]}',
@@ -144,8 +142,7 @@ snapshotTest.snapshot({
 		"index.js"
 	]
 }`,
-		// A `bin` key that normalizes to nothing, or to `__proto__`, is dropped by npm, so its target is
-		// published only because `files` lists it and the entry is not redundant. Verified with `npm pack`.
+		// A `bin` key that normalizes to nothing, or to `__proto__`, is dropped by npm, so its target is published only because `files` lists it and the entry is not redundant. Verified with `npm pack`.
 		'{"bin": {"": "cli.js"}, "files": ["cli.js"]}',
 		'{"bin": {"./": "cli.js"}, "files": ["cli.js"]}',
 		'{"bin": {".": "cli.js"}, "files": ["cli.js"]}',
@@ -153,8 +150,7 @@ snapshotTest.snapshot({
 		'{"bin": {"a/..": "cli.js"}, "files": ["cli.js"]}',
 		'{"bin": {"commands/__proto__": "cli.js"}, "files": ["cli.js"]}',
 		'{"bin": {"a/__proto__": "cli.js"}, "files": ["cli.js"]}',
-		// A `bin` key that normalizes onto another one writes its target there before npm reads the other, so
-		// the first key wins and the second target is published only because `files` lists it.
+		// A `bin` key that normalizes onto another one writes its target there before npm reads the other, so the first key wins and the second target is published only because `files` lists it.
 		'{"bin": {"commands/cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
 		'{"bin": {"commands:cli": "first.js", "cli": "second.js"}, "files": ["second.js"]}',
 		// Npm renames a `bin` key holding a path separator, a drive, or a colon, so the rule reads no `bin` target at all rather than model the renaming.
@@ -220,8 +216,7 @@ snapshotTest.snapshot({
 		"!!!tests"
 	]
 }`,
-		// Any number of leading bangs is a negation, and `README.md` is included whatever `files` says, so
-		// the negation cannot exclude it.
+		// Any number of leading bangs is a negation, and `README.md` is included whatever `files` says, so the negation cannot exclude it.
 		`{
 	"files": [
 		"!!README.md"
@@ -415,8 +410,7 @@ snapshotTest.snapshot({
 		'{"files": ["dist", "!tests/"]}',
 		// A repeated `!!` negation with no inclusion between them is redundant.
 		'{"files": ["dist", "!!dist", "!!dist"]}',
-		// `JSON.parse` makes a `__proto__` key an own data property, so npm keeps that one and publishes its
-		// target. A key that renames *onto* `__proto__` is the case npm drops. Verified with `npm pack`.
+		// `JSON.parse` makes a `__proto__` key an own data property, so npm keeps that one and publishes its target. A key that renames *onto* `__proto__` is the case npm drops. Verified with `npm pack`.
 		'{"bin": {"__proto__": "cli.js"}, "files": ["cli.js"]}',
 		// Removing the last entry leaves `"files": []` standing, since an absent `files` is npm's "publish everything", the opposite of an empty one.
 		'{"name": "foo", "bin": {"a": "a.js"}, "files": ["a.js", "README.md"]}',
@@ -429,8 +423,7 @@ snapshotTest.snapshot({
 	],
 });
 
-// An absent `files` field is npm's "publish everything", which is the opposite of the empty array, so
-// removing the field is never the right way to take an entry out of an allowlist.
+// An absent `files` field is npm's "publish everything", which is the opposite of the empty array, so removing the field is never the right way to take an entry out of an allowlist.
 test('a fix never removes the `files` field itself', () => {
 	const cases = [
 		'{"name": "p", "version": "1.0.0", "files": ["README.md"]}',
@@ -451,8 +444,7 @@ test('a fix never removes the `files` field itself', () => {
 });
 
 test('a `files` array is never narrowed to nothing', () => {
-	// The single-entry case is the one that inverts, since a lone `files` array and an absent field publish
-	// different sets.
+	// The single-entry case is the one that inverts, since a lone `files` array and an absent field publish different sets.
 	const code = '{"name": "p", "version": "1.0.0", "files": ["README.md"]}';
 	const [message] = linter.verify(code, config, {filename: 'package.json'});
 

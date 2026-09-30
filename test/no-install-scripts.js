@@ -57,8 +57,7 @@ snapshotTest.snapshot({
 });
 
 test('removing the only script takes the `scripts` field with it', () => {
-	// An empty `scripts` object is what `no-empty-fields` reports, so leaving one behind trades this rule's
-	// own report for another's, which is no better than not having removed the script at all.
+	// An empty `scripts` object is what `no-empty-fields` reports, so leaving one behind trades this rule's own report for another's, which is no better than not having removed the script at all.
 	const code = '{"name": "x", "scripts": {"postinstall": "node setup.js"}}';
 	const [message] = linter.verify(code, config, {filename: 'package.json'});
 

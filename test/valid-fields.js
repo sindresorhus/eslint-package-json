@@ -31,8 +31,7 @@ test.snapshot({
 		'{"description": ""}',
 		// `license`
 		'{"license": "MIT"}',
-		// Npm reads a license from `licence` when `license` is missing or empty, so the alias is a field it
-		// validates too.
+		// Npm reads a license from `licence` when `license` is missing or empty, so the alias is a field it validates too.
 		'{"licence": "MIT"}',
 		'{"license": "", "licence": "MIT"}',
 		'{"license": "(MIT OR Apache-2.0)"}',
@@ -145,8 +144,7 @@ test.snapshot({
 		'{"imports": {"#/internal": "./src/internal.js"}}',
 		'{"imports": {"#external": "foo/../bar"}}',
 		'{"imports": {"#nested": "foo/node_modules/bar"}}',
-		// Node matches `exports` and `imports` keys literally and only validates the target, so a `.`,
-		// `..`, or `node_modules` segment in a key resolves. It is the target those segments break in.
+		// Node matches `exports` and `imports` keys literally and only validates the target, so a `.`, `..`, or `node_modules` segment in a key resolves. It is the target those segments break in.
 		'{"exports": {"./utils/./helper.js": "./utils/helper.js"}}',
 		'{"exports": {"./a/../b": "./b.js"}}',
 		'{"exports": {"./a/node_modules/b": "./b.js"}}',
@@ -204,8 +202,7 @@ test.snapshot({
 		// `download` is a valid `onFail`.
 		'{"devEngines": {"packageManager": {"name": "pnpm", "version": ">=11", "onFail": "download"}}}',
 		'{"devEngines": {"runtime": {"name": "node", "onFail": "warn"}}}',
-		// Npm reads the range with `semver.satisfies`, which reads an empty one as `*`, so an empty version
-		// installs exactly as a missing one would. The same is already true of `engines`.
+		// Npm reads the range with `semver.satisfies`, which reads an empty one as `*`, so an empty version installs exactly as a missing one would. The same is already true of `engines`.
 		'{"devEngines": {"runtime": {"name": "node", "version": ""}}}',
 		'{"engines": {"node": ""}}',
 		'{"engines": {"npm": "", "node": ">=18"}}',
@@ -315,28 +312,23 @@ test.snapshot({
 		'{"overrides": {"foo@^1.0.0": "1.0.0"}}',
 		// The message is about the version npm reads, and a shadowed duplicate is not one it ever sees.
 		'{"dependencies": {"foo": 1, "foo": "^1.0.0"}}',
-		// Npm deletes a truthy non-string but leaves a `null` in place and reads it as "no description",
-		// which is the value npm itself writes when there is none.
+		// Npm deletes a truthy non-string but leaves a `null` in place and reads it as "no description", which is the value npm itself writes when there is none.
 		'{"description": null}',
 		// A filename after the marker may contain spaces, so only an empty remainder is rejected.
 		'{"license": "SEE LICENSE IN  a b"}',
-		// Npm flattens a `bin` array into an object keyed by each entry's basename, so the array form is
-		// a supported legacy shape rather than a field type error.
+		// Npm flattens a `bin` array into an object keyed by each entry's basename, so the array form is a supported legacy shape rather than a field type error.
 		'{"bin": ["./cli.js"]}',
 		'{"bin": ["a/b.js", "c/d.js"]}',
 		'{"bin": []}',
-		// Node resolves an empty path segment, only warning about it with DEP0166, so `./a//b.js` is a
-		// working target and must not be reported as a segment Node does not allow.
+		// Node resolves an empty path segment, only warning about it with DEP0166, so `./a//b.js` is a working target and must not be reported as a segment Node does not allow.
 		'{"exports": {".": "./a//b.js"}}',
 		'{"exports": {".": ".//a.js"}}',
 		'{"imports": {"#a": "./a//b.js"}}',
 
-		// The shapes npm keeps, including a `bugs` url that holds an `@` before a later `.`, which the object
-		// form parses as a URL even though the string form would read it as an email.
+		// The shapes npm keeps, including a `bugs` url that holds an `@` before a later `.`, which the object form parses as a URL even though the string form would read it as an email.
 		'{"bugs": {"url": "https://user@github.com/u/r"}}',
 		'{"bugs": {"url": "https://x.com/issues", "email": "a@b.com"}}',
-		// Npm guards each property with the truthiness of its value, so an empty `url` is never examined as a
-		// url. The `email` beside it is kept, so the field survives and nothing is wrong with the shape.
+		// Npm guards each property with the truthiness of its value, so an empty `url` is never examined as a url. The `email` beside it is kept, so the field survives and nothing is wrong with the shape.
 		'{"bugs": {"url": "", "email": "a@b.com"}}',
 		'{"bugs": {"url": null, "email": "a@b.com"}}',
 		'{"bugs": {"url": 0, "email": "a@b.com"}}',
@@ -357,46 +349,35 @@ test.snapshot({
 		'{"os": ["any"]}',
 		'{"os": "any"}',
 		'{"cpu": ["any"]}',
-		// Npm wraps a bare string into a one-element list before checking it, so the string shorthand is a
-		// form it supports.
+		// Npm wraps a bare string into a one-element list before checking it, so the string shorthand is a form it supports.
 		'{"cpu": "arm64"}',
 		// `npm fund` reads a plain `http:` URL too, and a URL that only needs a port to resolve is still a URL.
 		'{"funding": "http://example.com/donate"}',
 		'{"funding": "https://example.com:8443/donate"}',
-		// A subpath key repeated with a different value resolves to the last one, so the shadowed target is not
-		// one npm ever resolves.
+		// A subpath key repeated with a different value resolves to the last one, so the shadowed target is not one npm ever resolves.
 		'{"exports": {"./a": "./a/*.js", "./a": "./a.js"}}',
 		'{"exports": {"./a": {"./a/*.js": "./x.js", "./a": "./a.js"}}}',
 		// The string shorthand of `bugs` is the one form that takes either shape.
 		'{"bugs": "bugs@example.com"}',
 		// An unknown key beside a `url` is dropped without taking the field with it.
 		'{"bugs": {"url": "https://example.com/issues", "note": "x"}}',
-		// An `imports` key repeated with a different value resolves to the last one, so the shadowed target is
-		// not one Node ever resolves.
+		// An `imports` key repeated with a different value resolves to the last one, so the shadowed target is not one Node ever resolves.
 		'{"imports": {"#dep": 123, "#dep": "./dep.js"}}',
 		'{"imports": {"#dep": {"node": 123, "node": "./dep.js"}}}',
-		// An `engines` key repeated with a different value resolves to the last one, so the shadowed range is
-		// not one npm ever checks.
+		// An `engines` key repeated with a different value resolves to the last one, so the shadowed range is not one npm ever checks.
 		'{"engines": {"node": 18, "node": ">=18"}}',
-		// A `scripts` key repeated with a different value resolves to the last one, so the shadowed value is not
-		// one npm ever runs.
+		// A `scripts` key repeated with a different value resolves to the last one, so the shadowed value is not one npm ever runs.
 		'{"scripts": {"build": 1, "build": "tsc"}}',
-		// A `bin` key repeated with a different value resolves to the last one, so the shadowed path is not one
-		// npm ever installs.
+		// A `bin` key repeated with a different value resolves to the last one, so the shadowed path is not one npm ever installs.
 		'{"bin": {"foo": true, "foo": "./cli.js"}}',
-		// An `overrides` key repeated with a different value resolves to the last one, so the shadowed override
-		// is not one npm ever applies.
+		// An `overrides` key repeated with a different value resolves to the last one, so the shadowed override is not one npm ever applies.
 		'{"overrides": {"foo": 1, "foo": "1.0.0"}}',
 		'{"overrides": {"foo": {"bar": 1, "bar": "1.0.0"}}}',
-		// Node raises the "cannot mix" error from the top-level `exports` object only. A nested object is walked
-		// for `default` or a matching condition, so a key starting with `.` beside one that does not is a
-		// condition no consumer asks for and the target beside it still resolves.
+		// Node raises the "cannot mix" error from the top-level `exports` object only. A nested object is walked for `default` or a matching condition, so a key starting with `.` beside one that does not is a condition no consumer asks for and the target beside it still resolves.
 		'{"exports": {"./a": {"import": "./a.js", "./b": "./b.js"}}}',
-		// Npm guards the `directories.bin` expansion on `!data.bin`, so a falsy `bin` is what lets it be read
-		// and the two fields are not in conflict.
+		// Npm guards the `directories.bin` expansion on `!data.bin`, so a falsy `bin` is what lets it be read and the two fields are not in conflict.
 		'{"bin": "", "directories": {"bin": "./bin"}}',
-		// Npm's own test is `/^SEE LICEN[CS]E IN ./`, so any one character after the space is the filename it
-		// never reads.
+		// Npm's own test is `/^SEE LICEN[CS]E IN ./`, so any one character after the space is the filename it never reads.
 		'{"license": "SEE LICENSE IN   "}',
 		'{"license": "SEE LICENSE IN  MIT"}',
 		'{"exports": {".": "./a.js", "./b": {"import": "./a.js", "./b": "./b.js"}}}',
@@ -473,8 +454,7 @@ test.snapshot({
 		'{"version": "^1.0.0"}',
 		'{"version": "latest"}',
 		'{"version": "v1.0.0.0"}',
-		// `semver.clean` is case-sensitive, so an uppercase `V` is not a prefix npm strips. It cleans to `null`
-		// and the publish is refused, which is not the same claim as "not canonical".
+		// `semver.clean` is case-sensitive, so an uppercase `V` is not a prefix npm strips. It cleans to `null` and the publish is refused, which is not the same claim as "not canonical".
 		'{"version": "V1.0.0"}',
 		'{"version": "Vv1.0.0"}',
 		// A `v` prefix (e.g. copied from a git tag) is not canonical.
@@ -514,17 +494,14 @@ test.snapshot({
 		'{"repository": null}',
 		// `homepage`
 		'{"homepage": "git@github.com:user/repo.git"}',
-		// Npm publishes a bare host as `http://…`, so the report says which scheme the manifest ends up with
-		// rather than calling the value invalid, and the suggestion writes the one the author wants.
+		// Npm publishes a bare host as `http://…`, so the report says which scheme the manifest ends up with rather than calling the value invalid, and the suggestion writes the one the author wants.
 		'{"homepage": "example.com"}',
 		'{"homepage": "www.example.com/x"}',
 		// A protocol-relative URL is not a bare host: npm's own rewrite makes `http:////example.com`.
 		'{"homepage": "//example.com"}',
-		// A value that has a scheme npm does not rewrite is not a bare host either, so it keeps the plain report
-		// rather than the one that claims npm rewrites it.
+		// A value that has a scheme npm does not rewrite is not a bare host either, so it keeps the plain report rather than the one that claims npm rewrites it.
 		'{"homepage": "ftp://example.com/x"}',
-		// A scheme is case-insensitive and may hold a `+`, so npm parses these as they stand rather than
-		// prefixing an `http://` that makes nonsense of them.
+		// A scheme is case-insensitive and may hold a `+`, so npm parses these as they stand rather than prefixing an `http://` that makes nonsense of them.
 		'{"homepage": "FTP://example.com"}',
 		'{"homepage": "git+ssh://git@example.com/repo.git"}',
 		'{"homepage": "mailto:a@b.com"}',
@@ -535,8 +512,7 @@ test.snapshot({
 		'{"bugs": ["https://example.com"]}',
 		'{"bugs": {"url": 1}}',
 		'{"bugs": {"email": false}}',
-		// A falsy `url` is stepped over rather than examined, so the object holds nothing npm keeps and the
-		// field is what goes, not the property.
+		// A falsy `url` is stepped over rather than examined, so the object holds nothing npm keeps and the field is what goes, not the property.
 		'{"bugs": {"url": ""}}',
 		'{"bugs": {"url": null}}',
 		'{"bugs": {"url": "", "note": "x"}}',
@@ -742,8 +718,7 @@ test.snapshot({
 		'{"keywords": true}',
 		'{"keywords": ["eslint", 1]}',
 		'{"keywords": ["eslint", ""]}',
-		// Removing the last keyword takes the field with it, since an empty `keywords` is what
-		// `no-empty-fields` reports. Removing one of several leaves the field.
+		// Removing the last keyword takes the field with it, since an empty `keywords` is what `no-empty-fields` reports. Removing one of several leaves the field.
 		'{"keywords": [""]}',
 		'{"keywords": ["", "b"]}',
 		'{"keywords": ["eslint", "  "]}',
@@ -824,8 +799,7 @@ test.snapshot({
 		// A lone surrogate is a legal JSON string escape but cannot be percent-encoded, so the name validator throws on it. The rule must report, not crash.
 		String.raw`{"name": "\ud800"}`,
 		String.raw`{"name": "@scope/\udc00"}`,
-		// `npm publish` throws `Invalid version` on a non-string `version`, so the manifest cannot be
-		// published at all. A `null` is coerced to `""`, which is just as unpublishable.
+		// `npm publish` throws `Invalid version` on a non-string `version`, so the manifest cannot be published at all. A `null` is coerced to `""`, which is just as unpublishable.
 		'{"version": 1}',
 		'{"version": null}',
 		'{"version": true}',
@@ -838,8 +812,7 @@ test.snapshot({
 		'{"engines": {"npm": true}}',
 		'{"engines": {"npm": ["\u{3E}=9"]}}',
 		'{"engines": {"node": {}}}',
-		// A custom license reference is valid SPDX grammar, but npm rejects the whole expression for one,
-		// including inside a compound one, so it is reported separately from an invalid expression.
+		// A custom license reference is valid SPDX grammar, but npm rejects the whole expression for one, including inside a compound one, so it is reported separately from an invalid expression.
 		'{"license": "LicenseRef-MIT"}',
 		'{"license": "LicenseRef-Proprietary"}',
 		'{"license": "(MIT OR LicenseRef-Proprietary)"}',
@@ -848,13 +821,11 @@ test.snapshot({
 		// Every entry still has to be a non-empty path, because npm takes each entry's basename.
 		'{"bin": ["cli.js", 42]}',
 		'{"bin": ["cli.js", ""]}',
-		// Npm deletes a `bugs` url or email that is neither a URL nor an email, then the whole object once
-		// it is empty, without telling the author. Verified against `PackageJson.fix()` + `prepare()`.
+		// Npm deletes a `bugs` url or email that is neither a URL nor an email, then the whole object once it is empty, without telling the author. Verified against `PackageJson.fix()` + `prepare()`.
 		'{"bugs": {"url": "not a url"}}',
 		'{"bugs": {"email": "not an email"}}',
 		'{"bugs": "not a url"}',
-		// Npm calls `.trim()` on `readme` to derive the description, so a non-string throws
-		// `description.trim is not a function` and the package cannot be published. A falsy value is replaced first.
+		// Npm calls `.trim()` on `readme` to derive the description, so a non-string throws `description.trim is not a function` and the package cannot be published. A falsy value is replaced first.
 		'{"readme": 42}',
 		'{"readme": ["# x"]}',
 		'{"readme": true}',
@@ -863,8 +834,7 @@ test.snapshot({
 		'{"maintainers": [null]}',
 		'{"maintainers": 1}',
 		'{"contributors": [null]}',
-		// Npm excludes `.git` and `.npmrc` with a `**/`-prefixed default rule, so they are ignored at any depth
-		// and not only at the package root. Verified with `npm pack` on both majors.
+		// Npm excludes `.git` and `.npmrc` with a `**/`-prefixed default rule, so they are ignored at any depth and not only at the package root. Verified with `npm pack` on both majors.
 		'{"files": ["sub/.npmrc"]}',
 		'{"files": ["a/.git/config"]}',
 		'{"files": ["a/b/.git/c"]}',
@@ -875,14 +845,12 @@ test.snapshot({
 		// Npm also refuses to install when an entry carries a property it does not recognize.
 		'{"devEngines": {"runtime": {"name": "node", "url": "x"}}}',
 		'{"devEngines": {"runtime": [{"name": "node"}, {"name": "x", "url": "y"}]}}',
-		// Npm reads only `packages` out of a `workspaces` object and uses it as the pattern list, so
-		// anything else fails to install with `EWORKSPACESCONFIG`. Verified with `npm install` on both majors.
+		// Npm reads only `packages` out of a `workspaces` object and uses it as the pattern list, so anything else fails to install with `EWORKSPACESCONFIG`. Verified with `npm install` on both majors.
 		'{"workspaces": {"nohoist": ["**/x"]}}',
 		'{"workspaces": {"packages": "pkgs/*"}}',
 		'{"workspaces": {"packages": [1]}}',
 		'{"os": "nope"}',
-		// `npm fund` drops a funding entry whose URL does not parse or is not `http:`/`https:`, so these are funding
-		// links the author believes are there and nobody ever sees. Verified against libnpmfund's `isValidFunding`.
+		// `npm fund` drops a funding entry whose URL does not parse or is not `http:`/`https:`, so these are funding links the author believes are there and nobody ever sees. Verified against libnpmfund's `isValidFunding`.
 		'{"funding": "github:sindresorhus"}',
 		'{"funding": "example.com"}',
 		'{"funding": "mailto:user@example.com"}',
@@ -891,22 +859,19 @@ test.snapshot({
 		'{"funding": [{"url": "ftp://example.com"}, "https://example.com"]}',
 		// The shadowed duplicate of a subpath key is ignored, but the one npm resolves is not.
 		'{"exports": {"./a": "./a.js", "./a": "./a/*.js"}}',
-		// Npm checks a `bugs` `url` as a URL and an `email` as an email address, so each one that holds the
-		// other shape is deleted, and the `bugs` object goes with it once it is empty.
+		// Npm checks a `bugs` `url` as a URL and an `email` as an email address, so each one that holds the other shape is deleted, and the `bugs` object goes with it once it is empty.
 		'{"bugs": {"url": "bugs@example.com"}}',
 		'{"bugs": {"email": "https://example.com/issues"}}',
 		'{"bugs": {"url": "https://example.com/issues", "email": "https://example.com/issues"}}',
 		// Npm rebuilds the object from `url` and `email` alone, so one holding neither is deleted whole.
 		'{"bugs": {"foo": "bar"}}',
-		// SemVer allows no empty identifier, so a leading, trailing, or doubled dot in the prerelease or the
-		// build metadata is not a version, and a numeric part may carry no leading zero.
+		// SemVer allows no empty identifier, so a leading, trailing, or doubled dot in the prerelease or the build metadata is not a version, and a numeric part may carry no leading zero.
 		'{"packageManager": "npm@1.0.0-alpha."}',
 		'{"packageManager": "npm@1.0.0-."}',
 		'{"packageManager": "npm@1.0.0-alpha..1"}',
 		'{"packageManager": "npm@1.0.0+build."}',
 		'{"packageManager": "npm@1.0.0+build..1"}',
-		// Corepack reads the field as a string and throws on anything else, so a value that is not one is not a
-		// pinned package manager.
+		// Corepack reads the field as a string and throws on anything else, so a value that is not one is not a pinned package manager.
 		'{"packageManager": true}',
 		'{"packageManager": 1}',
 		'{"packageManager": ["npm@10.8.2"]}',
@@ -925,28 +890,22 @@ test.snapshot({
 		'{"bin": {"foo": "./cli.js", "foo": true}}',
 		// The shadowed duplicate of an `overrides` key is ignored, but the one npm applies is not.
 		'{"overrides": {"foo": "1.0.0", "foo": 1}}',
-		// Npm splits a string `keywords` on `/,\s+/` and keeps the parts, so the comma-joined shorthand is a
-		// form it supports and each part is checked on its own. No suggestion is offered, because removing or
-		// rewriting one part of a joined string cannot be expressed as a fix.
+		// Npm splits a string `keywords` on `/,\s+/` and keeps the parts, so the comma-joined shorthand is a form it supports and each part is checked on its own. No suggestion is offered, because removing or rewriting one part of a joined string cannot be expressed as a fix.
 		'{"keywords": ""}',
 		'{"keywords": "A"}',
 		'{"keywords": "a, B"}',
 		'{"name": "p", "keywords": "p"}',
 		'{"keywords": "  x  "}',
 		'{"keywords": "a,b"}',
-		// Npm keeps a keyword made of whitespace, so it is reported for the padding rather than for being
-		// empty; only the empty string is one npm drops.
+		// Npm keeps a keyword made of whitespace, so it is reported for the padding rather than for being empty; only the empty string is one npm drops.
 		'{"keywords": [" "]}',
-		// Every part of a joined string is the same node, so a repeated keyword is reported once rather than
-		// once per occurrence, all at the same range.
+		// Every part of a joined string is the same node, so a repeated keyword is reported once rather than once per occurrence, all at the same range.
 		'{"keywords": "a, a, a"}',
 		'{"keywords": "a, b, a"}',
-		// The same holds for a repeated keyword that is not lowercase, which would otherwise be reported once
-		// per occurrence all at the same range.
+		// The same holds for a repeated keyword that is not lowercase, which would otherwise be reported once per occurrence all at the same range.
 		'{"keywords": "Foo, Bar, Foo"}',
 		'{"keywords": "Foo, Foo, Foo"}',
-		// A `type` the rule rejects on its own offers no replacement string, since the suggestion would only
-		// trade the object report for the invalid-expression one.
+		// A `type` the rule rejects on its own offers no replacement string, since the suggestion would only trade the object report for the invalid-expression one.
 		'{"license": {"type": "SEE LICENSE IN ", "url": "https://example.com/LICENSE"}}',
 		'{"license": {"type": "MITT", "url": "https://example.com"}}',
 		'{"license": {"type": "", "url": "https://example.com"}}',
@@ -965,8 +924,7 @@ test.snapshot({
 		'{"license": null, "licence": "MITT"}',
 		'{"license": false, "licence": "MITT"}',
 		'{"license": 0, "licence": "MITT"}',
-		// Npm matches its ignore rules with `nocase`, so a casing variant of an always-ignored name is
-		// excluded just as the name spelled its own way is.
+		// Npm matches its ignore rules with `nocase`, so a casing variant of an always-ignored name is excluded just as the name spelled its own way is.
 		'{"files": ["YARN.LOCK"]}',
 		'{"files": [".NPMRC"]}',
 		'{"files": ["Node_Modules/foo"]}',
@@ -974,8 +932,7 @@ test.snapshot({
 		'{"files": ["Package-Lock.json"]}',
 		// The mixing error is real at the top level.
 		'{"exports": {"import": "./a.js", "./b": "./b.js"}}',
-		// A subpath key nested inside a top-level condition map is checked twice over, once standing in for the
-		// missing subpath key and once against the key that is really there.
+		// A subpath key nested inside a top-level condition map is checked twice over, once standing in for the missing subpath key and once against the key that is really there.
 		'{"exports": {"types": {".": "./dist/*"}}}',
 		'{"exports": {"node": {".": {"import": "./dist/*.mjs"}}}}',
 		// The same target under two different subpath keys is a real difference, so both are still reported.
@@ -984,20 +941,16 @@ test.snapshot({
 		'{"bin": {"a/b": "./cli.js"}}',
 		String.raw`{"bin": {"a\\b": "./cli.js"}}`,
 		'{"license": "SEE LICENSE IN"}',
-		// Npm publishes `semver.clean(version)`, which strips a leading run of `=` along with a `v` prefix, so an
-		// `=` pin is a version npm accepts and rewrites rather than one it refuses. The fix has to take the whole
-		// run, or `=v1.0.0` would land on `v1.0.0` and be reported again.
+		// Npm publishes `semver.clean(version)`, which strips a leading run of `=` along with a `v` prefix, so an `=` pin is a version npm accepts and rewrites rather than one it refuses. The fix has to take the whole run, or `=v1.0.0` would land on `v1.0.0` and be reported again.
 		'{"version": "=1.0.0"}',
 		'{"version": "=v1.0.0"}',
 		'{"version": "==1.0.0"}',
 		'{"version": "= 1.0.0"}',
 		'{"version": "=1.0.0+build.5"}',
 		'{"license": "SEE LICENSE IN\t"}',
-		// `libnpmpublish` throws `EUNSCOPED` for a restricted unscoped package, so the publish fails
-		// rather than the field being ignored.
+		// `libnpmpublish` throws `EUNSCOPED` for a restricted unscoped package, so the publish fails rather than the field being ignored.
 		'{"name": "foo", "version": "1.0.0", "publishConfig": {"access": "restricted"}}',
-		// Lowercasing a keyword that another entry already holds in that spelling would create the duplicate
-		// the same rule reports, so no conversion is offered.
+		// Lowercasing a keyword that another entry already holds in that spelling would create the duplicate the same rule reports, so no conversion is offered.
 		'{"keywords": ["Foo", "foo"]}',
 		'{"keywords": ["foo", "Foo"]}',
 		'{"keywords": ["Foo", "FOO"]}',
@@ -1007,9 +960,7 @@ test.snapshot({
 		'{"bin": {"..": "./cli.js"}}',
 		'{"bin": {"/": "./cli.js"}}',
 		'{"bin": ["a/../.."]}',
-		// A `.` entry holds the version for the package the enclosing entry names, so npm reads its value as
-		// a version string and a truthy non-string one fails the install. A falsy one is never looked at, and
-		// a `.` on the top-level `overrides` object belongs to no package at all.
+		// A `.` entry holds the version for the package the enclosing entry names, so npm reads its value as a version string and a truthy non-string one fails the install. A falsy one is never looked at, and a `.` on the top-level `overrides` object belongs to no package at all.
 		'{"overrides": {"lodash": {".": {"x": "1.0.0"}}}}',
 		'{"overrides": {"lodash": {".": 1}}}',
 		'{"overrides": {"lodash": {".": true}}}',

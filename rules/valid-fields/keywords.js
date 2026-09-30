@@ -36,8 +36,7 @@ export function * check(root, context) {
 		return;
 	}
 
-	// Npm splits a string on `/,\s+/` and keeps the parts, so the comma-joined shorthand is a form it supports
-	// and the same per-keyword checks read the parts it produces. An empty string leaves it with nothing.
+	// Npm splits a string on `/,\s+/` and keeps the parts, so the comma-joined shorthand is a form it supports and the same per-keyword checks read the parts it produces. An empty string leaves it with nothing.
 	const isString = keywords.value.type === 'String';
 	const elements = isString
 		? keywords.value.value.split(/,\s+/u).map(keyword => ({value: keywords.value, keyword}))
@@ -61,8 +60,7 @@ export function * check(root, context) {
 		},
 	});
 
-	// A string has no element to remove and no single value to rewrite, so a joined list is reported without a
-	// suggestion: removing one keyword or lowercasing one would drop the rest along with it.
+	// A string has no element to remove and no single value to rewrite, so a joined list is reported without a suggestion: removing one keyword or lowercasing one would drop the rest along with it.
 	const withSuggestion = suggestion => (isString ? {} : {suggest: [suggestion]});
 
 	const seen = new Set();
@@ -120,9 +118,7 @@ export function * check(root, context) {
 			continue;
 		}
 
-		// The two reports below are the only ones a repeated keyword of a joined string can draw, and every part
-		// of such a string is the same node, so only the first of them carries information. The keyword is
-		// marked where the report is, not on entry, since whether it is a duplicate depends on where it came.
+		// The two reports below are the only ones a repeated keyword of a joined string can draw, and every part of such a string is the same node, so only the first of them carries information. The keyword is marked where the report is, not on entry, since whether it is a duplicate depends on where it came.
 		if (isString && reported.has(keyword)) {
 			continue;
 		}
@@ -130,10 +126,7 @@ export function * check(root, context) {
 		if (keyword !== keyword.toLowerCase()) {
 			reported.add(keyword);
 
-			// A conversion that lands on a keyword the field already holds, in any casing, would create the
-			// duplicate reported below rather than remove one, so nothing is offered when another entry is in
-			// the way. Every part of a joined string shares one node, so it is the part that is compared rather
-			// than the value behind it.
+			// A conversion that lands on a keyword the field already holds, in any casing, would create the duplicate reported below rather than remove one, so nothing is offered when another entry is in the way. Every part of a joined string shares one node, so it is the part that is compared rather than the value behind it.
 			const lowercase = keyword.toLowerCase();
 			const collides = elements.some(other =>
 				other !== element

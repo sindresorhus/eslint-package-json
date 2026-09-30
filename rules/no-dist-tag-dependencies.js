@@ -8,9 +8,7 @@ const messages = {
 };
 
 /**
-Whether npm reads a specifier as a dist-tag. Asking `npm-package-arg` settles every form at once, including the
-loose versions it accepts (`1.0.0-01`, `01.2.3`) and the path and protocol forms, which are not tags either. A
-protocol it refuses, such as `workspace:` or `link:`, is not a tag.
+Whether npm reads a specifier as a dist-tag. Asking `npm-package-arg` settles every form at once, including the loose versions it accepts (`1.0.0-01`, `01.2.3`) and the path and protocol forms, which are not tags either. A protocol it refuses, such as `workspace:` or `link:`, is not a tag.
 */
 const isDistTag = specifier => {
 	try {
@@ -26,9 +24,7 @@ Get the dist-tag a specifier resolves to, or `undefined` when it is not pinned t
 Version ranges (including `*`, `x` and `1.2.x`) parse as a range, and tags do not.
 */
 const getDistTag = specifier => {
-	// An `npm:` alias carries its own specifier, which may itself be a scoped package name, so the tag is the
-	// one it aliases, not the whole alias. A specifier that is not an alias resolves to nothing, and is then
-	// read as itself.
+	// An `npm:` alias carries its own specifier, which may itself be a scoped package name, so the tag is the one it aliases, not the whole alias. A specifier that is not an alias resolves to nothing, and is then read as itself.
 	const aliased = resolveAlias(specifier)?.fetchSpec;
 	const subject = aliased ?? specifier;
 

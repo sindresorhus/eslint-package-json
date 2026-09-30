@@ -74,11 +74,9 @@ test.snapshot({
 		'{\n\t"dependencies": {\n\t\t"foo": "^1.2.3"\n\t},\n\t"overrides": {\n\t\t"foo@^1.0.0": {\n\t\t}\n\t}\n}',
 		'{"dependencies":{"foo":"^1","bar":"^2"},"devDependencies":{"bar":""},"overrides":{"foo":"$bar"}}',
 		'{"dependencies":{"Foo":"^1"},"devDependencies":{"foo":"^2"},"overrides":{"foo":"^1"}}',
-		// Npm refuses to install at all with `Unable to resolve reference $x`, so an unresolvable
-		// reference is a hard failure of its own.
+		// Npm refuses to install at all with `Unable to resolve reference $x`, so an unresolvable reference is a hard failure of its own.
 		'{\n\t"name": "root",\n\t"version": "1.0.0",\n\t"dependencies": {"foo": "^1.0.0"},\n\t"overrides": {"foo": "$missing"}\n}',
-		// Npm refuses to install at all with `Unable to resolve reference $x` when the referenced name is in
-		// no group, so this is a hard failure of its own rather than a conflict.
+		// Npm refuses to install at all with `Unable to resolve reference $x` when the referenced name is in no group, so this is a hard failure of its own rather than a conflict.
 		'{\n\t"dependencies": {\n\t\t"foo": "^1.0.0"\n\t},\n\t"overrides": {\n\t\t"foo": "$bar"\n\t}\n}',
 		// Npm only takes a non-empty referenced specifier, so a name whose every entry is empty fails with `Unable to resolve reference $x` too.
 		'{"dependencies":{"foo":"^1","bar":""},"overrides":{"foo":"$bar"}}',

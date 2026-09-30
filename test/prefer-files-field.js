@@ -86,16 +86,13 @@ test.snapshot({
 		// An `imports` target is often used only by tests or dev tooling, so it is not an entry point. `no-missing-files` checks that it exists.
 		'{"name": "p", "imports": {"#a": "./lib/a.js"}, "files": ["lib"]}',
 		'{"name": "p", "imports": {"#a": {"default": "./lib/a.js"}}, "files": ["**/*.js"]}',
-		// A `browser` replacement map names module files the bundler resolves to, and npm leaves them out
-		// of the tarball when `files` misses them. A `false` value names no file.
+		// A `browser` replacement map names module files the bundler resolves to, and npm leaves them out of the tarball when `files` misses them. A `false` value names no file.
 		'{"name": "p", "browser": {"a.js": "./lib/a.js"}, "files": ["lib"]}',
 		'{"name": "p", "browser": {"a.js": false, "b.js": "./lib/b.js"}, "files": ["lib"]}',
-		// A `browser` value that is not written `./`-rooted is a module specifier, so it names a file inside a
-		// dependency and no `files` entry covers it. This is the shape real manifests use.
+		// A `browser` value that is not written `./`-rooted is a module specifier, so it names a file inside a dependency and no `files` entry covers it. This is the shape real manifests use.
 		'{"name": "p", "browser": {"fs": false, "path": "path-browserify", "lodash": "lodash-es"}, "files": ["dist"]}',
 		'{"name": "p", "browser": {"index": "vendor/shim.js"}, "files": ["dist"]}',
-		// Npm force-includes the readme, copying, licence and `package.json` family at the package root
-		// whatever `files` says, and its rules for them are case-insensitive.
+		// Npm force-includes the readme, copying, licence and `package.json` family at the package root whatever `files` says, and its rules for them are case-insensitive.
 		'{"name": "p", "files": ["dist"], "exports": "./README.md"}',
 		'{"name": "p", "files": ["dist"], "browser": "./LICENSE"}',
 		'{"name": "p", "files": ["dist"], "exports": "./readme"}',
@@ -148,8 +145,7 @@ test.snapshot({
 		'{"exports": "./ba", "files": ["a"]}',
 		// A shadowed `bin` duplicate is not an entry point npm publishes, so it must not mark the uncovered `exports` target as auto-included.
 		'{"name": "p", "bin": {"x": "./index.js", "x": "./other.js"}, "exports": "./index.js", "files": ["dist"]}',
-		// The force-inclusion rule is the literal field value, so a `./` prefix names a different
-		// path and the file is not published.
+		// The force-inclusion rule is the literal field value, so a `./` prefix names a different path and the file is not published.
 		'{"main": "./index.js", "files": ["dist"]}',
 		// `.` names the package root but publishes nothing, so the entry point is uncovered.
 		'{"name": "p", "exports": "./dist/index.js", "files": ["."]}',

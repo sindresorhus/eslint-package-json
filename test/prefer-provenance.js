@@ -57,8 +57,7 @@ test.snapshot({
 		// A single-line empty `publishConfig` stays on one line, the way the non-empty case does.
 		'{"name": "x", "publishConfig": {}, "version": "1.0.0"}',
 		'{"publishConfig": {}, "name": "x"}',
-		// A multiline empty `publishConfig` gets the member on its own line, with no stray blank line
-		// left over from the whitespace the empty object already held.
+		// A multiline empty `publishConfig` gets the member on its own line, with no stray blank line left over from the whitespace the empty object already held.
 		'{\n\t"publishConfig": {\n\t}\n}',
 		'{\n  "name": "x",\n  "publishConfig": {\n  }\n}',
 		// A first member on the opening line with the rest on lines of their own: the new member takes the indentation of the members that have one.

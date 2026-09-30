@@ -61,8 +61,7 @@ test.snapshot({
 		'{"exports": {"node-addons": {"require": "./dep.cjs"}, "default": "./dep.js"}}',
 		// A covered `node` branch that has a `default` of its own has nothing left to report.
 		'{"exports": {"node": {"import": "./a.mjs", "require": "./a.cjs", "default": "./a.js"}, "default": "./a.js"}}',
-		// A fallback list is the fallback: an element that matches no condition resolves to nothing and Node
-		// moves on to the next one, so every element but the last needs no `default` of its own.
+		// A fallback list is the fallback: an element that matches no condition resolves to nothing and Node moves on to the next one, so every element but the last needs no `default` of its own.
 		'{"exports": [{"import": "./a.mjs"}, {"require": "./a.cjs", "default": "./a.js"}]}',
 		'{"exports": {".": [{"import": "./a.mjs"}, {"require": "./a.cjs", "default": "./a.js"}]}}',
 		'{"exports": [[{"import": "./a.mjs"}], ["./b.js"]]}',
@@ -112,8 +111,7 @@ test.snapshot({
 		'{"exports": {"browser": {"import": "./dep.mjs", "require": "./dep.cjs"}}}',
 		// A `default` before another condition is still wrong inside a fallback list.
 		'{"exports": [{"default": "./a.js", "import": "./a.mjs"}, {"require": "./a.cjs"}]}',
-		// The last element of a fallback list has nothing left to fall through to, so it needs a `default` of
-		// its own.
+		// The last element of a fallback list has nothing left to fall through to, so it needs a `default` of its own.
 		'{"exports": [{"import": "./a.mjs"}, {"require": "./a.cjs", "types": "./a.d.cts"}]}',
 		// A `default` before the nested object is read first, so nothing falls through to it.
 		'{"exports": {"default": "./b.cjs", "development": {"import": "./a.mjs"}}}',

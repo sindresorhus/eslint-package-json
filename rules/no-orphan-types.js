@@ -33,11 +33,7 @@ const defaultIgnore = [
 	'@types/w3c-web-serial',
 	'@types/w3c-image-capture',
 	'@types/webgl-ext',
-	// Type packages for a widely used AST format. Consumers normally get the format from an
-	// implementation package such as `mdast-util-from-markdown` or `rehype` rather than one named
-	// after the format, so a missing same-named dependency says nothing about whether the types are
-	// used. `@types/unist` is the canonical source: the `unist` package is deprecated in its favour,
-	// and `xast` is an unrelated library that happens to share the name.
+	// Type packages for a widely used AST format. Consumers normally get the format from an implementation package such as `mdast-util-from-markdown` or `rehype` rather than one named after the format, so a missing same-named dependency says nothing about whether the types are used. `@types/unist` is the canonical source: the `unist` package is deprecated in its favour, and `xast` is an unrelated library that happens to share the name.
 	'@types/estree',
 	'@types/estree-jsx',
 	'@types/hast',
@@ -84,9 +80,7 @@ const create = context => {
 				}
 			}
 
-			// A manifest that is itself a type package declares the types its own declaration file imports, and
-			// a consumer receives those from `dependencies` alone, so they are its public API rather than an
-			// orphan. `@types/debug` depends on `@types/ms` for exactly this reason.
+			// A manifest that is itself a type package declares the types its own declaration file imports, and a consumer receives those from `dependencies` alone, so they are its public API rather than an orphan. `@types/debug` depends on `@types/ms` for exactly this reason.
 			const ownName = findMember(root, 'name');
 			const isTypePackage = ownName?.value.type === 'String' && ownName.value.value.startsWith('@types/');
 

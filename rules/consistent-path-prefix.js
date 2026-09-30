@@ -21,9 +21,7 @@ const messages = {
 	[REMOVE_PREFIX_SUGGESTION_ID]: 'Remove the `./` prefix.',
 };
 
-// Npm force-includes `main` and `browser` by pushing `!/${value}` for the value as written, so a `./` prefix on
-// either stops the rule from matching and drops the file from the tarball. `bin` is not in this set because npm
-// normalizes its targets before that comparison, and the remaining fields are not force-included at all.
+// Npm force-includes `main` and `browser` by pushing `!/${value}` for the value as written, so a `./` prefix on either stops the rule from matching and drops the file from the tarball. `bin` is not in this set because npm normalizes its targets before that comparison, and the remaining fields are not force-included at all.
 const fieldsNpmComparesRaw = new Set(['main', 'browser']);
 
 const absolutePathPattern = /^(?:[/\\]|[a-z]:)/iu;
@@ -94,8 +92,7 @@ const create = context => {
 
 				const fix = fixer => fixer.replaceText(valueNode, JSON.stringify(fixed));
 
-				// Adding the prefix to a field npm compares as written takes the file out of the tarball, so
-				// it is offered as a suggestion rather than applied by `--fix`.
+				// Adding the prefix to a field npm compares as written takes the file out of the tarball, so it is offered as a suggestion rather than applied by `--fix`.
 				context.report(
 					fieldsNpmComparesRaw.has(field)
 						? {...base, suggest: [{messageId: PREFIX_SUGGESTION_ID, fix}]}
@@ -105,9 +102,7 @@ const create = context => {
 		} else if (prefix === 'never' && value.startsWith('./')) {
 			const fixed = value.slice(2);
 
-			// A bare `./` has nothing to strip to, and stripping the prefix off a doubled separator leaves a
-			// path rooted at the filesystem root, which is a different file from the one named. Leave both
-			// alone rather than produce an empty or absolute path.
+			// A bare `./` has nothing to strip to, and stripping the prefix off a doubled separator leaves a path rooted at the filesystem root, which is a different file from the one named. Leave both alone rather than produce an empty or absolute path.
 			if (fixed === '' || absolutePathPattern.test(fixed)) {
 				return;
 			}

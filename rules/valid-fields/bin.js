@@ -30,10 +30,7 @@ export const messages = {
 /**
 The problem npm has with a `bin` name, or `undefined` when it publishes it as written.
 
-Npm reads a name as the basename of the path it normalizes to, so one that normalizes to nothing names no
-command at all and the entry goes with it. Only the object form is checked for a rename: its keys are command
-names the author spelled out, whereas the array form's entries are paths whose basename is the command name the
-legacy shape exists to derive.
+Npm reads a name as the basename of the path it normalizes to, so one that normalizes to nothing names no command at all and the entry goes with it. Only the object form is checked for a rename: its keys are command names the author spelled out, whereas the array form's entries are paths whose basename is the command name the legacy shape exists to derive.
 */
 function getNameProblem(name, isArrayEntry) {
 	const command = normalizeBinName(isArrayEntry ? path.posix.basename(name) : name);
@@ -52,10 +49,7 @@ export function * check(root) {
 		return;
 	}
 
-	// Npm only reads `directories.bin` when there is no `bin` of its own, so the two together are a
-	// mistake worth flagging, but npm publishes the manifest either way. Its guard is `!data.bin`, so a
-	// falsy `bin` is what lets `directories.bin` be read and the two are not in conflict. The empty `bin`
-	// itself is `no-empty-fields`' business.
+	// Npm only reads `directories.bin` when there is no `bin` of its own, so the two together are a mistake worth flagging, but npm publishes the manifest either way. Its guard is `!data.bin`, so a falsy `bin` is what lets `directories.bin` be read and the two are not in conflict. The empty `bin` itself is `no-empty-fields`' business.
 	const directories = findMember(root, 'directories');
 
 	if (directories?.value.type === 'Object') {
@@ -74,8 +68,7 @@ export function * check(root) {
 		return;
 	}
 
-	// The array form is a legacy shape npm still accepts: it flattens the entries into an object keyed
-	// by each entry's basename. `path.basename` throws on a non-string, so every entry is still a path.
+	// The array form is a legacy shape npm still accepts: it flattens the entries into an object keyed by each entry's basename. `path.basename` throws on a non-string, so every entry is still a path.
 	if (bin.value.type === 'Array') {
 		for (const element of bin.value.elements) {
 			if (element.value.type !== 'String') {

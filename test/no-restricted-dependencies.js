@@ -70,8 +70,7 @@ test.snapshot({
 			code: '{"dependencies": {"foo": "^1.0.0", "bar": "^2.0.0"}}',
 			options: [{packages: ['foo', {name: 'bar', message: 'Deprecated.'}]}],
 		},
-		// A ban list names packages, and an `npm:` alias installs that exact package under another key, so
-		// matching only the key would let a ban be bypassed with an alias.
+		// A ban list names packages, and an `npm:` alias installs that exact package under another key, so matching only the key would let a ban be bypassed with an alias.
 		{
 			code: '{"dependencies": {"my-lodash": "npm:lodash@^4.0.0"}}',
 			options: [{packages: ['lodash']}],

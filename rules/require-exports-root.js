@@ -19,9 +19,7 @@ function isTypesCondition(key) {
 	return key === 'types' || key.startsWith('types@');
 }
 
-// The conditions Node sets on its own. Every other key is one a consumer has to ask for with `--conditions`,
-// or one a bundler sets for a target of its own, so a root built only from those cannot be loaded by a plain
-// `require` or `import`. `types` is TypeScript's, and is excluded for the same reason as the rest.
+// The conditions Node sets on its own. Every other key is one a consumer has to ask for with `--conditions`, or one a bundler sets for a target of its own, so a root built only from those cannot be loaded by a plain `require` or `import`. `types` is TypeScript's, and is excluded for the same reason as the rest.
 const nodeConditionKeys = new Set(['node', 'node-addons', 'import', 'require', 'module-sync', 'default']);
 
 // The no-runtime check counts only the targets reachable through `nodeConditionKeys`, while the `main` comparison counts a target under any condition, since `main` often names the `browser` target (svelte) or another condition's.

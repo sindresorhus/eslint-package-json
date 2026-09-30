@@ -88,10 +88,7 @@ function * checkTargetNode(node) {
 			for (const member of node.members) {
 				const key = getKey(member);
 
-				// Only the top level of `imports` maps a `#` key to a target. Nested in a conditions
-				// object Node reads a `#` key as a condition name like any other, so the branch is only
-				// reached when a consumer passes that name to `--conditions`, which nothing does by
-				// default.
+				// Only the top level of `imports` maps a `#` key to a target. Nested in a conditions object Node reads a `#` key as a condition name like any other, so the branch is only reached when a consumer passes that name to `--conditions`, which nothing does by default.
 				if (key.startsWith('#')) {
 					yield {
 						node: member.name,
@@ -142,8 +139,7 @@ export function * check(root) {
 		return;
 	}
 
-	// Collapsed the way `JSON.parse` builds the tree, so a shadowed duplicate is not checked as a target Node
-	// never resolves. The surviving members are the original nodes, so reports still point at real ranges.
+	// Collapsed the way `JSON.parse` builds the tree, so a shadowed duplicate is not checked as a target Node never resolves. The surviving members are the original nodes, so reports still point at real ranges.
 	const value = withoutShadowedMembers(imports.value);
 
 	if (value.type !== 'Object') {

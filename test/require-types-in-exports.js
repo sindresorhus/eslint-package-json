@@ -203,21 +203,17 @@ test.snapshot({
 		'{"exports": {".": {"types": "./a.d.ts", "types": "./a.js", "default": "./a.js"}}}',
 		// A `default` branch whose conditions the types object cannot answer is still uncovered.
 		'{"exports": {"types": {"browser": "./index.d.ts"}, "default": {"import": "./index.mjs"}}}',
-		// A `browser`, `module`, `worker` or `deno` condition is consulted by its own toolchain, not
-		// by a node resolution, so a declaration behind one does not cover a `default` string target.
-		// Checked with `tsc` under `nodenext`, which leaves these untyped for an importer.
+		// A `browser`, `module`, `worker` or `deno` condition is consulted by its own toolchain, not by a node resolution, so a declaration behind one does not cover a `default` string target. Checked with `tsc` under `nodenext`, which leaves these untyped for an importer.
 		'{"exports": {"types": {"browser": "./index.d.ts"}, "default": "./index.mjs"}}',
 		'{"exports": {"types": {"module": "./index.d.ts"}, "default": "./index.mjs"}}',
 		'{"exports": {"types": {"worker": "./index.d.ts"}, "default": "./index.mjs"}}',
 		'{"exports": {"types": {"deno": "./index.d.ts"}, "default": "./index.mjs"}}',
-		// `module-sync` and `node-addons` are real Node conditions that TypeScript never asks for, so
-		// a declaration behind either leaves an importer untyped just the same.
+		// `module-sync` and `node-addons` are real Node conditions that TypeScript never asks for, so a declaration behind either leaves an importer untyped just the same.
 		'{"exports": {"types": {"module-sync": "./index.d.ts"}, "default": "./index.mjs"}}',
 		'{"exports": {"types": {"node-addons": "./index.d.ts"}, "default": "./index.mjs"}}',
 		'{"exports": {"types": {"import": {"browser": "./index.d.ts"}}, "default": "./index.mjs"}}',
 		'{"exports": {"types": {"types@>=5": {"browser": "./index.d.ts"}}, "default": "./index.mjs"}}',
-		// A `null` under `import` answers an importing consumer with nothing, and the declaration behind
-		// `default` is never consulted.
+		// A `null` under `import` answers an importing consumer with nothing, and the declaration behind `default` is never consulted.
 		'{"type": "module", "exports": {"types": {"import": null, "default": "./i.d.mts"}, "default": "./i.mjs"}}',
 		// A `types` object that answers only `require` leaves an importer of the `default` target untyped.
 		'{"exports": {"types": {"require": "./i.d.cts"}, "default": "./i.cjs"}}',

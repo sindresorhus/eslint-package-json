@@ -72,31 +72,22 @@ const create = context => {
 						// Across groups, removing a `devDependencies` entry changes an install: the project root loads `devDependencies` last and lets them win, so `npm install --omit=dev` skips a name listed in both, and keeping only the `dependencies` entry installs it. Removing a `dependencies` entry in favor of the `optionalDependencies` one installs the same thing, but whether the package is required or optional is the author's call. So every cross-group removal is a suggestion, and only a same-group one an automatic fix.
 						const isAutofix = isSafeToFix && isSameGroup;
 
-						// Removing the name takes the whole run with it, so a group that held nothing else is
-						// left empty, which `no-empty-fields` then reports as a problem this fix created; the group
-						// itself goes instead. A same-group removal always leaves its effective entry, so only the
-						// cross-group one can empty a group.
+						// Removing the name takes the whole run with it, so a group that held nothing else is left empty, which `no-empty-fields` then reports as a problem this fix created; the group itself goes instead. A same-group removal always leaves its effective entry, so only the cross-group one can empty a group.
 						const doesEmptyTheGroup = !isSameGroup && countEffectiveMembers(group.value) === 1;
 
 						const removal = {
 							* fix(fixer) {
 								if (isSameGroup) {
-									// Within a group the effective member takes the whole shadowed run with it, which
-									// resolves the report. A duplicate that only shadows another needs no more than
-									// the member the report names.
+									// Within a group the effective member takes the whole shadowed run with it, which resolves the report. A duplicate that only shadows another needs no more than the member the report names.
 									yield * (isSafeToFix
 										? removeShadowedDuplicates(fixer, sourceCode, effectiveMember)
 										: removeMember(fixer, sourceCode, member));
 									return;
 								}
 
-								// Across groups the whole name goes, and with it every member in the group that
-								// shares it, so the report is resolved whether the member it names is the effective
-								// one or only shadows another.
+								// Across groups the whole name goes, and with it every member in the group that shares it, so the report is resolved whether the member it names is the effective one or only shadows another.
 								if (doesEmptyTheGroup) {
-									// The group member is the one `findMember` resolved, which is the final member
-									// for its key. Taking the whole run is what keeps a shadowed duplicate from
-									// being promoted into the group's place, which would bring this report back.
+									// The group member is the one `findMember` resolved, which is the final member for its key. Taking the whole run is what keeps a shadowed duplicate from being promoted into the group's place, which would bring this report back.
 									yield * removeMemberAndDuplicates(fixer, sourceCode, group);
 									return;
 								}

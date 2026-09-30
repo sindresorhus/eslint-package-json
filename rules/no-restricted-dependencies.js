@@ -12,9 +12,7 @@ const messages = {
 };
 
 /**
-The package name an `npm:` alias actually installs. A ban list names packages, and `npm:lodash@^4` puts the
-real `lodash` on disk under whatever key the alias uses, so a ban that only matched the key would be trivially
-bypassed.
+The package name an `npm:` alias actually installs. A ban list names packages, and `npm:lodash@^4` puts the real `lodash` on disk under whatever key the alias uses, so a ban that only matched the key would be trivially bypassed.
 */
 const getAliasedName = specifier => resolveAlias(specifier)?.name;
 
@@ -53,8 +51,7 @@ const create = context => {
 				const aliasedName = member.value.type === 'String' ? getAliasedName(member.value.value) : undefined;
 				const bannedName = banned.has(name) ? name : (aliasedName && banned.has(aliasedName) ? aliasedName : undefined);
 
-				// `undefined` is "not banned"; an empty name is a name `no-restricted-fields` bans too, and the
-				// two rules would otherwise disagree on the same misconfiguration.
+				// `undefined` is "not banned"; an empty name is a name `no-restricted-fields` bans too, and the two rules would otherwise disagree on the same misconfiguration.
 				if (bannedName === undefined) {
 					continue;
 				}

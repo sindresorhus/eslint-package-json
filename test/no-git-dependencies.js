@@ -15,8 +15,7 @@ test.snapshot({
 		'{"dependencies": {"foo": "./foo"}}',
 		'{"dependencies": {"foo": "../foo"}}',
 		'{"dependencies": {"foo": "./packages/foo"}}',
-		// A `.git` suffix does not turn a local path into a git remote: npm resolves all of these as
-		// directories, and `no-local-dependencies` is the rule that reports them.
+		// A `.git` suffix does not turn a local path into a git remote: npm resolves all of these as directories, and `no-local-dependencies` is the rule that reports them.
 		'{"dependencies": {"foo": "file:../foo.git"}}',
 		'{"dependencies": {"foo": "../foo.git"}}',
 		'{"dependencies": {"foo": "./foo.git"}}',
@@ -28,8 +27,7 @@ test.snapshot({
 		'{"dependencies": {"foo": 1}}',
 		// No dependencies field.
 		'{"name": "my-package"}',
-		// Npm keys on the host, not the suffix: a `.git` on an unhosted URL is a tarball it downloads, and
-		// `no-http-dependencies` reports it, whatever the case of the suffix.
+		// Npm keys on the host, not the suffix: a `.git` on an unhosted URL is a tarball it downloads, and `no-http-dependencies` reports it, whatever the case of the suffix.
 		'{"dependencies": {"foo": "https://example.com/user/repo.GIT"}}',
 		'{"dependencies": {"foo": "https://example.com/user/repo.git"}}',
 		'{"dependencies": {"foo": "https://example.com/user/repo.git#v1"}}',
@@ -89,8 +87,7 @@ test.snapshot({
 		},
 		// DevDependencies.
 		'{"devDependencies": {"foo": "git+https://github.com/user/repo.git"}}',
-		// `npm-package-arg` decides git from the host and protocol rather than from a suffix, so a hosted
-		// URL is a git remote with or without one. These are the shapes no string pattern can reach.
+		// `npm-package-arg` decides git from the host and protocol rather than from a suffix, so a hosted URL is a git remote with or without one. These are the shapes no string pattern can reach.
 		'{"dependencies": {"foo": "https://github.com/user/repo"}}',
 		'{"dependencies": {"foo": "https://gitlab.com/user/repo"}}',
 		'{"dependencies": {"foo": "https://gitlab.com/user/repo.GIT"}}',

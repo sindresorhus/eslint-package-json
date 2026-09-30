@@ -43,17 +43,11 @@ const create = context => ({
 			}
 
 			const specifier = member.value.value;
-			// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` pins one version just like
-			// `1.2.3` does. What precedes the installed range is the alias, found by searching for the range
-			// rather than by measuring the tail, since `npm-package-arg` trims the range it reports and a trailing
-			// space would otherwise land the prefix in the middle of the version.
+			// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` pins one version just like `1.2.3` does. What precedes the installed range is the alias, found by searching for the range rather than by measuring the tail, since `npm-package-arg` trims the range it reports and a trailing space would otherwise land the prefix in the middle of the version.
 			const version = installedSpecifier(specifier);
 			const aliasPrefix = specifier.slice(0, specifier.lastIndexOf(version));
 
-			// `validVersion` returns non-`null` only for a single exact version (e.g. `1.2.3`), not ranges, wildcards, or other specifiers.
-			// It wants that version bare, so an `=`-prefixed pin (`=1.2.3`) has its operator removed first. That form
-			// satisfies exactly one version just like the bare pin, which is the same anti-pattern. Only one
-			// operator goes: `==1.2.3` is not a range at all, which is `dependency-version-range`'s business.
+			// `validVersion` returns non-`null` only for a single exact version (e.g. `1.2.3`), not ranges, wildcards, or other specifiers. It wants that version bare, so an `=`-prefixed pin (`=1.2.3`) has its operator removed first. That form satisfies exactly one version just like the bare pin, which is the same anti-pattern. Only one operator goes: `==1.2.3` is not a range at all, which is `dependency-version-range`'s business.
 			const normalized = validVersion(version) ?? validVersion(version.replace(/^=/u, ''));
 
 			if (normalized === null) {
@@ -65,8 +59,7 @@ const create = context => ({
 			const suggestions = [
 				{
 					messageId: CARET_SUGGESTION_ID,
-					// Build the range from the canonical version so a loose input like `v1.2.3` becomes a clean
-					// `^1.2.3`, while a `+build` the author wrote survives the rewrite.
+					// Build the range from the canonical version so a loose input like `v1.2.3` becomes a clean `^1.2.3`, while a `+build` the author wrote survives the rewrite.
 					fix: fixer => fixer.replaceText(member.value, JSON.stringify(aliasPrefix + '^' + canonicalVersion(version))),
 				},
 			];

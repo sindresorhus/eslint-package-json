@@ -62,8 +62,7 @@ function * checkEntry(field, objectNode) {
 
 	const version = findMember(objectNode, 'version');
 
-	// Npm reads the range with `semver.satisfies`, which reads an empty one as `'*'`, so an empty version
-	// installs exactly as a missing one would.
+	// Npm reads the range with `semver.satisfies`, which reads an empty one as `'*'`, so an empty version installs exactly as a missing one would.
 	if (version && (version.value.type !== 'String' || validRange(version.value.value) === null)) {
 		yield {
 			node: version.value,

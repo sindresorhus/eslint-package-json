@@ -43,9 +43,7 @@ snapshotTest.snapshot({
 		'{"dependencies": {}}',
 		// @types in peerDependencies is allowed (a library may expose types from a peer).
 		'{"peerDependencies": {"@types/react": ">=18"}}',
-		// A manifest that is itself a type package declares the types its declaration file imports, and a
-		// consumer gets those from `dependencies` alone, because npm installs no devDependency of a
-		// dependency. `@types/debug` depends on `@types/ms` and `@types/mdast` on `@types/unist` for this.
+		// A manifest that is itself a type package declares the types its declaration file imports, and a consumer gets those from `dependencies` alone, because npm installs no devDependency of a dependency. `@types/debug` depends on `@types/ms` and `@types/mdast` on `@types/unist` for this.
 		'{"name": "@types/debug", "version": "1.0.0", "dependencies": {"@types/ms": "*"}}',
 		'{"name": "@types/mdast", "version": "1.0.0", "dependencies": {"@types/unist": "*"}}',
 		// Ignored package name: its types leak into the public API, so it must stay a real dependency.
@@ -71,9 +69,7 @@ snapshotTest.snapshot({
 		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^19.0.0"}}',
 		// A malformed (non-object) devDependencies is left to `valid-fields`; no fix is offered.
 		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": "invalid"}',
-		// Removing only the effective member would leave the earlier duplicate in `dependencies`, and removing
-		// the entry alone would leave a `{"dependencies": {}}` behind, which `no-empty-fields` reports as a
-		// problem this suggestion created. The group goes with the entry instead.
+		// Removing only the effective member would leave the earlier duplicate in `dependencies`, and removing the entry alone would leave a `{"dependencies": {}}` behind, which `no-empty-fields` reports as a problem this suggestion created. The group goes with the entry instead.
 		'{"dependencies": {"@types/node": "^19.0.0", "@types/node": "^20.0.0"}}',
 		// A non-string range is malformed; the entry is reported but no fix is offered.
 		'{"dependencies": {"@types/node": 1}}',
@@ -90,16 +86,13 @@ snapshotTest.snapshot({
 		'{"name": "x", "dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {}}',
 		// A `devDependencies` group that has to be created goes on one line when the root is on one line.
 		'{"name": "x", "version": "1.0.0", "dependencies": {"@types/node": "^20.0.0"}}',
-		// Already in `devDependencies` at the same range, so the move only has to take the entry out of
-		// `dependencies` and the suggestion does that alone. The group goes with the entry when that was its
-		// last one, since an empty group is what `no-empty-fields` reports.
+		// Already in `devDependencies` at the same range, so the move only has to take the entry out of `dependencies` and the suggestion does that alone. The group goes with the entry when that was its last one, since an empty group is what `no-empty-fields` reports.
 		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^20.0.0"}}',
 		'{"name": "x", "dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^20.0.0"}}',
 		'{"name": "x", "dependencies": {"@types/node": "^20.0.0", "foo": "^1.0.0"}, "devDependencies": {"@types/node": "^20.0.0", "bar": "^2.0.0"}}',
 		// A malformed entry in `devDependencies` gives nothing to compare against, so the range is ambiguous.
 		'{"dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": 1}}',
-		// A duplicated `dependencies` member is the one `findMember` resolved that the group removal takes, and
-		// leaving the earlier duplicate behind would promote it straight back into the group's place.
+		// A duplicated `dependencies` member is the one `findMember` resolved that the group removal takes, and leaving the earlier duplicate behind would promote it straight back into the group's place.
 		'{"name": "x", "dependencies": {"@types/node": "^20.0.0"}, "dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^20.0.0"}}',
 		// The created group and the moved entry go where a sorted document holds them.
 		'{"name": "x", "dependencies": {"@types/node": "^20.0.0", "foo": "^1.0.0"}, "peerDependencies": {"bar": "^1.0.0"}}',
@@ -148,9 +141,7 @@ test('the suggestion keeps a sorted document sorted', () => {
 });
 
 test('a group removal takes the whole run of that group key', () => {
-	// The group is reached through `findMember`, so the member the fix takes is the final one for its key.
-	// Removing only that one promotes the earlier duplicate into its place, which is the very report the
-	// suggestion was offered for.
+	// The group is reached through `findMember`, so the member the fix takes is the final one for its key. Removing only that one promotes the earlier duplicate into its place, which is the very report the suggestion was offered for.
 	const code = '{"name": "x", "dependencies": {"@types/node": "^20.0.0"}, "dependencies": {"@types/node": "^20.0.0"}, "devDependencies": {"@types/node": "^20.0.0"}}';
 	const [message] = linter.verify(code, config, {filename: 'package.json'});
 

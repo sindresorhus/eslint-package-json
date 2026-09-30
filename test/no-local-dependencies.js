@@ -71,9 +71,7 @@ test.snapshot({
 		// `portal:` is Yarn Berry's sibling of `link:` and names a local directory just the same.
 		'{"dependencies": {"foo": "portal:../foo"}}',
 		'{"dependencies": {"foo": "portal:."}}',
-		// A bare specifier is a directory npm copies into `node_modules` as soon as it is three path segments
-		// or ends in a slash, because `npm-package-arg` reads a one- or two-segment one as the hosted
-		// `owner/repo` shorthand instead. Verified against `npm-package-arg`.
+		// A bare specifier is a directory npm copies into `node_modules` as soon as it is three path segments or ends in a slash, because `npm-package-arg` reads a one- or two-segment one as the hosted `owner/repo` shorthand instead. Verified against `npm-package-arg`.
 		'{"dependencies": {"foo": "packages/utils/"}}',
 		'{"dependencies": {"foo": "a/b/c"}}',
 		'{"dependencies": {"foo": "a/b/c/d"}}',

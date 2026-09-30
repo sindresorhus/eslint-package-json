@@ -57,8 +57,7 @@ snapshotTest.snapshot({
 		// Only the final value per `bin` key is installed.
 		{code: '{"bin": "valid.js", "bin": "invalid.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": {"foo": "valid.js", "foo": "invalid.js"}}', filename: fixturePackageFilename},
-		// The Linux kernel hands `env` the whole rest of the line as one argument, so arguments after a
-		// bare `node` are part of the program name and `env` exits 127. Only `-S` splits them.
+		// The Linux kernel hands `env` the whole rest of the line as one argument, so arguments after a bare `node` are part of the program name and `env` exits 127. Only `-S` splits them.
 		{code: '{"bin": "arguments.js"}', filename: fixturePackageFilename},
 		{code: '{"bin": "tab-terminator.js"}', filename: fixturePackageFilename},
 		// One byte past the kernel buffer: the newline lands outside it, so the shebang is cut.

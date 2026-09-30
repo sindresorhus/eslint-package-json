@@ -54,23 +54,20 @@ snapshotTest.snapshot({
 				"vue": "^3.0.0"
 			}
 		}`,
-		// An `=`-prefixed version satisfies exactly one version, the same as the bare pin, so it is the
-		// same anti-pattern. `validVersion` wants a bare version, so the operator comes off first.
+		// An `=`-prefixed version satisfies exactly one version, the same as the bare pin, so it is the same anti-pattern. `validVersion` wants a bare version, so the operator comes off first.
 		'{"peerDependencies": {"react": "=1.0.0"}}',
 		'{"peerDependencies": {"react": "=v18.2.0"}}',
 		'{"peerDependencies": {"react": "=18.2.0+build.1"}}',
 		// An `npm:` alias pins one version when the range it carries is one, and the suggestions keep the alias.
 		'{"peerDependencies": {"react": "npm:react-dom@18.2.0"}}',
 		'{"peerDependencies": {"react": "npm:@scope/react@18.2.0"}}',
-		// A trailing space is one `npm-package-arg` trims off the range it reports, so the alias in front of it
-		// has to be found by searching rather than by measuring the tail.
+		// A trailing space is one `npm-package-arg` trims off the range it reports, so the alias in front of it has to be found by searching rather than by measuring the tail.
 		'{"peerDependencies": {"react": "npm:react-dom@18.2.0 "}}',
 	],
 });
 
 test('the `>=` suggestion stays a real range for a 0.x pin', () => {
-	// `>=0` and `>=0.0.0` both normalize to `*`, so neither the major nor major.minor can be
-	// the lower bound of a `0.x` pin, and `0.0.0` has no `>=` bound that is a range at all.
+	// `>=0` and `>=0.0.0` both normalize to `*`, so neither the major nor major.minor can be the lower bound of a `0.x` pin, and `0.0.0` has no `>=` bound that is a range at all.
 	for (const [pin, ...ranges] of [
 		['0.13.0', '^0.13.0', '>=0.13.0'],
 		['0.0.3', '^0.0.3', '>=0.0.3'],
@@ -91,9 +88,7 @@ test('the `>=` suggestion stays a real range for a 0.x pin', () => {
 });
 
 test('a `+build` the author wrote survives every rewrite', () => {
-	// `semver.valid` and `semver.clean` both drop the build metadata, so a rewrite through either of them would
-	// quietly remove an identifier the author wrote. The `>=` bound is a range, where build metadata carries no
-	// meaning, so that one is left bare.
+	// `semver.valid` and `semver.clean` both drop the build metadata, so a rewrite through either of them would quietly remove an identifier the author wrote. The `>=` bound is a range, where build metadata carries no meaning, so that one is left bare.
 	const code = '{"peerDependencies": {"react": "1.2.3+build.5"}}';
 	const messages = linter.verify(code, config, {filename: 'package.json'});
 	const outputs = messages

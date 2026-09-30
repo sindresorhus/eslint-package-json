@@ -77,8 +77,7 @@ snapshotTest.snapshot({
 });
 
 test('a name no manifest can spell is refused by the schema', () => {
-	// The rule has no fix, so a name that can never be a key is an error nothing can resolve. Saying so in the
-	// configuration beats a rule that is permanently red on every file it lints.
+	// The rule has no fix, so a name that can never be a key is an error nothing can resolve. Saying so in the configuration beats a rule that is permanently red on every file it lints.
 	const verify = options => linter.verify('{"name": "foo"}', {
 		files: ['**'],
 		language: 'json/json',

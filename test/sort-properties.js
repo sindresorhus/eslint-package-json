@@ -22,11 +22,9 @@ test.snapshot({
 			code: '{"version": "1.0.0", "name": "foo"}',
 			options: [{order: ['version', 'name']}],
 		},
-		// The dependency groups sit in the order `sort-dependencies` uses by default, so a manifest written
-		// the way this plugin documents is not rewritten.
+		// The dependency groups sit in the order `sort-dependencies` uses by default, so a manifest written the way this plugin documents is not rewritten.
 		'{\n\t"dependencies": {},\n\t"devDependencies": {},\n\t"optionalDependencies": {},\n\t"peerDependencies": {},\n\t"peerDependenciesMeta": {}\n}',
-		// A recognized field has a place in the canonical order, so it is not pushed to the end with the
-		// unknown ones. Npm silently renames `bundledDependencies` to `bundleDependencies`, so both sit together.
+		// A recognized field has a place in the canonical order, so it is not pushed to the end with the unknown ones. Npm silently renames `bundledDependencies` to `bundleDependencies`, so both sit together.
 		'{\n\t"author": "A",\n\t"authors": ["A"],\n\t"contributors": ["B"]\n}',
 		'{\n\t"version": "1.0.0",\n\t"bundledDependencies": ["a"],\n\t"bundleDependencies": ["a"],\n\t"overrides": {}\n}',
 		'{\n\t"name": "x",\n\t"version": "1.0.0",\n\t"bundleDependencies": ["a"]\n}',

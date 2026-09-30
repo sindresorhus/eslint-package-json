@@ -34,8 +34,7 @@ const isValidSpdx = expression => {
 		return true;
 	}
 
-	// Npm's own test is `/^SEE LICEN[CS]E IN ./`, which any single character after the space satisfies, so
-	// trailing spaces count as the filename it never looks at. The pattern asks for the same one character.
+	// Npm's own test is `/^SEE LICEN[CS]E IN ./`, which any single character after the space satisfies, so trailing spaces count as the filename it never looks at. The pattern asks for the same one character.
 	if (seeLicenseInPattern.test(expression)) {
 		return true;
 	}
@@ -49,9 +48,7 @@ const isValidSpdx = expression => {
 };
 
 export function * check(root) {
-	// Npm reads the license from `license || licence`, so the alias answers whenever the field is missing or its
-	// value is falsy. A `license` of any other shape is truthy, so npm reads that one and the alias beside it is
-	// dead weight rather than the value it validates.
+	// Npm reads the license from `license || licence`, so the alias answers whenever the field is missing or its value is falsy. A `license` of any other shape is truthy, so npm reads that one and the alias beside it is dead weight rather than the value it validates.
 	let member = findMember(root, 'license');
 	const alias = findMember(root, 'licence');
 
@@ -67,8 +64,7 @@ export function * check(root) {
 
 	if (value.type === 'Object') {
 		const typeMember = findMember(value, 'type');
-		// Only offer the string the rule would then accept. Offering a `type` it rejects trades the object
-		// report for the invalid-expression one, which says nothing about what is wrong with the value.
+		// Only offer the string the rule would then accept. Offering a `type` it rejects trades the object report for the invalid-expression one, which says nothing about what is wrong with the value.
 		const canConvert = typeMember?.value.type === 'String' && isValidSpdx(typeMember.value.value);
 
 		yield {

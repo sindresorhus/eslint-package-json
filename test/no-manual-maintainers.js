@@ -46,8 +46,7 @@ test.snapshot({
 		'{"maintainers": [{"name": "a"}], "contributors": []}',
 		// A one-line empty array stays on one line in a multiline document too.
 		'{\n\t"maintainers": [{"name": "a"}],\n\t"contributors": []\n}',
-		// An empty array written across lines is rewritten rather than appended to, so the closing indent the
-		// author wrote does not end up alone on a line.
+		// An empty array written across lines is rewritten rather than appended to, so the closing indent the author wrote does not end up alone on a line.
 		'{\n\t"maintainers": [\n\t\t"a"\n\t],\n\t"contributors": [\n\t]\n}',
 		// Several entries moved into a one-line empty array are spaced the way the non-empty branch spaces them.
 		'{"contributors": [], "maintainers": ["a", "b"]}',

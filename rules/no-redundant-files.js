@@ -185,9 +185,7 @@ const create = context => ({
 			return;
 		}
 
-		// Every fix below takes one entry out of the array and never the field itself. An absent `files` is
-		// npm's "publish everything", the opposite of the empty array, so the last entry has to go with the
-		// array left standing as `"files": []`.
+		// Every fix below takes one entry out of the array and never the field itself. An absent `files` is npm's "publish everything", the opposite of the empty array, so the last entry has to go with the array left standing as `"files": []`.
 		const filesMember = findMember(root, 'files');
 
 		if (!filesMember || filesMember.value.type !== 'Array') {

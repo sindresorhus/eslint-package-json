@@ -16,11 +16,7 @@ const messages = {
 };
 
 const supportedExtensions = new Set(['.js', '.mjs', '.cjs']);
-// The Linux kernel hands `env` the whole rest of the shebang line as a single argument, so `#!/usr/bin/env node --flag`
-// runs `env 'node --flag'`, which exits 127: the flag becomes part of the program name. `-S` is what makes `env` split it.
-// `env` splits its own argument on spaces and tabs and takes it glued on or after them, so every spacing of the plain and
-// `-S` spellings runs `node`. A bare `node` must end the line, and a `\r` is not a separator, so a CRLF shebang fails too.
-// The kernel skips spaces and tabs after `#!` and trims them before the newline (`fs/binfmt_script.c`), but a line with no newline is read out of a zero-padded buffer and keeps its trailing spaces, so `env` looks for a program named `node `.
+// The Linux kernel hands `env` the whole rest of the shebang line as a single argument, so `#!/usr/bin/env node --flag` runs `env 'node --flag'`, which exits 127: the flag becomes part of the program name. `-S` is what makes `env` split it. `env` splits its own argument on spaces and tabs and takes it glued on or after them, so every spacing of the plain and `-S` spellings runs `node`. A bare `node` must end the line, and a `\r` is not a separator, so a CRLF shebang fails too. The kernel skips spaces and tabs after `#!` and trims them before the newline (`fs/binfmt_script.c`), but a line with no newline is read out of a zero-padded buffer and keeps its trailing spaces, so `env` looks for a program named `node `.
 const nodeShebangPattern = /^#![\t ]*\/usr\/bin\/env[\t ]+(?:-S[\t ]*node(?:[\t\n ]|$)|node(?:[\t ]*\n|$))/u;
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -51,8 +47,7 @@ const create = context => ({
 				const newlineIndex = content.indexOf('\n');
 				const shebang = content.slice(0, newlineIndex === -1 ? undefined : newlineIndex);
 
-				// Linux reads a script into a 256-byte buffer and cuts a first line that does not fit at 255 bytes,
-				// so the file runs with a mangled argument instead of the one it declares.
+				// Linux reads a script into a 256-byte buffer and cuts a first line that does not fit at 255 bytes, so the file runs with a mangled argument instead of the one it declares.
 				if (Buffer.byteLength(shebang) <= 255) {
 					continue;
 				}

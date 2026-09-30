@@ -51,11 +51,7 @@ const create = context => {
 				return;
 			}
 
-			// `imports` is deliberately not checked: Node resolves a `#specifier` against the nearest
-			// package scope, so a nested manifest's `imports` is honored for files inside it. `exports` is
-			// read the same way, but only for a self-reference from inside the nested scope, and only when
-			// its `name` matches the package being resolved. No consumer resolving the package by name
-			// from outside ever sees it, which is what a nested `exports` is nearly always a mistake for.
+			// `imports` is deliberately not checked: Node resolves a `#specifier` against the nearest package scope, so a nested manifest's `imports` is honored for files inside it. `exports` is read the same way, but only for a self-reference from inside the nested scope, and only when its `name` matches the package being resolved. No consumer resolving the package by name from outside ever sees it, which is what a nested `exports` is nearly always a mistake for.
 			const member = findMember(root, 'exports');
 
 			if (member) {

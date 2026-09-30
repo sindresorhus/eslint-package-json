@@ -16,8 +16,7 @@ test.snapshot({
 		'{"peerDependencies": {"@types/foo": "^1.0.0"}}',
 		// Ambient type packages with no runtime counterpart are ignored by default.
 		'{"devDependencies": {"@types/node": "^20.0.0"}}',
-		// Type packages for a syntax specification, which consumers get from an implementation
-		// package rather than one named after the format.
+		// Type packages for a syntax specification, which consumers get from an implementation package rather than one named after the format.
 		'{"devDependencies": {"@types/mdast": "^4.0.4", "@types/unist": "^3.0.3"}}',
 		'{"devDependencies": {"@types/hast": "^3.0.4", "@types/xast": "^2.0.2"}}',
 		'{"devDependencies": {"@types/estree": "^1.0.6"}}',
@@ -46,8 +45,7 @@ test.snapshot({
 		{code: '{"devDependencies": {"@types/foo__bar": "^1.0.0"}}', options: [{ignore: ['@foo/bar']}]},
 		// The exemption applies to `dependencies` just as it does to `devDependencies`.
 		'{"dependencies": {"@types/estree-jsx": "^0.0.1"}}',
-		// A manifest that is itself a type package declares the types its own declaration file imports, and a
-		// consumer receives those from `dependencies` alone, so they are its public API, not an orphan.
+		// A manifest that is itself a type package declares the types its own declaration file imports, and a consumer receives those from `dependencies` alone, so they are its public API, not an orphan.
 		'{"name": "@types/debug", "dependencies": {"@types/ms": "*"}}',
 		'{"name": "@types/mdast", "dependencies": {"@types/unist": "*"}}',
 		'{"name": "@types/debug", "devDependencies": {"@types/jest": "^29.5.14"}}',

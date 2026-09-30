@@ -20,8 +20,7 @@ nodeTest('an invalid `ignore` pattern explains itself', () => {
 		/takes regular expression sources, not globs, and "\*build" is not a valid one/,
 	);
 
-	// A source the non-unicode grammar accepts but the `u` flag the rule adds does not, so the message has to
-	// name the flag or it reads as a complaint about a pattern that is valid.
+	// A source the non-unicode grammar accepts but the `u` flag the rule adds does not, so the message has to name the flag or it reads as a complaint about a pattern that is valid.
 	assert.throws(
 		() => verifyWithIgnore([String.raw`\p`]),
 		/not a valid one with the `u` flag this rule adds/u,
@@ -38,8 +37,7 @@ nodeTest('an `ignore` entry that cannot be named in a message is still refused',
 		rules: {[`rule-to-test/${ruleId}`]: ['error', {ignore}]},
 	}, {filename: 'package.json'});
 
-	// A `BigInt` and an object with a cycle are both values `JSON.stringify` refuses, so the message that names
-	// the offending entry has to be built without it.
+	// A `BigInt` and an object with a cycle are both values `JSON.stringify` refuses, so the message that names the offending entry has to be built without it.
 	const circular = {};
 	circular.self = circular;
 
@@ -48,8 +46,7 @@ nodeTest('an `ignore` entry that cannot be named in a message is still refused',
 });
 
 nodeTest('an `ignore` entry that is not a regular expression source is refused', () => {
-	// Every entry becomes a `RegExp` source, so an entry that is not a non-empty string is turned into a
-	// pattern the author never wrote. `''` in particular matches every script name, which turns the rule off.
+	// Every entry becomes a `RegExp` source, so an entry that is not a non-empty string is turned into a pattern the author never wrote. `''` in particular matches every script name, which turns the rule off.
 	const rejected = /takes regular expression sources, and .* is not one/u;
 
 	assert.throws(() => verifyWithIgnore([[]]), rejected, 'a nested array');
@@ -57,8 +54,7 @@ nodeTest('an `ignore` entry that is not a regular expression source is refused',
 	assert.throws(() => verifyWithIgnore([{}]), rejected, 'an object');
 	assert.throws(() => verifyWithIgnore(['']), rejected, 'an empty pattern');
 
-	// V8 defers a source too large to compile until it is first matched, so a long one has to be matched here
-	// for the failure to name the option rather than surfacing from inside the visitor, once per linted file.
+	// V8 defers a source too large to compile until it is first matched, so a long one has to be matched here for the failure to name the option rather than surfacing from inside the visitor, once per linted file.
 	assert.throws(() => verifyWithIgnore([`^${'a'.repeat(33_000)}$`]), /takes regular expression sources/u, 'an oversized source');
 
 	assert.deepEqual(verifyWithIgnore(['pre.*']), []);
@@ -109,9 +105,7 @@ test.snapshot({
 		'{"scripts": {"prepare:safari": "npm run build"}}',
 		// Git hook script names are standalone commands, not `pre` hooks.
 		'{"scripts": {"precommit": "lint-staged", "pre-commit": "lint-staged", "prepush": "npm test", "pre-push": "npm test"}}',
-		// A sub-command of a standalone tool, namespaced with a hyphen as well as a colon, since `npm run
-		// prettier-check` looks for `preprettier-check` and never for a `pre` hook on `ttier-check`. Five
-		// published packages name a script this way.
+		// A sub-command of a standalone tool, namespaced with a hyphen as well as a colon, since `npm run prettier-check` looks for `preprettier-check` and never for a `pre` hook on `ttier-check`. Five published packages name a script this way.
 		'{"scripts": {"prettier-check": "prettier --check .", "prettier-fix": "prettier --write ."}}',
 		'{"scripts": {"postcss-x": "x", "prepare-foo": "y", "preview-1": "z"}}',
 		// Standalone names can be exempted explicitly.

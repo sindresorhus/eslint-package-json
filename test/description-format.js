@@ -56,8 +56,7 @@ test.snapshot({
 		'{"description": "My package does things..."}',
 		// Both issues at once.
 		'{"description": "my package does things."}',
-		// A description made only of periods ends with a period but has no period-less form, so it is
-		// reported with no fix rather than silently accepted or stripped to an empty field.
+		// A description made only of periods ends with a period but has no period-less form, so it is reported with no fix rather than silently accepted or stripped to an empty field.
 		'{"description": "."}',
 		'{"description": "..."}',
 		// EndWithPeriod=true, missing period.
@@ -75,8 +74,7 @@ test.snapshot({
 			code: '{"description": "my package"}',
 			options: [{startWithUppercase: true, endWithPeriod: false}],
 		},
-		// A lowercase letter outside ASCII is just as lowercase. The astral cases also pin that the fix
-		// rewrites the whole letter rather than the first UTF-16 code unit, which would split a surrogate pair.
+		// A lowercase letter outside ASCII is just as lowercase. The astral cases also pin that the fix rewrites the whole letter rather than the first UTF-16 code unit, which would split a surrogate pair.
 		'{"description": "école polytechnique"}',
 		'{"description": "ökonomie"}',
 		'{"description": "ελλάδα"}',
@@ -84,12 +82,10 @@ test.snapshot({
 		'{"description": "𐐨bc"}',
 		// A letter with no uppercase mapping in Unicode is still reported, but there is nothing to offer as a fix.
 		'{"description": "𝔞bc"}',
-		// A letter whose uppercase mapping is more than one character is the same: `ß` and `ﬁ` would be
-		// respelled `SS` and `FI` rather than capitalized, and the author never asked for a spelling change.
+		// A letter whose uppercase mapping is more than one character is the same: `ß` and `ﬁ` would be respelled `SS` and `FI` rather than capitalized, and the author never asked for a spelling change.
 		'{"description": "ßeta tool"}',
 		'{"description": "ﬁle format"}',
-		// A trailing space or newline is invisible in the rendered description, so the sentence is judged
-		// without it and the period goes where the sentence ends.
+		// A trailing space or newline is invisible in the rendered description, so the sentence is judged without it and the period goes where the sentence ends.
 		{
 			code: String.raw`{"description": "Does things\n"}`,
 			options: [{endWithPeriod: true}],
@@ -98,8 +94,7 @@ test.snapshot({
 			code: '{"description": "Does things "}',
 			options: [{endWithPeriod: true}],
 		},
-		// The same trailing whitespace read the other way round: a value that still renders with a period once
-		// the periods are gone would resolve the report and change nothing.
+		// The same trailing whitespace read the other way round: a value that still renders with a period once the periods are gone would resolve the report and change nothing.
 		{
 			code: '{"description": "Does things. "}',
 		},

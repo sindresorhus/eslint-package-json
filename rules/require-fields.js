@@ -13,8 +13,7 @@ const messages = {
 	[MESSAGE_ID_WHEN_PUBLIC]: 'A published package should declare `{{field}}`.',
 };
 
-// The rule has no fix, so a name no manifest can carry would be an error nothing can ever resolve. A schema that
-// rejects it says so in the configuration instead.
+// The rule has no fix, so a name no manifest can carry would be an error nothing can ever resolve. A schema that rejects it says so in the configuration instead.
 const fieldNameSchema = {
 	type: 'array',
 	items: {

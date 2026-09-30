@@ -34,8 +34,7 @@ const create = context => {
 					continue;
 				}
 
-				// An `npm:` alias installs at the range it carries, so `npm:foo@*` is a wildcard just as much as
-				// `*` is, even though the alias string itself is neither a range nor a tag.
+				// An `npm:` alias installs at the range it carries, so `npm:foo@*` is a wildcard just as much as `*` is, even though the alias string itself is neither a range nor a tag.
 				const range = installedSpecifier(member.value.value);
 
 				// A wildcard (`*`, ``, `x`, `X`) normalizes to `*`; real ranges, tags, and `workspace:`/`file:`/git/URL specifiers do not.

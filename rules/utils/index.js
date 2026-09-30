@@ -63,8 +63,7 @@ export const fieldOrder = [
 	'optionalDependencies',
 	'peerDependencies',
 	'peerDependenciesMeta',
-	// Npm silently renames `bundledDependencies` to `bundleDependencies` on every fix, so both spellings
-	// belong next to each other rather than at the end as unknown fields.
+	// Npm silently renames `bundledDependencies` to `bundleDependencies` on every fix, so both spellings belong next to each other rather than at the end as unknown fields.
 	'bundledDependencies',
 	'bundleDependencies',
 	'overrides',
@@ -80,9 +79,7 @@ export const knownFields = new Set([
 	'engineStrict',
 	'licenses',
 	'modules',
-	// Common runtime/tool config keys and alternate spellings that are edit-distance 1 from a real field.
-	// `licence` is the spelling npm reads a license from when `license` is absent, so it is a field and not
-	// a misspelling, however it looks beside `license`.
+	// Common runtime/tool config keys and alternate spellings that are edit-distance 1 from a real field. `licence` is the spelling npm reads a license from when `license` is absent, so it is a field and not a misspelling, however it looks beside `license`.
 	'bun',
 	'licence',
 ]);
@@ -305,9 +302,7 @@ export function withoutShadowedMembers(node) {
 /**
 Check whether a value node is falsy the way a JavaScript `||` reads it: `null`, `false`, `0`, or the empty string.
 
-Every other JSON value is truthy, an object and an array included, so a member holding one is a value the `||`
-takes rather than steps over. Rules that read a field the way npm's `person.url || person.web` or
-`!data.bin` do need this, since an AST node is truthy whatever value it holds.
+Every other JSON value is truthy, an object and an array included, so a member holding one is a value the `||` takes rather than steps over. Rules that read a field the way npm's `person.url || person.web` or `!data.bin` do need this, since an AST node is truthy whatever value it holds.
 */
 export function isFalsyValue(node) {
 	switch (node?.type) {
@@ -457,10 +452,7 @@ export function canonicalVersion(version) {
 }
 
 /**
-Whether a version range targets a pre-release, decided the way `semver.minVersion` decides it: a range that starts
-at a stable version is not a pre-release range, even when a later bound in it carries a pre-release identifier. That
-is what `>=1.0.0 <2.0.0-0` is, the range `^1.0.0` normalizes to, where the `-0` upper bound excludes the next major's
-pre-releases rather than asking for one.
+Whether a version range targets a pre-release, decided the way `semver.minVersion` decides it: a range that starts at a stable version is not a pre-release range, even when a later bound in it carries a pre-release identifier. That is what `>=1.0.0 <2.0.0-0` is, the range `^1.0.0` normalizes to, where the `-0` upper bound excludes the next major's pre-releases rather than asking for one.
 
 `loose` reads the range the way `npm-package-arg` does when it resolves a dependency specifier, which accepts a leading zero in a numeric or pre-release identifier where strict SemVer does not, and a pre-release without the hyphen before it (`2.0.0rc1`).
 */
@@ -492,8 +484,7 @@ export function tryDecodeUriComponent(value) {
 /*
 The segments Node rejects anywhere after the initial `./` of a package target.
 
-An empty segment is deliberately not here: Node resolves `./a//b.js`, only warning about it with DEP0166. It
-warns rather than refusing, so calling it invalid would reject a target that works.
+An empty segment is deliberately not here: Node resolves `./a//b.js`, only warning about it with DEP0166. It warns rather than refusing, so calling it invalid would reject a target that works.
 */
 const invalidPackageTargetSegments = new Set(['.', '..', 'node_modules']);
 
@@ -557,12 +548,9 @@ export function isHttpUrl(string) {
 const aliasPattern = /^npm:/iu;
 
 /**
-The package an `npm:` alias installs, resolved the way `npm-package-arg` resolves it, or `undefined` when the
-specifier is not an alias or the alias is malformed.
+The package an `npm:` alias installs, resolved the way `npm-package-arg` resolves it, or `undefined` when the specifier is not an alias or the alias is malformed.
 
-An alias names the package it installs and the range it installs it at, neither of which the alias string itself
-says: `npm:foo@*` installs `foo` at any version and `npm:foo@1.2.3` installs exactly one. `name` on the result is
-the package it installs and `fetchSpec` the range it installs that at, so a rule that reads either reads it here.
+An alias names the package it installs and the range it installs it at, neither of which the alias string itself says: `npm:foo@*` installs `foo` at any version and `npm:foo@1.2.3` installs exactly one. `name` on the result is the package it installs and `fetchSpec` the range it installs that at, so a rule that reads either reads it here.
 */
 export function resolveAlias(specifier) {
 	if (!aliasPattern.test(specifier)) {
@@ -577,8 +565,7 @@ export function resolveAlias(specifier) {
 }
 
 /**
-The specifier npm actually installs for a dependency entry, which is any alias's own range and everything else
-unchanged. An alias `npm-package-arg` cannot parse is returned as written for the caller to reject.
+The specifier npm actually installs for a dependency entry, which is any alias's own range and everything else unchanged. An alias `npm-package-arg` cannot parse is returned as written for the caller to reject.
 */
 export function installedSpecifier(specifier) {
 	return resolveAlias(specifier)?.fetchSpec ?? specifier;
@@ -599,9 +586,7 @@ export function isGitRemote(specifier) {
 }
 
 /**
-Normalize a `bin` path the way npm does before it publishes the target, or `''` when the path names nothing.
-Npm turns every `\` and `:` into a path separator, so `scripts\cli.js` and `C:cli.js` are the files
-`scripts/cli.js` and `C/cli.js`, and an empty result is a path npm has nowhere to write.
+Normalize a `bin` path the way npm does before it publishes the target, or `''` when the path names nothing. Npm turns every `\` and `:` into a path separator, so `scripts\cli.js` and `C:cli.js` are the files `scripts/cli.js` and `C/cli.js`, and an empty result is a path npm has nowhere to write.
 */
 export function normalizeBinPath(value) {
 	const unixPath = value.replaceAll(/[:\\]/gu, '/');
@@ -616,21 +601,16 @@ export function normalizeBinName(value) {
 	return path.posix.basename(normalizeBinPath(value));
 }
 
-// Files npm force-includes at the package root whatever `files` says, matched case-insensitively, so a casing
-// variant needs no `files` entry either. The family is root-only: a nested `docs/README.md` is not published,
-// because the `docs` directory itself stays excluded. `package.json` is the one exact name: npm lists it without
-// the suffix the others carry, so `package.json.bak` is an ordinary file a `files` entry does publish.
+// Files npm force-includes at the package root whatever `files` says, matched case-insensitively, so a casing variant needs no `files` entry either. The family is root-only: a nested `docs/README.md` is not published, because the `docs` directory itself stays excluded. `package.json` is the one exact name: npm lists it without the suffix the others carry, so `package.json.bak` is an ordinary file a `files` entry does publish.
 const alwaysIncludedFilePattern = /^(?:package\.json|(?:readme|copying|licen[cs]e)(?:\.[^/]*[^$/~])?)$/u;
 
 /**
 Whether a `files` entry names a file npm includes whatever `files` says, so a `files` entry for it is redundant.
 
-Shared by the rules that report such an entry as redundant and the rule that would otherwise offer to rewrite the
-same entry's spelling, which would turn a removable entry into one that stays.
+Shared by the rules that report such an entry as redundant and the rule that would otherwise offer to rewrite the same entry's spelling, which would turn a removable entry into one that stays.
 */
 export function isAlwaysIncludedFile(value) {
-	// The leading `./` and `/` npm strips from a `files` entry are not part of the name, and its rules match
-	// case-insensitively, so a casing variant of these names is included too.
+	// The leading `./` and `/` npm strips from a `files` entry are not part of the name, and its rules match case-insensitively, so a casing variant of these names is included too.
 	const normalized = value.replace(/^(?:\.\/|\/)+/u, '').replaceAll(/[A-Z]/gu, character => character.toLowerCase());
 
 	return normalized !== '' && alwaysIncludedFilePattern.test(normalized);
@@ -656,8 +636,7 @@ export function * checkPlatformArray(rootObject, field, validValues) {
 		return;
 	}
 
-	// Npm wraps a bare string into a one-element list before checking it, so the string shorthand is a form
-	// it supports. Read the value nodes so both forms go through the same loop.
+	// Npm wraps a bare string into a one-element list before checking it, so the string shorthand is a form it supports. Read the value nodes so both forms go through the same loop.
 	const values = member.value.type === 'String'
 		? [member.value]
 		: (member.value.type === 'Array' ? member.value.elements.map(element => element.value) : undefined);
@@ -822,15 +801,11 @@ export function * removeElement(fixer, sourceCode, element) {
 }
 
 /**
-Remove `entry` out of the container `containerMember` holds, and when it was the only entry there remove the
-container with it.
+Remove `entry` out of the container `containerMember` holds, and when it was the only entry there remove the container with it.
 
-An empty container is what `no-empty-fields` reports, so a removal that leaves one behind trades the rule's own
-report for another's, which is no better than not having removed it at all.
+An empty container is what `no-empty-fields` reports, so a removal that leaves one behind trades the rule's own report for another's, which is no better than not having removed it at all.
 
-Every caller reaches the container through `findMember`, so it is the final member for its key. Taking only
-that one would promote a shadowed duplicate back into its place, which is the very problem the removal was
-offered for.
+Every caller reaches the container through `findMember`, so it is the final member for its key. Taking only that one would promote a shadowed duplicate back into its place, which is the very problem the removal was offered for.
 */
 export function * removeEntryAndEmptyContainer(fixer, sourceCode, containerMember, entry) {
 	const container = containerMember.value;

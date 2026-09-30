@@ -4,8 +4,7 @@ const {test} = getTester(import.meta);
 
 test.snapshot({
 	valid: [
-		// `npm-package-arg` parses a specifier with semver's loose grammar, so a leading zero in a numeric part
-		// and a leading zero in a prerelease identifier are versions to it rather than tags.
+		// `npm-package-arg` parses a specifier with semver's loose grammar, so a leading zero in a numeric part and a leading zero in a prerelease identifier are versions to it rather than tags.
 		'{"dependencies": {"foo": "1.0.0-01"}}',
 		'{"dependencies": {"foo": "01.2.3"}}',
 		'{"dependencies": {"foo": "1.0.0-"}}',
@@ -48,8 +47,7 @@ test.snapshot({
 		'{"dependencies": {"foo": "npm:bar@next"}}',
 		'{"dependencies": {"foo": "npm:@scope/bar@latest"}}',
 		'{"devDependencies": {"foo": "npm:bar@canary"}}',
-		// A URL scheme is case-insensitive (RFC 3986) and `npm-package-arg` resolves an uppercase
-		// alias to the same dist-tag, so the scheme is matched case-insensitively here too.
+		// A URL scheme is case-insensitive (RFC 3986) and `npm-package-arg` resolves an uppercase alias to the same dist-tag, so the scheme is matched case-insensitively here too.
 		'{"dependencies": {"foo": "NPM:bar@next"}}',
 		'{"dependencies": {"foo": "Npm:@scope/bar@latest"}}',
 	],

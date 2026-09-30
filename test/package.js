@@ -320,8 +320,7 @@ const trickyDocuments = [
 	'{"repository":"foo/bar","homepage":"https://old.example.com","homepage":"https://github.com/foo/bar#readme"}',
 	'{"name":"foo","publishConfig":{"access":"public","access":"restricted"}}',
 	'{"peerDependencies":{"a":"^1.0.0"},"peerDependenciesMeta":{"a":{"optional":true,"optional":false}}}',
-	// A duplicated group member that a removal has to take with it, since `findMember` resolved the final one and
-	// leaving the earlier duplicate in place would resurrect the very report the removal was offered for.
+	// A duplicated group member that a removal has to take with it, since `findMember` resolved the final one and leaving the earlier duplicate in place would resurrect the very report the removal was offered for.
 	'{"devDependencies":{"a":"1"},"optionalDependencies":{"a":"1"},"optionalDependencies":{"a":"1"}}',
 	'{"dependencies":{"a":"1"},"dependencies":{"a":"1"},"devDependencies":{"a":"1"}}',
 	'{"name":"a","dependencies":{"a":"1"},"dependencies":{"a":"1"}}',
@@ -342,8 +341,7 @@ const trickyDocuments = [
 	String.raw`{"files":["dist\\a.js"]}`,
 	'{\n    "dependencies": {\n        "b": "^1.0.0",\n        "a": "^1.0.0"\n    }\n}',
 	'{\n  "files": [\n    "b.js",\n    "a.js"\n  ]\n}',
-	// A blank line inside a container is not indentation. A rewrite that took the text after the last line break
-	// as the entry indent would write one blank line before every entry.
+	// A blank line inside a container is not indentation. A rewrite that took the text after the last line break as the entry indent would write one blank line before every entry.
 	'{\n\t"dependencies": {\n\n\t\t"b": "^1.0.0",\n\t\t"a": "^1.0.0"\n\t}\n}',
 	'{\n\n\n\t"dependencies": {\n\t\t"b": "^1.0.0",\n\t\t"a": "^1.0.0"\n\t}\n}',
 ];
@@ -388,8 +386,7 @@ test('every autofix and suggestion keeps the document valid JSON', () => {
 	}
 });
 
-// A container is rewritten whole, so its interior indentation is re-derived rather than copied. Returning the text
-// after the last line break as that indentation would carry a blank line the author wrote into every entry.
+// A container is rewritten whole, so its interior indentation is re-derived rather than copied. Returning the text after the last line break as that indentation would carry a blank line the author wrote into every entry.
 test('a sort fix does not turn one blank line into one per entry', () => {
 	const linter = new Linter();
 	const config = [plugin.configs.all];
@@ -987,10 +984,7 @@ test('`removeMembers` removes exactly the requested members, whatever the layout
 	}
 });
 
-// `removeEntryAndEmptyContainer` is what every "take this entry out" suggestion uses when removing the entry
-// would leave its container empty. The container is always reached through `findMember`, so it is the final
-// member for its key: taking only that one would promote a shadowed duplicate back into its place, and the
-// report the suggestion was offered for would survive it.
+// `removeEntryAndEmptyContainer` is what every "take this entry out" suggestion uses when removing the entry would leave its container empty. The container is always reached through `findMember`, so it is the final member for its key: taking only that one would promote a shadowed duplicate back into its place, and the report the suggestion was offered for would survive it.
 test('`removeEntryAndEmptyContainer` takes the whole run of a duplicated container', () => {
 	const linter = new Linter();
 	// A rule that empties the first effective `group` member, which is the shape every caller has.
@@ -1028,8 +1022,7 @@ test('`removeEntryAndEmptyContainer` takes the whole run of a duplicated contain
 	const [start, end] = single.suggestions[0].fix.range;
 	assert.equal(singleCode.slice(0, start) + singleCode.slice(end), '{"other": 2}');
 
-	// Two members share the key, so removing the final one alone would promote the first into its place and
-	// leave the empty container behind for the next round to find.
+	// Two members share the key, so removing the final one alone would promote the first into its place and leave the empty container behind for the next round to find.
 	const code = '{"group": {"a": "1"}, "group": {"a": "1"}, "other": 2}';
 	const [duplicated] = linter.verify(code, ruleOnlyConfig('empty', emptyingRule), {filename: 'package.json'});
 	const [duplicatedStart, duplicatedEnd] = duplicated.suggestions[0].fix.range;

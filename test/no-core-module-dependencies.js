@@ -44,8 +44,7 @@ snapshotTest.snapshot({
 });
 
 test('removing the only entry takes the group with it', () => {
-	// An empty group is what `no-empty-fields` reports, so leaving one behind trades this rule's own report
-	// for another's, which is no better than not having removed the entry at all.
+	// An empty group is what `no-empty-fields` reports, so leaving one behind trades this rule's own report for another's, which is no better than not having removed the entry at all.
 	const code = '{"name": "foo", "dependencies": {"fs": "^1.0.0"}}';
 	const [message] = linter.verify(code, config, {filename: 'package.json'});
 

@@ -52,9 +52,7 @@ function * checkNode(node, subpathPrefix, isRoot = true, isCovered = false) {
 
 		case 'Array': {
 			for (const [index, element] of node.elements.entries()) {
-				// A fallback list is the fallback. Node resolves an element that matches no condition to
-				// nothing and moves on to the next one, so an element that is not last needs no `default` of its
-				// own; the last one has nothing left to fall through to and still does.
+				// A fallback list is the fallback. Node resolves an element that matches no condition to nothing and moves on to the next one, so an element that is not last needs no `default` of its own; the last one has nothing left to fall through to and still does.
 				yield * checkNode(element.value, subpathPrefix, false, isCovered || index < node.elements.length - 1);
 			}
 

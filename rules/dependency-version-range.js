@@ -30,8 +30,7 @@ const classify = specifier => {
 	let version = specifier;
 	let style = 'exact';
 
-	// An `=`-prefixed version pins exactly as hard as the bare form, so it classifies the same way
-	// `no-exact-peer-dependencies` reads it. `>=` and the other comparators are ranges, not pins.
+	// An `=`-prefixed version pins exactly as hard as the bare form, so it classifies the same way `no-exact-peer-dependencies` reads it. `>=` and the other comparators are ranges, not pins.
 	if (specifier.startsWith('^')) {
 		style = 'caret';
 		version = specifier.slice(1);
@@ -48,8 +47,7 @@ const classify = specifier => {
 		return undefined;
 	}
 
-	// Use the canonical version so a non-standard input like `v1.0.0` converts to a clean `^1.0.0` rather than
-	// `^v1.0.0`, while a `+build` the author wrote survives the rewrite instead of being dropped by `semver.valid`.
+	// Use the canonical version so a non-standard input like `v1.0.0` converts to a clean `^1.0.0` rather than `^v1.0.0`, while a `+build` the author wrote survives the rewrite instead of being dropped by `semver.valid`.
 	return {style, version: canonicalVersion(version)};
 };
 
@@ -115,10 +113,7 @@ const create = context => {
 					continue;
 				}
 
-				// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` is an exact pin just like
-				// `1.2.3` is. What precedes the installed range is the alias, found by searching for the range
-				// rather than by measuring the tail, since `npm-package-arg` trims the range it reports and a
-				// trailing space would otherwise land the prefix in the middle of the version.
+				// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` is an exact pin just like `1.2.3` is. What precedes the installed range is the alias, found by searching for the range rather than by measuring the tail, since `npm-package-arg` trims the range it reports and a trailing space would otherwise land the prefix in the middle of the version.
 				const specifier = member.value.value;
 				const installedRange = installedSpecifier(specifier);
 				const classified = classify(installedRange);

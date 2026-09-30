@@ -18,9 +18,7 @@ export const messages = {
 	[STRING_FORMAT_MESSAGE_ID]: 'A `bugs` string must be a URL or an email address; npm deletes a `bugs` string that is neither.',
 };
 
-// Npm's own tests for the shapes a `bugs` value may take, copied so the rule accepts exactly what npm
-// keeps and reports exactly what npm throws away. Npm deletes the offending property, then the whole
-// `bugs` object once it is empty, without telling the author.
+// Npm's own tests for the shapes a `bugs` value may take, copied so the rule accepts exactly what npm keeps and reports exactly what npm throws away. Npm deletes the offending property, then the whole `bugs` object once it is empty, without telling the author.
 const isEmail = value => value.includes('@') && value.indexOf('@') < value.lastIndexOf('.');
 const isUrlOrEmail = value => isEmail(value) || URL.canParse(value);
 
@@ -52,14 +50,11 @@ export function * check(root) {
 		return;
 	}
 
-	// Npm checks each property against its own shape and deletes the ones that fail, so a `url` holding an email
-	// address goes just as surely as an `email` holding a URL. Either deletion empties the object, and then npm
-	// deletes the whole `bugs` field.
+	// Npm checks each property against its own shape and deletes the ones that fail, so a `url` holding an email address goes just as surely as an `email` holding a URL. Either deletion empties the object, and then npm deletes the whole `bugs` field.
 	//
 	// Npm also copies an old `web` or `name` spelling over `url`. Manifests do not use them in practice, so that is not modelled, and an object that holds its URL only there is reported as keeping nothing.
 	//
-	// Npm guards each property with the truthiness of its value, so a falsy one is never examined at all: an
-	// empty `url` is not a bad url, it is a url npm steps over.
+	// Npm guards each property with the truthiness of its value, so a falsy one is never examined at all: an empty `url` is not a bad url, it is a url npm steps over.
 	const urlMember = findMember(value, 'url');
 	const emailMember = findMember(value, 'email');
 	const truthyMember = member => (member === undefined || isFalsyValue(member.value) ? undefined : member);

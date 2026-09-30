@@ -65,9 +65,7 @@ const create = context => ({
 						if (contributorsElements.length === 0) {
 							const contents = sourceCode.text.slice(contributors.value.range[0] + 1, contributors.value.range[1] - 1);
 
-							// An empty array written on one line stays on one line, the way the non-empty branch below
-							// does. A multiline one has its contents replaced rather than appended to, or the closing
-							// indent the author wrote would end up alone on a line.
+							// An empty array written on one line stays on one line, the way the non-empty branch below does. A multiline one has its contents replaced rather than appended to, or the closing indent the author wrote would end up alone on a line.
 							if (contents.includes('\n')) {
 								const outerIndent = lineIndentOf(sourceCode, contributors.name);
 								const entryIndent = outerIndent + getIndentString(sourceCode);

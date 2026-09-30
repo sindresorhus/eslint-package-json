@@ -8,9 +8,7 @@ export const messages = {
 	[TYPE_MESSAGE_ID]: 'The `packageManager` field must be a string.',
 };
 
-// `name@version`. Ranges and tags like `latest` are left to SemVer to reject, which is also what catches the
-// prerelease and build metadata a hand-rolled pattern would let through, such as the empty identifier in
-// `1.0.0-alpha.`.
+// `name@version`. Ranges and tags like `latest` are left to SemVer to reject, which is also what catches the prerelease and build metadata a hand-rolled pattern would let through, such as the empty identifier in `1.0.0-alpha.`.
 const pattern = /^(?:npm|yarn|pnpm|bun)@(.+)$/u;
 
 export function * check(root) {
@@ -20,8 +18,7 @@ export function * check(root) {
 		return;
 	}
 
-	// Corepack reads the field as a string and throws on anything else, so a number or an object here is a
-	// value no tool can act on rather than a version anyone pinned.
+	// Corepack reads the field as a string and throws on anything else, so a number or an object here is a value no tool can act on rather than a version anyone pinned.
 	if (member.value.type !== 'String') {
 		yield {node: member.value, messageId: TYPE_MESSAGE_ID};
 		return;

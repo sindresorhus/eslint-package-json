@@ -19,9 +19,7 @@ export function * check(root) {
 
 	const {value} = workspaces;
 
-	// Yarn classic's `{packages, nohoist}` object form is accepted, but only because npm reads `packages`
-	// out of it. Npm uses that array as the pattern list directly, so anything else fails to install with
-	// `EWORKSPACESCONFIG`, including `{nohoist}` on its own and a `packages` that is not an array.
+	// Yarn classic's `{packages, nohoist}` object form is accepted, but only because npm reads `packages` out of it. Npm uses that array as the pattern list directly, so anything else fails to install with `EWORKSPACESCONFIG`, including `{nohoist}` on its own and a `packages` that is not an array.
 	if (value.type === 'Object') {
 		const packages = findMember(value, 'packages');
 

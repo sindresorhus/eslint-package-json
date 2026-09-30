@@ -30,8 +30,7 @@ export function * check(root) {
 			continue;
 		}
 
-		// Effective members, since the message is about the version npm reads, and a shadowed duplicate is
-		// not one it ever sees. The duplicate key itself is `json/no-duplicate-keys`' business.
+		// Effective members, since the message is about the version npm reads, and a shadowed duplicate is not one it ever sees. The duplicate key itself is `json/no-duplicate-keys`' business.
 		for (const dependency of iterateEffectiveMembers(member.value)) {
 			if (dependency.value.type !== 'String') {
 				yield {

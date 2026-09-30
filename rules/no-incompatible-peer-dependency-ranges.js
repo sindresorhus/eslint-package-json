@@ -47,10 +47,7 @@ const create = context => ({
 			}
 		}
 
-		// Npm documents that an `optionalDependencies` entry overrides a `dependencies` entry of the same
-		// name, so the `dependencies` value is never installed. Comparing it would report a conflict that
-		// cannot happen and offer to rewrite a range nothing uses; `no-duplicate-dependencies` reports the
-		// duplication itself.
+		// Npm documents that an `optionalDependencies` entry overrides a `dependencies` entry of the same name, so the `dependencies` value is never installed. Comparing it would report a conflict that cannot happen and offer to rewrite a range nothing uses; `no-duplicate-dependencies` reports the duplication itself.
 		const optionalNames = new Set();
 
 		for (const {name} of iterateDependencies(root, ['optionalDependencies'])) {

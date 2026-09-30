@@ -7,9 +7,7 @@ const MESSAGE_ID_FOLDER_TARGET = 'folderTarget';
 const SUGGESTION_ID = 'convert';
 
 const messages = {
-	// A `*` in the target is the substitution point, so a key without one leaves it literal and it names a
-	// file npm packs no path for. Both halves need the pattern, which is what the shape with a folder-mapping
-	// key gets from the suggestion and this one has to be told.
+	// A `*` in the target is the substitution point, so a key without one leaves it literal and it names a file npm packs no path for. Both halves need the pattern, which is what the shape with a folder-mapping key gets from the suggestion and this one has to be told.
 	[MESSAGE_ID]: 'Trailing-slash folder mapping `{{value}}` in `{{field}}` no longer resolves in Node.js; a subpath pattern needs `*` in the target and in the key beside it.',
 	[MESSAGE_ID_PATTERN]: 'Trailing-slash mapping `{{value}}` in `{{field}}` no longer resolves in Node.js; use a subpath pattern without a trailing slash.',
 	[MESSAGE_ID_COLLISION]: 'Trailing-slash folder mapping `{{value}}` in `{{field}}` no longer resolves in Node.js, and `{{suggestion}}` is taken, so the two have to be merged.',
@@ -18,8 +16,7 @@ const messages = {
 };
 
 /**
-Whether a subpath key and the target beside it can become a pattern together, which takes both to be a folder
-mapping: a key or a target that is already a pattern is left alone.
+Whether a subpath key and the target beside it can become a pattern together, which takes both to be a folder mapping: a key or a target that is already a pattern is left alone.
 */
 function isFolderMapping(key, value, subpathPrefix) {
 	return key.startsWith(subpathPrefix)
@@ -39,8 +36,7 @@ function * findTrailingSlashes(node, subpathPrefix, {isSubpathLevel, isUnderPatt
 	switch (node.type) {
 		case 'Object': {
 			const siblingKeys = node.members.map(member => getKey(member));
-			// A key another sibling holds too is rewritten twice onto the same new key, which leaves a duplicate
-			// member just as much as one that is already there, so it collides in the same way.
+			// A key another sibling holds too is rewritten twice onto the same new key, which leaves a duplicate member just as much as one that is already there, so it collides in the same way.
 			const repeatedKeys = new Set(siblingKeys.filter((sibling, index) => siblingKeys.indexOf(sibling) !== index));
 
 			for (const member of node.members) {
@@ -51,11 +47,7 @@ function * findTrailingSlashes(node, subpathPrefix, {isSubpathLevel, isUnderPatt
 				if (isFolderKey) {
 					const isKeyTaken = siblingKeys.includes(memberKey + '*');
 
-					// Rewriting the key onto one that already exists would leave a duplicate member, and
-					// `JSON.parse` keeps the last one, so the subpath would resolve to a different target than
-					// the author wrote. A sibling holding this same key is rewritten onto it as well, which
-					// leaves the same duplicate. Either way this needs a decision about the two patterns rather
-					// than a suggestion.
+					// Rewriting the key onto one that already exists would leave a duplicate member, and `JSON.parse` keeps the last one, so the subpath would resolve to a different target than the author wrote. A sibling holding this same key is rewritten onto it as well, which leaves the same duplicate. Either way this needs a decision about the two patterns rather than a suggestion.
 					const canConvert = isSubpathLevel
 						&& !isKeyTaken
 						&& !repeatedKeys.has(memberKey)
@@ -115,8 +107,7 @@ const create = context => ({
 			for (const {node: targetNode, isPattern, isKeyTaken, isFolderTarget, folderTarget} of findTrailingSlashes(member.value, subpathPrefix, {isSubpathLevel: true})) {
 				const {value} = targetNode;
 				const suggestion = value + '*';
-				// A repeated key leaves no pattern for the rewritten one to be taken by, so the message stays the
-				// plain one; only a key that is genuinely occupied gets the collision wording.
+				// A repeated key leaves no pattern for the rewritten one to be taken by, so the message stays the plain one; only a key that is genuinely occupied gets the collision wording.
 				let messageId = MESSAGE_ID;
 
 				if (isPattern) {

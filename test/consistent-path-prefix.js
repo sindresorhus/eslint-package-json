@@ -43,8 +43,7 @@ test.snapshot({
 		// Non-string values are ignored.
 		'{"main": 123}',
 		'{"bin": {"mycli": 123}}',
-		// Stripping `./` off a doubled separator would leave a path rooted at the filesystem root, which
-		// is a different file from the one the manifest points at.
+		// Stripping `./` off a doubled separator would leave a path rooted at the filesystem root, which is a different file from the one the manifest points at.
 		{
 			code: '{"main": ".//index.js"}',
 			options: [{prefix: 'never'}],
@@ -60,8 +59,7 @@ test.snapshot({
 		'{"bin": {"mycli": ""}}',
 		// Stripping `./` off a Windows drive path would leave a drive-relative path, not a relative one.
 		'{"main": "./C:/x"}',
-		// A `bin` key repeated with a different value resolves to the last one, so the shadowed path is not the
-		// one npm installs.
+		// A `bin` key repeated with a different value resolves to the last one, so the shadowed path is not the one npm installs.
 		'{"bin": {"mycli": "bin/cli.js", "mycli": "./bin/cli.js"}}',
 		{
 			code: '{"bin": {"mycli": "./bin/cli.js", "mycli": "bin/cli.js"}}',
@@ -78,8 +76,7 @@ test.snapshot({
 		},
 	],
 	invalid: [
-		// Missing ./ (default: always). Npm force-includes `main` and `browser` as written, so their prefix is
-		// offered as a suggestion rather than fixed; `bin` is fixed because npm normalizes its targets first.
+		// Missing ./ (default: always). Npm force-includes `main` and `browser` as written, so their prefix is offered as a suggestion rather than fixed; `bin` is fixed because npm normalizes its targets first.
 		'{"main": "index.js"}',
 		'{"module": "index.mjs"}',
 		'{"types": "index.d.ts"}',

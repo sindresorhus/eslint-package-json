@@ -33,9 +33,7 @@ const create = context => ({
 		}
 
 		for (const {node: valueNode, field} of iteratePathValueNodes(root)) {
-			// An `exports` or `imports` target is `valid-fields`' to report: it names the field, it says what the
-			// target has to start with, and it carries the rewrite. A second, vaguer report on the same node for
-			// the same string is noise.
+			// An `exports` or `imports` target is `valid-fields`' to report: it names the field, it says what the target has to start with, and it carries the rewrite. A second, vaguer report on the same node for the same string is noise.
 			if (field === 'exports' || field === 'imports') {
 				continue;
 			}
@@ -45,8 +43,7 @@ const create = context => ({
 			const negation = field === 'files' ? value.match(/^!*/)[0] : '';
 			const pattern = value.slice(negation.length);
 
-			// A leading slash on a file npm includes anyway is not a spelling problem: the entry is removable
-			// altogether, which is what `no-redundant-files` reports. Rewriting the spelling would keep it.
+			// A leading slash on a file npm includes anyway is not a spelling problem: the entry is removable altogether, which is what `no-redundant-files` reports. Rewriting the spelling would keep it.
 			if (field === 'files' && isAlwaysIncludedFile(pattern)) {
 				continue;
 			}

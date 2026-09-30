@@ -13,8 +13,7 @@ test.snapshot({
 		'{"scripts": {"lint": "node_modules/.bin/eslint ."}}',
 		String.raw`{"scripts": {"test": ".\\scripts\\test.js"}}`,
 		String.raw`{"scripts": {"test": "C:tools\\test.js"}}`,
-		// A backslash escapes the next character in every POSIX shell, so a `find` grouping is not a
-		// path. `html-entities` ships this exact command.
+		// A backslash escapes the next character in every POSIX shell, so a `find` grouping is not a path. `html-entities` ships this exact command.
 		String.raw`{"scripts": {"remove-unused-declarations": "find dist -type f \\( -name '*.d.ts' ! -name index.d.ts \\) | xargs rm"}}`,
 		String.raw`{"scripts": {"test": "grep \\! foo file"}}`,
 		String.raw`{"scripts": {"test": "sed s/\\.js//g file"}}`,
