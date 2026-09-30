@@ -59,14 +59,17 @@ const create = context => {
 					node: member,
 					messageId: MESSAGE_ID,
 					data: {key},
-					suggest: [
-						{
-							messageId: SUGGESTION_ID,
-							* fix(fixer) {
-								yield * removeMember(fixer, sourceCode, member);
+					// An empty `files` publishes only the files npm always includes, while no `files` publishes everything, so removing it is not offered.
+					suggest: key === 'files'
+						? []
+						: [
+							{
+								messageId: SUGGESTION_ID,
+								* fix(fixer) {
+									yield * removeMember(fixer, sourceCode, member);
+								},
 							},
-						},
-					],
+						],
 				});
 			}
 		},

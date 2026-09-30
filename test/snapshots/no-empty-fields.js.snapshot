@@ -130,9 +130,6 @@ Message:
 > 1 | {"files": []}
     |  ^^^^^^^^^^^ Unexpected empty \`files\` field.
 
-Suggestion 1/1: Remove the empty field.:
-  1 | {}
-
 `;
 
 exports[`invalid(8): {\n\t\"keywords\": []\n} 1`] = `

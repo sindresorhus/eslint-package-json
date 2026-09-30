@@ -12,6 +12,8 @@ Empty objects (`{}`), arrays (`[]`), and strings (`""`) in `package.json` are al
 
 Use the `ignore` option to allow specific fields where an empty value is meaningful (for example, `"files": []`).
 
+An empty `files` gets no removal suggestion, since removing it would publish everything.
+
 ## Options
 
 ### `ignore`
