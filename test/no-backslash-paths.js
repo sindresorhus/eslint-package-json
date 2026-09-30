@@ -43,6 +43,13 @@ snapshotTest.snapshot({
 		String.raw`{"man": ["npm\\npm.1", "npm.1"]}`,
 		// The object form of `browser` is a replacement map whose string values are paths too.
 		String.raw`{"browser": {"./server.js": ".\\dist\\browser.js"}}`,
+		// Npm 12 reads a `\` in a `files` entry as a glob escape, so a rewrite would change what ships, and it is offered as a suggestion while `main` in the same manifest is still fixed.
+		String.raw`{
+	"main": "dist\\index.js",
+	"files": [
+		"dist\\sub"
+	]
+}`,
 	],
 });
 

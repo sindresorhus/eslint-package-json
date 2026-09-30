@@ -100,7 +100,7 @@ export default defineConfig({
 | [description-format](docs/rules/description-format.md)                                                 | Enforce formatting of the `description` field.                                            |    | 🔧 |    |
 | [no-absolute-paths](docs/rules/no-absolute-paths.md)                                                   | Disallow absolute paths in path fields.                                                   | ✅  |    | 💡 |
 | [no-absolute-paths-in-scripts](docs/rules/no-absolute-paths-in-scripts.md)                             | Disallow absolute paths in scripts.                                                       | ✅  |    |    |
-| [no-backslash-paths](docs/rules/no-backslash-paths.md)                                                 | Enforce forward slashes in path fields.                                                   | ✅  | 🔧 |    |
+| [no-backslash-paths](docs/rules/no-backslash-paths.md)                                                 | Enforce forward slashes in path fields.                                                   | ✅  | 🔧 | 💡 |
 | [no-core-module-dependencies](docs/rules/no-core-module-dependencies.md)                               | Disallow dependencies that shadow Node.js built-in modules.                               | ✅  |    | 💡 |
 | [no-deprecated-fields](docs/rules/no-deprecated-fields.md)                                             | Disallow fields and scripts that npm has deprecated.                                      | ✅  |    |    |
 | [no-dist-tag-dependencies](docs/rules/no-dist-tag-dependencies.md)                                     | Disallow dist-tags as dependency specifiers.                                              | ✅  |    |    |

@@ -65,7 +65,7 @@ Message:
 > 1 | {"files": [".\\\\dist"]}
     |            ^^^^^^^^^ Path \`.\\dist\` must use forward slashes, not backslashes.
 
-Output:
+Suggestion 1/1: Replace the backslashes with forward slashes.:
   1 | {"files": ["./dist"]}
 
 `;
@@ -139,5 +139,59 @@ Message:
 
 Output:
   1 | {"browser": {"./server.js": "./dist/browser.js"}}
+
+`;
+
+exports[`invalid(9): {\n\t\"main\": \"dist\\\\index.js\",\n\t\"files\": [\n\t\t\"dist\\\\sub\"\n\t]\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"main": "dist\\\\index.js",
+  3 | 	"files": [
+  4 | 		"dist\\\\sub"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(9): {\n\t\"main\": \"dist\\\\index.js\",\n\t\"files\": [\n\t\t\"dist\\\\sub\"\n\t]\n} 2`] = `
+
+Message:
+  1 | {
+> 2 | 	"main": "dist\\\\index.js",
+    | 	        ^^^^^^^^^^^^^^^^ Path \`dist\\index.js\` must use forward slashes, not backslashes.
+  3 | 	"files": [
+  4 | 		"dist\\\\sub"
+  5 | 	]
+  6 | }
+
+Output:
+  1 | {
+  2 | 	"main": "dist/index.js",
+  3 | 	"files": [
+  4 | 		"dist\\\\sub"
+  5 | 	]
+  6 | }
+
+`;
+
+exports[`invalid(9): {\n\t\"main\": \"dist\\\\index.js\",\n\t\"files\": [\n\t\t\"dist\\\\sub\"\n\t]\n} 3`] = `
+
+Message:
+  1 | {
+  2 | 	"main": "dist\\\\index.js",
+  3 | 	"files": [
+> 4 | 		"dist\\\\sub"
+    | 		^^^^^^^^^^^ Path \`dist\\sub\` must use forward slashes, not backslashes.
+  5 | 	]
+  6 | }
+
+Suggestion 1/1: Replace the backslashes with forward slashes.:
+  1 | {
+  2 | 	"main": "dist\\\\index.js",
+  3 | 	"files": [
+  4 | 		"dist/sub"
+  5 | 	]
+  6 | }
 
 `;

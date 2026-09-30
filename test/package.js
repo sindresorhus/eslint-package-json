@@ -339,6 +339,7 @@ const trickyDocuments = [
 	'{"private":true,"publishConfig":{"access":"public"},"publishConfig":{"access":"public"}}',
 	'{"bin":"cli.js","bin":"cli.js"}',
 	'{"exports":"./a.js","exports":"./b.js"}',
+	String.raw`{"files":["dist\\a.js"]}`,
 	'{\n    "dependencies": {\n        "b": "^1.0.0",\n        "a": "^1.0.0"\n    }\n}',
 	'{\n  "files": [\n    "b.js",\n    "a.js"\n  ]\n}',
 	// A blank line inside a container is not indentation. A rewrite that took the text after the last line break
