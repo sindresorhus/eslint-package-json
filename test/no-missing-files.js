@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import process from 'node:process';
 import test from 'node:test';
 import {Linter} from 'eslint';
 import json from '@eslint/json';
@@ -360,8 +361,10 @@ test('resolves targets against a real package directory', t => {
 	// A real directory with nothing in it, which git cannot track but npm still refuses to pack from.
 	fs.mkdirSync(path.join(packageDirectory, 'empty'));
 
-	// A file whose name holds a literal `*`, which is what an `exports` target names when the subpath key has none.
-	write('starfile/*.js');
+	// A file whose name holds a literal `*`, which is what an `exports` target names when the subpath key has none. Windows does not allow `*` in a file name, so there the target is simply missing, which is reported all the same.
+	if (process.platform !== 'win32') {
+		write('starfile/*.js');
+	}
 
 	fs.symlinkSync(path.join(packageDirectory, 'index.js'), path.join(packageDirectory, 'link.js'));
 	fs.symlinkSync(path.join(packageDirectory, 'nope.js'), path.join(packageDirectory, 'dangling.js'));
