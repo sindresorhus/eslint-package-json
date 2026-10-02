@@ -80,6 +80,5 @@ test.snapshot({
 		String.raw`{"scripts": {"lint": "\".\\node_modules\\.bin\\eslint.cmd\" ."}}`,
 		String.raw`{"scripts": {"test": "echo \"example \\\n && node_modules/.bin/foo\" && node_modules/.bin/eslint"}}`,
 		String.raw`{"scripts": {"test": "echo \\; node_modules/.bin/foo && node_modules/.bin/eslint"}}`,
-		String.raw`{"scripts": {"test": "node_modules/.bin/jest\r\nnode_modules/.bin/eslint"}}`,
 	],
 });

@@ -14,8 +14,8 @@ const messages = {
 };
 
 // Keep quoted words and escaped characters intact so arguments containing shell operators cannot become commands.
-const tokenPattern = /#[^\n\r]*|(?:\\.|[^\s"&';<>\\|]|"(?:\\.|[^"\\])*"|'[^']*')+|[<>]+&?|[\n\r&;|]/gsu;
-const separatorPattern = /^[\n\r&;|]$/u;
+const tokenPattern = /#[^\n]*|(?:\\.|[^\s"&';<>\\|]|"(?:\\.|[^"\\])*"|'[^']*')+|[<>]+&?|[\n&;|]/gsu;
+const separatorPattern = /^[\n&;|]$/u;
 const assignmentPattern = /^[a-z_]\w*=/iu;
 const binaryPathPattern = /^(["']?)(?:\.[/\\])?node_modules[/\\]\.bin[/\\](\w[\w\-.]*)\1$/u;
 

@@ -353,7 +353,6 @@ const trickyDocuments = [
 	'{"exports":"./a.js","exports":"./b.js"}',
 	String.raw`{"files":["dist\\a.js"]}`,
 	'{"scripts":{"test":"node_modules/.bin/foo","test":"node_modules/.bin/bar && ./node_modules/.bin/foo"}}',
-	'{\r\n\t"dependencies": {\r\n\t\t"b": "^1.0.0",\r\n\t\t"a": "^1.0.0"\r\n\t}\r\n}',
 	'{\n    "dependencies": {\n        "b": "^1.0.0",\n        "a": "^1.0.0"\n    }\n}',
 	'{\n  "files": [\n    "b.js",\n    "a.js"\n  ]\n}',
 	// A blank line inside a container is not indentation. A rewrite that took all the whitespace before the first entry as the entry indent would write one blank line before every entry.

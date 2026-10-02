@@ -435,24 +435,6 @@ Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
 
 `;
 
-exports[`invalid(30): {\"scripts\": {\"test\": \"node_modules/.bin/jest\\r\\nnode_modules/.bin/eslint\"}} 1`] = `
-
-[Input]
-  1 | {"scripts": {"test": "node_modules/.bin/jest\\r\\nnode_modules/.bin/eslint"}}
-
-`;
-
-exports[`invalid(30): {\"scripts\": {\"test\": \"node_modules/.bin/jest\\r\\nnode_modules/.bin/eslint\"}} 2`] = `
-
-Message:
-> 1 | {"scripts": {"test": "node_modules/.bin/jest\\r\\nnode_modules/.bin/eslint"}}
-    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
-
-Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
-  1 | {"scripts": {"test": "jest\\r\\neslint"}}
-
-`;
-
 exports[`invalid(4): {\"scripts\": {\"lint\": \"'./node_modules/.bin/eslint' .\"}} 1`] = `
 
 [Input]

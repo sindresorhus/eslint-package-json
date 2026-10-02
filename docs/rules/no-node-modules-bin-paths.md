@@ -9,7 +9,7 @@
 <!-- end auto-generated rule header -->
 <!-- Do not manually modify this header. Run: `npm run fix:eslint-docs` -->
 
-[npm adds local binaries to `PATH`](https://docs.npmjs.com/cli/v11/using-npm/scripts/#path) in package scripts. Use `eslint` instead of `node_modules/.bin/eslint` or `./node_modules/.bin/eslint`.
+[npm adds local binaries to `PATH`](https://docs.npmjs.com/cli/v12/using-npm/scripts/#path) in package scripts. Use `eslint` instead of `node_modules/.bin/eslint` or `./node_modules/.bin/eslint`.
 
 Checks direct commands in `scripts`, including command chains and commands after environment assignments, with quoted paths and Windows path separators. Ignores path arguments, assignment values, and paths to other installations.
 
