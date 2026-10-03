@@ -87,6 +87,7 @@ const recommendedRuleIds = [
 	'no-invalid-direct-overrides',
 	'no-manual-maintainers',
 	'no-nested-exports',
+	'no-node-modules-bin-paths',
 	'no-orphan-script-hooks',
 	'no-orphan-types',
 	'no-overrides-in-published-package',
@@ -225,6 +226,18 @@ test('the recommended config works end-to-end through ESLint', () => {
 	const clean = linter.verify(cleanInput, config, {filename: 'package.json'});
 	assert.deepEqual(clean, [], 'a clean package.json should produce no problems');
 
+	const binaryPathInput = JSON.stringify({...cleanManifest, scripts: {test: 'node_modules/.bin/jest'}});
+	const binaryPathResult = linter.verifyAndFix(binaryPathInput, config, {filename: 'package.json'});
+	assert.equal(binaryPathResult.fixed, false, 'binary paths must require an explicit suggestion');
+	assert.equal(binaryPathResult.output, binaryPathInput);
+	assert.deepEqual(binaryPathResult.messages.map(message => message.ruleId), ['package-json/no-node-modules-bin-paths']);
+
+	const [binaryPathSuggestion] = binaryPathResult.messages[0].suggestions;
+	const {range, text} = binaryPathSuggestion.fix;
+	const suggestedInput = binaryPathInput.slice(0, range[0]) + text + binaryPathInput.slice(range[1]);
+	assert.equal(suggestedInput, JSON.stringify({...cleanManifest, scripts: {test: 'jest'}}));
+	assert.deepEqual(linter.verify(suggestedInput, config, {filename: 'package.json'}), [], 'the binary-name suggestion should leave the recommended config clean');
+
 	const redundantPackageJsonInput = JSON.stringify({...cleanManifest, files: [...cleanManifest.files, 'Package.json']});
 	const fixed = linter.verifyAndFix(redundantPackageJsonInput, config, {filename: 'package.json'});
 	assert.equal(fixed.fixed, true);
@@ -339,6 +352,7 @@ const trickyDocuments = [
 	'{"bin":"cli.js","bin":"cli.js"}',
 	'{"exports":"./a.js","exports":"./b.js"}',
 	String.raw`{"files":["dist\\a.js"]}`,
+	'{"scripts":{"test":"node_modules/.bin/foo","test":"node_modules/.bin/bar && ./node_modules/.bin/foo"}}',
 	'{\n    "dependencies": {\n        "b": "^1.0.0",\n        "a": "^1.0.0"\n    }\n}',
 	'{\n  "files": [\n    "b.js",\n    "a.js"\n  ]\n}',
 	// A blank line inside a container is not indentation. A rewrite that took all the whitespace before the first entry as the entry indent would write one blank line before every entry.
@@ -717,6 +731,7 @@ const findManifests = (directory, depth = 4) => {
 const unusualManifests = [
 	['{"name":"a","version":"1.0.0","main":"C:/build/index.js","files":["dist"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","scripts":{"test":"/usr/bin/node --test"},"files":["dist"]}', 'package.json'],
+	['{"name":"a","version":"1.0.0","scripts":{"test":"node_modules/.bin/foo && ./node_modules/.bin/bar"},"files":["dist"]}', 'package.json'],
 	[String.raw`{"name":"a","version":"1.0.0","main":"dist\\index.js","files":["dist"]}`, 'package.json'],
 	['{"name":"a","version":"1.0.0","dependencies":{"semver":"^7.0.0"},"devDependencies":{"semver":"^7.0.0"},"files":["dist"]}', 'package.json'],
 	['{"name":"a","version":"1.0.0","dependencies":{"semver":"^7.0.0"},"devDependencies":{"semver":"^6.0.0"},"files":["dist"]}', 'package.json'],
@@ -786,6 +801,7 @@ test('every rule takes part on a realistic manifest without breaking its neighbo
 		'no-invalid-direct-overrides',
 		'no-local-dependencies',
 		'no-nested-exports',
+		'no-node-modules-bin-paths',
 		'no-restricted-dependencies',
 		'no-restricted-fields',
 		'no-self-dependency',

@@ -1,0 +1,544 @@
+exports[`invalid(1): {\"scripts\": {\"lint\": \"node_modules/.bin/eslint .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "node_modules/.bin/eslint ."}}
+
+`;
+
+exports[`invalid(1): {\"scripts\": {\"lint\": \"node_modules/.bin/eslint .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "node_modules/.bin/eslint ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "eslint ."}}
+
+`;
+
+exports[`invalid(10): {\"scripts\": {\"lint\": \"npm run build && node_modules/.bin/eslint .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "npm run build && node_modules/.bin/eslint ."}}
+
+`;
+
+exports[`invalid(10): {\"scripts\": {\"lint\": \"npm run build && node_modules/.bin/eslint .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "npm run build && node_modules/.bin/eslint ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "npm run build && eslint ."}}
+
+`;
+
+exports[`invalid(11): {\"scripts\": {\"lint\": \"npm run build||./node_modules/.bin/eslint .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "npm run build||./node_modules/.bin/eslint ."}}
+
+`;
+
+exports[`invalid(11): {\"scripts\": {\"lint\": \"npm run build||./node_modules/.bin/eslint .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "npm run build||./node_modules/.bin/eslint ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "npm run build||eslint ."}}
+
+`;
+
+exports[`invalid(12): {\"scripts\": {\"lint\": \"echo input | node_modules/.bin/foo\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "echo input | node_modules/.bin/foo"}}
+
+`;
+
+exports[`invalid(12): {\"scripts\": {\"lint\": \"echo input | node_modules/.bin/foo\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "echo input | node_modules/.bin/foo"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "echo input | foo"}}
+
+`;
+
+exports[`invalid(13): {\"scripts\": {\"lint\": \"echo ok;node_modules/.bin/eslint .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "echo ok;node_modules/.bin/eslint ."}}
+
+`;
+
+exports[`invalid(13): {\"scripts\": {\"lint\": \"echo ok;node_modules/.bin/eslint .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "echo ok;node_modules/.bin/eslint ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "echo ok;eslint ."}}
+
+`;
+
+exports[`invalid(14): {\"scripts\": {\"lint\": \"echo ok & node_modules/.bin/eslint .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "echo ok & node_modules/.bin/eslint ."}}
+
+`;
+
+exports[`invalid(14): {\"scripts\": {\"lint\": \"echo ok & node_modules/.bin/eslint .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "echo ok & node_modules/.bin/eslint ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "echo ok & eslint ."}}
+
+`;
+
+exports[`invalid(15): {\"scripts\": {\"lint\": \"echo ok\\nnode_modules/.bin/eslint .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "echo ok\\nnode_modules/.bin/eslint ."}}
+
+`;
+
+exports[`invalid(15): {\"scripts\": {\"lint\": \"echo ok\\nnode_modules/.bin/eslint .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "echo ok\\nnode_modules/.bin/eslint ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "echo ok\\neslint ."}}
+
+`;
+
+exports[`invalid(16): {\"scripts\": {\"lint\": \"node_modules/.bin/eslint>output.txt\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "node_modules/.bin/eslint>output.txt"}}
+
+`;
+
+exports[`invalid(16): {\"scripts\": {\"lint\": \"node_modules/.bin/eslint>output.txt\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "node_modules/.bin/eslint>output.txt"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "eslint>output.txt"}}
+
+`;
+
+exports[`invalid(17): {\"scripts\": {\"test\": \"node_modules/.bin/jest --config \\\"test/config.json\\\"\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "node_modules/.bin/jest --config \\"test/config.json\\""}}
+
+`;
+
+exports[`invalid(17): {\"scripts\": {\"test\": \"node_modules/.bin/jest --config \\\"test/config.json\\\"\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "node_modules/.bin/jest --config \\"test/config.json\\""}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "jest --config \\"test/config.json\\""}}
+
+`;
+
+exports[`invalid(18): {\"scripts\": {\"test\": \"node_modules/.bin/foo-bar_2.js\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "node_modules/.bin/foo-bar_2.js"}}
+
+`;
+
+exports[`invalid(18): {\"scripts\": {\"test\": \"node_modules/.bin/foo-bar_2.js\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "node_modules/.bin/foo-bar_2.js"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "foo-bar_2.js"}}
+
+`;
+
+exports[`invalid(19): {\"scripts\": {\"test\": \"node_modules/.bin/foo node_modules/.bin/bar && ./node_modules/.bin/bar\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "node_modules/.bin/foo node_modules/.bin/bar && ./node_modules/.bin/bar"}}
+
+`;
+
+exports[`invalid(19): {\"scripts\": {\"test\": \"node_modules/.bin/foo node_modules/.bin/bar && ./node_modules/.bin/bar\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "node_modules/.bin/foo node_modules/.bin/bar && ./node_modules/.bin/bar"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "foo node_modules/.bin/bar && bar"}}
+
+`;
+
+exports[`invalid(2): {\"scripts\": {\"test\": \"./node_modules/.bin/jest --runInBand\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "./node_modules/.bin/jest --runInBand"}}
+
+`;
+
+exports[`invalid(2): {\"scripts\": {\"test\": \"./node_modules/.bin/jest --runInBand\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "./node_modules/.bin/jest --runInBand"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "jest --runInBand"}}
+
+`;
+
+exports[`invalid(20): {\"scripts\": {\"test\": \"echo 'a && b' && node_modules/.bin/jest\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo 'a && b' && node_modules/.bin/jest"}}
+
+`;
+
+exports[`invalid(20): {\"scripts\": {\"test\": \"echo 'a && b' && node_modules/.bin/jest\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo 'a && b' && node_modules/.bin/jest"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "echo 'a && b' && jest"}}
+
+`;
+
+exports[`invalid(21): {\"scripts\": {\"test\": \"# node_modules/.bin/foo\\nnode_modules/.bin/jest\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "# node_modules/.bin/foo\\nnode_modules/.bin/jest"}}
+
+`;
+
+exports[`invalid(21): {\"scripts\": {\"test\": \"# node_modules/.bin/foo\\nnode_modules/.bin/jest\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "# node_modules/.bin/foo\\nnode_modules/.bin/jest"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "# node_modules/.bin/foo\\njest"}}
+
+`;
+
+exports[`invalid(22): {\"scripts\": {\"test\": \"eslint\", \"test\": \"node_modules/.bin/eslint\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "eslint", "test": "node_modules/.bin/eslint"}}
+
+`;
+
+exports[`invalid(22): {\"scripts\": {\"test\": \"eslint\", \"test\": \"node_modules/.bin/eslint\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "eslint", "test": "node_modules/.bin/eslint"}}
+    |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "eslint", "test": "eslint"}}
+
+`;
+
+exports[`invalid(23): {\"scripts\": {\"test\": \"node_modules/.bin/jest\", \"test\": \"node_modules/.bin/eslint\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "node_modules/.bin/jest", "test": "node_modules/.bin/eslint"}}
+
+`;
+
+exports[`invalid(23): {\"scripts\": {\"test\": \"node_modules/.bin/jest\", \"test\": \"node_modules/.bin/eslint\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "node_modules/.bin/jest", "test": "node_modules/.bin/eslint"}}
+    |                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "node_modules/.bin/jest", "test": "eslint"}}
+
+`;
+
+exports[`invalid(24): {\"scripts\": {\"test\": \"eslint\"}, \"scripts\": {\"test\": \"node_modules/.bin/eslint\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "eslint"}, "scripts": {"test": "node_modules/.bin/eslint"}}
+
+`;
+
+exports[`invalid(24): {\"scripts\": {\"test\": \"eslint\"}, \"scripts\": {\"test\": \"node_modules/.bin/eslint\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "eslint"}, "scripts": {"test": "node_modules/.bin/eslint"}}
+    |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "eslint"}, "scripts": {"test": "eslint"}}
+
+`;
+
+exports[`invalid(25): {\"scripts\": {\"pretest\": null, \"test\": \"node_modules/.bin/jest\", \"lint\": \"node_modules/.bin/eslint\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"pretest": null, "test": "node_modules/.bin/jest", "lint": "node_modules/.bin/eslint"}}
+
+`;
+
+exports[`invalid(25): {\"scripts\": {\"pretest\": null, \"test\": \"node_modules/.bin/jest\", \"lint\": \"node_modules/.bin/eslint\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"pretest": null, "test": "node_modules/.bin/jest", "lint": "node_modules/.bin/eslint"}}
+    |                                       ^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"pretest": null, "test": "jest", "lint": "node_modules/.bin/eslint"}}
+
+`;
+
+exports[`invalid(25): {\"scripts\": {\"pretest\": null, \"test\": \"node_modules/.bin/jest\", \"lint\": \"node_modules/.bin/eslint\"}} 3`] = `
+
+Message:
+> 1 | {"scripts": {"pretest": null, "test": "node_modules/.bin/jest", "lint": "node_modules/.bin/eslint"}}
+    |                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"pretest": null, "test": "node_modules/.bin/jest", "lint": "eslint"}}
+
+`;
+
+exports[`invalid(26): {\n\t\"scripts\": {\n\t\t\"test\": \"./node_modules/.bin/jest && node_modules/.bin/eslint .\"\n\t}\n} 1`] = `
+
+[Input]
+  1 | {
+  2 | 	"scripts": {
+  3 | 		"test": "./node_modules/.bin/jest && node_modules/.bin/eslint ."
+  4 | 	}
+  5 | }
+
+`;
+
+exports[`invalid(26): {\n\t\"scripts\": {\n\t\t\"test\": \"./node_modules/.bin/jest && node_modules/.bin/eslint .\"\n\t}\n} 2`] = `
+
+Message:
+  1 | {
+  2 | 	"scripts": {
+> 3 | 		"test": "./node_modules/.bin/jest && node_modules/.bin/eslint ."
+    | 		        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+  4 | 	}
+  5 | }
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {
+  2 | 	"scripts": {
+  3 | 		"test": "jest && eslint ."
+  4 | 	}
+  5 | }
+
+`;
+
+exports[`invalid(27): {\"scripts\": {\"lint\": \"\\\".\\\\node_modules\\\\.bin\\\\eslint.cmd\\\" .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "\\".\\\\node_modules\\\\.bin\\\\eslint.cmd\\" ."}}
+
+`;
+
+exports[`invalid(27): {\"scripts\": {\"lint\": \"\\\".\\\\node_modules\\\\.bin\\\\eslint.cmd\\\" .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "\\".\\\\node_modules\\\\.bin\\\\eslint.cmd\\" ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "\\"eslint.cmd\\" ."}}
+
+`;
+
+exports[`invalid(28): {\"scripts\": {\"test\": \"echo \\\"example \\\\\\n && node_modules/.bin/foo\\\" && node_modules/.bin/eslint\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo \\"example \\\\\\n && node_modules/.bin/foo\\" && node_modules/.bin/eslint"}}
+
+`;
+
+exports[`invalid(28): {\"scripts\": {\"test\": \"echo \\\"example \\\\\\n && node_modules/.bin/foo\\\" && node_modules/.bin/eslint\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo \\"example \\\\\\n && node_modules/.bin/foo\\" && node_modules/.bin/eslint"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "echo \\"example \\\\\\n && node_modules/.bin/foo\\" && eslint"}}
+
+`;
+
+exports[`invalid(29): {\"scripts\": {\"test\": \"echo \\\\; node_modules/.bin/foo && node_modules/.bin/eslint\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo \\\\; node_modules/.bin/foo && node_modules/.bin/eslint"}}
+
+`;
+
+exports[`invalid(29): {\"scripts\": {\"test\": \"echo \\\\; node_modules/.bin/foo && node_modules/.bin/eslint\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo \\\\; node_modules/.bin/foo && node_modules/.bin/eslint"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "echo \\\\; node_modules/.bin/foo && eslint"}}
+
+`;
+
+exports[`invalid(3): {\"scripts\": {\"lint\": \"  node_modules/.bin/eslint .  \"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "  node_modules/.bin/eslint .  "}}
+
+`;
+
+exports[`invalid(3): {\"scripts\": {\"lint\": \"  node_modules/.bin/eslint .  \"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "  node_modules/.bin/eslint .  "}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "  eslint .  "}}
+
+`;
+
+exports[`invalid(4): {\"scripts\": {\"lint\": \"'./node_modules/.bin/eslint' .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "'./node_modules/.bin/eslint' ."}}
+
+`;
+
+exports[`invalid(4): {\"scripts\": {\"lint\": \"'./node_modules/.bin/eslint' .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "'./node_modules/.bin/eslint' ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "'eslint' ."}}
+
+`;
+
+exports[`invalid(5): {\"scripts\": {\"lint\": \"\\\"node_modules/.bin/eslint\\\" .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "\\"node_modules/.bin/eslint\\" ."}}
+
+`;
+
+exports[`invalid(5): {\"scripts\": {\"lint\": \"\\\"node_modules/.bin/eslint\\\" .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "\\"node_modules/.bin/eslint\\" ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "\\"eslint\\" ."}}
+
+`;
+
+exports[`invalid(6): {\"scripts\": {\"lint\": \"node_modules\\\\.bin\\\\eslint.cmd .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": "node_modules\\\\.bin\\\\eslint.cmd ."}}
+
+`;
+
+exports[`invalid(6): {\"scripts\": {\"lint\": \"node_modules\\\\.bin\\\\eslint.cmd .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": "node_modules\\\\.bin\\\\eslint.cmd ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "eslint.cmd ."}}
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"lint\": \".\\\\node_modules\\\\.bin\\\\eslint.cmd .\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"lint": ".\\\\node_modules\\\\.bin\\\\eslint.cmd ."}}
+
+`;
+
+exports[`invalid(7): {\"scripts\": {\"lint\": \".\\\\node_modules\\\\.bin\\\\eslint.cmd .\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"lint": ".\\\\node_modules\\\\.bin\\\\eslint.cmd ."}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`lint\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"lint": "eslint.cmd ."}}
+
+`;
+
+exports[`invalid(8): {\"scripts\": {\"test\": \"NODE_ENV=test CI=1 node_modules/.bin/jest\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "NODE_ENV=test CI=1 node_modules/.bin/jest"}}
+
+`;
+
+exports[`invalid(8): {\"scripts\": {\"test\": \"NODE_ENV=test CI=1 node_modules/.bin/jest\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "NODE_ENV=test CI=1 node_modules/.bin/jest"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "NODE_ENV=test CI=1 jest"}}
+
+`;
+
+exports[`invalid(9): {\"scripts\": {\"test\": \"LABEL='hello world' node_modules/.bin/jest\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "LABEL='hello world' node_modules/.bin/jest"}}
+
+`;
+
+exports[`invalid(9): {\"scripts\": {\"test\": \"LABEL='hello world' node_modules/.bin/jest\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "LABEL='hello world' node_modules/.bin/jest"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script invokes a binary through \`node_modules/.bin\`. Use its name instead; npm adds local binaries to \`PATH\`.
+
+Suggestion 1/1: Use binary names instead of \`node_modules/.bin\` paths.:
+  1 | {"scripts": {"test": "LABEL='hello world' jest"}}
+
+`;

@@ -118,6 +118,7 @@ export default defineConfig({
 | [no-manual-maintainers](docs/rules/no-manual-maintainers.md)                                           | Disallow a manually-set `maintainers` field.                                              | ✅  |    | 💡 |
 | [no-missing-files](docs/rules/no-missing-files.md)                                                     | Disallow missing files referenced by package metadata.                                    |    |    |    |
 | [no-nested-exports](docs/rules/no-nested-exports.md)                                                   | Disallow `exports` in nested `package.json` files.                                        | ✅  |    | 💡 |
+| [no-node-modules-bin-paths](docs/rules/no-node-modules-bin-paths.md)                                   | Disallow direct `node_modules/.bin` paths in scripts.                                     | ✅  |    | 💡 |
 | [no-orphan-script-hooks](docs/rules/no-orphan-script-hooks.md)                                         | Disallow `pre`/`post` script hooks without a corresponding script.                        | ✅  |    |    |
 | [no-orphan-types](docs/rules/no-orphan-types.md)                                                       | Disallow `@types/*` packages without a corresponding dependency.                          | ✅  |    | 💡 |
 | [no-overrides-in-published-package](docs/rules/no-overrides-in-published-package.md)                   | Disallow `overrides` in packages that can be published.                                   | ✅  |    | 💡 |
