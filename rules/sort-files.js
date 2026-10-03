@@ -5,8 +5,9 @@ import {
 	buildReordered,
 	isSameOrder,
 	iterateEffectiveMembers,
-	pathFields,
 	compareStrings,
+	isTypesConditionKey,
+	iterateEntryPointPaths,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'sort-files';
@@ -16,15 +17,6 @@ const messages = {
 };
 
 const declarationPathPattern = /^(.*)\.d\.(?:ts|mts|cts)$/u;
-
-/**
-Check whether an exports condition selects a TypeScript declaration target.
-*/
-const isTypesCondition = member => {
-	const key = getKey(member);
-
-	return key === 'types' || key.startsWith('types@');
-};
 
 /**
 Remove the optional `./` prefix used by entry-point fields so it can match a files entry.
@@ -56,13 +48,13 @@ function * iterateExportsTargets(node) {
 
 	// Effective members, so a subpath npm never resolves cannot pull its target to the front of `files`.
 	for (const member of iterateEffectiveMembers(node)) {
-		if (!isTypesCondition(member)) {
+		if (!isTypesConditionKey(getKey(member))) {
 			yield * iterateExportsTargets(member.value);
 		}
 	}
 
 	for (const member of iterateEffectiveMembers(node)) {
-		if (isTypesCondition(member)) {
+		if (isTypesConditionKey(getKey(member))) {
 			yield * iterateExportsTargets(member.value);
 		}
 	}
@@ -78,30 +70,8 @@ function * iterateEntryPointTargets(root) {
 		yield * iterateExportsTargets(exportsMember.value);
 	}
 
-	for (const field of pathFields) {
-		const member = findMember(root, field);
-
-		if (member?.value.type === 'String') {
-			yield member.value.value;
-		}
-	}
-
-	const binMember = findMember(root, 'bin');
-
-	if (binMember?.value.type === 'String') {
-		yield binMember.value.value;
-		return;
-	}
-
-	if (binMember?.value.type !== 'Object') {
-		return;
-	}
-
-	// Effective members, since npm publishes only the final value per `bin` key.
-	for (const member of iterateEffectiveMembers(binMember.value)) {
-		if (member.value.type === 'String') {
-			yield member.value.value;
-		}
+	for (const {node} of iterateEntryPointPaths(root)) {
+		yield node.value;
 	}
 }
 

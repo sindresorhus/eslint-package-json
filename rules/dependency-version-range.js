@@ -1,12 +1,13 @@
 import {
 	dependencyTypes,
 	getRootObject,
-	installedSpecifier,
+	splitAliasPrefix,
 	iterateDependencies,
 	optionsSchema,
 	stringArraySchema,
 	validVersion,
 	canonicalVersion,
+	dependencyTypesSchema,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'dependency-version-range';
@@ -113,9 +114,8 @@ const create = context => {
 					continue;
 				}
 
-				// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` is an exact pin just like `1.2.3` is. What precedes the installed range is the alias, found by searching for the range rather than by measuring the tail, since `npm-package-arg` trims the range it reports and a trailing space would otherwise land the prefix in the middle of the version.
-				const specifier = member.value.value;
-				const installedRange = installedSpecifier(specifier);
+				// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` is an exact pin just like `1.2.3` is.
+				const {prefix, range: installedRange} = splitAliasPrefix(member.value.value);
 				const classified = classify(installedRange);
 
 				if (classified) {
@@ -123,7 +123,7 @@ const create = context => {
 						member,
 						name,
 						classified,
-						prefix: specifier.slice(0, specifier.lastIndexOf(installedRange)),
+						prefix,
 					});
 				}
 			}
@@ -169,13 +169,7 @@ const config = {
 			range: {
 				enum: ['caret', 'tilde', 'exact', 'consistent'],
 			},
-			dependencyTypes: {
-				type: 'array',
-				items: {
-					enum: dependencyTypes,
-				},
-				uniqueItems: true,
-			},
+			dependencyTypes: dependencyTypesSchema,
 			exceptions: stringArraySchema,
 		}),
 		messages,

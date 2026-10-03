@@ -17,7 +17,7 @@ const create = context => ({
 
 		const engines = findMember(root, 'engines');
 
-		if (engines?.value.type === 'Object' && findMember(engines.value, 'node')) {
+		if (findMember(engines?.value, 'node')) {
 			return;
 		}
 

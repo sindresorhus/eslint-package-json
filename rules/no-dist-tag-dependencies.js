@@ -1,5 +1,5 @@
 import npa from 'npm-package-arg';
-import {getRootObject, iterateDependencies, resolveAlias} from './utils/index.js';
+import {getRootObject, installedSpecifier, iterateDependencies} from './utils/index.js';
 
 const MESSAGE_ID = 'no-dist-tag-dependencies';
 
@@ -25,8 +25,7 @@ Version ranges (including `*`, `x` and `1.2.x`) parse as a range, and tags do no
 */
 const getDistTag = specifier => {
 	// An `npm:` alias carries its own specifier, which may itself be a scoped package name, so the tag is the one it aliases, not the whole alias. A specifier that is not an alias resolves to nothing, and is then read as itself.
-	const aliased = resolveAlias(specifier)?.fetchSpec;
-	const subject = aliased ?? specifier;
+	const subject = installedSpecifier(specifier);
 
 	return isDistTag(subject) ? subject : undefined;
 };

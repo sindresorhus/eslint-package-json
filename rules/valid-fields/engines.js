@@ -1,5 +1,5 @@
 import {
-	findMember,
+	checkFieldType,
 	getKey,
 	isFalsyValue,
 	iterateEffectiveMembers,
@@ -17,17 +17,9 @@ export const messages = {
 };
 
 export function * check(root) {
-	const engines = findMember(root, 'engines');
+	const engines = yield * checkFieldType(root, 'engines', 'Object');
 
 	if (!engines) {
-		return;
-	}
-
-	if (engines.value.type !== 'Object') {
-		yield {
-			node: engines.value,
-			messageId: TYPE_MESSAGE_ID,
-		};
 		return;
 	}
 

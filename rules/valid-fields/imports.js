@@ -1,5 +1,5 @@
 import {
-	findMember,
+	checkFieldType,
 	getKey,
 	hasInvalidPackageTargetSegment,
 	isArrayIndexKey,
@@ -133,7 +133,7 @@ function * checkTargetNode(node) {
 }
 
 export function * check(root) {
-	const imports = findMember(root, 'imports');
+	const imports = yield * checkFieldType(root, 'imports', 'Object');
 
 	if (!imports) {
 		return;
@@ -141,14 +141,6 @@ export function * check(root) {
 
 	// Collapsed the way `JSON.parse` builds the tree, so a shadowed duplicate is not checked as a target Node never resolves. The surviving members are the original nodes, so reports still point at real ranges.
 	const value = withoutShadowedMembers(imports.value);
-
-	if (value.type !== 'Object') {
-		yield {
-			node: value,
-			messageId: TYPE_MESSAGE_ID,
-		};
-		return;
-	}
 
 	for (const member of value.members) {
 		const key = getKey(member);

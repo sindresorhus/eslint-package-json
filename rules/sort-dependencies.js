@@ -1,10 +1,9 @@
 import {
+	dependencyTypes,
 	getRootObject,
-	getKey,
 	findMember,
 	buildReordered,
-	isSameOrder,
-	compareStrings,
+	getSortedMembers,
 	optionsSchema,
 	stringArraySchema,
 } from './utils/index.js';
@@ -18,13 +17,7 @@ const messages = {
 /**
 Default dependency object names to check for alphabetical ordering.
 */
-const defaultProperties = [
-	'dependencies',
-	'devDependencies',
-	'optionalDependencies',
-	'peerDependencies',
-	'peerDependenciesMeta',
-];
+const defaultProperties = [...dependencyTypes, 'peerDependenciesMeta'];
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
@@ -47,15 +40,9 @@ const create = context => {
 				}
 
 				const objectNode = groupMember.value;
-				const {members} = objectNode;
+				const sortedMembers = getSortedMembers(objectNode);
 
-				if (members.length === 0) {
-					continue;
-				}
-
-				const sortedMembers = members.toSorted((a, b) => compareStrings(getKey(a), getKey(b)));
-
-				if (isSameOrder(members, sortedMembers)) {
+				if (!sortedMembers) {
 					continue;
 				}
 

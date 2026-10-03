@@ -2,6 +2,7 @@ import {
 	findMember,
 	getKey,
 	isFalsyValue,
+	isEmail,
 } from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
@@ -19,7 +20,6 @@ export const messages = {
 };
 
 // Npm's own tests for the shapes a `bugs` value may take, copied so the rule accepts exactly what npm keeps and reports exactly what npm throws away. Npm deletes the offending property, then the whole `bugs` object once it is empty, without telling the author.
-const isEmail = value => value.includes('@') && value.indexOf('@') < value.lastIndexOf('.');
 const isUrlOrEmail = value => isEmail(value) || URL.canParse(value);
 
 export function * check(root) {

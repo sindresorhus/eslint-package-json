@@ -4,7 +4,7 @@ import {
 	findMember,
 	getKey,
 	getRootObject,
-	iterateEffectiveMembers,
+	iterateBinEntries,
 	withoutShadowedMembers,
 } from './utils/index.js';
 
@@ -455,10 +455,12 @@ const hasMatchingExportTarget = (packageDirectory, pattern, isPatternAllowed) =>
 
 /**
 Get the package directory for a linted package.json, using the working directory for virtual filenames.
+
+It reads `physicalFilename`, since a processor names a code block after its container (`readme.md/0_package.json`) and only the container is a real path.
 */
 const getPackageDirectory = context => {
-	const {filename, cwd} = context;
-	const rootPath = filename.startsWith('<') ? cwd : path.dirname(path.resolve(cwd, filename));
+	const {physicalFilename, cwd} = context;
+	const rootPath = physicalFilename.startsWith('<') ? cwd : path.dirname(path.resolve(cwd, physicalFilename));
 
 	return createPackageDirectory(rootPath);
 };
@@ -467,10 +469,6 @@ const getPackageDirectory = context => {
 Report a missing `bin` target.
 */
 const checkBinTarget = (context, packageDirectory, node) => {
-	if (node.type !== 'String') {
-		return;
-	}
-
 	const {value} = node;
 	const relativePath = value.startsWith('./') ? value.slice(2) : value;
 
@@ -492,15 +490,9 @@ const checkBinTarget = (context, packageDirectory, node) => {
 Check the string or object form of `bin`.
 */
 const checkBin = (context, packageDirectory, root) => {
-	const binMember = findMember(root, 'bin');
-
-	if (binMember?.value.type === 'String') {
-		checkBinTarget(context, packageDirectory, binMember.value);
-	} else if (binMember?.value.type === 'Object') {
-		// Effective members, so a shadowed duplicate's missing target is not reported: npm only installs the final value per key.
-		for (const member of iterateEffectiveMembers(binMember.value)) {
-			checkBinTarget(context, packageDirectory, member.value);
-		}
+	// Effective members, so a shadowed duplicate's missing target is not reported: npm only installs the final value per key.
+	for (const {node} of iterateBinEntries(root)) {
+		checkBinTarget(context, packageDirectory, node);
 	}
 };
 

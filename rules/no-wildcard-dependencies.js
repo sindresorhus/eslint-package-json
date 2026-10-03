@@ -1,5 +1,5 @@
 import {
-	dependencyTypes,
+	dependencyTypesSchema,
 	getRootObject,
 	installedSpecifier,
 	iterateDependencies,
@@ -62,13 +62,7 @@ const config = {
 			recommended: true,
 		},
 		schema: optionsSchema({
-			dependencyTypes: {
-				type: 'array',
-				items: {
-					enum: dependencyTypes,
-				},
-				uniqueItems: true,
-			},
+			dependencyTypes: dependencyTypesSchema,
 			ignore: stringArraySchema,
 		}),
 		messages,

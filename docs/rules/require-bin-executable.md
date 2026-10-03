@@ -13,7 +13,7 @@ npm sets the bit on install, so this only matters for running `./cli.js` from a 
 
 Use `chmod u+x path/to/file` to set the permission. To also record the file as executable in Git's index, use `git update-index --chmod=+x path/to/file`; this does not change the working-tree mode checked by the rule. On filesystems without Unix permissions, the check is best-effort.
 
-The rule does nothing on Windows. It ignores missing, inaccessible, non-regular, virtual, and out-of-package targets, symlinks resolving outside the package, and `directories.bin`.
+The rule does nothing on Windows. It ignores missing, inaccessible, non-regular, and out-of-package targets, symlinks resolving outside the package, and `directories.bin`. Text linted without a file path is skipped, and a `package.json` code block inside another file is checked against that file's directory.
 
 ## Examples
 

@@ -1,9 +1,9 @@
-import npa from 'npm-package-arg';
 import {
-	findMember,
+	checkFieldType,
 	getKey,
 	isFalsyValue,
 	iterateEffectiveMembers,
+	parseOverrideKey,
 } from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
@@ -18,17 +18,6 @@ export const messages = {
 	[SELF_VALUE_MESSAGE_ID]: 'The `{{name}}` override\'s `.` entry holds the version for the package itself, so it must be one; npm reads any other value as a version and fails the install.',
 	// Every key but `.` names a package, and npm reads each one through `npm-package-arg` before it installs anything, so a key it cannot read stops the install outright.
 	[KEY_MESSAGE_ID]: 'The `overrides` key `{{key}}` must name a package, or `npm install` fails to read it.',
-};
-
-/**
-Read an override key as the package name `OverrideSet` reads, or `undefined` when npm cannot.
-*/
-const readOverrideName = key => {
-	try {
-		return npa(key).name || undefined;
-	} catch {
-		return undefined;
-	}
 };
 
 /**
@@ -54,7 +43,7 @@ function * checkOverrides(objectNode, packageName) {
 			continue;
 		}
 
-		if (!readOverrideName(getKey(member))) {
+		if (!parseOverrideKey(getKey(member))) {
 			yield {
 				node: member.name,
 				messageId: KEY_MESSAGE_ID,
@@ -76,17 +65,9 @@ function * checkOverrides(objectNode, packageName) {
 }
 
 export function * check(root) {
-	const overrides = findMember(root, 'overrides');
+	const overrides = yield * checkFieldType(root, 'overrides', 'Object');
 
 	if (!overrides) {
-		return;
-	}
-
-	if (overrides.value.type !== 'Object') {
-		yield {
-			node: overrides.value,
-			messageId: TYPE_MESSAGE_ID,
-		};
 		return;
 	}
 

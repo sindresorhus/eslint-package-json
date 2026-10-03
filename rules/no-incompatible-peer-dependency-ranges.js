@@ -1,6 +1,8 @@
 import semver from 'semver';
 import {
 	getRootObject,
+	runtimeDependencyTypes,
+	hasDependency,
 	iterateDependencies,
 	targetsPrerelease,
 	validRange,
@@ -15,8 +17,6 @@ const messages = {
 	[USE_PEER_RANGE_SUGGESTION_ID]: 'Use the peer dependency range `{{peerRange}}` in `{{groupName}}`.',
 	[USE_DEPENDENCY_RANGE_SUGGESTION_ID]: 'Use the `{{groupName}}` range `{{dependencyRange}}` in `peerDependencies`.',
 };
-
-const runtimeDependencyTypes = ['dependencies', 'optionalDependencies'];
 
 const hasStableVersions = range => semver.toComparators(range).some(comparators => semver.minVersion(comparators.join(' ')) !== null);
 
@@ -48,19 +48,13 @@ const create = context => ({
 		}
 
 		// Npm documents that an `optionalDependencies` entry overrides a `dependencies` entry of the same name, so the `dependencies` value is never installed. Comparing it would report a conflict that cannot happen and offer to rewrite a range nothing uses; `no-duplicate-dependencies` reports the duplication itself.
-		const optionalNames = new Set();
-
-		for (const {name} of iterateDependencies(root, ['optionalDependencies'])) {
-			optionalNames.add(name);
-		}
-
 		for (const {groupName, member, name} of iterateDependencies(root, runtimeDependencyTypes)) {
 			const peerMember = peerDependencies.get(name);
 
 			if (
 				!peerMember
 				|| member.value.type !== 'String'
-				|| (groupName === 'dependencies' && optionalNames.has(name))
+				|| (groupName === 'dependencies' && hasDependency(root, name, ['optionalDependencies']))
 			) {
 				continue;
 			}

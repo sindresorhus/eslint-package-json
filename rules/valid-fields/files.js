@@ -1,4 +1,4 @@
-import {findMember, removeElement} from '../utils/index.js';
+import {checkFieldType, removeElement} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const ELEMENT_MESSAGE_ID = 'element';
@@ -34,17 +34,9 @@ const alwaysIgnoredAnywhere = new Set([
 export function * check(root, context) {
 	const {sourceCode} = context;
 
-	const files = findMember(root, 'files');
+	const files = yield * checkFieldType(root, 'files', 'Array');
 
 	if (!files) {
-		return;
-	}
-
-	if (files.value.type !== 'Array') {
-		yield {
-			node: files.value,
-			messageId: TYPE_MESSAGE_ID,
-		};
 		return;
 	}
 

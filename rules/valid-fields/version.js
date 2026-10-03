@@ -1,5 +1,5 @@
 import semver from 'semver';
-import {findMember, canonicalVersion} from '../utils/index.js';
+import {checkFieldType, canonicalVersion} from '../utils/index.js';
 
 const MESSAGE_ID = 'valid-version';
 const CANONICAL_MESSAGE_ID = 'canonical-version';
@@ -12,15 +12,10 @@ export const messages = {
 };
 
 export function * check(root) {
-	const member = findMember(root, 'version');
+	// Npm reads a version with `semver`, which rejects anything that is not a string, so a manifest declaring one cannot be published.
+	const member = yield * checkFieldType(root, 'version', 'String');
 
 	if (!member) {
-		return;
-	}
-
-	// Npm reads a version with `semver`, which rejects anything that is not a string, so a manifest declaring one cannot be published.
-	if (member.value.type !== 'String') {
-		yield {node: member.value, messageId: TYPE_MESSAGE_ID};
 		return;
 	}
 

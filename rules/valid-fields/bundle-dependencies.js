@@ -1,8 +1,9 @@
 import {
 	findMember,
 	getKey,
-	iterateDependencies,
+	hasDependency,
 	iterateEffectiveMembers,
+	runtimeDependencyTypes,
 } from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
@@ -57,12 +58,6 @@ export function * check(root) {
 	}
 
 	// A bundled package must be a real runtime dependency (`devDependencies` are not published).
-	const dependencies = new Set();
-
-	for (const {name} of iterateDependencies(root, ['dependencies', 'optionalDependencies'])) {
-		dependencies.add(name);
-	}
-
 	for (const node of nameNodes) {
 		if (node.type !== 'String') {
 			yield {
@@ -70,7 +65,7 @@ export function * check(root) {
 				messageId: ELEMENT_MESSAGE_ID,
 				data: {field},
 			};
-		} else if (!dependencies.has(node.value)) {
+		} else if (!hasDependency(root, node.value, runtimeDependencyTypes)) {
 			yield {
 				node,
 				messageId: MISSING_MESSAGE_ID,

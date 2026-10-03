@@ -1,4 +1,4 @@
-import {findMember} from '../utils/index.js';
+import {checkStringElements, findMember} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const PACKAGES_MESSAGE_ID = 'packages';
@@ -31,14 +31,7 @@ export function * check(root) {
 			return;
 		}
 
-		for (const element of packages.value.elements) {
-			if (element.value.type !== 'String') {
-				yield {
-					node: element.value,
-					messageId: ELEMENT_MESSAGE_ID,
-				};
-			}
-		}
+		yield * checkStringElements(packages.value);
 
 		return;
 	}
@@ -51,12 +44,5 @@ export function * check(root) {
 		return;
 	}
 
-	for (const element of value.elements) {
-		if (element.value.type !== 'String') {
-			yield {
-				node: element.value,
-				messageId: ELEMENT_MESSAGE_ID,
-			};
-		}
-	}
+	yield * checkStringElements(value);
 }

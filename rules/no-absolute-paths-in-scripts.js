@@ -1,9 +1,8 @@
 import path from 'node:path';
 import {
-	findMember,
 	getKey,
 	getRootObject,
-	iterateEffectiveMembers,
+	iterateScripts,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-absolute-paths-in-scripts';
@@ -115,17 +114,8 @@ const create = context => ({
 			return;
 		}
 
-		const scripts = findMember(root, 'scripts');
-
-		if (scripts?.value.type !== 'Object') {
-			return;
-		}
-
-		for (const member of iterateEffectiveMembers(scripts.value)) {
-			if (
-				member.value.type !== 'String'
-				|| !hasAbsolutePath(member.value.value)
-			) {
+		for (const member of iterateScripts(root)) {
+			if (!hasAbsolutePath(member.value.value)) {
 				continue;
 			}
 

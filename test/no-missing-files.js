@@ -51,6 +51,26 @@ test('supports directory entries with unknown types', t => {
 	t.assert.deepStrictEqual(messages, []);
 });
 
+test('resolves a code block against the directory of the file that holds it', t => {
+	const linter = new Linter();
+	// A processor names a code block after its container, like `readme.md/0_package.json`, and passes the container as `physicalFilename`. The package directory is the container's directory, not `readme.md` itself.
+	const messages = linter.verify(
+		'{"exports": "./index.js", "files": ["rules"]}',
+		{
+			files: ['**'],
+			language: 'json/json',
+			plugins: {
+				json,
+				'rule-to-test': {rules: {'no-missing-files': rule}},
+			},
+			rules: {'rule-to-test/no-missing-files': 'error'},
+		},
+		{filename: 'readme.md/0_package.json', physicalFilename: 'readme.md'},
+	);
+
+	t.assert.deepStrictEqual(messages, []);
+});
+
 test('does not follow symlinks during globstar traversal when entry types are unknown', t => {
 	const packageDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'no-missing-files-'));
 	t.after(() => {

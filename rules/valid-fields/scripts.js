@@ -1,4 +1,4 @@
-import {findMember, getKey, iterateEffectiveMembers} from '../utils/index.js';
+import {checkFieldType, getKey, iterateEffectiveMembers} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const VALUE_MESSAGE_ID = 'value';
@@ -9,17 +9,9 @@ export const messages = {
 };
 
 export function * check(root) {
-	const scripts = findMember(root, 'scripts');
+	const scripts = yield * checkFieldType(root, 'scripts', 'Object');
 
 	if (!scripts) {
-		return;
-	}
-
-	if (scripts.value.type !== 'Object') {
-		yield {
-			node: scripts.value,
-			messageId: TYPE_MESSAGE_ID,
-		};
 		return;
 	}
 

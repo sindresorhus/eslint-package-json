@@ -1,6 +1,7 @@
 import {
 	getRootObject,
 	getKey,
+	isEmptyValue,
 	removeMember,
 	optionsSchema,
 	stringArraySchema,
@@ -12,26 +13,6 @@ const SUGGESTION_ID = 'remove';
 const messages = {
 	[MESSAGE_ID]: 'Unexpected empty `{{key}}` field.',
 	[SUGGESTION_ID]: 'Remove the empty field.',
-};
-
-const isEmptyValue = node => {
-	switch (node.type) {
-		case 'Object': {
-			return node.members.length === 0;
-		}
-
-		case 'Array': {
-			return node.elements.length === 0;
-		}
-
-		case 'String': {
-			return node.value === '';
-		}
-
-		default: {
-			return false;
-		}
-	}
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */

@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {Linter} from 'eslint';
+import json from '@eslint/json';
 import {getTester} from './utils/test.js';
 
-const {test: snapshotTest} = getTester(import.meta);
+const {test: snapshotTest, rule} = getTester(import.meta);
 const fixturePackageFilename = 'test/fixtures/require-bin-shebang/package.json';
 
 snapshotTest.snapshot({
@@ -67,6 +69,26 @@ snapshotTest.snapshot({
 		// Without a newline, Linux reads the line out of a zero-padded buffer and trims nothing, so `env` looks for a program named `node `.
 		{code: '{"bin": "trailing-space-eof.js"}', filename: fixturePackageFilename},
 	],
+});
+
+test('resolves a code block against the directory of the file that holds it', () => {
+	const linter = new Linter();
+	// A processor names a code block after its container, like `readme.md/0_package.json`, and passes the container as `physicalFilename`. The package directory is the container's directory, not `readme.md` itself.
+	const messages = linter.verify(
+		'{"bin": "invalid.js"}',
+		{
+			files: ['**'],
+			language: 'json/json',
+			plugins: {
+				json,
+				'rule-to-test': {rules: {'require-bin-shebang': rule}},
+			},
+			rules: {'rule-to-test/require-bin-shebang': 'error'},
+		},
+		{filename: 'test/fixtures/require-bin-shebang/readme.md/0_package.json', physicalFilename: 'test/fixtures/require-bin-shebang/readme.md'},
+	);
+
+	assert.deepEqual(messages.map(({messageId}) => messageId), ['invalidString']);
 });
 
 test('the trailing-space fixture keeps its trailing space', () => {

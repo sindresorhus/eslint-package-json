@@ -6,7 +6,7 @@ const messages = {
 	[MESSAGE_ID]: 'Prefer an `exports`-first package interface instead of `{{field}}`.',
 };
 
-// Fields this opinionated rule reports to enforce an `exports`-first package interface.
+// Fields this opinionated rule reports to enforce an `exports`-first package interface. It holds the same names as `pathFields` today, but on purpose it is not that list: a new field with one path is not always one that `exports` replaces.
 const legacyFields = [
 	'main',
 	'module',

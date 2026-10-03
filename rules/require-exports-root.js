@@ -3,6 +3,7 @@ import {
 	findMember,
 	getKey,
 	iterateEffectiveMembers,
+	isTypesConditionKey,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'require-exports-root';
@@ -14,10 +15,6 @@ const messages = {
 	[MESSAGE_ID_NO_RUNTIME]: 'The `exports` root must expose a runtime entry point, not only types or a blocked target.',
 	[MESSAGE_ID_MISMATCH]: 'The `exports` root does not expose the package `main` entry point `{{main}}`.',
 };
-
-function isTypesCondition(key) {
-	return key === 'types' || key.startsWith('types@');
-}
 
 // The conditions Node sets on its own. Every other key is one a consumer has to ask for with `--conditions`, or one a bundler sets for a target of its own, so a root built only from those cannot be loaded by a plain `require` or `import`. `types` is TypeScript's, and is excluded for the same reason as the rest.
 const nodeConditionKeys = new Set(['node', 'node-addons', 'import', 'require', 'module-sync', 'default']);
@@ -38,7 +35,7 @@ function * iterateRuntimeTargets(node, {nodeConditionsOnly}) {
 			for (const member of iterateEffectiveMembers(node)) {
 				const key = getKey(member);
 				// A subpath key here is not a condition, so Node matches nothing through this branch.
-				if (isTypesCondition(key) || key.startsWith('.')) {
+				if (isTypesConditionKey(key) || key.startsWith('.')) {
 					continue;
 				}
 

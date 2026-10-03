@@ -1,4 +1,4 @@
-import {getKey, getRootObject} from './utils/index.js';
+import {getKey, getRootObject, isEmptyValue} from './utils/index.js';
 import * as name from './valid-fields/name.js';
 import * as version from './valid-fields/version.js';
 import * as private_ from './valid-fields/private.js';
@@ -89,13 +89,6 @@ const namespaceReport = (field, report) => {
 
 	return namespaced;
 };
-
-/**
-Whether a value is one `no-empty-fields` reports: an empty string, object, or array.
-*/
-const isEmptyValue = node => (node.type === 'String' && node.value === '')
-	|| (node.type === 'Object' && node.members.length === 0)
-	|| (node.type === 'Array' && node.elements.length === 0);
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({

@@ -1,4 +1,9 @@
-import {getRootObject, findMember, getKey} from './utils/index.js';
+import {
+	deprecatedFields,
+	getRootObject,
+	findMember,
+	getKey,
+} from './utils/index.js';
 
 const FIELD_MESSAGE_ID = 'deprecatedField';
 const SCRIPT_MESSAGE_ID = 'deprecatedScript';
@@ -7,15 +12,6 @@ const messages = {
 	[FIELD_MESSAGE_ID]: 'The `{{field}}` field is deprecated. {{advice}}',
 	[SCRIPT_MESSAGE_ID]: 'The `prepublish` script no longer runs on `npm publish`, but it still runs on `npm install`. Use `prepublishOnly` to run only on publish.',
 };
-
-// Top-level fields npm no longer honors, mapped to migration advice.
-const deprecatedFields = new Map([
-	['jsnext:main', 'Use the `module` field instead.'],
-	['preferGlobal', 'It is ignored by npm.'],
-	['engineStrict', 'It is ignored by npm.'],
-	['licenses', 'Use the `license` field with an SPDX expression instead.'],
-	['modules', 'Use the `exports` field instead.'],
-]);
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({

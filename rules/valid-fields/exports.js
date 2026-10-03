@@ -1,14 +1,13 @@
 import {
 	findMember,
 	getKey,
-	checkKeyConsistency,
-	keyConsistencyMessages,
 	hasInvalidPackageTargetSegment,
 	isArrayIndexKey,
 	iterateStringValues,
 	withoutShadowedMembers,
 } from '../utils/index.js';
 
+const MESSAGE_ID_KEY_MIXING = 'keyMixing';
 const MESSAGE_ID_RELATIVE_PATH = 'relativePath';
 const MESSAGE_ID_SUBPATH_KEY = 'subpathKey';
 const MESSAGE_ID_CONDITION_KEY = 'conditionKey';
@@ -19,7 +18,7 @@ const MESSAGE_ID_ROOT_TYPE = 'rootType';
 const SUGGESTION_ID_RELATIVE_PATH = 'makeRelative';
 
 export const messages = {
-	...keyConsistencyMessages,
+	[MESSAGE_ID_KEY_MIXING]: 'Cannot mix subpath keys and condition keys; `{{key}}` does not match its siblings.',
 	[MESSAGE_ID_RELATIVE_PATH]: 'Export target `{{value}}` must be a package-relative path starting with `./`.',
 	[MESSAGE_ID_SUBPATH_KEY]: 'Subpath key `{{key}}` must be `.` or start with `./`.',
 	[MESSAGE_ID_CONDITION_KEY]: 'Condition key `{{key}}` must not be an array index.',
@@ -154,6 +153,29 @@ function isTopLevelConditionMap(node) {
 	return node.type === 'Object' && node.members.every(member => !getKey(member).startsWith('.'));
 }
 
+/**
+Yield reports for an `exports` object that mixes subpath keys (starting with `.`) and condition keys, which is invalid.
+*/
+function * checkKeyMixing(objectNode) {
+	const {members} = objectNode;
+
+	if (members.length === 0) {
+		return;
+	}
+
+	const firstIsSubpath = getKey(members[0]).startsWith('.');
+
+	for (const member of members) {
+		if (getKey(member).startsWith('.') !== firstIsSubpath) {
+			yield {
+				node: member.name,
+				messageId: MESSAGE_ID_KEY_MIXING,
+				data: {key: getKey(member)},
+			};
+		}
+	}
+}
+
 export function * check(root) {
 	const exportsMember = findMember(root, 'exports');
 
@@ -175,7 +197,7 @@ export function * check(root) {
 	// Node raises "cannot contain some keys starting with '.' and some not" from
 	// `isConditionalExportsMainSugar`, which it runs once, on the top-level object. A nested object is walked for `default` or a matching condition, so a key starting with `.` beside one that does not is a condition no consumer asks for, and the target beside it still resolves.
 	if (value.type === 'Object') {
-		yield * checkKeyConsistency(value, '.');
+		yield * checkKeyMixing(value);
 	}
 
 	const reports = [

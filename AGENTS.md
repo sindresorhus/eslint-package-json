@@ -90,31 +90,20 @@ Name boolean options in the positive `check*` form, never the negated `ignore*`/
 
 - `is*`/`has*`/`should*` return booleans (prefer explicit `false`).
 - `get*` returns a value or `undefined`.
-- Keep simple/rule-specific helpers local to the rule file. Only promote to `rules/utils/` when clearly general.
+- `check*` is a generator that yields report descriptors (`{node, messageId, data?}`) for the caller to report.
+- Keep simple/rule-specific helpers local to the rule file.
+- When two or more rules need the same non-trivial logic, put it in `rules/utils/index.js` with a doc comment, instead of copying it. Check that file before writing a helper. Share only logic that behaves the same in every rule: when two copies differ on purpose (for example, two `normalizePath` functions that model different npm behavior), keep each one local and say why in a comment. A one-line expression is not worth a shared helper.
 
 ## Reusable utilities
 
-`rules/utils/index.js` provides:
+Shared helpers live in `rules/utils/index.js`. Read its exports before you write a helper. Each one has a doc comment that says what it does, so the file is the reference and this section does not list them. Import from `'./utils/index.js'`.
 
-- `getRootObject(document)`, `findMember(object, key)`, `getKey(member)` — AST navigation.
-- `iterateEffectiveMembers(object)` / `countEffectiveMembers(object)` / `withoutShadowedMembers(node)` — the object as `JSON.parse` builds it, one member per key. See “Duplicate keys” below.
-- `iterateDependencies(root, types?)` — yields `{groupName, group, member, name}` across dependency groups.
-- `dependencyTypes` — the four standard dependency group names.
-- `isPrivatePackage(root)` — whether the package has `"private": true`. `isFalsyValue(node)` — whether a value node is falsy the way npm's `||` and `!` read it (`null`, `false`, `0`, `""`).
-- `removeMember`/`removeMemberAndDuplicates`/`removeShadowedDuplicates`/`removeMembers`/`removeElement`/`removeEntryAndEmptyContainer` — comma-aware removal (generators yielding fixes). See “Duplicate keys” below for which to use.
-- `buildReordered(sourceCode, container, orderedNodes)` + `isSameOrder` — for sorting fixes on objects or arrays that preserve indentation. Pass an object's members, or an array's element values (`Element` nodes carry no range).
-- `compareStrings` — locale-independent alphabetical comparison. Always use it instead of `String#localeCompare`, whose locale-dependent result would make a fix disagree between a contributor and CI.
-- `iterateStringValues(node)` — every `String` value node in an `exports`/`imports` tree; `iteratePathValueNodes(root)` yields `{node, field}` across every path-bearing field, since the same text means different things per field (a leading `/` is absolute in `main`, redundant in a `files` pattern).
-- `insertRootField(fixer, sourceCode, root, {key, value})` — add a top-level field where a sorted document holds it, so `sort-properties` does not report the result. Use it instead of appending. It ranks by the default `fieldOrder`, so a document sorted with a custom `sort-properties` `order` can get the field in a place that order reports. `getRootFieldAnchor(root, key)` is the member it inserts after.
-- `insertMember(fixer, sourceCode, object, {index, entry})` — insert a member into any object at a given index, keeping its layout (one-line, multiline, empty).
-- `insertGroupMember(fixer, sourceCode, root, {groupMember, groupName, key, value})` — add an entry to a dependency-style group where a sorted document holds it, creating the group with `insertRootField` when it is missing. `setPrivate(fixer, sourceCode, root, privateMember)` — set `"private": true`, adding the field when it is missing.
-- `getIndentString` — detect the file's indentation. `lineIndentOf(sourceCode, node)` — the indentation of the line a node starts on. `getIndentPrefix(sourceCode, node)` — the same, or `''` when the node shares its line with earlier content.
-- `validRange`/`validVersion` — memoized `semver.validRange`/`semver.valid`. Use them instead of calling `semver` per entry.
-- `canonicalVersion(version)` — the spelling of a version without its whitespace and leading `=`/`v`, keeping `+build`. `targetsPrerelease(range, {loose?})` — whether a range starts at a pre-release, the way `semver.minVersion` decides it.
-- `resolveAlias(specifier)` — the package and range an `npm:` alias installs, via `npm-package-arg`. `installedSpecifier(specifier)` — the specifier npm installs for a dependency entry (an alias's own range, anything else unchanged). `isGitRemote(specifier)` — whether npm resolves a specifier to a git remote.
-- `optionsSchema(properties)` + `stringArraySchema` — build a rule's options schema without boilerplate.
+Some helpers replace a call you would otherwise write, so always use them:
 
-Import from `'./utils/index.js'`.
+- `compareStrings` instead of `String#localeCompare`, whose locale-dependent result would make a fix disagree between a contributor and CI.
+- `validRange`/`validVersion` instead of `semver.validRange`/`semver.valid`. They are memoized across rules and files.
+- `insertRootField` instead of appending a top-level field, so `sort-properties` does not report the result.
+- `findMember`, `iterateEffectiveMembers`, `withoutShadowedMembers`, and the `remove*` helpers for anything a duplicate key can affect. See “Duplicate keys” below.
 
 External: `semver`, `validate-npm-package-name`, `spdx-expression-parse`, `detect-indent`, `hosted-git-info`, `npm-package-arg`.
 
@@ -126,7 +115,7 @@ External: `semver`, `validate-npm-package-name`, `spdx-expression-parse`, `detec
 - `removeMember` — the rule iterates members and reports each one separately (`no-empty-fields`, `no-duplicate-dependencies`), so each suggestion should remove only its own member. The distinction is per report, not per rule.
 - `removeEntryAndEmptyContainer` — the rule found a container with `findMember` and deletes one entry of it (a dependency, a keyword, a `publishConfig` key). It removes the whole container when that entry is its only one, since an empty container is what `no-empty-fields` reports, and it removes the entry together with its duplicates. So it is only for an entry reached through the effective members, not for a per-entry report on raw `.members`.
 - `removeShadowedDuplicates` — the fix rewrites the effective member instead of deleting it, by renaming its key or replacing it with a member under a different key (`no-manual-maintainers`, `no-package-manager-engines`, the group rename in `types-in-dev-dependencies`). It drops the earlier duplicates and leaves the rewritten member alone.
-- `removeMembers` — removing several members, a contiguous run at a time. The member removers above are built on it, so call it directly only to remove members that are not one key and its duplicates. One at a time does not work: each removal also consumes an adjacent comma, so neighboring members produce overlapping ranges and ESLint rejects the report with `Fix objects must not be overlapped`.
+- `removeMembers` — removing several members, a contiguous run at a time. It also takes an array and its element values, which is how `removeElement` removes one. The member removers above are built on it, so call it directly only to remove members that are not one key and its duplicates. One at a time does not work: each removal also consumes an adjacent comma, so neighboring members produce overlapping ranges and ESLint rejects the report with `Fix objects must not be overlapped`.
 
 `test/package.js` enforces this on its tricky documents, which reach every rule with suggestions: every suggestion must reduce the number of reports of its own `messageId`, so a fix that only unmasks a shadowed duplicate fails the suite. A per-entry removal that also takes the effective duplicate still reduces that count, so the test does not catch the wrong remover in that direction.
 

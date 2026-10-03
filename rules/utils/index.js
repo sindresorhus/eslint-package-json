@@ -15,9 +15,14 @@ export const dependencyTypes = [
 ];
 
 /**
+The dependency groups that hold the package's own runtime dependencies. `peerDependencies` is left out, since npm resolves a peer in the consumer's tree instead of giving the package its own copy.
+*/
+export const runtimeDependencyTypes = ['dependencies', 'optionalDependencies'];
+
+/**
 The canonical order for known top-level package.json fields.
 
-The fields npm itself deprecates or ignores (`jsnext:main`, `preferGlobal`, `engineStrict`, `licenses`, `modules`) and third-party tool keys such as `bun` are deliberately left out, so `sort-properties` keeps them with the unknown fields at the end rather than inventing a position for them.
+The fields npm itself deprecates or ignores (`deprecatedFields`) and third-party tool keys such as `bun` are deliberately left out, so `sort-properties` keeps them with the unknown fields at the end rather than inventing a position for them.
 */
 export const fieldOrder = [
 	'name',
@@ -58,10 +63,7 @@ export const fieldOrder = [
 	'workspaces',
 	'keywords',
 	// The dependency groups follow `dependencyTypes`, the plugin's canonical order for them, with `peerDependenciesMeta` after the group it describes. Npm's own `depTypes` is `dependencies`, `optionalDependencies`, `devDependencies`, `peerDependencies`, which swaps the middle two.
-	'dependencies',
-	'devDependencies',
-	'optionalDependencies',
-	'peerDependencies',
+	...dependencyTypes,
 	'peerDependenciesMeta',
 	// Npm silently renames `bundledDependencies` to `bundleDependencies` on every fix, so both spellings belong next to each other rather than at the end as unknown fields.
 	'bundledDependencies',
@@ -70,15 +72,22 @@ export const fieldOrder = [
 ];
 
 /**
+Top-level fields npm no longer honors, mapped to the migration advice `no-deprecated-fields` gives.
+*/
+export const deprecatedFields = new Map([
+	['jsnext:main', 'Use the `module` field instead.'],
+	['preferGlobal', 'It is ignored by npm.'],
+	['engineStrict', 'It is ignored by npm.'],
+	['licenses', 'Use the `license` field with an SPDX expression instead.'],
+	['modules', 'Use the `exports` field instead.'],
+]);
+
+/**
 Every recognized top-level field name, including deprecated ones, so typo detection defers to `no-deprecated-fields` rather than flagging them.
 */
 export const knownFields = new Set([
 	...fieldOrder,
-	'jsnext:main',
-	'preferGlobal',
-	'engineStrict',
-	'licenses',
-	'modules',
+	...deprecatedFields.keys(),
 	// Common runtime/tool config keys and alternate spellings that are edit-distance 1 from a real field. `licence` is the spelling npm reads a license from when `license` is absent, so it is a field and not a misspelling, however it looks beside `license`.
 	'bun',
 	'licence',
@@ -91,6 +100,17 @@ export const stringArraySchema = {
 	type: 'array',
 	items: {
 		type: 'string',
+	},
+	uniqueItems: true,
+};
+
+/**
+A JSON Schema fragment for an option that is an array of unique dependency group names.
+*/
+export const dependencyTypesSchema = {
+	type: 'array',
+	items: {
+		enum: dependencyTypes,
 	},
 	uniqueItems: true,
 };
@@ -121,27 +141,27 @@ export function getRootObject(document) {
 	return root?.type === 'Object' ? root : undefined;
 }
 
-// Around sixty rules look up the same handful of keys on the one AST that ESLint shares between them, and every lookup would otherwise scan the object's members. Indexing each object on first use turns the whole pass into hash lookups. A `WeakMap` keeps an index alive no longer than the node it describes.
-const memberIndexCache = new WeakMap();
+/**
+Wrap a function of one object so it runs once per object, and later calls with the same object get the first result. ESLint parses a file once and shares that AST (and its `SourceCode`) with every rule, so a value derived from a node is the same for all of them. A `WeakMap` keeps each result alive no longer than the object it was computed for.
+*/
+function memoizeByObject(compute) {
+	const cache = new WeakMap();
+
+	return object => {
+		if (!cache.has(object)) {
+			cache.set(object, compute(object));
+		}
+
+		return cache.get(object);
+	};
+}
 
 /**
 Index an object's members by key exactly as `JSON.parse` would build the object: setting a key that is already present overwrites its value but keeps its original position, so the map ends up holding each key's final member in its first appearance's place.
+
+Around sixty rules look up the same handful of keys on the one AST that ESLint shares between them, and every lookup would otherwise scan the object's members. Indexing each object on first use turns the whole pass into hash lookups.
 */
-function getMemberIndex(objectNode) {
-	let index = memberIndexCache.get(objectNode);
-
-	if (!index) {
-		index = new Map();
-
-		for (const member of objectNode.members) {
-			index.set(getKey(member), member);
-		}
-
-		memberIndexCache.set(objectNode, index);
-	}
-
-	return index;
-}
+const getMemberIndex = memoizeByObject(objectNode => new Map(objectNode.members.map(member => [getKey(member), member])));
 
 /**
 Find the final member by key in an object node, matching JSON parsing semantics, or `undefined`.
@@ -168,7 +188,7 @@ export function iterateEffectiveMembers(objectNode) {
 /**
 Check whether a resolved path stays within the package directory.
 */
-function isWithinPackage(packageDirectory, filePath) {
+export function isWithinPackage(packageDirectory, filePath) {
 	const relativePath = path.relative(packageDirectory, filePath);
 
 	return relativePath !== ''
@@ -178,9 +198,9 @@ function isWithinPackage(packageDirectory, filePath) {
 }
 
 /**
-Iterate the effective string-valued file paths referenced by `bin`.
+Iterate the effective string-valued file paths referenced by `bin`, as `{node, value, name}`. `name` is the command name, and it is `undefined` for the string form.
 */
-function * iterateBinEntries(rootObject) {
+export function * iterateBinEntries(rootObject) {
 	const binMember = findMember(rootObject, 'bin');
 
 	if (binMember?.value.type === 'String') {
@@ -260,8 +280,6 @@ export function countEffectiveMembers(objectNode) {
 	return getMemberIndex(objectNode).size;
 }
 
-const collapsedNodeCache = new WeakMap();
-
 /**
 Get a view of a value node with duplicate object keys collapsed the way `JSON.parse` does.
 
@@ -272,32 +290,27 @@ export function withoutShadowedMembers(node) {
 		return node;
 	}
 
-	let collapsed = collapsedNodeCache.get(node);
+	return collapseShadowedMembers(node);
+}
 
-	if (collapsed) {
-		return collapsed;
-	}
-
+const collapseShadowedMembers = memoizeByObject(node => {
 	if (node.type === 'Array') {
 		const elements = node.elements.map(element => {
 			const value = withoutShadowedMembers(element.value);
 			return value === element.value ? element : {...element, value};
 		});
 
-		collapsed = isSameOrder(node.elements, elements) ? node : {...node, elements};
-	} else {
-		const members = [...iterateEffectiveMembers(node)].map(member => {
-			const value = withoutShadowedMembers(member.value);
-			return value === member.value ? member : {...member, value};
-		});
-
-		// `isSameOrder` compares lengths too, so a collapsed duplicate is caught as well as a reordering.
-		collapsed = isSameOrder(node.members, members) ? node : {...node, members};
+		return isSameOrder(node.elements, elements) ? node : {...node, elements};
 	}
 
-	collapsedNodeCache.set(node, collapsed);
-	return collapsed;
-}
+	const members = [...iterateEffectiveMembers(node)].map(member => {
+		const value = withoutShadowedMembers(member.value);
+		return value === member.value ? member : {...member, value};
+	});
+
+	// `isSameOrder` compares lengths too, so a collapsed duplicate is caught as well as a reordering.
+	return isSameOrder(node.members, members) ? node : {...node, members};
+});
 
 /**
 Check whether a value node is falsy the way a JavaScript `||` reads it: `null`, `false`, `0`, or the empty string.
@@ -329,11 +342,95 @@ export function isFalsyValue(node) {
 }
 
 /**
+Get the top-level member for `key` when its value is of the JSON `type` (`'Object'`, `'Array'`, `'String'`, …), or `undefined` when the field is missing or holds another type. Yields a `type` report for the wrong type, so a `valid-fields` check that uses it must define a `type` message.
+
+@example
+```
+const engines = yield * checkFieldType(root, 'engines', 'Object');
+```
+*/
+export function * checkFieldType(rootObject, key, type) {
+	const member = findMember(rootObject, key);
+
+	if (!member) {
+		return undefined;
+	}
+
+	if (member.value.type !== type) {
+		yield {node: member.value, messageId: 'type'};
+		return undefined;
+	}
+
+	return member;
+}
+
+/**
+Yield an `element` report for each element of an array node that is not a string, so a `valid-fields` check that uses it must define an `element` message.
+*/
+export function * checkStringElements(arrayNode) {
+	for (const element of arrayNode.elements) {
+		if (element.value.type !== 'String') {
+			yield {node: element.value, messageId: 'element'};
+		}
+	}
+}
+
+/**
 Check whether the package is private, i.e. has `"private": true`.
 */
 export function isPrivatePackage(rootObject) {
 	const member = findMember(rootObject, 'private');
 	return member?.value.type === 'Boolean' && member.value.value === true;
+}
+
+/**
+Iterate the effective `scripts` members whose value is a string, which are the scripts npm can run.
+*/
+export function * iterateScripts(rootObject) {
+	const scripts = findMember(rootObject, 'scripts');
+
+	if (scripts?.value.type !== 'Object') {
+		return;
+	}
+
+	for (const member of iterateEffectiveMembers(scripts.value)) {
+		if (member.value.type === 'String') {
+			yield member;
+		}
+	}
+}
+
+/**
+Check whether the package is itself a type package, i.e. its `name` starts with `@types/`.
+*/
+export function isTypesPackage(rootObject) {
+	const member = findMember(rootObject, 'name');
+	return member?.value.type === 'String' && member.value.value.startsWith('@types/');
+}
+
+/**
+Check whether a value is one `no-empty-fields` reports: an empty string, object, or array.
+*/
+export function isEmptyValue(node) {
+	return (node.type === 'String' && node.value === '')
+		|| (node.type === 'Object' && node.members.length === 0)
+		|| (node.type === 'Array' && node.elements.length === 0);
+}
+
+/**
+Check whether a string is an email address the way npm tests one: an `@` before a later `.`.
+
+This is npm's own loose test, copied so rules accept exactly what npm reads as an email.
+*/
+export function isEmail(value) {
+	return value.includes('@') && value.indexOf('@') < value.lastIndexOf('.');
+}
+
+/**
+Check whether an `exports`/`imports` condition key is a TypeScript types condition: `types` or a versioned `types@…`.
+*/
+export function isTypesConditionKey(key) {
+	return key === 'types' || key.startsWith('types@');
 }
 
 function * collectDependencies(rootObject, types) {
@@ -349,8 +446,15 @@ function * collectDependencies(rootObject, types) {
 	}
 }
 
-// ESLint parses a file once and shares that AST with every rule, so entries derived from a root object are computed once and cached on it. A `WeakMap` keeps them alive no longer than the AST itself.
-const dependenciesCache = new WeakMap();
+/**
+Check whether `name` is an entry in any of the given dependency groups.
+*/
+export function hasDependency(rootObject, name, types = dependencyTypes) {
+	return types.some(groupName => findMember(findMember(rootObject, groupName)?.value, name) !== undefined);
+}
+
+// ESLint parses a file once and shares that AST with every rule, so entries derived from a root object are computed once and cached on it, keyed by the group names asked for.
+const getDependencyEntriesByTypes = memoizeByObject(() => new Map());
 
 /**
 Iterate the effective dependency entries across the given dependency groups that are present as objects.
@@ -358,12 +462,7 @@ Iterate the effective dependency entries across the given dependency groups that
 Returns a frozen array of `{groupName, group, member, name}`, where `group` is the group member (e.g. the `dependencies` member) and `member` is an individual `name: range` entry.
 */
 export function iterateDependencies(rootObject, types = dependencyTypes) {
-	let entriesByTypes = dependenciesCache.get(rootObject);
-
-	if (!entriesByTypes) {
-		entriesByTypes = new Map();
-		dependenciesCache.set(rootObject, entriesByTypes);
-	}
+	const entriesByTypes = getDependencyEntriesByTypes(rootObject);
 
 	// Dependency group names never contain a comma, so joining them is an unambiguous cache key.
 	const cacheKey = types.join(',');
@@ -572,6 +671,39 @@ export function installedSpecifier(specifier) {
 }
 
 /**
+Split a dependency specifier into the `npm:` alias `prefix` and the `range` npm installs (see `installedSpecifier`), so a fix can rewrite the range and keep the alias. A specifier that is not an alias has an empty prefix. The prefix is only right when the installed range is written in the specifier, so a bare `npm:foo`, which installs `*`, does not split cleanly; callers only use it for a range they found there.
+
+What precedes the installed range is the alias, found by searching for the range rather than by measuring the tail, since `npm-package-arg` trims the range it reports and a trailing space would otherwise land the prefix in the middle of the version.
+*/
+export function splitAliasPrefix(specifier) {
+	const range = installedSpecifier(specifier);
+	return {prefix: specifier.slice(0, specifier.lastIndexOf(range)), range};
+}
+
+/**
+Parse an `overrides` key the way npm's `OverrideSet` reads it, as `{packageName, keySpecifier}`, where `keySpecifier` is the range the key carries after the name (`*` when it has none). Returns `undefined` when npm cannot read a package name from the key.
+*/
+export function parseOverrideKey(key) {
+	try {
+		const parsed = npa(key);
+		const packageName = parsed.name;
+
+		if (!packageName) {
+			return undefined;
+		}
+
+		parsed.name = '';
+
+		return {
+			packageName,
+			keySpecifier: parsed.toString(),
+		};
+	} catch {
+		return undefined;
+	}
+}
+
+/**
 Check whether npm resolves a dependency specifier to a git remote. Shared by `no-git-dependencies`, which reports these, and `no-http-dependencies`, which leaves them alone so a git URL is never labelled an HTTP tarball.
 
 `npm-package-arg` decides from the host and the protocol, not from a `.git` suffix, so this catches the shapes no string pattern can: a hosted URL with no `git+` prefix and no `.git` suffix is a remote, as is a hosted `ssh://` one, while `https://example.com/foo.git` is a plain tarball npm downloads over HTTP. An unhosted `ssh://` URL needs the `git+` prefix: without it, `npm-package-arg` refuses the protocol, so it is not a remote.
@@ -669,39 +801,29 @@ export function * checkPlatformArray(rootObject, field, validValues) {
 	}
 }
 
-// Both of these scan the whole document, and fixes ask for them repeatedly, so the result is cached per `SourceCode` (one object per file per lint pass).
-const indentStringCache = new WeakMap();
-
 /**
 Detect the indentation string used by the document, defaulting to a tab.
+
+This scans the whole document, and fixes ask for it repeatedly, so the result is cached per `SourceCode` (one object per file per lint pass).
 */
-export function getIndentString(sourceCode) {
-	let indent = indentStringCache.get(sourceCode);
-
-	if (indent === undefined) {
-		indent = detectIndent(sourceCode.text).indent || '\t';
-		indentStringCache.set(sourceCode, indent);
-	}
-
-	return indent;
-}
+export const getIndentString = memoizeByObject(sourceCode => detectIndent(sourceCode.text).indent || '\t');
 
 /**
-Remove a set of an object's members, keeping the surrounding JSON valid and tidy.
+Remove a set of an object's members, or of an array's element values, keeping the surrounding JSON valid and tidy.
 
 Members are removed a contiguous run at a time. Removing them one by one would not work: each removal also consumes an adjacent comma, so two neighboring members would produce overlapping ranges and ESLint rejects a report whose fixes overlap.
 */
-export function * removeMembers(fixer, sourceCode, objectNode, membersToRemove) {
-	const {members} = objectNode;
+export function * removeMembers(fixer, sourceCode, containerNode, membersToRemove) {
+	const members = getEntryNodes(containerNode);
 	const targets = new Set(membersToRemove);
 
 	if (targets.size === 0) {
 		return;
 	}
 
-	// Asking what survives, rather than comparing set sizes, keeps this correct even if the caller passes a member twice or one belonging to another object.
+	// Asking what survives, rather than comparing set sizes, keeps this correct even if the caller passes a member twice or one belonging to another container.
 	if (members.every(member => targets.has(member))) {
-		// Everything goes: clear the space between the braces.
+		// Everything goes: clear the space between the braces or brackets.
 		yield fixer.removeRange([
 			sourceCode.getTokenBefore(members[0]).range[1],
 			sourceCode.getTokenAfter(members.at(-1)).range[0],
@@ -720,13 +842,13 @@ export function * removeMembers(fixer, sourceCode, objectNode, membersToRemove) 
 		}
 
 		if (end === members.length - 1) {
-			// The run reaches the final member, so it takes the comma that precedes it. Something is kept before the run, or the whole-object branch above would have run.
+			// The run reaches the final member, so it takes the comma that precedes it. Something is kept before the run, or the whole-container branch above would have run.
 			yield fixer.removeRange([
 				sourceCode.getTokenBefore(members[index]).range[0],
 				members[end].range[1],
 			]);
 		} else {
-			// Otherwise the run takes its own trailing comma and the gap up to the next kept member. Each member keeps its own leading whitespace, so that member's indentation stays intact on every line layout.
+			// Otherwise the run takes its own trailing comma and the gap up to the next kept member. Each entry keeps its own leading whitespace, so that entry's indentation stays intact on every line layout.
 			const comma = sourceCode.getTokenAfter(members[end]);
 			yield fixer.removeRange([
 				members[index].range[0],
@@ -783,21 +905,7 @@ Remove an array element along with its adjacent comma, keeping the surrounding J
 `Element` nodes carry no range, so the element's value node is used for token and range lookups.
 */
 export function * removeElement(fixer, sourceCode, element) {
-	const valueNode = element.value;
-	const tokenBefore = sourceCode.getTokenBefore(valueNode);
-	const tokenAfter = sourceCode.getTokenAfter(valueNode);
-
-	if (tokenAfter?.type === 'Comma') {
-		// Not the last element: remove the element, its trailing comma, and the gap before the next element. Each element keeps its own leading whitespace, so the next element's indentation stays intact on every line layout.
-		const nextToken = sourceCode.getTokenAfter(tokenAfter);
-		yield fixer.removeRange([valueNode.range[0], nextToken.range[0]]);
-	} else if (tokenBefore?.type === 'Comma') {
-		// Last element with siblings: remove the preceding comma and the element.
-		yield fixer.removeRange([tokenBefore.range[0], valueNode.range[1]]);
-	} else {
-		// Only element: clear everything between the brackets.
-		yield fixer.removeRange([tokenBefore.range[1], tokenAfter.range[0]]);
-	}
+	yield * removeMembers(fixer, sourceCode, sourceCode.getParent(element), [element.value]);
 }
 
 /**
@@ -879,6 +987,15 @@ A differing length counts as a difference, so `withoutShadowedMembers` can use t
 export function isSameOrder(entries, orderedEntries) {
 	return entries.length === orderedEntries.length
 		&& entries.every((entry, index) => entry === orderedEntries[index]);
+}
+
+/**
+Get an object's members sorted alphabetically by key, or `undefined` when they are already in that order.
+*/
+export function getSortedMembers(objectNode) {
+	const {members} = objectNode;
+	const sortedMembers = members.toSorted((first, second) => compareStrings(getKey(first), getKey(second)));
+	return isSameOrder(members, sortedMembers) ? undefined : sortedMembers;
 }
 
 /**
@@ -996,19 +1113,6 @@ export function * insertGroupMember(fixer, sourceCode, root, {
 }
 
 /**
-Get the leading indentation (whitespace) of the line where a node starts, or `''` if the node is not at the start of its line.
-
-A node that shares its line with earlier content is inline, so `''` doubles as the signal to keep an insertion on the same line rather than break it across newlines.
-*/
-export function getIndentPrefix(sourceCode, node) {
-	const {text} = sourceCode;
-	const lineStart = text.lastIndexOf('\n', node.range[0] - 1) + 1;
-	const linePrefix = text.slice(lineStart, node.range[0]);
-
-	return /^\s*$/.test(linePrefix) ? linePrefix : '';
-}
-
-/**
 Recurse a value node (an `exports`/`imports` tree) yielding every `String` value node.
 */
 export function * iterateStringValues(node) {
@@ -1040,10 +1144,10 @@ export function * iterateStringValues(node) {
 /**
 The simple top-level fields whose value is a single path string.
 */
-export const pathFields = ['main', 'module', 'browser', 'types', 'typings'];
+const pathFields = ['main', 'module', 'browser', 'types', 'typings'];
 
 /**
-Yield the path values of a field that is either one path string or a list of them. Only `man` takes that shape.
+Yield the path values of a field that is either one path string or a list of them, which is the shape `man` takes. `files` is only ever the list.
 */
 function * iterateOneOrManyPaths(field, member) {
 	if (member?.value.type === 'String') {
@@ -1058,35 +1162,35 @@ function * iterateOneOrManyPaths(field, member) {
 }
 
 /**
-Yield the `String` values of a flat map of paths. Effective members, since a shadowed duplicate is not a path the manifest holds.
+Iterate the entry-point paths written as strings, as `{node, field}`: the string form of each `pathFields` field in that order, then each `bin` path. Only the final member per `bin` key counts, since npm publishes only that value. A `browser` replacement map is not included.
 */
-function * iterateMappedPaths(field, objectNode) {
-	for (const member of iterateEffectiveMembers(objectNode)) {
-		if (member.value.type === 'String') {
-			yield {node: member.value, field};
-		}
-	}
-}
-
-function * collectPathValueNodes(rootObject) {
+export function * iterateEntryPointPaths(rootObject) {
 	for (const field of pathFields) {
 		const member = findMember(rootObject, field);
 
 		if (member?.value.type === 'String') {
 			yield {node: member.value, field};
-		} else if (field === 'browser' && member?.value.type === 'Object') {
-			// `browser` is the only one of these that also takes a replacement map. The map is flat, and a string value is what it swaps in; a `false` value shims the module out instead of pointing anywhere.
-			yield * iterateMappedPaths(field, member.value);
 		}
 	}
 
-	const bin = findMember(rootObject, 'bin');
+	// Effective members, since a shadowed duplicate is not a path npm ever installs.
+	for (const {node} of iterateBinEntries(rootObject)) {
+		yield {node, field: 'bin'};
+	}
+}
 
-	if (bin?.value.type === 'String') {
-		yield {node: bin.value, field: 'bin'};
-	} else if (bin?.value.type === 'Object') {
-		// Effective members, since a shadowed duplicate is not a path npm ever installs.
-		yield * iterateMappedPaths('bin', bin.value);
+function * collectPathValueNodes(rootObject) {
+	yield * iterateEntryPointPaths(rootObject);
+
+	const browser = findMember(rootObject, 'browser');
+
+	if (browser?.value.type === 'Object') {
+		// The object form of `browser` is a replacement map. The map is flat, and a string value is what it swaps in; a `false` value shims the module out instead of pointing anywhere. Effective members, since a shadowed duplicate is not a path the manifest holds.
+		for (const member of iterateEffectiveMembers(browser.value)) {
+			if (member.value.type === 'String') {
+				yield {node: member.value, field: 'browser'};
+			}
+		}
 	}
 
 	// Npm 12 rewrites every `man` entry the way it rewrites a `bin` target (`secureAndUnixifyPath` in `@npmcli/package-json`): it drops the leading `/` and turns `\` into `/`, so `/man/foo.1` and `man\foo.1` still name `man/foo.1`. Only a real system path like `/usr/share/man/man1/foo.1` names no file in the package, but the rules still report the leading `/` and the `\` in every `man` entry, since the manifest reads as a machine path either way. Unlike `bin`, `man` is not force-included, so the path is the only thing that decides whether it ships. The field is one path or a list of them.
@@ -1095,11 +1199,7 @@ function * collectPathValueNodes(rootObject) {
 	const files = findMember(rootObject, 'files');
 
 	if (files?.value.type === 'Array') {
-		for (const element of files.value.elements) {
-			if (element.value.type === 'String') {
-				yield {node: element.value, field: 'files'};
-			}
-		}
+		yield * iterateOneOrManyPaths('files', files);
 	}
 
 	for (const field of ['exports', 'imports']) {
@@ -1114,52 +1214,11 @@ function * collectPathValueNodes(rootObject) {
 	}
 }
 
-// `no-absolute-paths` and `no-backslash-paths` both walk every path in the manifest, and the same AST is shared between them, so the traversal is materialized once per root and reused.
-const pathValueNodesCache = new WeakMap();
-
 /**
 Get every path-bearing `String` value node in a package.json as `{node, field}`: the simple path fields, a `browser` replacement map's values, `bin`, `man`, `files` entries, and `exports`/`imports` string targets.
 
 The `field` says which top-level field the path came from, because the same text does not mean the same thing everywhere — a leading `/` is an absolute path in `main` but a package-root anchor in `files`.
+
+`no-absolute-paths` and `no-backslash-paths` both walk every path in the manifest, and the same AST is shared between them, so the traversal is materialized once per root and reused. The array is frozen because both rules linting the file share it; neither should be able to mutate it for the other.
 */
-export function iteratePathValueNodes(rootObject) {
-	let nodes = pathValueNodesCache.get(rootObject);
-
-	if (!nodes) {
-		// Frozen because both rules linting the file share this array; neither should be able to mutate it for the other.
-		nodes = Object.freeze([...collectPathValueNodes(rootObject)]);
-		pathValueNodesCache.set(rootObject, nodes);
-	}
-
-	return nodes;
-}
-
-/**
-The message a rule must include to use `checkKeyConsistency`.
-*/
-export const keyConsistencyMessages = {
-	keyMixing: 'Cannot mix subpath keys and condition keys; `{{key}}` does not match its siblings.',
-};
-
-/**
-Yield reports for an `exports`/`imports` object that mixes subpath keys (starting with `subpathPrefix`) and condition keys, which is invalid.
-*/
-export function * checkKeyConsistency(objectNode, subpathPrefix) {
-	const {members} = objectNode;
-
-	if (members.length === 0) {
-		return;
-	}
-
-	const firstIsSubpath = getKey(members[0]).startsWith(subpathPrefix);
-
-	for (const member of members) {
-		if (getKey(member).startsWith(subpathPrefix) !== firstIsSubpath) {
-			yield {
-				node: member.name,
-				messageId: 'keyMixing',
-				data: {key: getKey(member)},
-			};
-		}
-	}
-}
+export const iteratePathValueNodes = memoizeByObject(rootObject => Object.freeze([...collectPathValueNodes(rootObject)]));

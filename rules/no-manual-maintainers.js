@@ -4,7 +4,6 @@ import {
 	removeMemberAndDuplicates,
 	removeShadowedDuplicates,
 	getIndentString,
-	getIndentPrefix,
 	lineIndentOf,
 } from './utils/index.js';
 
@@ -17,6 +16,19 @@ const messages = {
 	[REMOVE_SUGGESTION_ID]: 'Remove the `maintainers` field.',
 	[MOVE_SUGGESTION_ID]: 'Move the `maintainers` entries into `contributors`.',
 };
+
+/**
+Get the leading indentation (whitespace) of the line where a node starts, or `''` if the node is not at the start of its line.
+
+A node that shares its line with earlier content is inline, so `''` doubles as the signal to keep an insertion on the same line rather than break it across newlines.
+*/
+function getIndentPrefix(sourceCode, node) {
+	const {text} = sourceCode;
+	const lineStart = text.lastIndexOf('\n', node.range[0] - 1) + 1;
+	const linePrefix = text.slice(lineStart, node.range[0]);
+
+	return /^\s*$/.test(linePrefix) ? linePrefix : '';
+}
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => ({

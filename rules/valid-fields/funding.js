@@ -1,4 +1,4 @@
-import {findMember} from '../utils/index.js';
+import {findMember, isHttpUrl} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const URL_MESSAGE_ID = 'url';
@@ -10,21 +10,9 @@ export const messages = {
 	[INVALID_URL_MESSAGE_ID]: 'A `funding` URL must be an `http:` or `https:` URL; `npm fund` drops the whole `funding` field when one entry holds anything else.',
 };
 
-// `npm fund` reads a funding entry only when its URL parses and carries an `http:`/`https:` host, so a value that misses that check is a funding link the author believes is there and nobody ever sees.
-const isFundableUrl = value => {
-	let url;
-
-	try {
-		url = new URL(value);
-	} catch {
-		return false;
-	}
-
-	return (url.protocol === 'https:' || url.protocol === 'http:') && url.host !== '';
-};
-
 export function * check(root) {
-	const checkUrl = (node, url) => (isFundableUrl(url)
+	// `npm fund` reads a funding entry only when its URL parses and carries an `http:`/`https:` host, so a value that misses that check is a funding link the author believes is there and nobody ever sees. A WHATWG `http:`/`https:` URL always has a host, so `isHttpUrl` is that check.
+	const checkUrl = (node, url) => (isHttpUrl(url)
 		? undefined
 		: {
 			node,

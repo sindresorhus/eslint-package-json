@@ -3,6 +3,7 @@ import {
 	findMember,
 	getKey,
 	withoutShadowedMembers,
+	isTypesConditionKey,
 } from './utils/index.js';
 
 const MESSAGE_ID_MISSING = 'missing';
@@ -36,10 +37,6 @@ const typeScriptConditionSets = [
 	['types', 'node', 'import'],
 	['types', 'import'],
 ];
-
-function isTypesConditionKey(key) {
-	return key === 'types' || key.startsWith('types@');
-}
 
 function isValidTypesVersionPartial(value) {
 	const match = typesVersionPartialPattern.exec(value);
@@ -87,7 +84,7 @@ function isValidTypesVersionRange(range) {
 	return true;
 }
 
-function isTypesCondition(key) {
+function isValidTypesConditionKey(key) {
 	if (key === 'types') {
 		return true;
 	}
@@ -112,7 +109,7 @@ function isMatchingCondition(key, conditions) {
 	// The rule cannot know the TypeScript version, so it assumes every well-formed `types@` range matches.
 	return key === 'default'
 		|| conditions.includes(key)
-		|| (key.startsWith('types@') && conditions.includes('types') && isTypesCondition(key));
+		|| (key.startsWith('types@') && conditions.includes('types') && isValidTypesConditionKey(key));
 }
 
 /**
@@ -250,7 +247,7 @@ function * checkTypesMembers(objectNode) {
 			continue;
 		}
 
-		if (!isTypesCondition(key)) {
+		if (!isValidTypesConditionKey(key)) {
 			yield {
 				node: member.name,
 				messageId: MESSAGE_ID_TYPES_VERSION,

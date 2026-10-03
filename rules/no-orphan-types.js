@@ -1,7 +1,8 @@
 import {
 	getRootObject,
-	findMember,
+	hasDependency,
 	iterateDependencies,
+	isTypesPackage,
 	removeEntryAndEmptyContainer,
 	optionsSchema,
 	stringArraySchema,
@@ -66,36 +67,23 @@ const create = context => {
 				return;
 			}
 
-			const allNames = new Set();
-			const typeEntries = [];
-
-			for (const {group, groupName, member, name} of iterateDependencies(root)) {
-				allNames.add(name);
-
-				if (
-					name.startsWith('@types/')
-					&& (groupName === 'dependencies' || groupName === 'devDependencies')
-				) {
-					typeEntries.push({group, member, name});
-				}
-			}
-
 			// A manifest that is itself a type package declares the types its own declaration file imports, and a consumer receives those from `dependencies` alone, so they are its public API rather than an orphan. `@types/debug` depends on `@types/ms` for exactly this reason.
-			const ownName = findMember(root, 'name');
-			const isTypePackage = ownName?.value.type === 'String' && ownName.value.value.startsWith('@types/');
-
-			if (isTypePackage) {
+			if (isTypesPackage(root)) {
 				return;
 			}
 
-			for (const {group, member, name} of typeEntries) {
+			for (const {group, member, name} of iterateDependencies(root, ['dependencies', 'devDependencies'])) {
+				if (!name.startsWith('@types/')) {
+					continue;
+				}
+
 				const target = getTypesTarget(name);
 
 				if (ignore.has(name) || ignore.has(target)) {
 					continue;
 				}
 
-				if (allNames.has(target)) {
+				if (hasDependency(root, target)) {
 					continue;
 				}
 

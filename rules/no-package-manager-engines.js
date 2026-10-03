@@ -7,7 +7,7 @@ import {
 	getRootFieldAnchor,
 	insertRootField,
 	iterateEffectiveMembers,
-	removeMemberAndDuplicates,
+	removeEntryAndEmptyContainer,
 	removeShadowedDuplicates,
 } from './utils/index.js';
 
@@ -55,7 +55,7 @@ function * migrateToPackageManager(fixer, sourceCode, {root, engines, member, pa
 	}
 
 	yield insertRootField(fixer, sourceCode, root, {key: 'packageManager', value});
-	yield * removeMemberAndDuplicates(fixer, sourceCode, isSoleEngine ? engines : member);
+	yield * removeEntryAndEmptyContainer(fixer, sourceCode, engines, member);
 }
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -94,11 +94,7 @@ const create = context => ({
 					data: {manager},
 					* fix(fixer) {
 						// Dropping the only engine leaves an empty `engines`, so remove the whole field — including any duplicate `engines` that would otherwise be promoted into its place.
-						if (countEffectiveMembers(engines.value) === 1) {
-							yield * removeMemberAndDuplicates(fixer, sourceCode, engines);
-						} else {
-							yield * removeMemberAndDuplicates(fixer, sourceCode, member);
-						}
+						yield * removeEntryAndEmptyContainer(fixer, sourceCode, engines, member);
 					},
 				},
 			];

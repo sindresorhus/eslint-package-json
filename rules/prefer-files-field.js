@@ -5,7 +5,7 @@ import {
 	isAlwaysIncludedFile,
 	isPrivatePackage,
 	iterateEffectiveMembers,
-	pathFields,
+	iterateEntryPointPaths,
 	hasInvalidPackageTargetSegment,
 	iterateStringValues,
 	withoutShadowedMembers,
@@ -47,12 +47,12 @@ function isPackagePath(value, isBareSpecifierPossible) {
 }
 
 /**
-Yield the entry points a field's object form names. Both `bin` and a `browser` replacement map hold `name -> path` members, and npm leaves those paths out of the tarball when `files` misses them. A non-string value names no file, and a shadowed duplicate is not an entry point because npm publishes only the final value per key.
+Yield the entry points a `browser` replacement map names. It holds `name -> path` members, and npm leaves those paths out of the tarball when `files` misses them. A non-string value names no file, and a shadowed duplicate is not an entry point because npm publishes only the final value per key.
 */
-function * iterateObjectEntryPoints(member, field) {
+function * iterateBrowserMapEntryPoints(member) {
 	for (const child of iterateEffectiveMembers(member.value)) {
-		if (child.value.type === 'String' && isPackagePath(child.value.value, field === 'browser')) {
-			yield {node: child.value, field, value: child.value.value};
+		if (child.value.type === 'String' && isPackagePath(child.value.value, true)) {
+			yield {node: child.value, field: 'browser', value: child.value.value};
 		}
 	}
 }
@@ -69,23 +69,17 @@ function * iterateEntryPoints(root) {
 		}
 	}
 
-	for (const field of pathFields) {
-		const member = findMember(root, field);
-
-		if (member?.value.type === 'String' && isPackagePath(member.value.value, false)) {
-			yield {node: member.value, field, value: member.value.value};
-		} else if (field === 'browser' && member?.value.type === 'Object') {
-			// The object form is a replacement map, so its values are the module files a bundler resolves to.
-			yield * iterateObjectEntryPoints(member, field);
+	for (const {node, field} of iterateEntryPointPaths(root)) {
+		if (isPackagePath(node.value, false)) {
+			yield {node, field, value: node.value};
 		}
 	}
 
-	const bin = findMember(root, 'bin');
+	const browser = findMember(root, 'browser');
 
-	if (bin?.value.type === 'String' && isPackagePath(bin.value.value, false)) {
-		yield {node: bin.value, field: 'bin', value: bin.value.value};
-	} else if (bin?.value.type === 'Object') {
-		yield * iterateObjectEntryPoints(bin, 'bin');
+	if (browser?.value.type === 'Object') {
+		// The object form is a replacement map, so its values are the module files a bundler resolves to.
+		yield * iterateBrowserMapEntryPoints(browser);
 	}
 }
 

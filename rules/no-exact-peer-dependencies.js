@@ -1,8 +1,9 @@
 import semver from 'semver';
 import {
 	getRootObject,
-	installedSpecifier,
+	splitAliasPrefix,
 	iterateDependencies,
+	validRange,
 	validVersion,
 	canonicalVersion,
 } from './utils/index.js';
@@ -25,7 +26,7 @@ A major version of `0` carries no release-line information, and `>=0` normalizes
 const getLowerBound = normalized => {
 	const {major, minor, patch} = semver.parse(normalized);
 	const bound = major === 0 ? `0.${minor}.${patch}` : String(major);
-	return semver.validRange('>=' + bound) === '*' ? undefined : bound;
+	return validRange('>=' + bound) === '*' ? undefined : bound;
 };
 
 /** @param {import('eslint').Rule.RuleContext} context */
@@ -43,9 +44,8 @@ const create = context => ({
 			}
 
 			const specifier = member.value.value;
-			// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` pins one version just like `1.2.3` does. What precedes the installed range is the alias, found by searching for the range rather than by measuring the tail, since `npm-package-arg` trims the range it reports and a trailing space would otherwise land the prefix in the middle of the version.
-			const version = installedSpecifier(specifier);
-			const aliasPrefix = specifier.slice(0, specifier.lastIndexOf(version));
+			// An `npm:` alias installs at the range it carries, so `npm:foo@1.2.3` pins one version just like `1.2.3` does.
+			const {prefix: aliasPrefix, range: version} = splitAliasPrefix(specifier);
 
 			// `validVersion` returns non-`null` only for a single exact version (e.g. `1.2.3`), not ranges, wildcards, or other specifiers. It wants that version bare, so an `=`-prefixed pin (`=1.2.3`) has its operator removed first. That form satisfies exactly one version just like the bare pin, which is the same anti-pattern. Only one operator goes: `==1.2.3` is not a range at all, which is `dependency-version-range`'s business.
 			const normalized = validVersion(version) ?? validVersion(version.replace(/^=/u, ''));

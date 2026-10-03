@@ -7,6 +7,7 @@ import {
 	getRootObject,
 	iterateEffectiveMembers,
 	lineIndentOf,
+	parseOverrideKey,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-invalid-direct-overrides';
@@ -76,26 +77,6 @@ const getReferencedSpecifier = (root, name) => {
 	}
 
 	return '';
-};
-
-const parseOverrideKey = name => {
-	try {
-		const parsed = npa(name);
-		const packageName = parsed.name;
-
-		if (!packageName) {
-			return undefined;
-		}
-
-		parsed.name = '';
-
-		return {
-			packageName,
-			keySpecifier: parsed.toString(),
-		};
-	} catch {
-		return undefined;
-	}
 };
 
 const specifiersIntersect = (first, second) => {

@@ -3,6 +3,7 @@ import {
 	findMember,
 	getKey,
 	countEffectiveMembers,
+	isEmail,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'prefer-shorthand';
@@ -49,9 +50,6 @@ const personToShorthand = objectNode => {
 
 	return name + (email ? ` <${email}>` : '') + (url ? ` (${url})` : '');
 };
-
-// Npm re-reads a `bugs` string that holds an `@` before a later `.` as `bugs.email`, so the shorthand would flip the key's meaning. This is npm's own test, copied so the two stay in step.
-const npmReadsBugsStringAsEmail = value => value.includes('@') && value.indexOf('@') < value.lastIndexOf('.');
 
 const repositoryFields = new Set(['type', 'url']);
 
@@ -124,7 +122,8 @@ const collectShorthands = root => {
 			const url = getStringValue(member.value, 'url');
 
 			// An empty `url` would become an empty field that `no-empty-fields` then reports.
-			if (url && !(field === 'bugs' && npmReadsBugsStringAsEmail(url))) {
+			// Npm re-reads a `bugs` string that holds an `@` before a later `.` as `bugs.email`, so the shorthand would flip the key's meaning.
+			if (url && !(field === 'bugs' && isEmail(url))) {
 				results.push({node: member.value, field, shorthand: url});
 			}
 		}

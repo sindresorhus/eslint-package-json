@@ -1,4 +1,4 @@
-import {findMember, validVersion} from '../utils/index.js';
+import {checkFieldType, validVersion} from '../utils/index.js';
 
 const MESSAGE_ID = 'valid-package-manager';
 const TYPE_MESSAGE_ID = 'type';
@@ -12,15 +12,10 @@ export const messages = {
 const pattern = /^(?:npm|yarn|pnpm|bun)@(.+)$/u;
 
 export function * check(root) {
-	const member = findMember(root, 'packageManager');
+	// Corepack reads the field as a string and throws on anything else, so a number or an object here is a value no tool can act on rather than a version anyone pinned.
+	const member = yield * checkFieldType(root, 'packageManager', 'String');
 
 	if (!member) {
-		return;
-	}
-
-	// Corepack reads the field as a string and throws on anything else, so a number or an object here is a value no tool can act on rather than a version anyone pinned.
-	if (member.value.type !== 'String') {
-		yield {node: member.value, messageId: TYPE_MESSAGE_ID};
 		return;
 	}
 

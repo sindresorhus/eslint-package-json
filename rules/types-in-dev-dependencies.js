@@ -1,9 +1,11 @@
 import {
 	countEffectiveMembers,
 	getRootObject,
+	runtimeDependencyTypes,
 	iterateDependencies,
 	findMember,
-	removeMemberAndDuplicates,
+	isTypesPackage,
+	removeEntryAndEmptyContainer,
 	removeShadowedDuplicates,
 	insertGroupMember,
 	optionsSchema,
@@ -17,9 +19,6 @@ const messages = {
 	[MESSAGE_ID]: '`{{name}}` should be in `devDependencies`, not `{{group}}`.',
 	[SUGGESTION_ID]: 'Move to `devDependencies`.',
 };
-
-// `peerDependencies` is intentionally excluded: a library may legitimately expose types from a peer.
-const runtimeGroups = ['dependencies', 'optionalDependencies'];
 
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
@@ -35,21 +34,20 @@ const create = context => {
 			}
 
 			// A manifest that is itself a type package declares the types its own declaration file imports, and a consumer receives those from `dependencies` alone, because npm installs no devDependency of a dependency. `@types/debug` depends on `@types/ms` for exactly this reason.
-			const ownName = findMember(root, 'name');
-
-			if (ownName?.value.type === 'String' && ownName.value.value.startsWith('@types/')) {
+			if (isTypesPackage(root)) {
 				return;
 			}
 
 			const devDependenciesGroup = findMember(root, 'devDependencies');
 
-			for (const {group, groupName, member, name} of iterateDependencies(root, runtimeGroups)) {
+			// `peerDependencies` is intentionally excluded: a library may legitimately expose types from a peer.
+			for (const {group, groupName, member, name} of iterateDependencies(root, runtimeDependencyTypes)) {
 				if (!name.startsWith('@types/') || ignore.includes(name)) {
 					continue;
 				}
 
 				// An entry already in `devDependencies` at the same range means the move is half done, so the fix only has to take it out of the group it does not belong in. A different range there is ambiguous to resolve, since either group could be the one holding the wrong version.
-				const existing = devDependenciesGroup?.value.type === 'Object' ? findMember(devDependenciesGroup.value, name) : undefined;
+				const existing = findMember(devDependenciesGroup?.value, name);
 				const isAlreadyMoved = member.value.type === 'String'
 					&& existing?.value.type === 'String'
 					&& existing.value.value === member.value.value;
@@ -79,7 +77,7 @@ const create = context => {
 									}
 
 									// The group is the one `findMember` resolved, so the member that goes is the final one for its key. Taking the whole run keeps a shadowed duplicate from being promoted into the group's place, which brings this report back.
-									yield * removeMemberAndDuplicates(fixer, sourceCode, isTheOnlyMember ? group : member);
+									yield * removeEntryAndEmptyContainer(fixer, sourceCode, group, member);
 
 									if (isAlreadyMoved) {
 										return;

@@ -1,4 +1,5 @@
 import {
+	checkFieldType,
 	findMember,
 	getKey,
 	iterateEffectiveMembers,
@@ -115,17 +116,9 @@ function * checkField(field, valueNode) {
 }
 
 export function * check(root) {
-	const devEngines = findMember(root, 'devEngines');
+	const devEngines = yield * checkFieldType(root, 'devEngines', 'Object');
 
 	if (!devEngines) {
-		return;
-	}
-
-	if (devEngines.value.type !== 'Object') {
-		yield {
-			node: devEngines.value,
-			messageId: TYPE_MESSAGE_ID,
-		};
 		return;
 	}
 

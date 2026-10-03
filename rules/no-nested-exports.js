@@ -2,6 +2,7 @@ import path from 'node:path';
 import {
 	findMember,
 	getRootObject,
+	isWithinPackage,
 	removeMemberAndDuplicates,
 } from './utils/index.js';
 
@@ -25,12 +26,7 @@ function isNestedPackageJson(context) {
 
 	const workingDirectory = path.resolve(context.cwd);
 	const packagePath = path.resolve(workingDirectory, physicalFilename);
-	const relativePath = path.relative(workingDirectory, packagePath);
-
-	return relativePath !== ''
-		&& relativePath !== '..'
-		&& !relativePath.startsWith(`..${path.sep}`)
-		&& !path.isAbsolute(relativePath)
+	return isWithinPackage(workingDirectory, packagePath)
 		&& path.basename(packagePath) === 'package.json'
 		&& path.dirname(packagePath) !== workingDirectory;
 }

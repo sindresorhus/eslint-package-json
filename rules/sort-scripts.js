@@ -1,10 +1,8 @@
 import {
 	getRootObject,
-	getKey,
 	findMember,
 	buildReordered,
-	isSameOrder,
-	compareStrings,
+	getSortedMembers,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'sort-scripts';
@@ -34,15 +32,9 @@ const create = context => {
 			}
 
 			const scripts = scriptsMember.value;
-			const {members} = scripts;
+			const sortedMembers = getSortedMembers(scripts);
 
-			if (members.length === 0) {
-				return;
-			}
-
-			const sortedMembers = members.toSorted((a, b) => compareStrings(getKey(a), getKey(b)));
-
-			if (isSameOrder(members, sortedMembers)) {
+			if (!sortedMembers) {
 				return;
 			}
 

@@ -1,10 +1,8 @@
 import {
 	getRootObject,
-	findMember,
 	hasGlob,
-	iterateEffectiveMembers,
 	optionsSchema,
-	pathFields,
+	iterateEntryPointPaths,
 } from './utils/index.js';
 
 const MESSAGE_ID_MISSING = 'missing';
@@ -54,10 +52,6 @@ const create = context => {
 	Check a string value node and report if needed.
 	*/
 	const checkPathNode = (valueNode, field) => {
-		if (valueNode.type !== 'String') {
-			return;
-		}
-
 		const {value} = valueNode;
 
 		if (!isLocalRelativePath(value)) {
@@ -137,30 +131,9 @@ const create = context => {
 				return;
 			}
 
-			for (const field of pathFields) {
-				const member = findMember(root, field);
-
-				if (!member) {
-					continue;
-				}
-
-				// The object form of `browser` is a replacement map, and `checkPathNode` skips it. A bare value in that map is a module request resolved from the package root, not a relative path, so a `./` prefix would point it at a local file that does not exist.
-				checkPathNode(member.value, field);
-			}
-
-			const binMember = findMember(root, 'bin');
-
-			if (!binMember) {
-				return;
-			}
-
-			if (binMember.value.type === 'String') {
-				checkPathNode(binMember.value, 'bin');
-			} else if (binMember.value.type === 'Object') {
-				// Effective members, since a shadowed duplicate is not a path npm ever installs.
-				for (const childMember of iterateEffectiveMembers(binMember.value)) {
-					checkPathNode(childMember.value, 'bin');
-				}
+			// The object form of `browser` is a replacement map, which `iterateEntryPointPaths` skips. A bare value in that map is a module request resolved from the package root, not a relative path, so a `./` prefix would point it at a local file that does not exist.
+			for (const {node, field} of iterateEntryPointPaths(root)) {
+				checkPathNode(node, field);
 			}
 		},
 	};

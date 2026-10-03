@@ -1,8 +1,7 @@
 import {
-	findMember,
 	getKey,
 	getRootObject,
-	iterateEffectiveMembers,
+	iterateScripts,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-node-modules-bin-paths';
@@ -50,17 +49,7 @@ const create = context => ({
 			return;
 		}
 
-		const scripts = findMember(root, 'scripts');
-
-		if (scripts?.value.type !== 'Object') {
-			return;
-		}
-
-		for (const member of iterateEffectiveMembers(scripts.value)) {
-			if (member.value.type !== 'String') {
-				continue;
-			}
-
+		for (const member of iterateScripts(root)) {
 			const script = member.value.value;
 			const replacement = replaceBinaryPaths(script);
 

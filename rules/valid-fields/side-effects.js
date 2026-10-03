@@ -1,4 +1,4 @@
-import {findMember} from '../utils/index.js';
+import {checkStringElements, findMember} from '../utils/index.js';
 
 const TYPE_MESSAGE_ID = 'type';
 const FOOTGUN_MESSAGE_ID = 'footgun';
@@ -26,14 +26,7 @@ export function * check(root) {
 	}
 
 	if (value.type === 'Array') {
-		for (const element of value.elements) {
-			if (element.value.type !== 'String') {
-				yield {
-					node: element.value,
-					messageId: ELEMENT_MESSAGE_ID,
-				};
-			}
-		}
+		yield * checkStringElements(value);
 
 		return;
 	}

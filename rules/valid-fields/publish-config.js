@@ -1,4 +1,5 @@
 import {
+	checkFieldType,
 	findMember,
 	removeEntryAndEmptyContainer,
 	isHttpUrl,
@@ -27,17 +28,9 @@ export const messages = {
 const validAccessValues = new Set(['public', 'restricted']);
 
 export function * check(root, context) {
-	const publishConfig = findMember(root, 'publishConfig');
+	const publishConfig = yield * checkFieldType(root, 'publishConfig', 'Object');
 
 	if (!publishConfig) {
-		return;
-	}
-
-	if (publishConfig.value.type !== 'Object') {
-		yield {
-			node: publishConfig.value,
-			messageId: TYPE_MESSAGE_ID,
-		};
 		return;
 	}
 

@@ -1,8 +1,11 @@
 import semver from 'semver';
 import {
 	getRootObject,
+	runtimeDependencyTypes,
 	getKey,
 	findMember,
+	hasDependency,
+	iterateDependencies,
 	iterateEffectiveMembers,
 	insertGroupMember,
 	validRange,
@@ -19,8 +22,6 @@ const messages = {
 	[ADD_SUGGESTION_ID]: 'Add `{{name}}` to `devDependencies` at `{{range}}`.',
 	[ALIGN_SUGGESTION_ID]: 'Set the `devDependencies` range to `{{range}}`.',
 };
-
-const runtimeDependencyTypes = ['dependencies', 'optionalDependencies'];
 
 /**
 Get the names marked `optional: true` in a `peerDependenciesMeta` object.
@@ -57,29 +58,18 @@ const create = context => {
 				return;
 			}
 
-			const peerDependenciesGroup = findMember(root, 'peerDependencies');
-
-			if (peerDependenciesGroup?.value.type !== 'Object') {
-				return;
-			}
-
 			const devDependenciesGroup = findMember(root, 'devDependencies');
-			const devDependencies = new Map(devDependenciesGroup?.value.type === 'Object'
-				? devDependenciesGroup.value.members.map(member => [getKey(member), member])
-				: []);
 
 			const optionalPeers = getOptionalPeers(root);
 
-			for (const member of iterateEffectiveMembers(peerDependenciesGroup.value)) {
-				const name = getKey(member);
-
+			for (const {member, name} of iterateDependencies(root, ['peerDependencies'])) {
 				// A non-string peer range is malformed; `valid-fields` reports it, so skip it here.
 				if (member.value.type !== 'String') {
 					continue;
 				}
 
 				const peerRange = member.value.value;
-				const devMember = devDependencies.get(name);
+				const devMember = findMember(devDependenciesGroup?.value, name);
 
 				if (!devMember) {
 					// An optional peer is not expected to be installed for development, so its absence from `devDependencies` is fine.
@@ -88,7 +78,7 @@ const create = context => {
 					}
 
 					// A peer that is also a runtime dependency is installed for development anyway, and a `devDependencies` entry for it would be a duplicate.
-					if (runtimeDependencyTypes.some(groupName => findMember(findMember(root, groupName)?.value, name))) {
+					if (hasDependency(root, name, runtimeDependencyTypes)) {
 						continue;
 					}
 

@@ -1,5 +1,5 @@
 import validateNpmPackageName from 'validate-npm-package-name';
-import {findMember} from '../utils/index.js';
+import {checkFieldType} from '../utils/index.js';
 
 const MESSAGE_ID = 'valid-name';
 const TYPE_MESSAGE_ID = 'type';
@@ -21,15 +21,10 @@ const validateName = name => {
 };
 
 export function * check(root) {
-	const member = findMember(root, 'name');
+	// `npm publish` throws `name field must be a string`, so a non-string name cannot be published at all.
+	const member = yield * checkFieldType(root, 'name', 'String');
 
 	if (!member) {
-		return;
-	}
-
-	// `npm publish` throws `name field must be a string`, so a non-string name cannot be published at all.
-	if (member.value.type !== 'String') {
-		yield {node: member.value, messageId: TYPE_MESSAGE_ID};
 		return;
 	}
 
