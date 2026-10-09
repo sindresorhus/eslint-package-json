@@ -2678,6 +2678,7 @@ test('each effective string script reports its first short flag once', () => {
 		'The `build` script uses the short-form flag `-c`. Use long-form flags for readability.',
 	]);
 	const {output} = linter.verifyAndFix(code, config);
-	assert.equal(output, '{"scripts":{"shadowed":"prettier -w ."},"scripts":{"format":"node -v","format":"eslint --version --help","build":"prettier --check --list-different .","disabled":"node -v","disabled":false}}');
+	const expected = code.replace('eslint -v -h', 'eslint --version --help').replace('prettier -c -l .', 'prettier --check --list-different .');
+	assert.equal(output, expected);
 	assert.equal(linter.verifyAndFix(output, config).fixed, false);
 });
