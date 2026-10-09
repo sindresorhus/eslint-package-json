@@ -891,6 +891,78 @@ Output:
 
 `;
 
+exports[`invalid(56): {\"scripts\": {\"test\": \"knip -f -F -c knip.json && oxlint -D correctness -c other.json && cspell -v -u -c cspell.json\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "knip -f -F -c knip.json && oxlint -D correctness -c other.json && cspell -v -u -c cspell.json"}}
+
+`;
+
+exports[`invalid(56): {\"scripts\": {\"test\": \"knip -f -F -c knip.json && oxlint -D correctness -c other.json && cspell -v -u -c cspell.json\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "knip -f -F -c knip.json && oxlint -D correctness -c other.json && cspell -v -u -c cspell.json"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-f\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "knip --fix --format --config knip.json && oxlint --deny correctness -c other.json && cspell --verbose --unique --config cspell.json"}}
+
+`;
+
+exports[`invalid(57): {\"scripts\": {\"test\": \"wait-on -l -r -t 3000 tcp:3000 && chokidar -s -p -c 'prettier -w .'\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "wait-on -l -r -t 3000 tcp:3000 && chokidar -s -p -c 'prettier -w .'"}}
+
+`;
+
+exports[`invalid(57): {\"scripts\": {\"test\": \"wait-on -l -r -t 3000 tcp:3000 && chokidar -s -p -c 'prettier -w .'\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "wait-on -l -r -t 3000 tcp:3000 && chokidar -s -p -c 'prettier -w .'"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-l\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "wait-on --log --reverse --timeout 3000 tcp:3000 && chokidar --follow-symlinks --polling --command 'prettier -w .'"}}
+
+`;
+
+exports[`invalid(58): {\"scripts\": {\"test\": \"gulp -L -L -S && ts-node -p -e '-T' && ts-node-esm -r '-T'\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "gulp -L -L -S && ts-node -p -e '-T' && ts-node-esm -r '-T'"}}
+
+`;
+
+exports[`invalid(58): {\"scripts\": {\"test\": \"gulp -L -L -S && ts-node -p -e '-T' && ts-node-esm -r '-T'\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "gulp -L -L -S && ts-node -p -e '-T' && ts-node-esm -r '-T'"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-L\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "gulp --log-level --log-level --silent && ts-node --print --eval '-T' && ts-node-esm --require '-T'"}}
+
+`;
+
+exports[`invalid(59): {\"scripts\": {\"test\": \"terser -c -m && browserify -d -t transform -p plugin && vue-tsc -b -v\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "terser -c -m && browserify -d -t transform -p plugin && vue-tsc -b -v"}}
+
+`;
+
+exports[`invalid(59): {\"scripts\": {\"test\": \"terser -c -m && browserify -d -t transform -p plugin && vue-tsc -b -v\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "terser -c -m && browserify -d -t transform -p plugin && vue-tsc -b -v"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-c\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "terser --compress -m && browserify --debug --transform transform -p plugin && vue-tsc --build -v"}}
+
+`;
+
 exports[`invalid(6): {\"scripts\": {\"test\": \"babel -w -D -d dist src && swc -w -q -d dist src && sass -q -w src:dist\"}} 1`] = `
 
 [Input]
@@ -906,6 +978,42 @@ Message:
 
 Output:
   1 | {"scripts": {"test": "babel --watch --copy-files --out-dir dist src && swc --watch --quiet --out-dir dist src && sass --quiet --watch src:dist"}}
+
+`;
+
+exports[`invalid(60): {\"scripts\": {\"test\": \"ncu -u -m -t minor && env-cmd -x -f .env -- node -v && onchange -i -k -d 100 src\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "ncu -u -m -t minor && env-cmd -x -f .env -- node -v && onchange -i -k -d 100 src"}}
+
+`;
+
+exports[`invalid(60): {\"scripts\": {\"test\": \"ncu -u -m -t minor && env-cmd -x -f .env -- node -v && onchange -i -k -d 100 src\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "ncu -u -m -t minor && env-cmd -x -f .env -- node -v && onchange -i -k -d 100 src"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-u\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "ncu --upgrade --minimal --target minor && env-cmd --expand-envs --file .env -- node -v && onchange --initial --kill --delay 100 src"}}
+
+`;
+
+exports[`invalid(61): {\"scripts\": {\"test\": \"prettier-eslint -l -w && prettier-package-json -l && npmPkgJsonLint -q -c config.json\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "prettier-eslint -l -w && prettier-package-json -l && npmPkgJsonLint -q -c config.json"}}
+
+`;
+
+exports[`invalid(61): {\"scripts\": {\"test\": \"prettier-eslint -l -w && prettier-package-json -l && npmPkgJsonLint -q -c config.json\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "prettier-eslint -l -w && prettier-package-json -l && npmPkgJsonLint -q -c config.json"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-l\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "prettier-eslint --log-level -w && prettier-package-json --list-different && npmPkgJsonLint --quiet --config-file config.json"}}
 
 `;
 
