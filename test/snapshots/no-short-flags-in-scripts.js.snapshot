@@ -355,6 +355,60 @@ Output:
 
 `;
 
+exports[`invalid(117): {\"scripts\": {\"test\": \"npm-check -g -s -p -E -i '-u' && tsd -t index.d.ts -f test.ts && ts-standard -p '-h'\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "npm-check -g -s -p -E -i '-u' && tsd -t index.d.ts -f test.ts && ts-standard -p '-h'"}}
+
+`;
+
+exports[`invalid(117): {\"scripts\": {\"test\": \"npm-check -g -s -p -E -i '-u' && tsd -t index.d.ts -f test.ts && ts-standard -p '-h'\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "npm-check -g -s -p -E -i '-u' && tsd -t index.d.ts -f test.ts && ts-standard -p '-h'"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-g\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "npm-check --global --skip-unused --production --save-exact --ignore '-u' && tsd --typings index.d.ts -f test.ts && ts-standard --project '-h'"}}
+
+`;
+
+exports[`invalid(118): {\"scripts\": {\"test\": \"jscs -n -x -c '-r' && jshint -c config.json -e ts && csso -d -s '-u'\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "jscs -n -x -c '-r' && jshint -c config.json -e ts && csso -d -s '-u'"}}
+
+`;
+
+exports[`invalid(118): {\"scripts\": {\"test\": \"jscs -n -x -c '-r' && jshint -c config.json -e ts && csso -d -s '-u'\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "jscs -n -x -c '-r' && jshint -c config.json -e ts && csso -d -s '-u'"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-n\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "jscs --no-colors --fix --config '-r' && jshint --config config.json -e ts && csso --declaration-list --source-map '-u'"}}
+
+`;
+
+exports[`invalid(119): {\"scripts\": {\"test\": \"purgecss -v -p -c config.js && uncss -n -S '-r' && cpx -C -w -c 'transform -x' src dist\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "purgecss -v -p -c config.js && uncss -n -S '-r' && cpx -C -w -c 'transform -x' src dist"}}
+
+`;
+
+exports[`invalid(119): {\"scripts\": {\"test\": \"purgecss -v -p -c config.js && uncss -n -S '-r' && cpx -C -w -c 'transform -x' src dist\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "purgecss -v -p -c config.js && uncss -n -S '-r' && cpx -C -w -c 'transform -x' src dist"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "purgecss --variables --preserve-paths --config config.js && uncss --noBanner --ignoreSheets '-r' && cpx --clean --watch --command 'transform -x' src dist"}}
+
+`;
+
 exports[`invalid(12): {\"scripts\": {\"format\": \"prettier --config config.json -w .\"}} 1`] = `
 
 [Input]
@@ -367,6 +421,186 @@ exports[`invalid(12): {\"scripts\": {\"format\": \"prettier --config config.json
 Message:
 > 1 | {"scripts": {"format": "prettier --config config.json -w ."}}
     |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`format\` script uses the short-form flag \`-w\`. Use long-form flags for readability.
+
+`;
+
+exports[`invalid(120): {\"scripts\": {\"test\": \"hugo -D -F -E -b https://example.com && bandit -r -l -l -i -f json src\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "hugo -D -F -E -b https://example.com && bandit -r -l -l -i -f json src"}}
+
+`;
+
+exports[`invalid(120): {\"scripts\": {\"test\": \"hugo -D -F -E -b https://example.com && bandit -r -l -l -i -f json src\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "hugo -D -F -E -b https://example.com && bandit -r -l -l -i -f json src"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-D\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "hugo --buildDrafts --buildFuture --buildExpired --baseURL https://example.com && bandit --recursive --level --level --confidence --format json src"}}
+
+`;
+
+exports[`invalid(121): {\"scripts\": {\"test\": \"vulture -v src && pycodestyle -q -v src && pydocstyle -e -s -d src\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "vulture -v src && pycodestyle -q -v src && pydocstyle -e -s -d src"}}
+
+`;
+
+exports[`invalid(121): {\"scripts\": {\"test\": \"vulture -v src && pycodestyle -q -v src && pydocstyle -e -s -d src\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "vulture -v src && pycodestyle -q -v src && pydocstyle -e -s -d src"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "vulture --verbose src && pycodestyle --quiet --verbose src && pydocstyle --explain --source --debug src"}}
+
+`;
+
+exports[`invalid(122): {\"scripts\": {\"test\": \"nox -r -N -l -s lint && nox --sessions '-v' -l && pipenv -v -q run node -v\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "nox -r -N -l -s lint && nox --sessions '-v' -l && pipenv -v -q run node -v"}}
+
+`;
+
+exports[`invalid(122): {\"scripts\": {\"test\": \"nox -r -N -l -s lint && nox --sessions '-v' -l && pipenv -v -q run node -v\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "nox -r -N -l -s lint && nox --sessions '-v' -l && pipenv -v -q run node -v"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-r\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "nox --reuse-existing-virtualenvs --no-reuse-existing-virtualenvs --list-sessions --sessions lint && nox --sessions '-v' -l && pipenv --verbose --quiet run node -v"}}
+
+`;
+
+exports[`invalid(123): {\"scripts\": {\"test\": \"rubocop -l -P -D -a -F src && rubocop --autocorrect -F src && rubocop -C false -d src\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "rubocop -l -P -D -a -F src && rubocop --autocorrect -F src && rubocop -C false -d src"}}
+
+`;
+
+exports[`invalid(123): {\"scripts\": {\"test\": \"rubocop -l -P -D -a -F src && rubocop --autocorrect -F src && rubocop -C false -d src\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "rubocop -l -P -D -a -F src && rubocop --autocorrect -F src && rubocop -C false -d src"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-l\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "rubocop --lint --parallel --display-cop-names --autocorrect -F src && rubocop --autocorrect -F src && rubocop --cache false -d src"}}
+
+`;
+
+exports[`invalid(124): {\"scripts\": {\"test\": \"gmake -B -r -S -j -n all && gradle -q -m -x test build && mvn -B -q -D skipTests package\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "gmake -B -r -S -j -n all && gradle -q -m -x test build && mvn -B -q -D skipTests package"}}
+
+`;
+
+exports[`invalid(124): {\"scripts\": {\"test\": \"gmake -B -r -S -j -n all && gradle -q -m -x test build && mvn -B -q -D skipTests package\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "gmake -B -r -S -j -n all && gradle -q -m -x test build && mvn -B -q -D skipTests package"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-B\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "gmake --always-make --no-builtin-rules --no-keep-going --jobs -n all && gradle --quiet --dry-run --exclude-task test build && mvn --batch-mode --quiet --define skipTests package"}}
+
+`;
+
+exports[`invalid(125): {\"scripts\": {\"test\": \"golangci-lint -v run && gmake -k -S all && mvn -C -c package\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "golangci-lint -v run && gmake -k -S all && mvn -C -c package"}}
+
+`;
+
+exports[`invalid(125): {\"scripts\": {\"test\": \"golangci-lint -v run && gmake -k -S all && mvn -C -c package\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "golangci-lint -v run && gmake -k -S all && mvn -C -c package"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "golangci-lint --verbose run && gmake --keep-going --no-keep-going all && mvn --strict-checksums --lax-checksums package"}}
+
+`;
+
+exports[`invalid(126): {\"scripts\": {\"test\": \"rubocop -P --no-parallel -D --no-display-cop-names -d -c config.yml\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "rubocop -P --no-parallel -D --no-display-cop-names -d -c config.yml"}}
+
+`;
+
+exports[`invalid(126): {\"scripts\": {\"test\": \"rubocop -P --no-parallel -D --no-display-cop-names -d -c config.yml\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "rubocop -P --no-parallel -D --no-display-cop-names -d -c config.yml"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-P\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "rubocop --parallel --no-parallel -D --no-display-cop-names -d -c config.yml"}}
+
+`;
+
+exports[`invalid(127): {\"scripts\": {\"test\": \"gradle -q -i -s -S -D key=value -q && mvn -B -q -U -P release -X\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "gradle -q -i -s -S -D key=value -q && mvn -B -q -U -P release -X"}}
+
+`;
+
+exports[`invalid(127): {\"scripts\": {\"test\": \"gradle -q -i -s -S -D key=value -q && mvn -B -q -U -P release -X\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "gradle -q -i -s -S -D key=value -q && mvn -B -q -U -P release -X"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "gradle --quiet --info --stacktrace --full-stacktrace --system-prop key=value -q && mvn --batch-mode --quiet --update-snapshots --activate-profiles release -X"}}
+
+`;
+
+exports[`invalid(128): {\"scripts\": {\"test\": \"csvcut -t -b -S -c id,name data.csv && csvgrep -i -a -r pattern data.csv\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "csvcut -t -b -S -c id,name data.csv && csvgrep -i -a -r pattern data.csv"}}
+
+`;
+
+exports[`invalid(128): {\"scripts\": {\"test\": \"csvcut -t -b -S -c id,name data.csv && csvgrep -i -a -r pattern data.csv\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "csvcut -t -b -S -c id,name data.csv && csvgrep -i -a -r pattern data.csv"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-t\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "csvcut --tabs --no-doublequote --skipinitialspace --columns id,name data.csv && csvgrep --invert-match --any-match --regex pattern data.csv"}}
+
+`;
+
+exports[`invalid(129): {\"scripts\": {\"test\": \"csvformat -T -B -D ',' data.csv && csvstack -t -g first,second a.csv b.csv\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "csvformat -T -B -D ',' data.csv && csvstack -t -g first,second a.csv b.csv"}}
+
+`;
+
+exports[`invalid(129): {\"scripts\": {\"test\": \"csvformat -T -B -D ',' data.csv && csvstack -t -g first,second a.csv b.csv\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "csvformat -T -B -D ',' data.csv && csvstack -t -g first,second a.csv b.csv"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-T\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "csvformat --out-tabs --out-no-doublequote --out-delimiter ',' data.csv && csvstack --tabs --groups first,second a.csv b.csv"}}
 
 `;
 
@@ -385,6 +619,111 @@ Message:
 
 Output:
   1 | {"scripts": {"format": "prettier --write --config -c"}}
+
+`;
+
+exports[`invalid(130): {\"scripts\": {\"test\": \"csvjoin -I -c id a.csv b.csv && in2csv -I -f json data.json\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "csvjoin -I -c id a.csv b.csv && in2csv -I -f json data.json"}}
+
+`;
+
+exports[`invalid(130): {\"scripts\": {\"test\": \"csvjoin -I -c id a.csv b.csv && in2csv -I -f json data.json\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "csvjoin -I -c id a.csv b.csv && in2csv -I -f json data.json"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-I\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "csvjoin --no-inference --columns id a.csv b.csv && in2csv --no-inference --format json data.json"}}
+
+`;
+
+exports[`invalid(131): {\"scripts\": {\"test\": \"csvgrep -m '-i' -a data.csv && in2csv --format json -I data.json\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "csvgrep -m '-i' -a data.csv && in2csv --format json -I data.json"}}
+
+`;
+
+exports[`invalid(131): {\"scripts\": {\"test\": \"csvgrep -m '-i' -a data.csv && in2csv --format json -I data.json\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "csvgrep -m '-i' -a data.csv && in2csv --format json -I data.json"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-m\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "csvgrep --match '-i' -a data.csv && in2csv --format json -I data.json"}}
+
+`;
+
+exports[`invalid(132): {\"scripts\": {\"test\": \"http -v -v -h -F -p h example.test && https -j -x -x -I -a user:password example.test\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "http -v -v -h -F -p h example.test && https -j -x -x -I -a user:password example.test"}}
+
+`;
+
+exports[`invalid(132): {\"scripts\": {\"test\": \"http -v -v -h -F -p h example.test && https -j -x -x -I -a user:password example.test\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "http -v -v -h -F -p h example.test && https -j -x -x -I -a user:password example.test"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "http --verbose --verbose --headers --follow --print h example.test && https --json --compress --compress --ignore-stdin --auth user:password example.test"}}
+
+`;
+
+exports[`invalid(133): {\"scripts\": {\"test\": \"http -a '-v' -h example.test && https --auth '-v' -h example.test\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "http -a '-v' -h example.test && https --auth '-v' -h example.test"}}
+
+`;
+
+exports[`invalid(133): {\"scripts\": {\"test\": \"http -a '-v' -h example.test && https --auth '-v' -h example.test\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "http -a '-v' -h example.test && https --auth '-v' -h example.test"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-a\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "http --auth '-v' -h example.test && https --auth '-v' -h example.test"}}
+
+`;
+
+exports[`invalid(134): {\"scripts\": {\"test\": \"rclone -n -P -v -v copy source dest && jless -N -n -r -R -m line data.json\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "rclone -n -P -v -v copy source dest && jless -N -n -r -R -m line data.json"}}
+
+`;
+
+exports[`invalid(134): {\"scripts\": {\"test\": \"rclone -n -P -v -v copy source dest && jless -N -n -r -R -m line data.json\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "rclone -n -P -v -v copy source dest && jless -N -n -r -R -m line data.json"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-n\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "rclone --dry-run --progress --verbose --verbose copy source dest && jless --no-line-numbers --line-numbers --relative-line-numbers --no-relative-line-numbers --mode line data.json"}}
+
+`;
+
+exports[`invalid(135): {\"scripts\": {\"test\": \"jless --mode line -N data.json && rclone copy -n source dest\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "jless --mode line -N data.json && rclone copy -n source dest"}}
+
+`;
+
+exports[`invalid(135): {\"scripts\": {\"test\": \"jless --mode line -N data.json && rclone copy -n source dest\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "jless --mode line -N data.json && rclone copy -n source dest"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-N\`. Use long-form flags for readability.
 
 `;
 
