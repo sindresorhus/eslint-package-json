@@ -16,7 +16,7 @@ const messages = {
 
 // Each entry is [short name, long name, stops fixing]. Value-taking options, optional arguments, and mode switches end the unambiguous leading option sequence.
 // Verified against each tool's CLI definitions. TypeScript's `-v` and `-d` are omitted because their meanings change in build mode.
-// The rule documentation links to the upstream definitions for each command. Untyped options (such as Rollup's) also stop fixing because their parsers can consume a value.
+// Untyped options (such as Rollup's) also stop fixing because their parsers can consume a value.
 const commandAliases = new Map([
 	['alex', [
 		['v', 'version'],
