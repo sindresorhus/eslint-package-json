@@ -873,6 +873,24 @@ Output:
 
 `;
 
+exports[`invalid(55): {\"scripts\": {\"test\": \"echo \\\"say \\\\\\\" && prettier -w .\\\" && eslint -v\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "echo \\"say \\\\\\" && prettier -w .\\" && eslint -v"}}
+
+`;
+
+exports[`invalid(55): {\"scripts\": {\"test\": \"echo \\\"say \\\\\\\" && prettier -w .\\\" && eslint -v\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "echo \\"say \\\\\\" && prettier -w .\\" && eslint -v"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "echo \\"say \\\\\\" && prettier -w .\\" && eslint --version"}}
+
+`;
+
 exports[`invalid(6): {\"scripts\": {\"test\": \"babel -w -D -d dist src && swc -w -q -d dist src && sass -q -w src:dist\"}} 1`] = `
 
 [Input]

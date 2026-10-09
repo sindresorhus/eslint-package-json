@@ -23,6 +23,7 @@ ruleTest.snapshot({
 		'{"scripts": {"test": "tool \\\\-w"}}',
 		'{"scripts": {"test": "tool -- -w && prettier --write ."}}',
 		'{"scripts": {"test": "echo \'prettier -w .\'"}}',
+		'{"scripts": {"test": "echo \\"say \\\\\\" && prettier -w .\\""}}',
 		'{"scripts": {"test": "concurrently \\"vite -c config.js\\" \\"vitest -w\\""}}',
 		'{"scripts": {"test": "FLAG=-w tool > -w 2> -c < -l"}}',
 		'{"scripts": {"test": "tool 2>&1 # prettier -w ."}}',
@@ -103,6 +104,7 @@ ruleTest.snapshot({
 			code: '{"scripts": {"format": "prettier -w . && eslint -v"}}',
 			options: [{ignore: ['prettier']}],
 		},
+		'{"scripts": {"test": "echo \\"say \\\\\\" && prettier -w .\\" && eslint -v"}}',
 	],
 });
 
