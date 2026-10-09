@@ -33,12 +33,12 @@ ruleTest.snapshot({
 		'{"scripts": {"format": "prettier -w .", "format": null}}',
 		'{"scripts": {"format": "prettier -w ."}, "scripts": null}',
 		{
-			code: '{"scripts": {"test": "sh -c \'prettier -w .\' && git -C repo status"}}',
-			options: [{ignore: ['sh', 'git']}],
+			code: '{"scripts": {"test": "shell-tool -c \'prettier -w .\' && vcs-tool -C repo status"}}',
+			options: [{ignore: ['shell-tool', 'vcs-tool']}],
 		},
 		{
-			code: '{"scripts": {"test": "\'sh\' -c echo"}}',
-			options: [{ignore: ['sh']}],
+			code: '{"scripts": {"test": "\'shell-tool\' -c echo"}}',
+			options: [{ignore: ['shell-tool']}],
 		},
 	],
 	invalid: [
@@ -58,7 +58,7 @@ ruleTest.snapshot({
 		'{"scripts": {"format": "prettier --write -l ."}}',
 		'{"scripts": {"format": "prettier --write=false -l ."}}',
 		'{"scripts": {"format": "prettier -wl -p80 -x=value"}}',
-		'{"scripts": {"test": "find . -name file"}}',
+		'{"scripts": {"test": "tool . -name file"}}',
 		'{"scripts": {"format": "prettier -x -w ."}}',
 		'{"scripts": {"format": "prettier -w \\\\; -l ."}}',
 		'{"scripts": {"test": "tool --label \'-w\'"}}',
@@ -94,12 +94,12 @@ ruleTest.snapshot({
 		'{"scripts": {"format": "prettier -w .", "lint": "eslint -v"}}',
 		'{\n\t"scripts": {\n\t\t"format": "prettier  -w\\t.\\neslint -v"\n\t}\n}',
 		{
-			code: '{"scripts": {"test": "sh -c \'prettier -w .\' && prettier -w ."}}',
-			options: [{ignore: ['sh']}],
+			code: '{"scripts": {"test": "shell-tool -c \'prettier -w .\' && prettier -w ."}}',
+			options: [{ignore: ['shell-tool']}],
 		},
 		{
-			code: '{"scripts": {"test": "./sh -c echo && SH -c echo"}}',
-			options: [{ignore: ['sh']}],
+			code: '{"scripts": {"test": "./shell-tool -c echo && SHELL-TOOL -c echo"}}',
+			options: [{ignore: ['shell-tool']}],
 		},
 		{
 			code: '{"scripts": {"format": "prettier -w . && eslint -v"}}',
@@ -197,10 +197,10 @@ const config = {
 
 test('recommended config autofixes scripts', () => {
 	const linter = new Linter();
-	const code = '{"scripts":{"test":"node -v && eslint -v"}}';
+	const code = '{"scripts":{"test":"git -C repo status && node -v && eslint -v"}}';
 	const options = {filename: 'package.json'};
 	const {output, messages} = linter.verifyAndFix(code, plugin.configs.recommended, options);
-	assert.equal(JSON.parse(output).scripts.test, 'node --version && eslint --version');
+	assert.equal(JSON.parse(output).scripts.test, 'git -C repo status && node --version && eslint --version');
 	assert.equal(messages.some(message => message.ruleId === 'package-json/no-short-flags-in-scripts'), false);
 	assert.equal(linter.verifyAndFix(output, plugin.configs.recommended, options).fixed, false);
 });
@@ -952,10 +952,6 @@ const aliases = [
 	['flake8', 'v', 'verbose'],
 	['flake8', 'q', 'quiet'],
 	['flake8', 'j', 'jobs', true],
-	['git', 'p', 'paginate'],
-	['git', 'P', 'no-pager'],
-	['git', 'h', 'help', true],
-	['git', 'v', 'version', true],
 	['gmake', 'B', 'always-make'],
 	['gmake', 'e', 'environment-overrides'],
 	['gmake', 'E', 'eval', true],
@@ -2477,7 +2473,6 @@ for (const script of [
 	'vitest -w --no-watch',
 	'tsup -d dist',
 	'tsup -d first --out-dir second',
-	'git status -p',
 	'npm run test -w',
 	'c8 node -c index.js',
 	'npx prettier -w .',
@@ -2614,7 +2609,6 @@ for (const script of [
 	'nox -R',
 	'nox -j 2',
 	'gmake -d',
-	'make -j 2',
 	'hugo server -p 3000',
 	'gradle -b build.gradle',
 	'gradle -c settings.gradle',
@@ -2681,4 +2675,87 @@ test('each effective string script reports its first short flag once', () => {
 	const expected = code.replace('eslint -v -h', 'eslint --version --help').replace('prettier -c -l .', 'prettier --check --list-different .');
 	assert.equal(output, expected);
 	assert.equal(linter.verifyAndFix(output, config).fixed, false);
+});
+
+for (const script of [
+	'[ -d dist ]',
+	'awk -F , file.csv',
+	'bash -c true',
+	'c++ -std=c++20 -c source.cpp',
+	'cc -c source.c',
+	'chmod -R u+w dist',
+	'clang -fsyntax-only source.c',
+	'clang++ -std=c++20 -c source.cpp',
+	'cmake -S . -B build',
+	'cp -R assets dist',
+	'cut -d , -f 1 file.csv',
+	'dash -c true',
+	'date -u',
+	'echo -n ready',
+	'env -i node script.js',
+	'ffmpeg -i input.mov -c:v libx264 output.mp4',
+	'ffprobe -show_entries format=duration input.mov',
+	'find . -type f',
+	'g++ -std=c++20 -c source.cpp',
+	'gcc -fPIC -c source.c',
+	'git -C repo -c core.autocrlf=false status',
+	'java -jar app.jar',
+	'javac -d classes -Werror Main.java',
+	'kill -s TERM 1234',
+	'ln -s source destination',
+	'make -f Makefile -j 4',
+	'mkdir -p dist/assets',
+	'mv -f build dist',
+	'perl -pe 1 input.txt',
+	'python -m compileall src',
+	'python3 -m compileall src',
+	'rm -rf dist',
+	'ruby -e true',
+	'scp -r dist server:/app',
+	'sed -n p input.txt',
+	'set -e',
+	'sh -c true',
+	'ssh -p 2222 server true',
+	'tail -f log.txt',
+	'tee -a log.txt',
+	'test -f package.json',
+	'touch -t 202601010000 file',
+	'unzip -q archive.zip',
+	'wc -l file',
+	'xargs -I {} echo {}',
+	'zsh -c true',
+]) {
+	test(`built-in exemption: ${script}`, () => {
+		const linter = new Linter();
+		assert.deepEqual(linter.verify(JSON.stringify({scripts: {test: script}}), config), []);
+		const commandEnd = script.indexOf(' ');
+		const quotedScript = `MODE=1 '${script.slice(0, commandEnd)}'${script.slice(commandEnd)} && prettier -w .`;
+		const emptyIgnoreConfig = {...config, rules: {'package-json/no-short-flags-in-scripts': ['error', {ignore: []}]}};
+		const {output, messages} = linter.verifyAndFix(JSON.stringify({scripts: {test: quotedScript}}), emptyIgnoreConfig);
+		assert.equal(JSON.parse(output).scripts.test, quotedScript.replace('prettier -w', 'prettier --write'));
+		assert.deepEqual(messages, []);
+		assert.equal(linter.verifyAndFix(output, emptyIgnoreConfig).fixed, false);
+	});
+}
+
+test('custom ignore entries extend built-in exemptions', () => {
+	const linter = new Linter();
+	const customConfig = {...config, rules: {'package-json/no-short-flags-in-scripts': ['error', {ignore: ['custom-tool']}]}};
+	const code = JSON.stringify({scripts: {test: 'sh -c true && custom-tool -x && prettier -w .'}});
+	const {output, messages} = linter.verifyAndFix(code, customConfig);
+	assert.equal(JSON.parse(output).scripts.test, 'sh -c true && custom-tool -x && prettier --write .');
+	assert.deepEqual(messages, []);
+	assert.equal(linter.verify(JSON.stringify({scripts: {test: 'custom-tool -x'}}), config).length, 1);
+});
+
+test('built-in exemptions match exact executable names', () => {
+	const linter = new Linter();
+	const code = JSON.stringify({
+		scripts: {
+			path: './sh -c true', case: 'SH -c true', extension: 'sh.cmd -c true', longFlags: 'fish -c true',
+		},
+	});
+	const messages = linter.verify(code, config);
+	assert.equal(messages.length, 4);
+	assert.equal(messages.every(message => message.messageId === 'no-short-flags-in-scripts' && message.fix === undefined), true);
 });

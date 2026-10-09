@@ -14,6 +14,56 @@ const messages = {
 	[MESSAGE_ID]: 'The `{{script}}` script uses the short-form flag `{{flag}}`. Use long-form flags for readability.',
 };
 
+// These commands have unavoidable single-dash syntax or lack portable long equivalents.
+const commandsWithShortOnlyFlags = [
+	'[',
+	'awk',
+	'bash',
+	'c++',
+	'cc',
+	'chmod',
+	'clang',
+	'clang++',
+	'cmake',
+	'cp',
+	'cut',
+	'dash',
+	'date',
+	'echo',
+	'env',
+	'ffmpeg',
+	'ffprobe',
+	'find',
+	'g++',
+	'gcc',
+	'git',
+	'java',
+	'javac',
+	'kill',
+	'ln',
+	'make',
+	'mkdir',
+	'mv',
+	'perl',
+	'python',
+	'python3',
+	'rm',
+	'ruby',
+	'scp',
+	'sed',
+	'set',
+	'sh',
+	'ssh',
+	'tail',
+	'tee',
+	'test',
+	'touch',
+	'unzip',
+	'wc',
+	'xargs',
+	'zsh',
+];
+
 // Each entry is [short name, long name, stops fixing]. Value-taking options, optional arguments, and mode switches end the unambiguous leading option sequence.
 // Verified against each tool's CLI definitions. TypeScript's `-v` and `-d` are omitted because their meanings change in build mode.
 // Untyped options (such as Rollup's) also stop fixing because their parsers can consume a value.
@@ -890,12 +940,6 @@ const commandAliases = new Map([
 		['v', 'verbose'],
 		['q', 'quiet'],
 		['j', 'jobs', true],
-	]],
-	['git', [
-		['p', 'paginate'],
-		['P', 'no-pager'],
-		['h', 'help', true],
-		['v', 'version', true],
 	]],
 	['gmake', [
 		['B', 'always-make'],
@@ -2809,7 +2853,7 @@ const getScriptResult = (script, ignoredCommands) => {
 /** @param {import('eslint').Rule.RuleContext} context */
 const create = context => {
 	const {ignore = []} = context.options[0] ?? {};
-	const ignoredCommands = new Set(ignore);
+	const ignoredCommands = new Set([...commandsWithShortOnlyFlags, ...ignore]);
 
 	return {
 		Document(node) {
