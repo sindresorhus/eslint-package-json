@@ -34,6 +34,186 @@ Output:
 
 `;
 
+exports[`invalid(100): {\"scripts\": {\"test\": \"rustfmt -h '-q' && clang-format -n -i source.c\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "rustfmt -h '-q' && clang-format -n -i source.c"}}
+
+`;
+
+exports[`invalid(100): {\"scripts\": {\"test\": \"rustfmt -h '-q' && clang-format -n -i source.c\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "rustfmt -h '-q' && clang-format -n -i source.c"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-h\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "rustfmt --help '-q' && clang-format --dry-run -i source.c"}}
+
+`;
+
+exports[`invalid(101): {\"scripts\": {\"test\": \"ctest -Q -V -j 4 -R test && ctest --parallel -V\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "ctest -Q -V -j 4 -R test && ctest --parallel -V"}}
+
+`;
+
+exports[`invalid(101): {\"scripts\": {\"test\": \"ctest -Q -V -j 4 -R test && ctest --parallel -V\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "ctest -Q -V -j 4 -R test && ctest --parallel -V"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-Q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "ctest --quiet --verbose --parallel 4 -R test && ctest --parallel -V"}}
+
+`;
+
+exports[`invalid(102): {\"scripts\": {\"test\": \"pandoc -C -s -o report.html input.md && sphinx-build -W -n -b html docs build\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "pandoc -C -s -o report.html input.md && sphinx-build -W -n -b html docs build"}}
+
+`;
+
+exports[`invalid(102): {\"scripts\": {\"test\": \"pandoc -C -s -o report.html input.md && sphinx-build -W -n -b html docs build\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "pandoc -C -s -o report.html input.md && sphinx-build -W -n -b html docs build"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-C\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "pandoc --citeproc --standalone -o report.html input.md && sphinx-build --fail-on-warning --nitpicky --builder html docs build"}}
+
+`;
+
+exports[`invalid(103): {\"scripts\": {\"test\": \"hatch -q -e test run node -v && poetry -n -C project run node -v\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "hatch -q -e test run node -v && poetry -n -C project run node -v"}}
+
+`;
+
+exports[`invalid(103): {\"scripts\": {\"test\": \"hatch -q -e test run node -v && poetry -n -C project run node -v\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "hatch -q -e test run node -v && poetry -n -C project run node -v"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "hatch --quiet --env test run node -v && poetry --no-interaction --directory project run node -v"}}
+
+`;
+
+exports[`invalid(104): {\"scripts\": {\"test\": \"pdm -q -I -c config.toml run node -v && uv -q -v run node -v\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "pdm -q -I -c config.toml run node -v && uv -q -v run node -v"}}
+
+`;
+
+exports[`invalid(104): {\"scripts\": {\"test\": \"pdm -q -I -c config.toml run node -v && uv -q -v run node -v\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "pdm -q -I -c config.toml run node -v && uv -q -v run node -v"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "pdm --quiet --ignore-python --config config.toml run node -v && uv --quiet --verbose run node -v"}}
+
+`;
+
+exports[`invalid(105): {\"scripts\": {\"test\": \"mkdocs -q -v build && pip -v -q install package && pip3 -q install package\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "mkdocs -q -v build && pip -v -q install package && pip3 -q install package"}}
+
+`;
+
+exports[`invalid(105): {\"scripts\": {\"test\": \"mkdocs -q -v build && pip -v -q install package && pip3 -q install package\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "mkdocs -q -v build && pip -v -q install package && pip3 -q install package"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "mkdocs --quiet --verbose build && pip --verbose --quiet install package && pip3 --quiet install package"}}
+
+`;
+
+exports[`invalid(106): {\"scripts\": {\"test\": \"lychee -q -v -i -t 3 https://example.com\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "lychee -q -v -i -t 3 https://example.com"}}
+
+`;
+
+exports[`invalid(106): {\"scripts\": {\"test\": \"lychee -q -v -i -t 3 https://example.com\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "lychee -q -v -i -t 3 https://example.com"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "lychee --quiet --verbose --insecure -t 3 https://example.com"}}
+
+`;
+
+exports[`invalid(107): {\"scripts\": {\"test\": \"cargo -v external -q && poetry -v -v run node -v && poetry -P project run node -v\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "cargo -v external -q && poetry -v -v run node -v && poetry -P project run node -v"}}
+
+`;
+
+exports[`invalid(107): {\"scripts\": {\"test\": \"cargo -v external -q && poetry -v -v run node -v && poetry -P project run node -v\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "cargo -v external -q && poetry -v -v run node -v && poetry -P project run node -v"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "cargo --verbose external -q && poetry --verbose --verbose run node -v && poetry --project project run node -v"}}
+
+`;
+
+exports[`invalid(108): {\"scripts\": {\"test\": \"gzip -n -k -c input && gunzip -k -c input && zcat -q input\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "gzip -n -k -c input && gunzip -k -c input && zcat -q input"}}
+
+`;
+
+exports[`invalid(108): {\"scripts\": {\"test\": \"gzip -n -k -c input && gunzip -k -c input && zcat -q input\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "gzip -n -k -c input && gunzip -k -c input && zcat -q input"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-n\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "gzip --no-name --keep --stdout input && gunzip --keep --stdout input && zcat --quiet input"}}
+
+`;
+
+exports[`invalid(109): {\"scripts\": {\"test\": \"xz -e -k -c input && unxz -q -T 4 -c input && xzcat -q -F xz input\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "xz -e -k -c input && unxz -q -T 4 -c input && xzcat -q -F xz input"}}
+
+`;
+
+exports[`invalid(109): {\"scripts\": {\"test\": \"xz -e -k -c input && unxz -q -T 4 -c input && xzcat -q -F xz input\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "xz -e -k -c input && unxz -q -T 4 -c input && xzcat -q -F xz input"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-e\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "xz --extreme --keep --stdout input && unxz --quiet --threads 4 -c input && xzcat --quiet --format xz input"}}
+
+`;
+
 exports[`invalid(11): {\"scripts\": {\"format\": \"prettier . -w\"}} 1`] = `
 
 [Input]
@@ -46,6 +226,132 @@ exports[`invalid(11): {\"scripts\": {\"format\": \"prettier . -w\"}} 2`] = `
 Message:
 > 1 | {"scripts": {"format": "prettier . -w"}}
     |                        ^^^^^^^^^^^^^^^ The \`format\` script uses the short-form flag \`-w\`. Use long-form flags for readability.
+
+`;
+
+exports[`invalid(110): {\"scripts\": {\"test\": \"zstd -q -C -k input && unzstd -q -f input && zstdcat -q -v input\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "zstd -q -C -k input && unzstd -q -f input && zstdcat -q -v input"}}
+
+`;
+
+exports[`invalid(110): {\"scripts\": {\"test\": \"zstd -q -C -k input && unzstd -q -f input && zstdcat -q -v input\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "zstd -q -C -k input && unzstd -q -f input && zstdcat -q -v input"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "zstd --quiet --check --keep input && unzstd --quiet --force input && zstdcat --quiet --verbose input"}}
+
+`;
+
+exports[`invalid(111): {\"scripts\": {\"test\": \"bzip2 -v --verbose -s -k -c input && bunzip2 -q -k input && bzcat -s input\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "bzip2 -v --verbose -s -k -c input && bunzip2 -q -k input && bzcat -s input"}}
+
+`;
+
+exports[`invalid(111): {\"scripts\": {\"test\": \"bzip2 -v --verbose -s -k -c input && bunzip2 -q -k input && bzcat -s input\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "bzip2 -v --verbose -s -k -c input && bunzip2 -q -k input && bzcat -s input"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "bzip2 --verbose --verbose --small --keep --stdout input && bunzip2 --quiet --keep input && bzcat --small input"}}
+
+`;
+
+exports[`invalid(112): {\"scripts\": {\"test\": \"bzip2 -v -z --decompress input\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "bzip2 -v -z --decompress input"}}
+
+`;
+
+exports[`invalid(112): {\"scripts\": {\"test\": \"bzip2 -v -z --decompress input\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "bzip2 -v -z --decompress input"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "bzip2 --verbose -z --decompress input"}}
+
+`;
+
+exports[`invalid(113): {\"scripts\": {\"test\": \"lz4 -q -z -m -d inputs\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "lz4 -q -z -m -d inputs"}}
+
+`;
+
+exports[`invalid(113): {\"scripts\": {\"test\": \"lz4 -q -z -m -d inputs\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "lz4 -q -z -m -d inputs"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "lz4 --quiet --compress --multiple --decompress inputs"}}
+
+`;
+
+exports[`invalid(114): {\"scripts\": {\"test\": \"bats -r -p -t -T -f '-x' test && bats --filter '-x' -r test\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "bats -r -p -t -T -f '-x' test && bats --filter '-x' -r test"}}
+
+`;
+
+exports[`invalid(114): {\"scripts\": {\"test\": \"bats -r -p -t -T -f '-x' test && bats --filter '-x' -r test\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "bats -r -p -t -T -f '-x' test && bats --filter '-x' -r test"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-r\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "bats --recursive --pretty --tap --timing --filter '-x' test && bats --filter '-x' -r test"}}
+
+`;
+
+exports[`invalid(115): {\"scripts\": {\"test\": \"rsync -a -v -n -e 'ssh -p 2222' source destination\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "rsync -a -v -n -e 'ssh -p 2222' source destination"}}
+
+`;
+
+exports[`invalid(115): {\"scripts\": {\"test\": \"rsync -a -v -n -e 'ssh -p 2222' source destination\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "rsync -a -v -n -e 'ssh -p 2222' source destination"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-a\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "rsync --archive --verbose --dry-run --rsh 'ssh -p 2222' source destination"}}
+
+`;
+
+exports[`invalid(116): {\"scripts\": {\"test\": \"rsync -a -q -B 4096 -z source destination\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "rsync -a -q -B 4096 -z source destination"}}
+
+`;
+
+exports[`invalid(116): {\"scripts\": {\"test\": \"rsync -a -q -B 4096 -z source destination\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "rsync -a -q -B 4096 -z source destination"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-a\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "rsync --archive --quiet --block-size 4096 -z source destination"}}
 
 `;
 
@@ -1626,5 +1932,131 @@ Message:
 
 Output:
   1 | {"scripts": {"test": "watchexec --restart --verbose --watch src -- node -e code && ninja --verbose all"}}
+
+`;
+
+exports[`invalid(93): {\"scripts\": {\"test\": \"commitlint -q -s -l -e '-V' && commitlint --edit '-s' -q\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "commitlint -q -s -l -e '-V' && commitlint --edit '-s' -q"}}
+
+`;
+
+exports[`invalid(93): {\"scripts\": {\"test\": \"commitlint -q -s -l -e '-V' && commitlint --edit '-s' -q\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "commitlint -q -s -l -e '-V' && commitlint --edit '-s' -q"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "commitlint --quiet --strict --last --edit '-V' && commitlint --edit '-s' -q"}}
+
+`;
+
+exports[`invalid(94): {\"scripts\": {\"test\": \"alex -q -w -l README.md && jsonlint -s -q -V '-p'\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "alex -q -w -l README.md && jsonlint -s -q -V '-p'"}}
+
+`;
+
+exports[`invalid(94): {\"scripts\": {\"test\": \"alex -q -w -l README.md && jsonlint -s -q -V '-p'\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "alex -q -w -l README.md && jsonlint -s -q -V '-p'"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-q\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "alex --quiet --why --html README.md && jsonlint --sort-keys --quiet --validate '-p'"}}
+
+`;
+
+exports[`invalid(95): {\"scripts\": {\"test\": \"webpack-bundle-analyzer -O -m static stats.json && standard-version -f -s -p '-a'\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "webpack-bundle-analyzer -O -m static stats.json && standard-version -f -s -p '-a'"}}
+
+`;
+
+exports[`invalid(95): {\"scripts\": {\"test\": \"webpack-bundle-analyzer -O -m static stats.json && standard-version -f -s -p '-a'\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "webpack-bundle-analyzer -O -m static stats.json && standard-version -f -s -p '-a'"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-O\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "webpack-bundle-analyzer --no-open --mode static stats.json && standard-version --first-release --sign --prerelease '-a'"}}
+
+`;
+
+exports[`invalid(96): {\"scripts\": {\"test\": \"conventional-changelog -a -u -r 0 && standard-changelog -a -v release\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "conventional-changelog -a -u -r 0 && standard-changelog -a -v release"}}
+
+`;
+
+exports[`invalid(96): {\"scripts\": {\"test\": \"conventional-changelog -a -u -r 0 && standard-changelog -a -v release\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "conventional-changelog -a -u -r 0 && standard-changelog -a -v release"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-a\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "conventional-changelog --append --output-unreleased --release-count 0 && standard-changelog --append -v release"}}
+
+`;
+
+exports[`invalid(97): {\"scripts\": {\"test\": \"conventional-recommended-bump -h '-v' && conventional-commits-parser -v -s '-p'\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "conventional-recommended-bump -h '-v' && conventional-commits-parser -v -s '-p'"}}
+
+`;
+
+exports[`invalid(97): {\"scripts\": {\"test\": \"conventional-recommended-bump -h '-v' && conventional-commits-parser -v -s '-p'\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "conventional-recommended-bump -h '-v' && conventional-commits-parser -v -s '-p'"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-h\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "conventional-recommended-bump --header-pattern '-v' && conventional-commits-parser --verbose --separator '-p'"}}
+
+`;
+
+exports[`invalid(98): {\"scripts\": {\"test\": \"conventional-changelog-writer -c context.json && dpdm -T -o '-h'\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "conventional-changelog-writer -c context.json && dpdm -T -o '-h'"}}
+
+`;
+
+exports[`invalid(98): {\"scripts\": {\"test\": \"conventional-changelog-writer -c context.json && dpdm -T -o '-h'\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "conventional-changelog-writer -c context.json && dpdm -T -o '-h'"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-c\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "conventional-changelog-writer --context context.json && dpdm --transform --output '-h'"}}
+
+`;
+
+exports[`invalid(99): {\"scripts\": {\"test\": \"rustc -v -A warnings -D unused && rustfmt -q -l source.rs && cargo -v -v test\"}} 1`] = `
+
+[Input]
+  1 | {"scripts": {"test": "rustc -v -A warnings -D unused && rustfmt -q -l source.rs && cargo -v -v test"}}
+
+`;
+
+exports[`invalid(99): {\"scripts\": {\"test\": \"rustc -v -A warnings -D unused && rustfmt -q -l source.rs && cargo -v -v test\"}} 2`] = `
+
+Message:
+> 1 | {"scripts": {"test": "rustc -v -A warnings -D unused && rustfmt -q -l source.rs && cargo -v -v test"}}
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-v\`. Use long-form flags for readability.
+
+Output:
+  1 | {"scripts": {"test": "rustc --verbose --allow warnings -D unused && rustfmt --quiet --files-with-diff source.rs && cargo --verbose --verbose test"}}
 
 `;
