@@ -401,6 +401,11 @@ export function * iterateScripts(rootObject) {
 }
 
 /**
+Match simple shell words, comments, redirections, and command separators, keeping quoted words and escaped characters intact.
+*/
+export const scriptTokenPattern = /#[^\n]*|(?:\\.|[^\s"&';<>\\|]|"(?:\\.|[^"\\])*"|'[^']*')+|[<>]+&?|[\n&;|]/gsu;
+
+/**
 Check whether the package is itself a type package, i.e. its `name` starts with `@types/`.
 */
 export function isTypesPackage(rootObject) {

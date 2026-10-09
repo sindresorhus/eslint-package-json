@@ -2,6 +2,7 @@ import {
 	getKey,
 	getRootObject,
 	iterateScripts,
+	scriptTokenPattern,
 } from './utils/index.js';
 
 const MESSAGE_ID = 'no-node-modules-bin-paths';
@@ -12,8 +13,6 @@ const messages = {
 	[SUGGESTION_ID]: 'Use binary names instead of `node_modules/.bin` paths.',
 };
 
-// Keep quoted words and escaped characters intact so arguments containing shell operators cannot become commands.
-const tokenPattern = /#[^\n]*|(?:\\.|[^\s"&';<>\\|]|"(?:\\.|[^"\\])*"|'[^']*')+|[<>]+&?|[\n&;|]/gsu;
 const separatorPattern = /^[\n&;|]$/u;
 const assignmentPattern = /^[a-z_]\w*=/iu;
 const binaryPathPattern = /^(["']?)(?:\.[/\\])?node_modules[/\\]\.bin[/\\](\w[\w\-.]*)\1$/u;
@@ -24,7 +23,8 @@ Replace local binary paths in simple command positions, leaving arguments and as
 const replaceBinaryPaths = script => {
 	let isCommand = true;
 
-	return script.replaceAll(tokenPattern, token => {
+	// Keep quoted words and escaped characters intact so arguments containing shell operators cannot become commands.
+	return script.replaceAll(scriptTokenPattern, token => {
 		if (separatorPattern.test(token)) {
 			isCommand = true;
 			return token;

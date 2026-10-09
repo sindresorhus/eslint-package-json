@@ -35,6 +35,7 @@ export {default as 'no-redundant-repository-fields'} from './no-redundant-reposi
 export {default as 'no-restricted-dependencies'} from './no-restricted-dependencies.js';
 export {default as 'no-restricted-fields'} from './no-restricted-fields.js';
 export {default as 'no-self-dependency'} from './no-self-dependency.js';
+export {default as 'no-short-flags-in-scripts'} from './no-short-flags-in-scripts.js';
 export {default as 'no-typo-fields'} from './no-typo-fields.js';
 export {default as 'no-wildcard-dependencies'} from './no-wildcard-dependencies.js';
 export {default as 'no-workspace-protocol-in-published-package'} from './no-workspace-protocol-in-published-package.js';
