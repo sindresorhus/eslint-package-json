@@ -622,7 +622,7 @@ const getScriptResult = (script, ignoredCommands) => {
 		const [short, long, stopsFixing] = alias;
 
 		if (word === `-${short}`) {
-			replacements.push({index: tokens[index].index, token, text: token.replace(word, `--${long}`)});
+			replacements.push({index: tokens[index].index, token, text: token.replace(word, () => `--${long}`)});
 		}
 
 		// Long equivalents stop at exactly the same boundary, so later fix passes cannot start interpreting an option value as another flag.

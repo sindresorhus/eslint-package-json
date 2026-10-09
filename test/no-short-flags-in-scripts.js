@@ -552,7 +552,12 @@ for (const [command, short, long, stopsFixing] of aliases) {
 				fixedAgain: linter.verifyAndFix(output, config).fixed,
 			};
 		});
-		assert.deepEqual(results, cases.map(([, expected]) => ({messageId: 'no-short-flags-in-scripts', firstFix: expected, script: expected, fixedAgain: false})));
+		assert.deepEqual(results, cases.map(([, expected]) => ({
+			messageId: 'no-short-flags-in-scripts',
+			firstFix: expected,
+			script: expected,
+			fixedAgain: false,
+		})));
 	});
 }
 
