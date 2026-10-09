@@ -2370,9 +2370,6 @@ const commandAliases = new Map([
 		['t', 'target', true],
 		['m', 'module', true],
 	]],
-	['tsup', [
-		['d', 'out-dir', true],
-	]],
 	['tsx', [
 		['e', 'eval', true],
 		['p', 'print', true],
@@ -2462,21 +2459,6 @@ const commandAliases = new Map([
 		['S', 'scope', true],
 		['T', 'team', true],
 		['h', 'help'],
-	]],
-	['vite', [
-		['c', 'config', true],
-		['l', 'logLevel', true],
-		['d', 'debug', true],
-		['f', 'filter', true],
-		['m', 'mode', true],
-	]],
-	['vitest', [
-		['r', 'root', true],
-		['c', 'config', true],
-		['u', 'update', true],
-		['w', 'watch'],
-		['t', 'testNamePattern', true],
-		['p', 'project', true],
 	]],
 	['vue-tsc', [
 		['b', 'build', true],

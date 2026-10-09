@@ -2171,7 +2171,6 @@ const aliases = [
 	['tsgo', 'p', 'project', true],
 	['tsgo', 't', 'target', true],
 	['tsgo', 'm', 'module', true],
-	['tsup', 'd', 'out-dir', true],
 	['tsx', 'e', 'eval', true],
 	['tsx', 'p', 'print', true],
 	['turbo', 'F', 'filter', true],
@@ -2244,17 +2243,6 @@ const aliases = [
 	['vercel', 'S', 'scope', true],
 	['vercel', 'T', 'team', true],
 	['vercel', 'h', 'help'],
-	['vite', 'c', 'config', true],
-	['vite', 'l', 'logLevel', true],
-	['vite', 'd', 'debug', true],
-	['vite', 'f', 'filter', true],
-	['vite', 'm', 'mode', true],
-	['vitest', 'r', 'root', true],
-	['vitest', 'c', 'config', true],
-	['vitest', 'u', 'update', true],
-	['vitest', 'w', 'watch'],
-	['vitest', 't', 'testNamePattern', true],
-	['vitest', 'p', 'project', true],
 	['vue-tsc', 'b', 'build', true],
 	['vue-tsc', 'w', 'watch'],
 	['vue-tsc', 'h', 'help', true],
@@ -2483,6 +2471,12 @@ for (const script of [
 	'esbuild -o out.js',
 	'del -f build',
 	'vitest run -u',
+	'vite -c config.js',
+	'vite -c first.js --config second.js',
+	'vitest -w',
+	'vitest -w --no-watch',
+	'tsup -d dist',
+	'tsup -d first --out-dir second',
 	'git status -p',
 	'npm run test -w',
 	'c8 node -c index.js',
@@ -2651,4 +2645,39 @@ test('shell parameter expansion is never rewritten', () => {
 	const [message] = linter.verify(code, config);
 	assert.equal(message.messageId, 'no-short-flags-in-scripts');
 	assert.equal(message.fix, undefined);
+});
+
+test('report-only commands do not block safe fixes in independent commands', () => {
+	const linter = new Linter();
+	const script = 'vite -c first.js --config second.js && vitest -w --no-watch && tsup -d first --out-dir second && prettier -w .';
+	const code = JSON.stringify({scripts: {test: script}});
+	const expected = script.replace('prettier -w', 'prettier --write');
+	const [message] = linter.verify(code, config);
+	assert.equal(JSON.parse(message.fix.text), expected);
+	const {output} = linter.verifyAndFix(code, config);
+	assert.equal(JSON.parse(output).scripts.test, expected);
+	assert.equal(linter.verifyAndFix(output, config).fixed, false);
+});
+
+test('leading redirections stop fixing only their own invocation', () => {
+	const linter = new Linter();
+	const code = JSON.stringify({scripts: {format: 'FORMAT=1 > "-w" prettier -l . && prettier \'-w\' .'}});
+	const {output, messages} = linter.verifyAndFix(code, config);
+	assert.equal(JSON.parse(output).scripts.format, 'FORMAT=1 > "-w" prettier -l . && prettier \'--write\' .');
+	assert.equal(messages.length, 1);
+	assert.equal(messages[0].message, 'The `format` script uses the short-form flag `-l`. Use long-form flags for readability.');
+	assert.equal(messages[0].fix, undefined);
+});
+
+test('each effective string script reports its first short flag once', () => {
+	const linter = new Linter();
+	const code = '{"scripts":{"shadowed":"prettier -w ."},"scripts":{"format":"node -v","format":"eslint -v -h","build":"prettier -c -l .","disabled":"node -v","disabled":false}}';
+	const messages = linter.verify(code, config);
+	assert.deepEqual(messages.map(message => message.message), [
+		'The `format` script uses the short-form flag `-v`. Use long-form flags for readability.',
+		'The `build` script uses the short-form flag `-c`. Use long-form flags for readability.',
+	]);
+	const {output} = linter.verifyAndFix(code, config);
+	assert.equal(output, '{"scripts":{"shadowed":"prettier -w ."},"scripts":{"format":"node -v","format":"eslint --version --help","build":"prettier --check --list-different .","disabled":"node -v","disabled":false}}');
+	assert.equal(linter.verifyAndFix(output, config).fixed, false);
 });

@@ -837,7 +837,7 @@ Message:
     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The \`test\` script uses the short-form flag \`-u\`. Use long-form flags for readability.
 
 Output:
-  1 | {"scripts": {"test": "vitest --update -w && rollup --watch -c && http-server -s -p"}}
+  1 | {"scripts": {"test": "vitest -u -w && rollup --watch -c && http-server -s -p"}}
 
 `;
 
