@@ -37,10 +37,10 @@ Reports single-dash arguments starting with an ASCII letter, including bundles, 
 
 Always exempts these commands because common options lack usable or portable long equivalents:
 
-- Shells and builtins: `[`, `bash`, `dash`, `echo`, `env`, `set`, `sh`, `test`, `zsh`.
-- Portable utilities: `awk`, `chmod`, `cp`, `cut`, `date`, `find`, `kill`, `ln`, `mkdir`, `mv`, `rm`, `sed`, `tail`, `tee`, `touch`, `unzip`, `wc`, `xargs`.
-- Developer tools: `c++`, `cc`, `clang`, `clang++`, `cmake`, `g++`, `gcc`, `git`, `java`, `javac`, `make`, `perl`, `python`, `python3`, `ruby`, `scp`, `ssh`.
-- Media tools: `ffmpeg`, `ffprobe`.
+- Shells and builtins: `[`, `bash`, `cd`, `command`, `dash`, `echo`, `env`, `pwd`, `read`, `set`, `sh`, `test`, `ulimit`, `zsh`.
+- Portable utilities: `awk`, `cat`, `chgrp`, `chmod`, `chown`, `cp`, `cut`, `date`, `df`, `du`, `find`, `install`, `kill`, `ln`, `ls`, `mkdir`, `mv`, `ps`, `readlink`, `rm`, `rmdir`, `sed`, `stat`, `tail`, `tee`, `touch`, `tr`, `uname`, `unzip`, `wc`, `xargs`.
+- Developer tools: `c++`, `cc`, `clang`, `clang++`, `cmake`, `g++`, `gcc`, `git`, `java`, `javac`, `make`, `perl`, `python`, `python3`, `ruby`, `scp`, `ssh`, `swift`, `swiftc`, `xcodebuild`.
+- Media tools: `composite`, `convert`, `cwebp`, `dwebp`, `ffmpeg`, `ffprobe`, `gs`, `identify`, `magick`, `mogrify`, `montage`.
 
 ## Autofixing
 
@@ -56,19 +56,6 @@ Type: `string[]`\
 Default: `[]`
 
 Additional commands to exempt from reporting and fixing. Matching is exact and case-sensitive after removing quotes: `sh`, `./sh`, and `sh.cmd` differ. Built-in exemptions always apply; later commands in a chain remain checked.
-
-```js
-{
-	'package-json/no-short-flags-in-scripts': [
-		'error',
-		{
-			ignore: [
-				'custom-tool',
-			],
-		},
-	],
-}
-```
 
 With `{ignore: ['custom-tool']}`:
 
@@ -90,6 +77,4 @@ With `{ignore: ['custom-tool']}`:
 }
 ```
 
-CLIs with autofix support:
-
-`alex`, `api-extractor`, `autoflake`, `autopep8`, `ava`, `babel`, `babel-node`, `bandit`, `basedpyright`, `bats`, `black`, `browserify`, `bun`, `bunzip2`, `bzcat`, `bzip2`, `c8`, `cargo`, `chokidar`, `clang-format`, `cleancss`, `codespell`, `coffee`, `commitlint`, `conc`, `concurrently`, `conventional-changelog`, `conventional-changelog-writer`, `conventional-commits-parser`, `conventional-recommended-bump`, `copyfiles`, `copyup`, `cpx`, `cspell`, `csso`, `csvclean`, `csvcut`, `csvformat`, `csvgrep`, `csvjoin`, `csvjson`, `csvlook`, `csvsort`, `csvsql`, `csvstack`, `csvstat`, `ctest`, `cucumber-js`, `curl`, `del-cli`, `depcruise`, `dependency-cruise`, `dependency-cruiser`, `docformatter`, `dpdm`, `dprint`, `ejs`, `env-cmd`, `eslint`, `eslint_d`, `fd`, `fdfind`, `firebase`, `flake8`, `gmake`, `golangci-lint`, `gradle`, `grunt`, `gulp`, `gunzip`, `gzip`, `hatch`, `html-minifier`, `html-minifier-terser`, `html-validate`, `htmlhint`, `http`, `https`, `hugo`, `hyperfine`, `in2csv`, `isort`, `jest`, `jless`, `jq`, `jscpd`, `jscs`, `jsdoc`, `jshint`, `json5`, `jsonlint`, `just`, `knip`, `lessc`, `lightningcss`, `lint-staged`, `lychee`, `lz4`, `madge`, `markdown-it`, `markdownlint`, `marked`, `mkdirp`, `mkdocs`, `mocha`, `mvn`, `mypy`, `ncc`, `ncu`, `nexe`, `next`, `ninja`, `node`, `node-dev`, `nodemon`, `nox`, `npm`, `npm-check`, `npm-check-updates`, `npm-run-all`, `npm-run-all2`, `npmPkgJsonLint`, `npx`, `nyc`, `onchange`, `oxfmt`, `oxlint`, `pa11y`, `pandoc`, `pdm`, `pip`, `pip3`, `pipenv`, `pnpm`, `poetry`, `postcss`, `prettier`, `prettier-eslint`, `prettier-package-json`, `pug`, `pug-cli`, `pug-lint`, `purgecss`, `py.test`, `pycodestyle`, `pydocstyle`, `pylint`, `pyright`, `pytest`, `qunit`, `rclone`, `rehype`, `release-it`, `remark`, `rg`, `rimraf`, `rollup`, `rsync`, `rubocop`, `ruff`, `run-p`, `run-s`, `rush`, `rustc`, `rustfmt`, `sass`, `sass-lint`, `semver`, `serve`, `shellcheck`, `shfmt`, `sort-package-json`, `sphinx-build`, `standard-changelog`, `standard-version`, `stylelint`, `stylus`, `sucrase`, `svgo`, `swc`, `tap`, `tape`, `terser`, `testcafe`, `textlint`, `ts-node`, `ts-node-esm`, `ts-node-transpile-only`, `ts-standard`, `tsc`, `tsc-alias`, `tsd`, `tsgo`, `tsx`, `turbo`, `uglifyjs`, `uncss`, `unxz`, `unzstd`, `uv`, `vc`, `vercel`, `vue-tsc`, `vulture`, `wait-on`, `watchexec`, `watchify`, `wds`, `web-dev-server`, `webpack`, `webpack-bundle-analyzer`, `webpack-cli`, `webpack-dev-server`, `wrangler`, `wrangler2`, `xz`, `xzcat`, `yamllint`, `yapf`, `zcat`, `zstd`, `zstdcat`.
+See the [rule source](../../rules/no-short-flags-in-scripts.js) for supported CLIs and aliases.
