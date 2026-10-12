@@ -3,6 +3,7 @@ import {
 	getKey,
 	hasInvalidPackageTargetSegment,
 	isArrayIndexKey,
+	isSubpathMap,
 	iterateStringValues,
 	withoutShadowedMembers,
 } from '../utils/index.js';
@@ -150,7 +151,7 @@ function * checkObject(objectNode) {
 }
 
 function isTopLevelConditionMap(node) {
-	return node.type === 'Object' && node.members.every(member => !getKey(member).startsWith('.'));
+	return node.type === 'Object' && !isSubpathMap(node);
 }
 
 /**

@@ -3,6 +3,7 @@ import {
 	findMember,
 	getKey,
 	iterateEffectiveMembers,
+	isSubpathMap,
 	isTypesConditionKey,
 } from './utils/index.js';
 
@@ -67,10 +68,6 @@ function normalizePath(value) {
 }
 
 const normalizeMainPath = value => normalizePath(value.replace(/\/+$/u, ''));
-
-function isSubpathMap(objectNode) {
-	return objectNode.members.some(member => getKey(member).startsWith('.'));
-}
 
 // Node's legacy CommonJS resolution first tries the `main` path as a file, then appends `.js`, `.json`, and `.node`, and finally tries the same extensions under an `index` path. Without reading the filesystem the rule cannot tell which form resolves, so every form Node would try counts as a match.
 const cjsExtensions = ['.js', '.json', '.node'];

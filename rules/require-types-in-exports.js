@@ -3,6 +3,7 @@ import {
 	findMember,
 	getKey,
 	withoutShadowedMembers,
+	isSubpathMap,
 	isTypesConditionKey,
 } from './utils/index.js';
 
@@ -326,7 +327,7 @@ function * iterateObjects(node) {
 }
 
 function getSubpathTargets(exportsValue) {
-	if (exportsValue.type === 'Object' && exportsValue.members.some(member => getKey(member).startsWith('.'))) {
+	if (exportsValue.type === 'Object' && isSubpathMap(exportsValue)) {
 		return exportsValue.members.map(member => member.value);
 	}
 

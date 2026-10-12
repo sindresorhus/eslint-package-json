@@ -10,6 +10,7 @@ const messages = {
 Whether a path segment is invalid in a package target.
 */
 function isInvalidPackageTargetSegment(segment) {
+	// Not `hasInvalidPackageTargetSegment`, which also rejects a malformed escape and a decoded `/` or `\`. Node throws on each of these rather than moving past the target, so an array does not fall through them.
 	const decodedSegment = tryDecodeUriComponent(segment);
 
 	if (decodedSegment === undefined) {

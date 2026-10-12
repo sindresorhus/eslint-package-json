@@ -1,5 +1,10 @@
 import npa from 'npm-package-arg';
-import {getRootObject, installedSpecifier, iterateDependencies} from './utils/index.js';
+import {
+	getRootObject,
+	installedSpecifier,
+	iterateDependencies,
+	validRange,
+} from './utils/index.js';
 
 const MESSAGE_ID = 'no-dist-tag-dependencies';
 
@@ -9,8 +14,14 @@ const messages = {
 
 /**
 Whether npm reads a specifier as a dist-tag. Asking `npm-package-arg` settles every form at once, including the loose versions it accepts (`1.0.0-01`, `01.2.3`) and the path and protocol forms, which are not tags either. A protocol it refuses, such as `workspace:` or `link:`, is not a tag.
+
+A valid range is never a tag, and most specifiers are one, so the memoized range check answers them without the much slower `npm-package-arg`.
 */
 const isDistTag = specifier => {
+	if (validRange(specifier) !== null) {
+		return false;
+	}
+
 	try {
 		return npa(`any@${specifier}`).type === 'tag';
 	} catch {

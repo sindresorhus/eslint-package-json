@@ -1,6 +1,7 @@
 import path from 'node:path';
 import {
 	findMember,
+	getPhysicalFilePath,
 	getRootObject,
 	isWithinPackage,
 	removeMemberAndDuplicates,
@@ -18,14 +19,13 @@ const messages = {
 Whether the current file is a package.json below the configured working directory.
 */
 function isNestedPackageJson(context) {
-	const {physicalFilename} = context;
+	const packagePath = getPhysicalFilePath(context);
 
-	if (physicalFilename.startsWith('<')) {
+	if (packagePath === undefined) {
 		return false;
 	}
 
 	const workingDirectory = path.resolve(context.cwd);
-	const packagePath = path.resolve(workingDirectory, physicalFilename);
 	return isWithinPackage(workingDirectory, packagePath)
 		&& path.basename(packagePath) === 'package.json'
 		&& path.dirname(packagePath) !== workingDirectory;

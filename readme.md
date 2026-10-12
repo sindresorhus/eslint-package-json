@@ -207,3 +207,4 @@ Use a more specific `files` pattern when the rule should be disabled for only on
 - [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn) — Lots of awesome ESLint rules.
 - [eslint-cssicorn](https://github.com/sindresorhus/eslint-cssicorn) — Powerful ESLint rules for CSS.
 - [eslint-node-test](https://github.com/sindresorhus/eslint-node-test) — ESLint rules for the Node.js built-in test runner.
+- [eslint-soml](https://github.com/soml-lang/eslint-soml) — ESLint rules for SOML config files.

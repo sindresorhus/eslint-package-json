@@ -3,6 +3,7 @@ import path from 'node:path';
 import {
 	findMember,
 	getKey,
+	getPhysicalFilePath,
 	getRootObject,
 	iterateBinEntries,
 	withoutShadowedMembers,
@@ -459,8 +460,8 @@ Get the package directory for a linted package.json, using the working directory
 It reads `physicalFilename`, since a processor names a code block after its container (`readme.md/0_package.json`) and only the container is a real path.
 */
 const getPackageDirectory = context => {
-	const {physicalFilename, cwd} = context;
-	const rootPath = physicalFilename.startsWith('<') ? cwd : path.dirname(path.resolve(cwd, physicalFilename));
+	const physicalFilePath = getPhysicalFilePath(context);
+	const rootPath = physicalFilePath === undefined ? context.cwd : path.dirname(physicalFilePath);
 
 	return createPackageDirectory(rootPath);
 };

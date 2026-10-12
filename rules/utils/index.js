@@ -220,16 +220,31 @@ export function * iterateBinEntries(rootObject) {
 }
 
 /**
+Get the absolute path of the file being linted, or `undefined` for a virtual filename such as `<input>` or `<text>`, which names no file on disk.
+
+ESLint names a block inside another file after its container (`readme.md/0_package.json`), so `physicalFilename` is the path to resolve even then.
+*/
+export function getPhysicalFilePath(context) {
+	const {physicalFilename, cwd} = context;
+
+	if (physicalFilename.startsWith('<')) {
+		return undefined;
+	}
+
+	return path.resolve(cwd, physicalFilename);
+}
+
+/**
 Iterate existing regular files referenced by effective `bin` entries, resolving only targets that stay within the physical package directory.
 */
 export function * iterateExistingBinFiles(context, rootObject) {
-	const {physicalFilename} = context;
+	const physicalFilePath = getPhysicalFilePath(context);
 
-	if (physicalFilename.startsWith('<')) {
+	if (physicalFilePath === undefined) {
 		return;
 	}
 
-	const packageDirectory = path.dirname(path.resolve(context.cwd, physicalFilename));
+	const packageDirectory = path.dirname(physicalFilePath);
 	let realPackageDirectory;
 
 	for (const entry of iterateBinEntries(rootObject)) {
@@ -436,6 +451,13 @@ Check whether an `exports`/`imports` condition key is a TypeScript types conditi
 */
 export function isTypesConditionKey(key) {
 	return key === 'types' || key.startsWith('types@');
+}
+
+/**
+Check whether an `exports` object node is a subpath map, meaning at least one key starts with `.`. An empty object is not a subpath map.
+*/
+export function isSubpathMap(objectNode) {
+	return objectNode.members.some(member => getKey(member).startsWith('.'));
 }
 
 function * collectDependencies(rootObject, types) {
@@ -714,6 +736,11 @@ Check whether npm resolves a dependency specifier to a git remote. Shared by `no
 `npm-package-arg` decides from the host and the protocol, not from a `.git` suffix, so this catches the shapes no string pattern can: a hosted URL with no `git+` prefix and no `.git` suffix is a remote, as is a hosted `ssh://` one, while `https://example.com/foo.git` is a plain tarball npm downloads over HTTP. An unhosted `ssh://` URL needs the `git+` prefix: without it, `npm-package-arg` refuses the protocol, so it is not a remote.
 */
 export function isGitRemote(specifier) {
+	// Most specifiers are plain version ranges, and `npm-package-arg` is slow to rule them out. A valid range holds no `/` or `:`, so it is never a remote.
+	if (validRange(specifier) !== null) {
+		return false;
+	}
+
 	try {
 		return npa(specifier).type === 'git';
 	} catch {
