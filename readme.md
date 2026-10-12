@@ -129,6 +129,7 @@ export default defineConfig({
 | [no-restricted-dependencies](docs/rules/no-restricted-dependencies.md)                                 | Disallow specific dependencies.                                                           |    |    |    |
 | [no-restricted-fields](docs/rules/no-restricted-fields.md)                                             | Disallow specific fields.                                                                 |    |    | 💡 |
 | [no-self-dependency](docs/rules/no-self-dependency.md)                                                 | Disallow a package depending on itself.                                                   | ✅  |    | 💡 |
+| [no-short-flags-in-scripts](docs/rules/no-short-flags-in-scripts.md)                                   | Disallow short-form flags in scripts.                                                     | ✅  | 🔧 |    |
 | [no-typo-fields](docs/rules/no-typo-fields.md)                                                         | Disallow misspelled package.json field names.                                             | ✅  |    | 💡 |
 | [no-wildcard-dependencies](docs/rules/no-wildcard-dependencies.md)                                     | Disallow wildcard version ranges for dependencies.                                        | ✅  |    |    |
 | [no-workspace-protocol-in-published-package](docs/rules/no-workspace-protocol-in-published-package.md) | Disallow `workspace:` dependency specifiers in packages that can be published.            | ✅  |    |    |
